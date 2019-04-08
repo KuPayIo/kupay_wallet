@@ -1,13 +1,17 @@
 /**
  * RedEnvHistory
  */
+import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getInviteCodeDetail, querySendRedEnvelopeRecord } from '../../../net/pull';
+import { sharePerUrl } from '../../../config';
+import { getInviteCode, querySendRedEnvelopeRecord } from '../../../net/pull';
+import { LuckyMoneyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
+import { getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -42,7 +46,8 @@ export class RedEnvHistory extends Widget {
             showMoreTips:true, 
             sendNumber:0,  
             scrollHeight:0,
-            topRefresh:false
+            topRefresh:false,
+            avatar:getUserInfo().avatar
         };
         this.initData();
     }
@@ -50,20 +55,7 @@ export class RedEnvHistory extends Widget {
     /**
      * 更新数据
      */
-    public async initData() {
-        // const data = await getInviteCodeDetail(); // 获取邀请码记录
-        // if (data) {
-        //     this.props.recordList.push({
-        //         rid:'-1' ,
-        //         rtype:2,
-        //         ctypeShow:'ETH',
-        //         timeShow:'',
-        //         amount:0.5,
-        //         curNum:data[1],
-        //         totalNum:20
-        //     });
-        // }
-
+    public initData() {
         const sHisRec = getStore('activity/luckyMoney/sends');
         if (sHisRec) {
             const hList = sHisRec.list;
@@ -79,7 +71,6 @@ export class RedEnvHistory extends Widget {
             querySendRedEnvelopeRecord(this.props.start);
         }
         this.loadMore(); 
-        this.paint(); 
     }
 
     /**
@@ -159,6 +150,47 @@ export class RedEnvHistory extends Widget {
             this.paint();
         }, 1000);
         querySendRedEnvelopeRecord('');
+    }
+
+    /**
+     * 继续发送红包
+     */
+    public async continueSendClick(index:number) {
+        const item = this.props.recordList[index];
+        item.message = '恭喜发财 万事如意';
+        console.log(item);
+        let url = '';
+        let title = '';
+        const lanSet = getStore('setting/language');
+        let lan:any;
+        if (lanSet) {
+            lan = lanSet;
+        } else {
+            lan = 'zh_Hans';
+        }
+        
+        if (item.rtype === 0) {
+            // tslint:disable-next-line:max-line-length
+            url = `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${item.rid}&lm=${(<any>window).encodeURIComponent(item.message)}&lan=${lan}`;
+            title = this.language.redEnvType[0]; 
+        } else if (item.rtype === 1) {
+            // tslint:disable-next-line:max-line-length
+            url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${item.rid}&lm=${(<any>window).encodeURIComponent(item.message)}&lan=${lan}`;
+            title = this.language.redEnvType[1]; 
+        } else if (item.rid === '-1') {
+            const inviteCodeInfo = await getInviteCode();
+            if (inviteCodeInfo.result !== 1) return;
+                
+            url = `${sharePerUrl}?cid=${inviteCodeInfo.cid}&type=${LuckyMoneyType.Invite}&lan=${lan}`;
+            title = this.language.redEnvType[2];
+        }
+        popNew('app-components-share-share', { 
+            shareType: ShareType.TYPE_LINK,
+            url,
+            title,
+            content:this.props.message
+        });
+        console.error(url);
     }
 }
 // =====================================本地

@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { setStore } from '../../../store/memstore';
 import { pswEqualed } from '../../../utils/account';
 import { defaultPassword } from '../../../utils/constants';
 import { getUserInfo, popNewLoading, popNewMessage } from '../../../utils/tools';
@@ -78,6 +79,7 @@ export class SettingPsw extends Widget {
         await passwordChange(secretHash, this.props.walletPsw);
         loading.callback(loading.widget);
         popNewMessage('设置成功');
+        setStore('flags/setPsw',false);
         this.ok && this.ok();
         const userInfo = getUserInfo();
         if (!userInfo.phoneNumber) {

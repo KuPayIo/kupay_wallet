@@ -110,6 +110,9 @@ export const initPush = () => {
         const wallet = getStore('wallet');
         const userInfo = getUserInfo();
         if (!wallet.setPsw) {
+            const setPsw = getStore('flags').setPsw;
+            if (setPsw) return;
+            setStore('flags/setPsw',true);  // 防止多次弹窗
             setTimeout(() => {
                 const modalBox = { 
                     zh_Hans:{
@@ -133,6 +136,9 @@ export const initPush = () => {
             },3000);
             
         } else if (!userInfo.phoneNumber) {
+            const bindPhone = getStore('flags').bindPhone;
+            if (bindPhone) return;
+            setStore('flags/bindPhone',true);  // 防止多次弹窗
             setTimeout(() => {
                 popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
                     popNew('app-view-mine-setting-phone',{ jump:true });

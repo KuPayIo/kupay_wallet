@@ -291,7 +291,7 @@ export const popPswBox = (content = [],onlyOk:boolean = false,cancelDel:boolean 
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
         popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content,onlyOk }, (r: string) => {
             resolve(r);
-            if (cancelDel) popPswBox(content,onlyOk,cancelDel);
+            if (!r && cancelDel) popPswBox(content,onlyOk,cancelDel);
         }, (forgetPsw:boolean) => {
             if (cancelDel && !forgetPsw) logoutAccount();
             resolve('');
@@ -1121,6 +1121,8 @@ export const getUserInfo = () => {
     let avatar = userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
+    } else {
+        avatar = 'app/res/image/default_avater_big.png';
     }
 
     const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;

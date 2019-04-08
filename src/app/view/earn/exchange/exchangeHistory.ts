@@ -6,10 +6,9 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getData, getOneUserInfo, queryConvertLog } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
-import { parseRtype, timestampFormat } from '../../../utils/tools';
+import { getUserInfo, parseRtype, timestampFormat } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -51,6 +50,7 @@ export class ExchangeHistory extends Widget {
             showMoreTips:false, 
             inviteObj:null,
             userList:[],
+            avatar:getUserInfo().avatar,
             scrollHeight:0
         };
         this.initData();
