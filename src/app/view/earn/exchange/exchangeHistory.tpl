@@ -8,7 +8,7 @@
             <img src="../../../res/image/redEnvtop1.png" w-class="topBackimg" />
 
             <div w-class="topBack">
-                <img src="../../../res/image/default_avater_big.png" w-class="userHead" />
+                <img src="{{it.avatar}}" w-class="userHead" />
                 <div style="margin-top: 20px;">
                     <pi-ui-lang>{"zh_Hans":"共兑换","zh_Hant":"共兌換","en":""}</pi-ui-lang>
                 </div>

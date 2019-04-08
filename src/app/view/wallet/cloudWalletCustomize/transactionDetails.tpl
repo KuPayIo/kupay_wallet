@@ -45,7 +45,7 @@
                     <div w-class="amount">+{{it.amount}}&nbsp;{{it.scShow}}</div>
                     <div w-class="item">
                         <div w-class="tag"><pi-ui-lang>{{tags[0]}}</pi-ui-lang></div>
-                        <div w-class="content"><span>￥{{it.money}}</span></div>
+                        <div w-class="content"><span>{{it.beneficiary}}</span></div>
                     </div>
                     <div w-class="item">
                         <div w-class="tag"><pi-ui-lang>{{tags[1]}}</pi-ui-lang></div>

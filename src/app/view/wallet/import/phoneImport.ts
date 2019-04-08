@@ -75,6 +75,8 @@ export class PhoneImport extends Widget {
             close.callback(close.widget);
             if (itype === -301) {
                 this.phoneImportError('验证码错误');
+            } else if (itype === 1014) {
+                this.phoneImportSuccess(phoneNum);
             } else if (itype === 1) {
                 this.phoneImportSuccess(phoneNum);
             } else {
@@ -90,7 +92,7 @@ export class PhoneImport extends Widget {
                     const userinfo = getStore('user/info');
                     userinfo.phoneNumber = this.props.phone;
                     userinfo.areaCode = this.props.areaCode;
-                    setStore('user/info',userinfo);
+                    setStore('user/info',userinfo,false);
                     delPopPhoneTips();
                     this.ok && this.ok();
                 } else {

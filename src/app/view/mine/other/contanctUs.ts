@@ -2,12 +2,12 @@
  * 联系我们
  */
 // ===============================================导入
-import { CUSTOMER_SERVICE } from '../../../../chat/server/data/constant';
+import { getLocalStorage } from '../../../../chat/client/app/data/lcstore';
+import { getChatUid } from '../../../../chat/client/app/net/rpc';
 import { GENERATOR_TYPE } from '../../../../chat/server/data/db/user.s';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { rippleShow } from '../../../utils/tools';
 // ==================================================导出
@@ -28,7 +28,8 @@ export class ContanctUs extends Widget {
                 { value: '',desc:getModulConfig('WALLET_NAME') + '游戏' }
             ],
             walletLogo:getModulConfig('WALLET_LOGO'),
-            walletName:getModulConfig('WALLET_NAME')
+            walletName:getModulConfig('WALLET_NAME'),
+            desc:getModulConfig('CONTACTUSDESC')
         };
     }
 
@@ -49,7 +50,9 @@ export class ContanctUs extends Widget {
                 break;
             // 客服
             case 1:
-                popNew('chat-client-app-view-chat-chat', { id: CUSTOMER_SERVICE, chatType: GENERATOR_TYPE.USER });
+                getChatUid(getLocalStorage('officialService').HAOHAI_SERVANT).then((r) => {
+                    popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER });
+                });
                 break;
             // KuPay公众号
             case 2:

@@ -35,6 +35,7 @@ enum PayState {
     '支付异常' = 2,
     '查询失败' = 3
 }
+
 export class TransactionDetails extends Widget {
     public ok:() => void;
 
