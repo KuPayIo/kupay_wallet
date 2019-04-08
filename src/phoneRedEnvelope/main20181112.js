@@ -300,7 +300,7 @@ function takeRedEnvelope(rid){
 /**
  * 查询红包领取详情
  */
-function querydetail(uid,rid) {
+function querydetail(accId,rid) {
     var xmlhttp;
 	if (window.XMLHttpRequest) {
 		//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
@@ -311,7 +311,7 @@ function querydetail(uid,rid) {
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	}
     
-	xmlhttp.open("GET",urlHead+"/red_bag/query_detail_log?rid="+rid+"&uid="+uid,false);
+	xmlhttp.open("GET",urlHead+"/red_bag/query_detail_log?rid="+rid+"&acc_id="+accId,false);
     xmlhttp.send();
 
     return JSON.parse(xmlhttp.responseText);

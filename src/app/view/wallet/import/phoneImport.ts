@@ -92,7 +92,7 @@ export class PhoneImport extends Widget {
                     const userinfo = getStore('user/info');
                     userinfo.phoneNumber = this.props.phone;
                     userinfo.areaCode = this.props.areaCode;
-                    setStore('user/info',userinfo);
+                    setStore('user/info',userinfo,false);
                     delPopPhoneTips();
                     this.ok && this.ok();
                 } else {

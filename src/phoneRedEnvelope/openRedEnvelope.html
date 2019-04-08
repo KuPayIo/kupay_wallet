@@ -32,12 +32,15 @@ if(window.localStorage.takeRedBag){
         window.location.href = './redEnvelopeDetail.html';
     }
 }
+
 var state = {};
 switch (itype) {
     case RedEnvelopeType.Normal:
         state = {
             type:itype,
             rid:parseUrlParams(search,'rid'),
+            uid:parseUrlParams(search,'uid'),
+            accId:parseUrlParams(search,'accId'),
             lm:window.decodeURIComponent(parseUrlParams(search,'lm')),
             desc:lan.redEnvDesc[0],
         };
@@ -46,6 +49,8 @@ switch (itype) {
         state = {
             type:itype,
             rid:parseUrlParams(search,'rid'),
+            uid:parseUrlParams(search,'uid'),
+            accId:parseUrlParams(search,'accId'),
             lm:window.decodeURIComponent(parseUrlParams(search,'lm')),
             desc:lan.redEnvDesc[1],
         };
@@ -101,7 +106,7 @@ function openRedEnvelopeClick() {
             amount:0.015,
             leaveMsg:lan.redEnvDesc[2]
         };
-        window.localStorage.takeRedBag=JSON.stringify(redEnvelope);
+        window.localStorage.takeRedBag = JSON.stringify(redEnvelope);
         window.location.href = './redEnvelopeDetail.html';
     },500);
 }
@@ -116,9 +121,10 @@ function openNormalRedEnvelope() {
         switch (res.result) {
             case 1:
                 const v = res.value;
-                const redEnvelope = {
+                var redEnvelope = {
                     rid:state.rid,
-                    uid:v[0],
+                    accId:state.accId,
+                    uid:state.uid,
                     rtype:v[1],
                     ctype:v[2],
                     cid:v[3],
@@ -133,7 +139,18 @@ function openNormalRedEnvelope() {
                 popMessage(lan.errorList[0]);
                 break;
             case 702:
-                popMessage(lan.errorList[1]);
+                const detailRes = querydetail(state.accId, state.rid);
+                var l = detailRes.value[1];
+                var redEnvelope = {
+                    rid:state.rid,
+                    accId:state.accId,
+                    uid:state.uid,
+                    rtype:l[0][2],
+                    ctype:l[0][3],
+                    leaveMsg:detailRes.value[0]
+                };
+                window.localStorage.takeRedBag = JSON.stringify(redEnvelope);
+                window.location.href = './redEnvelopeDetail.html';
                 break;
             case 703:
                 popMessage(lan.errorList[2]);

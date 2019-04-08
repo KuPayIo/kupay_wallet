@@ -431,8 +431,8 @@ const registerSettingChange = () => {
  */
 const inviteUsersChange = () => {
     const localInvite = {
-        invite_success: getStore('inviteUsers').invite_success || [],  // 我邀请的好友
-        convert_invite: getStore('inviteUsers').convert_invite || []  // 邀请我的好友
+        invite_success: getStore('inviteUsers').invite_success,  // 我邀请的好友
+        convert_invite: getStore('inviteUsers').convert_invite  // 邀请我的好友
     };
     setLocalStorage('inviteUsers', localInvite);
 };
@@ -441,10 +441,11 @@ const inviteUsersChange = () => {
  * 邀请好友数据初始
  */
 const initInviteUsers = () => {
-    const flags = getLocalStorage('inviteUsers');
-    if (!flags) return;
-    setStore('inviteUsers/invite_success',flags.invite_success);
-    setStore('inviteUsers/convert_invite',flags.convert_invite);
+    const data = getLocalStorage('inviteUsers');
+    if (!data) return;
+    console.log('===========================邀请好友数据初始',data);
+    setStore('inviteUsers/invite_success',data.invite_success);
+    setStore('inviteUsers/convert_invite',data.convert_invite);
 };
 
 /**

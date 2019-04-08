@@ -63,6 +63,6 @@ export const getGameItem = (webviewName:string) => {
 
     return {
         ...gameList[index],
-        gameItem
+        ...gameItem
     };
 };

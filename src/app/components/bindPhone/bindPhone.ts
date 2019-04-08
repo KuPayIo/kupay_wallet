@@ -20,6 +20,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class BindPhone extends Widget {
     public ok: () => void;
+    public timer:number;
     constructor() {
         super();
     }
@@ -34,7 +35,6 @@ export class BindPhone extends Widget {
             phone,
             limitTime: 60
         };
-        this.openTimer();
         super.setProps(this.props,oldProps);
     }
     public backClick() {
@@ -55,6 +55,8 @@ export class BindPhone extends Widget {
         await pullMod.sendCode(this.props.phone, this.props.oldCode,this.props.verify);
         notify(event.node,'ev-getCode',{ value:this.props.phone,areaCode:this.props.oldCode });
         this.props.countdown = this.props.limitTime;
+        clearTimeout(this.timer);
+        this.openTimer();
         this.paint();
     }
     /**
@@ -107,9 +109,9 @@ export class BindPhone extends Widget {
      * 开启倒计时
      */
     private openTimer() {
-        setTimeout(() => {
-            this.openTimer();
+        this.timer = setTimeout(() => {
             if (this.props.countdown <= 0) return;
+            this.openTimer();
             this.props.countdown--;
             this.paint();
         }, 1000);
