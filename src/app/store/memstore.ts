@@ -658,7 +658,8 @@ const store: Store = {
         currency2USDTMap: new Map<string, Currency2USDT>()  // k线  --> 计算涨跌幅
     },
     flags: {},
-    inviteUsers:{}
+    inviteUsers:{},
+    mine:{}
 };
 
 initStore();
