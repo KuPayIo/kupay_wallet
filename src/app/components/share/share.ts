@@ -52,13 +52,11 @@ export class BaseShare extends Widget {
     }
 
     private baseShare(platform: number) {
-        const stp = new ShareToPlatforms();
 
-        stp.init();
         if (this.props.shareType === ShareType.TYPE_LINK) {
             const walletName = '钱包';
 
-            stp.shareLink({
+            ShareToPlatforms.shareLink({
                 success: (result) => { console.log('share success callback');this.ok(true); },
                 fail: (result) => { console.log('share fail callback');this.cancel(false); },
                 webName: this.props.webName || walletName,
@@ -69,7 +67,7 @@ export class BaseShare extends Widget {
                 platform: platform
             });
         } else if (this.props.shareType === ShareType.TYPE_SCREEN) {
-            stp.shareScreenShot({
+            ShareToPlatforms.shareScreenShot({
                 success: (result) => { console.log('share success callback');this.ok(true); },
                 fail: (result) => { console.log('share fail callback');this.cancel(false); },
                 platform: platform
@@ -77,7 +75,7 @@ export class BaseShare extends Widget {
         } else {
             console.log('share text====',this.props.text);
             console.log('share type====',this.props.shareType);
-            stp.shareCode({
+            ShareToPlatforms.shareCode({
                 success: (result) => { 
                     console.log('share success callback');
                     this.ok(true); 

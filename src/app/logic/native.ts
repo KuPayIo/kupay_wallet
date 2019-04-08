@@ -87,9 +87,7 @@ export const getDeviceId = (okCB?) => {
 export const makeScreenShot = (okCB?,errCB?) => {
     piRequire(['pi/browser/shareToPlatforms']).then(mods => {
         const ShareToPlatforms = mods[0].ShareToPlatforms;
-        const stp = new ShareToPlatforms();
-        stp.init();
-        stp.makeScreenShot({
+        ShareToPlatforms.makeScreenShot({
             success: (result) => { 
                 okCB && okCB(result);
             },
