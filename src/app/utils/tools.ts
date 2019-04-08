@@ -1121,6 +1121,8 @@ export const getUserInfo = () => {
     let avatar = userInfo.avatar;
     if (avatar && avatar.indexOf('data:image') < 0) {
         avatar = `${uploadFileUrlPrefix}${avatar}`;
+    } else {
+        avatar = 'app/res/image/default_avater_big.png';
     }
 
     const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;

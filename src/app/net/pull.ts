@@ -482,7 +482,7 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         let userInfo = {
             ...localUserInfo
         };
-        if (userInfoStr) {
+        if (userInfoStr && userInfoStr !== JSON.stringify(localUserInfo)) {
             const serverUserInfo = JSON.parse(userInfoStr);
             console.log('serverUserInfo ==== ',serverUserInfo);
             userInfo = {
@@ -490,8 +490,9 @@ export const getUserInfoFromServer = async (uids: [number]) => {
                 ...serverUserInfo
             };
             console.log('userInfo ==== ',userInfo);
+            setStore('user/info',userInfo);
         } 
-        setStore('user/info',userInfo);
+        
     });
         
 };
@@ -758,9 +759,12 @@ export const getBindPhone = async () => {
 
     return  requestAsync(msg).then(res => {
         const userInfo  = getStore('user/info');
-        userInfo.phoneNumber =  res.phone;
-        userInfo.areaCode = res.num;
-        setStore('user/info',userInfo);
+        if (userInfo.phoneNumber !== res.phone || userInfo.areaCode !== res.num) {
+            userInfo.phoneNumber =  res.phone;
+            userInfo.areaCode = res.num;
+            setStore('user/info',userInfo);
+        }
+        
     }).catch(err => {
         // console.log(err);
     });

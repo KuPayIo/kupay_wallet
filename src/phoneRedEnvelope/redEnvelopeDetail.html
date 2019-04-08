@@ -20,9 +20,9 @@
                 <div class="detail-head-inner"></div>
             </div>
             <div class="detail-amount"><span id="amount">1</span><span class="detail-currency-name" id="currencyName"></span></div>
-            <div class="detail-leave-message" id="message">恭喜发财 万事如意</div>
+            <div class="detail-leave-message" id="message"></div>
             <div class="detail-input-father">
-                <div class="input-father" id="code">000000</div>
+                <div class="input-father" id="code"></div>
                 <div class="detail-copy-btn" onclick="copyBtnClick()" id="copyBtn">复制</div>
             </div>
             <div class="detail-receive" onclick="receiveClick()" id="receiveBtn">立即领取</div>
@@ -47,12 +47,27 @@
     const lan = getLanguage();
     (function init() {
         document.getElementById('message').innerText = props.leaveMsg;
-        document.getElementById('amount').innerText = props.amount;
-        document.getElementById('currencyName').innerText = getCurrencyNameShow(props.ctype);
-        document.getElementById('code').innerText = props.cidShow;
-        document.getElementById('copyBtn').innerText = lan.copyBtn;
         document.getElementById('receiveBtn').innerText = lan.receiveBtn;
+        if(props.cid){
+            document.getElementById('amount').innerText = props.amount;
+            document.getElementById('currencyName').innerText = getCurrencyNameShow(props.ctype);
+            document.getElementById('code').innerText = props.cidShow;
+            document.getElementById('copyBtn').innerText = lan.copyBtn;
+        }else{
+            document.querySelector(".detail-amount").style.visibility = "hidden";
+            const inputFater = document.querySelector(".detail-input-father");
+            inputFater.innerHTML = "已领完";
+            inputFater.style.justifyContent = "center";
+        }
+        
+        
+        
     })();
+    const sender = JSON.parse(userDetails(props.uid).value[0]);
+    console.log("sender",sender);
+    if(sender.avatar){
+        document.querySelector(".detail-head-inner").style.backgroundImage = `url(${uploadFileUrlPrefix}${sender.avatar})`;
+    }
 
     if (props.rtype !== 99) {
         getDetail();
@@ -65,7 +80,7 @@
     }
 
     function getDetail() {
-        const res = querydetail(props.uid, props.rid);
+        const res = querydetail(props.accId, props.rid);
         console.log(res);
 
         if (res.result !== 1) {

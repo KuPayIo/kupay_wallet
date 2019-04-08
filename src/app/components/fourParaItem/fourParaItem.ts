@@ -16,6 +16,7 @@ interface Props {
     time:string;
     describe?:string;
     showPin?:boolean;
+    btnName:string;
 }
 // ================================ 导出
 
@@ -32,5 +33,9 @@ export class FourParaItem extends Widget {
 
     public doTap(event:any) {
         notify(event.node,'ev-btn-tap',{});
+    }
+
+    public continueSendClick(event:any) {
+        notify(event.node,'ev-btn-send',{});
     }
 }

@@ -36,6 +36,7 @@
     height: 120px;
     width: 120px;
     margin-top: 60px;
+    border-radius: 50%;
 }
 .bottom{
     background: #fff;

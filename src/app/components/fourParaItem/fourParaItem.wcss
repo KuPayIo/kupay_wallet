@@ -23,6 +23,10 @@
 .itemleft{
     flex: 1;
 }
+.itemRight{
+    display: flex;
+    align-items: baseline;
+}
 .other{
     font-size: 28px;
     background: #F8BC45;
