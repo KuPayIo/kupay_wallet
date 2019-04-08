@@ -141,14 +141,12 @@ export const autoLogin = async (conRandom:string) => {
         console.log('自动登录成功-----------',res);
         loginWalletSuccess();
 
-        const invite = getStore('inviteUsers').invite_success;
-        if (!invite) {  // 如果本地没有记录则向后端请求邀请好友记录
-            getInviteUserAccIds().then(res => {
-                console.log('===============邀请好友id',res);
-                setStore('inviteUsers/invite_success',res.invites || []);  // 我邀请的好友
-                setStore('inviteUsers/convert_invite',res.invited || []);  // 邀请我的好友
-            });
-        }
+        // 向后端请求邀请好友列表
+        getInviteUserAccIds().then(res => {
+            console.log('===============邀请好友id',res);
+            setStore('inviteUsers/invite_success',res.invites || []);  // 我邀请的好友
+            setStore('inviteUsers/convert_invite',res.invited || []);  // 邀请我的好友
+        });
         
     }).catch((res) => {
         setStore('user/isLogin', false);

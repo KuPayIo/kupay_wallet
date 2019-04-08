@@ -76,8 +76,10 @@ export const initPush = () => {
     setPushListener('event_invite_success',(res) => {
         console.log('event_invite_success服务器推送邀请好友成功=====================',res);
         const invite = getStore('inviteUsers').invite_success || [];
+        
         if (res.accId) {
-            invite.push(res.accId);
+            const index = invite.indexOf(res.accId);
+            index === -1 && invite.push(res.accId);
         }
         setStore('inviteUsers/invite_success',invite);
     });
@@ -85,9 +87,9 @@ export const initPush = () => {
     // 监听兑换邀请码成功事件
     setPushListener('event_convert_invite',(res) => {
         console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
-        const invite = getStore('inviteUsers').convert_invite || [];
+        let invite = [];
         if (res.accId) {
-            invite.push(res.accId);
+            invite = [res.accId];
         }
         setStore('inviteUsers/convert_invite',invite);
     });
