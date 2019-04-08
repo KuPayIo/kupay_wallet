@@ -24,7 +24,8 @@ export class Aboutus extends Widget {
                 { value: '', components: '' }
             ],
             walletLogo:getModulConfig('WALLET_LOGO'),
-            walletName:getModulConfig('WALLET_NAME')
+            walletName:getModulConfig('WALLET_NAME'),
+            desc:getModulConfig('ABOUTUSDESC')
         };
     }
 

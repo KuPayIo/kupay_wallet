@@ -7,7 +7,6 @@ import { GENERATOR_TYPE } from '../../../../chat/server/data/db/user.s';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { openNewActivity } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { rippleShow } from '../../../utils/tools';
 // ==================================================导出
@@ -28,7 +27,8 @@ export class ContanctUs extends Widget {
                 { value: '',desc:getModulConfig('WALLET_NAME') + '游戏' }
             ],
             walletLogo:getModulConfig('WALLET_LOGO'),
-            walletName:getModulConfig('WALLET_NAME')
+            walletName:getModulConfig('WALLET_NAME'),
+            desc:getModulConfig('CONTACTUSDESC')
         };
     }
 

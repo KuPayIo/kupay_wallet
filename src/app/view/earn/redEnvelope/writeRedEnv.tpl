@@ -10,7 +10,7 @@
         <div style="font-size: 28px;color: #888888;margin: 0 30px;">
             {{: changePin = [
             {"zh_Hans":"当前为","zh_Hant":"當前為","en":""},
-            {"zh_Hans":"，改为","zh_Hant":"，改為","en":""}] }}
+            {"zh_Hans":"改为","zh_Hant":"改為","en":""}] }}
             
             {{: redEnvType = [
             {"zh_Hans":"普通红包","zh_Hant":"普通紅包","en":""},
@@ -18,8 +18,7 @@
 
             {{if it.inFlag !== "chat_user"}}
             <pi-ui-lang>{{changePin[0]}} </pi-ui-lang>
-            <pi-ui-lang>{{it.showPin ? redEnvType[1] : redEnvType[0]}}</pi-ui-lang>
-            <pi-ui-lang>{{changePin[1]}}</pi-ui-lang>
+            <pi-ui-lang>{{it.showPin ? redEnvType[1] : redEnvType[0]}}</pi-ui-lang>，
             <span w-class="changeType" on-tap="changePin">
                 <pi-ui-lang>{{changePin[1]}}</pi-ui-lang>
                 <pi-ui-lang>{{it.showPin? redEnvType[0] : redEnvType[1]}}</pi-ui-lang>

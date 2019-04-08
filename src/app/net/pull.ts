@@ -5,9 +5,9 @@ import { request } from '../../pi/net/ui/con_mgr';
 import { MainChainCoin, uploadFileUrl } from '../config';
 import { getModulConfig } from '../modulConfig';
 import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
-import { getStore, setStore } from '../store/memstore';
+import { getCloudBalances, getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank,parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
+import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 import { base64ToFile, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
@@ -637,17 +637,32 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
 /**
  * 获取全部用户嗨豆排名列表
  */
-export const getHighTop = async (num: number) => {
+export const getHighTop =  (num: number) => {
     const msg = { type: 'wallet/cloud@get_high_top', param: { num: num } };
 
-    return new Promise((resolve,reject) => {
-        requestAsync(msg).then(data => {
-            resolve(parseMiningRank(data));
-        });
+    return  requestAsync(msg).then(data => {
+        console.log('获取全部排名========================',data);
+        const mine = {
+            miningRank:data.me || 0,
+            miningKTnum: getCloudBalances().get(CloudCurrencyType.KT)
+        };
+        setStore('mine',mine); 
+
+        return parseMiningRank(data);
     });
     
 };
 
+// 获取好友嗨豆排名
+export const getFriendsKTTops =  (arr:any) => {
+    const msg = { type:'wallet/cloud@finds_high_top',param:{ finds:JSON.stringify(arr) } };
+
+    return  requestAsync(msg).then(data => {
+        console.log('获取好友排名========================',data);
+
+        return parseMiningRank(data);
+    });
+};
 /**
  * 验证手机号是否被注册
  */
@@ -670,7 +685,9 @@ export const verifyPhone = async (phone:string,num: string) => {
 export const sendCode = async (phone: string, num: string,verify:boolean = true) => {
     if (verify) {
         const v = await verifyPhone(phone,num);
-        if (!v) {
+        if (v) {
+            popNewMessage('手机号已绑定');
+
             return;
         }
     }

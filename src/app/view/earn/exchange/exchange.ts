@@ -61,9 +61,10 @@ export class Exchange extends Widget {
         setStore('activity/luckyMoney/exchange',undefined);
         getServerCloudBalance();
         const r: any = await this.queryDesc(code);
+        const ktShow = getModulConfig('KT_SHOW');
         const redEnvelope = {
             message: r.value,
-            ctypeShow: CloudCurrencyType[res.value[0]],
+            ctypeShow: res.value[0] === CloudCurrencyType.KT ? ktShow : CloudCurrencyType[res.value[0]],
             amount: smallUnit2LargeUnit(CloudCurrencyType[res.value[0]], res.value[1]),
             rtype: code.slice(0, 2),
             rid:res.rid,

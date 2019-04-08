@@ -10,6 +10,7 @@ import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, register } from '../../../store/memstore';
+import { TaskSid } from '../../../store/parse';
 import { rechargeGiftMultiple, SCPrecision, SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
 
@@ -31,7 +32,7 @@ interface Props {
     SCNum: number; // 输入的金额
 }
 
-export class RechargeSC  extends Widget {
+export class RechargeSC extends Widget {
     public ok: () => void;
     public setProps(props: any) {
         this.props = {
@@ -95,7 +96,8 @@ export class RechargeSC  extends Widget {
         confirmPay(orderDetail).then(res => {
             if (res) {
                 this.initData();
-                popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: res.oid });
+                const itype = this.props.payType === PayType.WX ? TaskSid.Wxpay : TaskSid.Wxpay;
+                popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: res.oid,itype,ctype:1 });
                 this.paint();
                 setStore('flags/firstRecharge',true); // 首次充值
                 getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
