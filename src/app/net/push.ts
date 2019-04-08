@@ -1,6 +1,7 @@
 /**
  * 后端主动推消息给后端
  */
+import { getStore as gameGetStore, setStore as gameSetStore } from '../../earn/client/app/store/memstore';
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
@@ -104,8 +105,10 @@ export const initPush = () => {
     setMsgHandler('alter_balance_ok',(res) => {
         console.log('alter_balance_ok服务器推送成功===========调用排名===============',res);
         
-        getServerCloudBalance().then(() => {
-            getHighTop(100);
+        getHighTop(100).then((data) => {
+            const mine = gameGetStore('mine',{});
+            mine.miningRank = data.miningRank || 0;
+            gameSetStore('mine',mine);  
         });
         const wallet = getStore('wallet');
         const userInfo = getUserInfo();

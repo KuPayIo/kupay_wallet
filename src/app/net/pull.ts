@@ -482,7 +482,7 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         let userInfo = {
             ...localUserInfo
         };
-        if (userInfoStr && userInfoStr !== JSON.stringify(localUserInfo)) {
+        if (userInfoStr) {
             const serverUserInfo = JSON.parse(userInfoStr);
             console.log('serverUserInfo ==== ',serverUserInfo);
             userInfo = {
@@ -490,9 +490,8 @@ export const getUserInfoFromServer = async (uids: [number]) => {
                 ...serverUserInfo
             };
             console.log('userInfo ==== ',userInfo);
-            setStore('user/info',userInfo);
         } 
-        
+        setStore('user/info',userInfo);
     });
         
 };
@@ -643,11 +642,11 @@ export const getHighTop =  (num: number) => {
 
     return  requestAsync(msg).then(data => {
         console.log('获取全部排名========================',data);
-        const mine = {
-            miningRank:data.me || 0,
-            s: getCloudBalances().get(CloudCurrencyType.KT)
-        };
-        setStore('mine',mine); 
+        // const mine = {
+        //     miningRank:data.me || 0,
+        //     miningKTnum: getCloudBalances().get(CloudCurrencyType.KT)
+        // };
+        // setStore('mine',mine); 
 
         return parseMiningRank(data);
     });
@@ -764,12 +763,9 @@ export const getBindPhone = async () => {
 
     return  requestAsync(msg).then(res => {
         const userInfo  = getStore('user/info');
-        if (userInfo.phoneNumber !== res.phone || userInfo.areaCode !== res.num) {
-            userInfo.phoneNumber =  res.phone;
-            userInfo.areaCode = res.num;
-            setStore('user/info',userInfo);
-        }
-        
+        userInfo.phoneNumber =  res.phone;
+        userInfo.areaCode = res.num;
+        setStore('user/info',userInfo);
     }).catch(err => {
         // console.log(err);
     });
