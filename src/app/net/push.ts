@@ -75,21 +75,21 @@ export const initPush = () => {
     // 监听邀请好友成功事件
     setPushListener('event_invite_success',(res) => {
         console.log('event_invite_success服务器推送邀请好友成功=====================',res);
-        const invite = getStore('flags').invite_success || [];
+        const invite = getStore('inviteUsers').invite_success || [];
         if (res.accId) {
             invite.push(res.accId);
         }
-        setStore('flags/invite_success',invite);
+        setStore('inviteUsers/invite_success',invite);
     });
 
     // 监听兑换邀请码成功事件
     setPushListener('event_convert_invite',(res) => {
         console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
-        const invite = getStore('flags').convert_invite || [];
+        const invite = getStore('inviteUsers').convert_invite || [];
         if (res.accId) {
             invite.push(res.accId);
         }
-        setStore('flags/convert_invite',invite);
+        setStore('inviteUsers/convert_invite',invite);
     });
 
     // 监听邀请好友并成为真实用户事件

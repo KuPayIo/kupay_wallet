@@ -141,7 +141,8 @@ export const autoLogin = async (conRandom:string) => {
         console.log('自动登录成功-----------',res);
         loginWalletSuccess();
 
-        if (!getStore('inviteUsers').invite_success) {  // 如果本地没有记录则向后端请求邀请好友记录
+        const invite = getStore('inviteUsers').invite_success;
+        if (!invite) {  // 如果本地没有记录则向后端请求邀请好友记录
             getInviteUserAccIds().then(res => {
                 console.log('===============邀请好友id',res);
                 setStore('inviteUsers/invite_success',res.invites || []);  // 我邀请的好友
