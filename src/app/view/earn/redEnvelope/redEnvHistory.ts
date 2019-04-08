@@ -55,20 +55,7 @@ export class RedEnvHistory extends Widget {
     /**
      * 更新数据
      */
-    public async initData() {
-        // const data = await getInviteCodeDetail(); // 获取邀请码记录
-        // if (data) {
-        //     this.props.recordList.push({
-        //         rid:'-1' ,
-        //         rtype:2,
-        //         ctypeShow:'ETH',
-        //         timeShow:'',
-        //         amount:0.5,
-        //         curNum:data[1],
-        //         totalNum:20
-        //     });
-        // }
-
+    public initData() {
         const sHisRec = getStore('activity/luckyMoney/sends');
         if (sHisRec) {
             const hList = sHisRec.list;
@@ -84,7 +71,6 @@ export class RedEnvHistory extends Widget {
             querySendRedEnvelopeRecord(this.props.start);
         }
         this.loadMore(); 
-        this.paint(); 
     }
 
     /**
@@ -171,6 +157,8 @@ export class RedEnvHistory extends Widget {
      */
     public async continueSendClick(index:number) {
         const item = this.props.recordList[index];
+        item.message = '恭喜发财 万事如意';
+        console.log(item);
         let url = '';
         let title = '';
         const lanSet = getStore('setting/language');
