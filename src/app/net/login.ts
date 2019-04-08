@@ -330,6 +330,7 @@ export const logoutAccountDel = (noLogin?:boolean) => {
     setStore('user',user);
     setStore('activity',activity);
     setStore('setting/lockScreen',lockScreen);
+    setStore('flags/saveAccount', false);  
     setBottomLayerReloginMsg('','','');
     closeCon();
     logoutWalletSuccess();
