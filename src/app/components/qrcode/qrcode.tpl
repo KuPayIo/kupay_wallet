@@ -1,3 +1,3 @@
-<div>
-    <div style="width:{{it.size}}px; height:{{it.size}}px; margin-top:15px;margin-right: auto;margin-left: auto;"></div>
+<div style="width:{{it.size + 20}}px; height:{{it.size + 20}}px;display: flex;justify-content: center;align-items: center;">
+    <img id="qrcode-img" />
 </div>
