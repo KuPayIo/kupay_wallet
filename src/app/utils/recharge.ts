@@ -3,11 +3,12 @@
  */
 
 import { getStore as earnGetStore, setStore  as earnSetStore } from '../../earn/client/app/store/memstore';
+import { IAPManager } from '../../pi/browser/iap_manager';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { getModulConfig } from '../modulConfig';
 import { requestAsync } from '../net/pull';
-import { popNewLoading } from './tools';
+import { popNewLoading, popNewMessage } from './tools';
 
 export interface OrderDetail {
     total: number; // 总价
@@ -23,7 +24,8 @@ export interface OrderDetail {
  */
 export enum PayType {
     WX = 'wxpay',
-    Alipay = 'alipay'
+    Alipay = 'alipay',
+    IOS = 'apple_pay'
 }
 /**
  * 确认订单支付接口
@@ -55,9 +57,20 @@ export const confirmPay = async (orderDetail: OrderDetail) => {
             });
             jumpData.mweb_url = aliRes.url;
             retOrder = await jumpAlipay(jumpData);
+
         } else if (orderDetail.payType === PayType.WX) { // 微信H5支付
             jumpData.mweb_url = JSON.parse(resData.JsData).mweb_url;
             retOrder = await jumpWxpay(jumpData);
+
+        } else if (orderDetail.payType === PayType.IOS) {  // ios支付
+            IAPManager.IAPurchase({
+                sm: `high_xzxd_${orderDetail.num}`,
+                sd: resData.oid,
+                success(str: String) {
+                    popNewMessage(str);
+                }
+            });
+            
         }
         
         return retOrder;

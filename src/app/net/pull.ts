@@ -1,8 +1,10 @@
 /**
  * 主动向后端通讯
  */
+import { ajax } from '../../pi/lang/mod';
 import { request } from '../../pi/net/ui/con_mgr';
 import { MainChainCoin, uploadFileUrl } from '../config';
+import { sourceIp, sourcePort } from '../ipConfig';
 import { getModulConfig } from '../modulConfig';
 import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
 import { getCloudBalances, getStore, setStore } from '../store/memstore';
@@ -1315,4 +1317,41 @@ export const getInviteUserAccIds = () => {
     };
 
     return requestAsync(msg);
+};
+
+/**
+ * 获取iOS支付的商品信息
+ */
+export const getAppleGoods = () => {
+    const msg = {
+        type: 'get_apple_goods',
+        param: {}
+    };
+
+    return requestAsync(msg);
+};
+
+/**
+ * 验证iOS是否支付成功
+ */
+export const confirmApplePay = (oid:string,receipt:string) => {
+    // let receipt = JSON.stringify(encodeURIComponent(receipt));
+    const data = {
+        orderId: oid,
+        receipt: receipt
+    };
+    const url = `http://${sourceIp}:${sourcePort}/pay/apple_verify?`;
+    
+    return fetch(url, {
+        body: JSON.stringify(data), 
+        cache: 'no-cache',
+        headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json'
+        },
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, cors, *same-origin
+        redirect: 'follow', // manual, *follow, error
+        referrer: 'no-referrer' // *client, no-referrer
+    }).then(res => res.json()).catch();
 };

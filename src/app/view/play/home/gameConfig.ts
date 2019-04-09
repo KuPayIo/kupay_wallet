@@ -42,13 +42,13 @@ export const activityList = [
         desc:{ zh_Hans:'是哪一个幸运的宝箱被选中呢？',zh_Hant:'是哪一個幸運的寶箱被選中呢？',en:'' },
         img:['app/res/image1/chest.png','app/res/image1/chest1.png'],
         url:'earn-client-app-view-openBox-openBox'
-    },
-    {
-        title:{ zh_Hans:'兑换商城',zh_Hant:'兌換商城',en:'' },
-        desc:{ zh_Hans:'不定期上新物品',zh_Hant:'不定期上新物品',en:'' },
-        img:['app/res/image1/exchangeMall.png','app/res/image1/exchangeMall1.png'],
-        url:'earn-client-app-view-exchange-exchange'
     }
+    // {
+    //     title:{ zh_Hans:'兑换商城',zh_Hant:'兌換商城',en:'' },
+    //     desc:{ zh_Hans:'不定期上新物品',zh_Hant:'不定期上新物品',en:'' },
+    //     img:['app/res/image1/exchangeMall.png','app/res/image1/exchangeMall1.png'],
+    //     url:'earn-client-app-view-exchange-exchange'
+    // }
 ];
 
 /**

@@ -96,7 +96,6 @@
     flex: 1 0 0;
     width:100%;
     border-radius: 12px;
-    margin-top: 10px;
     background-color: #fff;
     padding: 40px 30px;
 }

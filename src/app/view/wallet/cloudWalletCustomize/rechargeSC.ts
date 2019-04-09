@@ -1,18 +1,19 @@
 /**
  * 充值SC
  */
-
 import { setStore } from '../../../../chat/client/app/data/store';
+import { IAPManager } from '../../../../pi/browser/iap_manager';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../modulConfig';
-import { getAccountDetail } from '../../../net/pull';
+import { confirmApplePay, getAccountDetail, getAppleGoods } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getCloudBalances, register } from '../../../store/memstore';
 import { TaskSid } from '../../../store/parse';
 import { rechargeGiftMultiple, SCPrecision, SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
+import { popNewMessage } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -34,23 +35,29 @@ interface Props {
 
 export class RechargeSC extends Widget {
     public ok: () => void;
-    public setProps(props: any) {
+    
+    public async setProps(props: any) {
         this.props = {
             ...this.props,
             ...props
         };
         super.setProps(this.props);
+        this.initGoods();
     }
 
     public create() {
         super.create();
         const payList = [
-            { sellNum: 20, sellPrize: 20 },
-            { sellNum: 50, sellPrize: 50 },
-            { sellNum: 100, sellPrize: 100 },
-            { sellNum: 200, sellPrize: 200 },
-            { sellNum: 500, sellPrize: 500 },
-            { sellNum: 1000, sellPrize: 1000 }
+            { sellNum: 6, sellPrize: 6 },
+            { sellNum: 30, sellPrize: 30 },
+            { sellNum: 68, sellPrize: 68 },
+            { sellNum: 98, sellPrize: 98 },
+            { sellNum: 198, sellPrize: 198 },
+            { sellNum: 328, sellPrize: 328 },
+            { sellNum: 648, sellPrize: 648 },
+            { sellNum: 1298, sellPrize: 1298 },
+            { sellNum: 2998, sellPrize: 2998 },
+            { sellNum: 6498, sellPrize: 6498 }
         ];
         const selectPayItemIndex = 0;
         const SCNum = payList[selectPayItemIndex].sellNum;
@@ -60,7 +67,7 @@ export class RechargeSC extends Widget {
             ktShow:getModulConfig('KT_SHOW'),
             scShow:getModulConfig('SC_SHOW'),
             scBalance,
-            payType: PayType.WX,
+            payType: PayType.IOS,
             payList,
             giveKT,
             selectPayItemIndex,
@@ -69,12 +76,21 @@ export class RechargeSC extends Widget {
         };
     }
 
+    public async initGoods() {
+        const res = await getAppleGoods();
+        console.log('===========================apple',res);
+        const payList = [];
+        for (const v of res) {
+            payList.push({ sellId:v[0], sellNum:v[1] });
+        }
+    }
+
     // 初始化
     public initData() {
         const selectPayItemIndex = 0;
         const SCNum = this.props.payList[selectPayItemIndex].sellNum;
         const giveKT = SCNum * rechargeGiftMultiple;
-        this.props.payType = PayType.WX;
+        this.props.payType = PayType.IOS;
         this.props.SCNum = SCNum;
         this.props.giveKT = giveKT;
         this.props.selectPayItemIndex = selectPayItemIndex;
@@ -82,7 +98,7 @@ export class RechargeSC extends Widget {
     /**
      * 充值
      */
-    public rechargeClick() {
+    public rechargeClick() { 
         const num = this.props.SCNum * SCPrecision;
         const orderDetail:OrderDetail = {
             total: num * SCUnitprice, // 总价
@@ -96,11 +112,30 @@ export class RechargeSC extends Widget {
         confirmPay(orderDetail).then(res => {
             if (res) {
                 this.initData();
-                const itype = this.props.payType === PayType.WX ? TaskSid.Wxpay : TaskSid.Wxpay;
+                const itype = this.props.payType === PayType.WX ? TaskSid.Wxpay : TaskSid.Alipay;
                 popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: res.oid,itype,ctype:1 });
                 this.paint();
                 setStore('flags/firstRecharge',true); // 首次充值
                 getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+            } else {
+                IAPManager.addTransactionListener(
+                    (issuccess:Number,sd: string,transtion: string) => {
+                        if (issuccess) {
+                            confirmApplePay(sd,transtion).then(res => {
+                                console.log('================验证苹果支付是否成功',res);
+                                this.initData();
+                                popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: sd,ctype:1 });
+                                this.paint();
+                                setStore('flags/firstRecharge',true); // 首次充值
+                                getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+                                popNewMessage('支付成功');
+                            });
+                            
+                        } else {
+                            popNewMessage('支付失败');
+                        }
+                    }
+                );
             }
         });
     }
