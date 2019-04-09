@@ -142,11 +142,11 @@ export const autoLogin = async (conRandom:string) => {
         loginWalletSuccess();
 
         // 向后端请求邀请好友列表
-        getInviteUserAccIds().then(res => {
-            console.log('===============邀请好友id',res);
-            setStore('inviteUsers/invite_success',res.invites || []);  // 我邀请的好友
-            setStore('inviteUsers/convert_invite',res.invited || []);  // 邀请我的好友
-        });
+        // getInviteUserAccIds().then(res => {
+        //     console.log('===============邀请好友id',res);
+        //     setStore('inviteUsers/invite_success',res.invites || []);  // 我邀请的好友
+        //     setStore('inviteUsers/convert_invite',res.invited || []);  // 邀请我的好友
+        // });
         
     }).catch((res) => {
         setStore('user/isLogin', false);

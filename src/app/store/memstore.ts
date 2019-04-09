@@ -659,7 +659,10 @@ const store: Store = {
         currency2USDTMap: new Map<string, Currency2USDT>()  // k线  --> 计算涨跌幅
     },
     flags: {},
-    inviteUsers:{}
+    inviteUsers:{
+        invite_success: null,  // 我邀请的所有好友的accid
+        convert_invite: null   // 邀请我的好友的accid
+    }
 };
 
 initStore();
