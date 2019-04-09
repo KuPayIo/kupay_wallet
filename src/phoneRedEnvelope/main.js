@@ -45,12 +45,9 @@ const walletName = getWalletName();
 const Config= {
     zh_Hans:{ 
         copySuccess:"复制成功",
-        shortMess:walletName+"好玩又赚钱",
+        shortMess:"好玩又赚钱",
         immeDownload:"立即下载",
-        installTutorial:"使用教程",
-        step1:"点击“下载”下载安装文件",
-        step2:"进入APP并创建账户",
-        step3:"在赚-兑换中使用兑换码或邀请码",
+        step1:"下载app即可在“赚”中兑换红包或使用邀请码",
         redEnvMess:[
             "恭喜发财 万事如意",
             walletName+"大礼包"
@@ -82,12 +79,9 @@ const Config= {
     },
     zh_Hant:{
         copySuccess:"複製成功",
-        shortMess:walletName+"好玩又賺錢",
+        shortMess:"好玩又賺錢",
         immeDownload:"立即下載",
-        installTutorial:"使用教程",
-        step1:"點擊“下載”下載安裝文件",
-        step2:"進入APP並創建賬戶",
-        step3:"在賺-兌換中使用兌換碼或邀請碼",
+        step1:"下載app即可在“賺”中兌換紅包或使用邀請碼",
         redEnvMess:[
             "恭喜發財 萬事如意",
             walletName+"大禮包"
@@ -259,11 +253,17 @@ const timestampFormat = (timestamp) => {
  * 下载APP
  */
 function downloadClick() {
-    var ua = navigator.userAgent.toLowerCase();
-    if(ua.match(/MicroMessenger/i) == "micromessenger" || ua.match(/mqqbrowser/i)){
+    var ua = navigator.userAgent;
+    var isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;   //判断是否是 android终端
+    var isIOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);     //判断是否是 ios终端
+    var isIosQQ = (isIOS && / QQ/i.test(ua));    // ios内置qq浏览器
+    var isAndroidQQ = (isAndroid && /MQQBrowser/i.test(ua) && /QQ/i.test(ua.split('MQQBrowser'))); // android内置qq浏览器
+    var isWX = ua.match(/MicroMessenger/i) == "micromessenger";   // 微信
+    // alert(`isIosQQ = ${isIosQQ},isAndroidQQ = ${isAndroidQQ},isWX = ${isWX}`);
+    if(isWX || isIosQQ || isAndroidQQ){
         document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:block;');
     }else{
-        location.href = "https://app.herominer.net/wallet/appversion/fairyChivalry1.0.3.apk";
+        location.href = "https://app.herominer.net/wallet/appversion/xzxd_1.0.6.apk";
     }
 }
 /**
@@ -335,3 +335,6 @@ function userDetails(uids){
 
     return JSON.parse(xmlhttp.responseText);
 }
+
+
+winit && winit();
