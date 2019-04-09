@@ -4,6 +4,6 @@
     </div>
     <app-components1-offlineTip-offlineTip>{ offlienType:{{it.offlienType}} }</app-components1-offlineTip-offlineTip>
     <div w-class="body">
-        <img src="{{it.gameList[0].img[0]}}" style="width:100%;height:100%" on-tap="gameClick(0)"/>
+        <div  w-class="game-item" style="background-image: url({{it.gameList[0].img[0]}});" on-tap="gameClick(0)"></div>
     </div>
 </div>
