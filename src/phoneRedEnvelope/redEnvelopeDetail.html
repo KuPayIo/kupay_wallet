@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="IGNORE.manifest">
+<html>
 
 <head>
     <meta charset="utf-8" />
@@ -10,6 +10,12 @@
     <title>好嗨</title>
     <meta name="viewport" content="width=device-width,initial-scale=0.5,maximum-scale=0.5,user-scalable=0">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script>
+        var jsScript = document.createElement("script");
+        jsScript.src = "main.js?" + Math.random();
+        jsScript.async 
+        document.querySelector("head").appendChild(jsScript); 
+    </script>
 </head>
 
 <body>
@@ -37,32 +43,25 @@
 
     </div>
 </body>
-<script src="main20181112.js"></script>
 <script src="bignumber.js"></script>
 <script>
-    function getCurrencyNameShow(ctype){
-        return CloudCurrencyType[ctype] === 'KT' ? '嗨豆' : CloudCurrencyType[ctype];
+var props = JSON.parse(window.localStorage.takeRedBag);
+var lan;
+function winit(){
+    lan = getLanguage();
+    document.getElementById('message').innerText = props.leaveMsg;
+    document.getElementById('receiveBtn').innerText = lan.receiveBtn;
+    if(props.cid){
+        document.getElementById('amount').innerText = props.amount;
+        document.getElementById('currencyName').innerText = getCurrencyNameShow(props.ctype);
+        document.getElementById('code').innerText = props.cidShow;
+        document.getElementById('copyBtn').innerText = lan.copyBtn;
+    }else{
+        document.querySelector(".detail-amount").style.visibility = "hidden";
+        const inputFater = document.querySelector(".detail-input-father");
+        inputFater.innerHTML = "已领完";
+        inputFater.style.justifyContent = "center";
     }
-    const props = JSON.parse(window.localStorage.takeRedBag);
-    const lan = getLanguage();
-    (function init() {
-        document.getElementById('message').innerText = props.leaveMsg;
-        document.getElementById('receiveBtn').innerText = lan.receiveBtn;
-        if(props.cid){
-            document.getElementById('amount').innerText = props.amount;
-            document.getElementById('currencyName').innerText = getCurrencyNameShow(props.ctype);
-            document.getElementById('code').innerText = props.cidShow;
-            document.getElementById('copyBtn').innerText = lan.copyBtn;
-        }else{
-            document.querySelector(".detail-amount").style.visibility = "hidden";
-            const inputFater = document.querySelector(".detail-input-father");
-            inputFater.innerHTML = "已领完";
-            inputFater.style.justifyContent = "center";
-        }
-        
-        
-        
-    })();
     const sender = JSON.parse(userDetails(props.uid).value[0]);
     console.log("sender",sender);
     if(sender.avatar){
@@ -72,6 +71,13 @@
     if (props.rtype !== 99) {
         getDetail();
     }
+}
+    
+
+    function getCurrencyNameShow(ctype){
+        return CloudCurrencyType[ctype] === 'KT' ? '嗨豆' : CloudCurrencyType[ctype];
+    }
+
     /**
      * 复制兑换码
      */
