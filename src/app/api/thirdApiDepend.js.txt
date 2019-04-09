@@ -405,8 +405,8 @@ pi_tools.createThirdBaseStyle = function(){
     border-radius:50%;
     border:1px solid rgba(255,255,255,0.2);
     position: fixed;
-    top: 10px;
-    left: 10px;
+    top: 100px;
+    right:10px;
     z-index:99999;
   }
   .pi-dot1{
