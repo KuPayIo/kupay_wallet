@@ -23,7 +23,9 @@
             </div>
             <div w-class="name-box" ev-input-change="walletNameChange">
                 <widget w-tag="app-components1-input-input" style="flex: 1;">{input:{{it.walletName}},maxLength:10}</widget>
-                <img w-class="random" src="../../../res/image/dice.png" on-tap="randomPlayName" id="random"/>
+                <div w-class="randomBox">
+                    <img w-class="random" src="../../../res/image/dice.png" on-tap="randomPlayName" id="random"/>
+                </div>   
             </div>
             {{end}}
             <div ev-psw-change="pswChange" ev-psw-clear="pwsClear"><app-components-password-password>{hideTips:true}</app-components-password-password></div>
@@ -43,8 +45,12 @@
             {{: imgLogin = {"zh_Hans":"使用照片注册","zh_Hant":"使用照片註冊","en":""} }}
             {{if it.itype === it.createWalletType.Random}}
             <div w-class="login-btns">
-                <pi-ui-lang w-class="login-btn" on-tap="haveAccountClick">{{haveAccount}}</pi-ui-lang>
-                <pi-ui-lang w-class="login-btn" on-tap="imgLoginClick">{{imgLogin}}</pi-ui-lang>
+                <div w-class="login-btnBox1" on-tap="haveAccountClick">
+                    <pi-ui-lang w-class="login-btn" >{{haveAccount}}</pi-ui-lang>
+                </div>
+                <div w-class="login-btnBox2" on-tap="imgLoginClick">
+                    <pi-ui-lang w-class="login-btn" >{{imgLogin}}</pi-ui-lang>
+                </div>   
             </div>
             {{end}}
         </div>

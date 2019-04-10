@@ -3,6 +3,7 @@
     height: 100%;
     color: #222;
     font-size: 32px;
+    overflow: hidden;
 }
 .input-focused-true{
     border-bottom:1px solid #318DE6;
@@ -41,13 +42,19 @@
     height: 36px;
     border-radius: 50%;
     position: absolute;
-    right: 75px;
+    right: 0;
     border: 20px solid transparent;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
 }
-
+.pi-input__suffixBox{
+    width: 80px;
+    height: 100px;
+    position: absolute;
+    right: 80px;
+    top: 0;
+}
 .close-eyes{
     position:absolute;
     right:0px;
@@ -57,6 +64,13 @@
     height: 25px;
     border: 20px solid transparent;
     border-radius: 50%;
+}
+.close-eyesBox{
+    width: 80px;
+    height: 100px;
+    position:absolute;
+    right:0px;
+    top:0;
 }
 .pi-input__inner1{
     text-align: center;
