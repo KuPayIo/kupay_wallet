@@ -49,7 +49,7 @@
 }
 .scan{
     position: absolute;
-    right: 16px;
+    right: 24px;
     top: 50%;
     transform: translateY(-50%);
     width: 40px;
@@ -57,4 +57,11 @@
 }
 .btn{
     margin: 480px 20px;
+}
+.canBox{
+    width: 90px;
+    height: 106px;
+    position: absolute;
+    right: 0;
+    top: 0;
 }

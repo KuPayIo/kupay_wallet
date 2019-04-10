@@ -9,11 +9,17 @@
             <app-components1-input-input>{itype:{{it.isShowPassword?"password":""}},placeHolder:{{placeHolder}},input:{{it.password}} }</app-components1-input-input>
         </div>
         {{if it.isSuccess}}
-        <img src="../../res/image/icon_right2.png" w-class="successPic"/>
+        <div w-class="successPicBox">
+            <img src="../../res/image/icon_right2.png" w-class="successPic"/>
+        </div>
         {{elseif it.showIcon}}
-        <img src="../../res/image/30_gray.png" w-class="successPic" on-tap="clear"/>
+        <div w-class="successPicBox" on-tap="clear">
+            <img src="../../res/image/30_gray.png" w-class="successPic"/>
+        </div>   
         {{end}}
-        <img src="{{it.isShowPassword?'../../res/image/closeEyes.png':'../../res/image/openEyes.png'}}" w-class="close-eyes" on-tap="showPassword"/>
+        <div w-class="close-eyesBox" on-tap="showPassword">
+            <img src="{{it.isShowPassword?'../../res/image/closeEyes.png':'../../res/image/openEyes.png'}}" w-class="close-eyes"/>
+        </div>  
     </div>
     <div w-class="pseRank-line" style="display: flex;">
         <div w-class="line" style="{{it.lineStyle}}"></div>
