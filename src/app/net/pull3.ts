@@ -217,7 +217,7 @@ export const changellyGetTransactions = (currencyName:string,addr:string) => {
  * 获取官方客服等配置信息
  */
 export const getOfficial = () => {
-    const url = `http://${sourceIp}/wallet/appversion/official_service.json`;
+    const url = `https://${sourceIp}/wallet/appversion/official_service.json?${Math.random()}`;
 
     return fetch(url).then(res => res.json()).catch();
 };
