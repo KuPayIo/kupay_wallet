@@ -19,8 +19,13 @@
                 {{end}}
             </div>
             <div w-class="other-input" ev-input-change="inputChange">
-                {{: inputPlace = {"zh_Hans":"自定义充值金额","zh_Hant":"自定義充值金額","en":""} }}
-                <app-components1-input-input>{itype:"number",maxLength:4,placeHolder:{{inputPlace}},input:{{it.SCNum}},style:"color:rgba(34,34,34,1);;background:transparent;"}</app-components1-input-input>
+                {{if it.system == "android"}}
+                    {{: inputPlace = {"zh_Hans":"自定义充值金额","zh_Hant":"自定義充值金額","en":""} }}
+                    <app-components1-input-input>{itype:"number",maxLength:4,placeHolder:{{inputPlace}},input:{{it.SCNum}},style:"color:rgba(34,34,34,1);;background:transparent;"}</app-components1-input-input>
+                {{else}}
+                    <div style="font-size: 32px;line-height: 100px;margin-left: 30px;">{{it.SCNum}}</div>
+                {{end}}
+
                 {{: let scNumTip = {"zh_Hans":it.SCNum + it.scShow,"zh_Hant":it.SCNum + it.scShow,"en":""} }}
                 <div w-class="input-suffix"><widget w-tag="pi-ui-lang">{{scNumTip}}</widget></div>
             </div>

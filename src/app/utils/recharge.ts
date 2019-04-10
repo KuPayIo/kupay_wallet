@@ -33,7 +33,7 @@ export enum PayType {
  * @param okCb 成功回调
  * @param failCb 失败回调
  */
-export const confirmPay = async (orderDetail: OrderDetail) => {
+export const confirmPay = async (orderDetail: OrderDetail,appleGood?:string) => {
     const msg = { type: 'order_pay', param: orderDetail };
     const loading = popNewLoading({ zh_Hans: '充值中...', zh_Hant: '充值中...', en: '' });
     try {
@@ -63,8 +63,9 @@ export const confirmPay = async (orderDetail: OrderDetail) => {
             retOrder = await jumpWxpay(jumpData);
 
         } else if (orderDetail.payType === PayType.IOS) {  // ios支付
+            console.log('打开苹果支付',orderDetail,appleGood);
             IAPManager.IAPurchase({
-                sm: `high_xzxd_${orderDetail.num}`,
+                sm: appleGood,
                 sd: resData.oid,
                 success(str: String) {
                     popNewMessage(str);

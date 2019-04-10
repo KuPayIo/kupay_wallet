@@ -36,28 +36,27 @@ interface Props {
 export class RechargeSC extends Widget {
     public ok: () => void;
     
-    public async setProps(props: any) {
+    public setProps(props: any) {
         this.props = {
             ...this.props,
             ...props
         };
         super.setProps(this.props);
-        this.initGoods();
     }
 
     public create() {
         super.create();
         const payList = [
-            { sellNum: 6, sellPrize: 6 },
-            { sellNum: 30, sellPrize: 30 },
-            { sellNum: 68, sellPrize: 68 },
-            { sellNum: 98, sellPrize: 98 },
-            { sellNum: 198, sellPrize: 198 },
-            { sellNum: 328, sellPrize: 328 },
-            { sellNum: 648, sellPrize: 648 },
-            { sellNum: 1298, sellPrize: 1298 },
-            { sellNum: 2998, sellPrize: 2998 },
-            { sellNum: 6498, sellPrize: 6498 }
+            { sellNum: 6, sellId: 'high_xzxd_6' },
+            { sellNum: 30, sellId: 'high_xzxd_30' },
+            { sellNum: 68, sellId: 'high_xzxd_68' },
+            { sellNum: 98, sellId: 'high_xzxd_98' },
+            { sellNum: 198, sellId: 'high_xzxd_198' },
+            { sellNum: 328, sellId: 'high_xzxd_328' },
+            { sellNum: 648, sellId: 'high_xzxd_648' },
+            { sellNum: 1298, sellId: 'high_xzxd_1298' },
+            { sellNum: 2998, sellId: 'high_xzxd_2998' },
+            { sellNum: 6498, sellId: 'high_xzxd_6498' }
         ];
         const selectPayItemIndex = 0;
         const SCNum = payList[selectPayItemIndex].sellNum;
@@ -71,9 +70,9 @@ export class RechargeSC extends Widget {
             payList,
             giveKT,
             selectPayItemIndex,
-            SCNum,
-            PayType
+            SCNum
         };
+        this.initGoods();
     }
 
     /**
@@ -82,9 +81,9 @@ export class RechargeSC extends Widget {
     public async initGoods() {
         const res = await getAppleGoods();
         console.log('===========================apple',res);
-        const payList = [];
-        for (const v of res) {
-            payList.push({ sellId:v[0], sellNum:v[1] });
+        this.props.payList = [];
+        for (const v of res.value) {
+            this.props.payList.push({ sellId:v[0] / SCPrecision, sellNum:v[1] });
         }
     }
 
@@ -112,7 +111,8 @@ export class RechargeSC extends Widget {
             note: ''          // 备注
         };
 
-        confirmPay(orderDetail).then(res => {
+        const sellId = this.props.payList[this.props.selectPayItemIndex].sellId;
+        confirmPay(orderDetail, sellId).then(res => {
             if (res) {
                 this.initData();
                 const itype = this.props.payType === PayType.WX ? TaskSid.Wxpay : TaskSid.Alipay;
