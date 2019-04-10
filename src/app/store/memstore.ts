@@ -173,7 +173,9 @@ export const getAllAccount = () => {
         accounts.push(localAcccounts.accounts[key]);
     }
 
-    return accounts;
+    return accounts.sort((item1,item2) => {
+        return item2.wallet.logoutTimestamp - item1.wallet.logoutTimestamp;
+    });
 };
 
 /**
@@ -308,7 +310,8 @@ const initAccount = () => {
             showCurrencys: localWallet.showCurrencys,
             currencyRecords,
             changellyPayinAddress:localWallet.changellyPayinAddress || [],
-            changellyTempTxs:localWallet.changellyTempTxs || []
+            changellyTempTxs:localWallet.changellyTempTxs || [],
+            logoutTimestamp:localWallet.logoutTimestamp || 0
         };
         store.wallet = wallet;
     } else {
@@ -462,6 +465,7 @@ const accountChange = () => {
         const flags = getStore('flags');
         const saveAccount = flags.saveAccount;
         if (saveAccount) {
+            localAccounts.accounts[localAccounts.currenctId].wallet.logoutTimestamp = new Date().getTime();
             localAccounts.currenctId = '';
             setLocalStorage('accounts', localAccounts);
         } else {
@@ -523,7 +527,8 @@ const accountChange = () => {
             showCurrencys: wallet.showCurrencys,
             currencyRecords: localCurrencyRecords,
             changellyPayinAddress:wallet.changellyPayinAddress,
-            changellyTempTxs:wallet.changellyTempTxs
+            changellyTempTxs:wallet.changellyTempTxs,
+            logoutTimestamp:wallet.logoutTimestamp
         };
     }
 
@@ -587,7 +592,7 @@ const store: Store = {
     user: {
         id: '',                      // 该账号的id
         offline: false,               // 连接状态
-        isLogin: true,              // 登录状态
+        isLogin: false,              // 登录状态
         allIsLogin:false,            // 所有服务登录状态  (钱包  活动  聊天)
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
@@ -740,6 +745,7 @@ export interface LocalWallet {
     currencyRecords: LocalCurrencyRecord[];  // 支持的所有货币记录
     changellyPayinAddress:ChangellyPayinAddr[]; // changelly payinAddress
     changellyTempTxs:ChangellyTempTxs[]; // changelly临时交易记录
+    logoutTimestamp?:number;      // 登出时间戳
 }
 
 /**

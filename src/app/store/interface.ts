@@ -236,6 +236,7 @@ export interface Wallet {
     currencyRecords: CurrencyRecord[];  // 支持的所有货币记录
     changellyPayinAddress:ChangellyPayinAddr[];           // changelly 交易记录的changelly方收币地址
     changellyTempTxs:ChangellyTempTxs[];   // changelly 临时交易记录
+    logoutTimestamp?:number;             // 登出时间戳
 }
 
 /**

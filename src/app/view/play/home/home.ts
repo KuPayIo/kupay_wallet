@@ -143,6 +143,7 @@ export class PlayHome extends Widget {
      */
     public gameClick(num:number) {
         closePopFloatBox();
+        if (!getStore('user/id')) return;
         if (!getStore('user/isLogin')) {
             popNewMessage('登录中,请稍后再试');
 
