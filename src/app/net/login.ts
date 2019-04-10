@@ -401,7 +401,6 @@ export const loginSuccess = (account:Account,secretHash:string) => {
     const wallet:Wallet = {
         vault:localWallet.vault,
         setPsw:true,
-        backupTip:false,               
         isBackup: localWallet.isBackup,
         sharePart:false, 
         helpWord:false,                

@@ -120,7 +120,6 @@ export const createWalletRandom = async (option: Option,tourist?:boolean) => {
     const wallet: Wallet = {
         vault: gwlt.vault,
         setPsw:tourist ? false : true,
-        backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,
         helpWord:false,
@@ -164,7 +163,6 @@ export const createWalletByImage = async (option: Option) => {
     const wallet: Wallet = {
         vault: gwlt.vault,
         setPsw:true,
-        backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,
         helpWord:false,
@@ -250,7 +248,6 @@ export const importWalletByMnemonic = async (option: Option) => {
     const wallet: Wallet = {
         vault: gwlt.vault,
         setPsw:true,
-        backupTip:false,
         isBackup: gwlt.isBackup,
         sharePart:false,
         helpWord:false,

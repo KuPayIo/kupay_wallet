@@ -171,7 +171,6 @@ export class PlayHome extends Widget {
             const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
             allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
                 const content =  configContent + thirdApiDependContent + thirdApiContent;
-
                 WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }
