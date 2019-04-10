@@ -12,7 +12,7 @@ import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletTo
 import { CMD, defaultPassword } from '../utils/constants';
 import { closeAllPage, delPopPhoneTips, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { fetchBtcFees, fetchGasPrices, getBindPhone, getInviteUserAccIds, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
+import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 
 // 登录成功之后的回调列表
 const loginedCallbackList:LoginType[] = [];
@@ -57,6 +57,8 @@ export const walletManualReconnect = () => {
 export const openConnect = (secrectHash:string = '') => {
     console.log('openConnect strat');
     setUrl(wsUrl);
+    console.time('loginMod start');
+    console.time('loginMod open connect');
     open(conSuccess(secrectHash),conError,conClose,conReOpen);
 };
 
@@ -65,6 +67,7 @@ export const openConnect = (secrectHash:string = '') => {
  */
 const conSuccess = (secrectHash:string) => {
     console.time('login');
+    console.timeEnd('loginMod open connect');
 
     return () => {
         console.log('con success');
@@ -124,9 +127,12 @@ export const applyAutoLogin = async () => {
  * 自动登录
  */
 export const autoLogin = async (conRandom:string) => {
+    console.time('loginMod autoLogin');
     const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
     console.log('deviceId -------',deviceId);
+    console.time('loginMod getCipherToolsMod');
     const cipherToolsMod = await getCipherToolsMod();
+    console.timeEnd('loginMod getCipherToolsMod');
     const token = cipherToolsMod.decrypt(getStore('user/token'),deviceId.toString());
     const msg = { 
         type: 'wallet/user@auto_login', 
@@ -137,17 +143,11 @@ export const autoLogin = async (conRandom:string) => {
         }
     };
     requestAsync(msg).then(res => {
-        setStore('user/isLogin', true);
-        console.log('自动登录成功-----------',res);
         loginWalletSuccess();
-
-        // 向后端请求邀请好友列表
-        // getInviteUserAccIds().then(res => {
-        //     console.log('===============邀请好友id',res);
-        //     setStore('inviteUsers/invite_success',res.invites || []);  // 我邀请的好友
-        //     setStore('inviteUsers/convert_invite',res.invited || []);  // 邀请我的好友
-        // });
-        
+        console.timeEnd('loginMod autoLogin');
+        setStore('user/isLogin', true);
+        console.timeEnd('loginMod start');
+        console.log('自动登录成功-----------',res);
     }).catch((res) => {
         setStore('user/isLogin', false);
         if (res.error !== -69) {
@@ -177,9 +177,9 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
     return requestAsync(msgLogin).then((r:any) => {
         console.log('============================好嗨号acc_id:',r.acc_id);
         setStore('user/info/acc_id',r.acc_id,false);
+        loginWalletSuccess();
         applyAutoLogin();
         setStore('user/isLogin', true);
-        loginWalletSuccess();
     }).catch(err => {
         setStore('user/isLogin', false);
         if (err.error !== -69) {
@@ -204,10 +204,12 @@ export const getOpenId = (appId:string) => {
  * flag:0 普通用户注册，1注册即为真实用户
  */
 export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code?:number,num?:string) => {
-    console.log('getRandom--------------');
+    console.time('loginMod getRandom');
     const wallet = getStore('wallet');
     if (!wallet) return;
+    console.time('loginMod deviceId');
     const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
+    console.timeEnd('loginMod deviceId');
     const param:any = {
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
@@ -233,7 +235,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     let resp;
     try {
         resp = await requestAsync(msg);
-        // const serverTimestamp = resp.timestamp.value;
+        console.timeEnd('loginMod getRandom');
         const conRandom = resp.rand;
         if (secretHash) {
             defaultLogin(secretHash,conRandom);
@@ -432,10 +434,6 @@ export const loginWallet = (appId:string,success:Function) => {
         success
     };
     loginedCallbackList.push(loginType);
-    const isLogin = getStore('user/isLogin');
-    if (isLogin) {
-        loginWalletSuccess();
-    }
 };
 
 /**
@@ -546,15 +544,10 @@ export const registerStore = () => {
                 getRealUser();
             });
         } 
-    });
-
-        // 获取随机数成功
-    register('user/conRandom',() => {
-            // eth gasPrice
+        // eth gasPrice
         fetchGasPrices();
 
-            // btc fees
+        // btc fees
         fetchBtcFees();
-
     });
 };

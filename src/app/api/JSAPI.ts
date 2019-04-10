@@ -3,15 +3,13 @@
  */
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
-import { sign } from '../core/genmnemonic';
-import { GlobalWallet } from '../core/globalWallet';
 import { getOpenId } from '../net/login';
 import { getOneUserInfo, requestAsync } from '../net/pull';
 import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
+import { getGenmnemonicMod, getGlobalWalletClass, getWalletToolsMod } from '../utils/commonjsTools';
 import { SCPrecision } from '../utils/constants';
 import { getUserInfo } from '../utils/tools';
-import { getMnemonicByHash, VerifyIdentidy } from '../utils/walletTools';
 import { getGameItem } from '../view/play/home/gameConfig';
 import { minWebview1 } from './thirdBase';
 
@@ -68,17 +66,19 @@ export const querySetNoPassword = (appid, callback) => {
  * 设置免密支付
  */
 export const setFreeSecrectPay = (payload,callback) => {
-    VerifyIdentidy(payload.password).then(secretHash => {
-        if (!secretHash) {  //  密码错误
-            callback(resCode.PASSWORD_ERROR, false);
-    
-            return;
-    
-        }
-        setNoPWD(payload.appid,payload.noPSW,secretHash).then(() => {
-            callback(undefined, true);
-        }).catch(err => {
-            callback(err, false);
+    getWalletToolsMod().then(walletToolsMod => {
+        walletToolsMod.VerifyIdentidy(payload.password).then(secretHash => {
+            if (!secretHash) {  //  密码错误
+                callback(resCode.PASSWORD_ERROR, false);
+        
+                return;
+        
+            }
+            setNoPWD(payload.appid,payload.noPSW,secretHash).then(() => {
+                callback(undefined, true);
+            }).catch(err => {
+                callback(err, false);
+            });
         });
     });
 };
@@ -101,16 +101,18 @@ export const thirdPay = (payload,callback) => {
  */
 export const thirdPayDirect = (payload,callback) => {
     console.log('thirdPayDirect payload=====',payload);
-    VerifyIdentidy(payload.password).then(secretHash => {
-        if (!secretHash) {
-            callback(undefined,{ result:PayCode.ERRORPSW });
-            
-            return;
-        }
-        walletPay(payload.order,secretHash).then(() => {
-            callback(undefined,{ result:PayCode.SUCCESS });
-        }).catch(err => {
-            callback(undefined,{ result:PayCode.FAILED });
+    getWalletToolsMod().then(walletToolsMod => {
+        walletToolsMod.VerifyIdentidy(payload.password).then(secretHash => {
+            if (!secretHash) {
+                callback(undefined,{ result:PayCode.ERRORPSW });
+                
+                return;
+            }
+            walletPay(payload.order,secretHash).then(() => {
+                callback(undefined,{ result:PayCode.SUCCESS });
+            }).catch(err => {
+                callback(undefined,{ result:PayCode.FAILED });
+            });
         });
     });
     
@@ -219,7 +221,7 @@ const openPayment = (order: any) => {
 /**
  * 支付接口(输入密码进行支付)
  */
-const orderPay = (order: any,secretHash?:string) => {
+const orderPay = async (order: any,secretHash?:string) => {
     const signJson = {
         appid: order.appid,
         transaction_id: order.transaction_id,
@@ -229,7 +231,7 @@ const orderPay = (order: any,secretHash?:string) => {
     // tslint:disable-next-line:variable-name
     let no_password = SetNoPassword.SETED;  // 使用免密
     if (secretHash) {
-        signStr = getSign(signJson, secretHash);
+        signStr = await getSign(signJson, secretHash);
         no_password = SetNoPassword.NOSETED;
     }
     const param:any = {
@@ -306,7 +308,7 @@ const setNoPWD = async (appid:string,noPSW:number,secretHash:string) => {
         no_password: noPSW,
         nonce_str: Math.random().toFixed(5)
     };
-    const signStr = getSign(signJson, secretHash);
+    const signStr = await getSign(signJson, secretHash);
     const msg = {
         type: 'wallet/order@set_nopwd',
         param:{
@@ -345,11 +347,14 @@ export const closePayment = async (transactionId:string,okCb?:Function,failCb?:F
  * 获取签名
  * @param json 签名json
  */
-const getSign = (json:any,secretHash:string) => {
-    const mnemonic = getMnemonicByHash(secretHash);
+const getSign = async (json:any,secretHash:string):Promise<string> => {
+    const walletToolsMod = await getWalletToolsMod();
+    const mnemonic = walletToolsMod.getMnemonicByHash(secretHash);
+    const GlobalWallet = await getGlobalWalletClass();
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
-
-    return sign(jsonUriSort(json), wlt.exportPrivateKey());
+    const genmnemonic = await getGenmnemonicMod();
+    
+    return genmnemonic.sign(jsonUriSort(json), wlt.exportPrivateKey());
 };
 
 /**
