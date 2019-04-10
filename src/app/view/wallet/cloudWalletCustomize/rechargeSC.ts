@@ -76,6 +76,9 @@ export class RechargeSC extends Widget {
         };
     }
 
+    /**
+     * 更新商品
+     */
     public async initGoods() {
         const res = await getAppleGoods();
         console.log('===========================apple',res);
