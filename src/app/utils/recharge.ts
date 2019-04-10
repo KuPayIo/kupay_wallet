@@ -46,7 +46,7 @@ export const confirmPay = async (orderDetail: OrderDetail,appleGood?:string) => 
             oid: resData.oid,
             mweb_url: ''
         };
-        let retOrder;
+        let retOrder = null;
         if (orderDetail.payType === PayType.Alipay) {// 支付宝H5支付
             const aliRes = await fetch('https://openapi.alipay.com/gateway.do', {
                 method: 'POST',
@@ -63,12 +63,12 @@ export const confirmPay = async (orderDetail: OrderDetail,appleGood?:string) => 
             retOrder = await jumpWxpay(jumpData);
 
         } else if (orderDetail.payType === PayType.IOS) {  // ios支付
-            console.log('打开苹果支付',orderDetail,appleGood);
+            console.log('打开苹果支付======',appleGood,orderDetail);
             IAPManager.IAPurchase({
                 sm: appleGood,
                 sd: resData.oid,
                 success(str: String) {
-                    popNewMessage(str);
+                    console.log('打开苹果支付成功========', str);
                 }
             });
             

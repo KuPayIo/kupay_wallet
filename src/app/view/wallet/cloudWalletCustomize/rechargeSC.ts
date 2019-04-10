@@ -13,7 +13,7 @@ import { getCloudBalances, register } from '../../../store/memstore';
 import { TaskSid } from '../../../store/parse';
 import { rechargeGiftMultiple, SCPrecision, SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
-import { popNewMessage } from '../../../utils/tools';
+import { popNewLoading, popNewMessage } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -83,7 +83,7 @@ export class RechargeSC extends Widget {
         console.log('===========================apple',res);
         this.props.payList = [];
         for (const v of res.value) {
-            this.props.payList.push({ sellId:v[0] / SCPrecision, sellNum:v[1] });
+            this.props.payList.push({ sellId:v[0], sellNum:v[1] / SCPrecision });
         }
     }
 
@@ -121,24 +121,26 @@ export class RechargeSC extends Widget {
                 setStore('flags/firstRecharge',true); // 首次充值
                 getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
             } else {
-                IAPManager.addTransactionListener(
-                    (issuccess:Number,sd: string,transtion: string) => {
-                        if (issuccess) {
-                            confirmApplePay(sd,transtion).then(res => {
-                                console.log('================验证苹果支付是否成功',res);
-                                this.initData();
-                                popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: sd,ctype:1 });
-                                this.paint();
-                                setStore('flags/firstRecharge',true); // 首次充值
-                                getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
-                                popNewMessage('支付成功');
-                            });
+               
+                IAPManager.addTransactionListener((issuccess:Number,sd: string,transtion: string) => {
+                    if (issuccess) {
+                        confirmApplePay(sd,transtion).then(res => {
+                            console.log('================验证苹果支付是否成功',res);
+                            this.initData();
+                            this.paint();
+
+                            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: sd,ctype:1 });
+                            setStore('flags/firstRecharge',true); // 首次充值
+                            getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+                            popNewMessage('支付成功');
+                        });
                             
-                        } else {
-                            popNewMessage('支付失败');
-                        }
+                    } else {
+                        popNewMessage('支付失败');
+                           
                     }
-                );
+                });
+
             }
         });
     }
