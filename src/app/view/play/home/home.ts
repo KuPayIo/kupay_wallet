@@ -61,6 +61,7 @@ export class PlayHome extends Widget {
             offlienType:OfflienType.WALLET
         };
         super.setProps(this.props);
+        console.log(props);
         const userInfo = getUserInfo();
         if (userInfo) {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image/default_avater_big.png';
@@ -70,6 +71,11 @@ export class PlayHome extends Widget {
         this.props.activityList = activityList;
         this.props.loaded = false;
 
+    }
+
+    public attach() {
+        super.attach();
+        this.defaultEnterGame();
     }
     /**
      * 刷新页面
@@ -143,7 +149,7 @@ export class PlayHome extends Widget {
             popNewMessage(tips[getLang()]);
         } else {
             setPopPhoneTips();
-            
+            hasEnterGame = true;
             const gameTitle = gameList[num].title.zh_Hans;
             const gameUrl =   gameList[num].url;
             const webviewName = gameList[num].webviewName;
@@ -151,8 +157,6 @@ export class PlayHome extends Widget {
             pi3Config.appid = gameList[num].appid;
             pi3Config.gameName = gameTitle;
             pi3Config.webviewName = webviewName;
-            pi3Config.uid = gameList[num].uid;
-            pi3Config.gid = gameList[num].gid;
             
             const pi3ConfigStr = `
                 window.pi_config = ${JSON.stringify(pi3Config)};
@@ -177,8 +181,29 @@ export class PlayHome extends Widget {
         popNew3(this.props.activityList[index].url);
     }
 
-}
+    /**
+     * 默认进入游戏
+     */
+    public defaultEnterGame() {
+        console.log(`this.state = ${this.state},isActive = ${this.props.isActive}`);
+        const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
+        const phoneNumber = getUserInfo().phoneNumber;    
+        console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
+        if (!firstEnterGame || phoneNumber) {
+            if (!this.state  || !this.props.isActive || hasEnterGame) {
+                console.log('defaultEnterGame failed');
+    
+                return;
+            } else {
+                console.log('defaultEnterGame success');
+                this.gameClick(0);
+                localStorage.setItem('firstEnterGame','true');
+            }
+        }
+    }
 
+}
+let hasEnterGame = false;
 // ========================================
 register('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -193,4 +218,8 @@ register('user/info',() => {
 
 register('user/isLogin', (isLogin:boolean) => {
     forelet.paint(isLogin);
+    setTimeout(() => {
+        const w:any = forelet.getWidget(WIDGET_NAME);
+        w && w.defaultEnterGame();
+    },0);
 });

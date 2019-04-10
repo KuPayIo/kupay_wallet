@@ -1,4 +1,4 @@
-import { erlangLogicIp, erlangLogicPort, sourceIp, sourcePort } from './ipConfig';
+import { erlangLogicIp, erlangLogicPort, sourceIp } from './ipConfig';
 import { getModulConfig } from './modulConfig';
 
 /**
@@ -9,22 +9,22 @@ import { getModulConfig } from './modulConfig';
 const walletName = getModulConfig('WALLET_NAME');
 const ktShow = getModulConfig('KT_SHOW');
 // 向资源服务器请求第3方数据url prefix
-export const thirdUrlPre = `http://${sourceIp}:${sourcePort}/proxy`;
+export const thirdUrlPre = `http://${sourceIp}/proxy`;
 
 // 分享链接前缀
-export const sharePerUrl = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+export const sharePerUrl = `http://${sourceIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 分享下载链接
-export const shareDownload = `http://${sourceIp}:${sourcePort}/wallet/appversion/haohai.apk`;
+export const shareDownload = `http://${sourceIp}/wallet/phoneRedEnvelope/download.html?${Math.random()}`;
 
 // 邀请好友下载链接
-export const inviteFriends = `http://${sourceIp}:${sourcePort}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
+export const inviteFriends = `http://${sourceIp}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
 
 // 上传图片url
-export const uploadFileUrl = `http://${sourceIp}:${sourcePort}/service/upload`;
+export const uploadFileUrl = `http://${sourceIp}/service/upload`;
 
 // 上传的文件url前缀
-export const uploadFileUrlPrefix = `http://${sourceIp}:${sourcePort}/service/get_file?sid=`;
+export const uploadFileUrlPrefix = `http://${sourceIp}/service/get_file?sid=`;
 
 // websock连接url
 export const wsUrl = `ws://${erlangLogicIp}:${erlangLogicPort}`;

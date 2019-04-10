@@ -210,10 +210,10 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
+				loadWalletLoginSource();  // 登录相关
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
-				loadWalletLoginSource();  // 登录相关
 				loadImages(); // 预加载图片
 				
 			});
@@ -245,7 +245,6 @@ winit.initNext = function () {
 			// erlang服务器连接登录
 			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.registerStore();
 			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.openConnect();
-			
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);

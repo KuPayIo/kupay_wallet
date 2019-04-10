@@ -5,6 +5,7 @@ import { getStore as gameGetStore, setStore as gameSetStore } from '../../earn/c
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
+import { CloudCurrencyType } from '../store/interface';
 import { getAllAccount, getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
 import { closeAllPage, getPopPhoneTips, getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
@@ -104,12 +105,15 @@ export const initPush = () => {
     // 监听余额变化事件
     setMsgHandler('alter_balance_ok',(res) => {
         console.log('alter_balance_ok服务器推送成功===========调用排名===============',res);
+        getServerCloudBalance();
+        if (res.cointype === CloudCurrencyType.KT) {
+            getHighTop(100).then((data) => {
+                const mine = gameGetStore('mine',{});
+                mine.miningRank = data.miningRank || 0;
+                gameSetStore('mine',mine);  
+            });
+        }
         
-        getHighTop(100).then((data) => {
-            const mine = gameGetStore('mine',{});
-            mine.miningRank = data.miningRank || 0;
-            gameSetStore('mine',mine);  
-        });
         const wallet = getStore('wallet');
         const userInfo = getUserInfo();
         if (!wallet.setPsw) {
