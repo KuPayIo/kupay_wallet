@@ -643,12 +643,7 @@ export const getHighTop =  (num: number) => {
 
     return  requestAsync(msg).then(data => {
         console.log('获取全部排名========================',data);
-        const mine = {
-            miningRank:data.me || 0,
-            miningKTnum: getCloudBalances().get(CloudCurrencyType.KT)
-        };
-        setStore('mine',mine); 
-
+        
         return parseMiningRank(data);
     });
     
