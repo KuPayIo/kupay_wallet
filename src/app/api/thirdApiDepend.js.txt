@@ -256,6 +256,8 @@ window.pi_RPC_Method = (function () {
     };
 })();
 
+
+
 /**
  * 函数防抖
  */
@@ -273,7 +275,9 @@ pi_tools.throttle = function(func){
     }
 };
 
-
+/**
+ * 拖动悬浮框
+ */
 pi_tools.dragDom = function(element, callback) {
     callback = callback || function() {};
     var parentNodeWidth = element.parentNode.clientWidth,parentNodeHeigth = element.parentNode.clientHeight;
@@ -422,6 +426,64 @@ pi_tools.createThirdBaseStyle = function(){
   border-radius: 50%;
   margin: 0 5px;
   }
+
+  .pi-wx-btns{
+    position:absolute;
+    top:20px;
+    right:10px;
+    background-color:rgba(0,0,0,0.2);
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,0.2);
+    padding: 3.5px 10px;
+    display: inline-flex;
+    align-items: center;
+    z-index:99999;
+}
+.pi-wx-dots{
+    display: flex;
+    align-items: center;
+    width: 25px;
+    height: 25px;
+    justify-content: center;
+}
+.pi-wx-dot1{
+    width:3.5px;
+    height:3.5px;
+    background-color: #fff;
+    border-radius: 50%;
+}
+.pi-wx-dot2{
+    width:6.5px;
+    height:6.5px;
+    background-color: #fff;
+    border-radius: 50%;
+    margin: 0 2.5px;
+}
+.pi-wx-circle{
+    width:25px;
+    height:25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 17px;
+}
+.pi-wx-circle1{
+    background-color:rgba(0,0,0,0);
+    width:17px;
+    height:17px;
+    border: 2px solid #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    box-sizing: border-box;
+}
+.pi-wx-circle2{
+    width:5px;
+    height:5px;
+    background-color: #fff;
+    border-radius: 50%;
+}
   .pi-bottom-box{
   background:#fff;
   border-radius:20px 20px 0px 0px;
@@ -465,69 +527,122 @@ pi_tools.createThirdBaseStyle = function(){
 };
 
 /**
+ * 弹出底部面板框
+ */
+pi_tools.popNewPanel = function(){
+    return pi_tools.throttle(function(){
+        var $bottomBox = document.createElement("div");
+        $bottomBox.setAttribute("class","pi-bottom-box");
+        $bottomBox.addEventListener("click",function(e){
+          e.stopPropagation();
+          e.preventDefault();
+        });
+        pi_tools.buttons.forEach(function(item,index){
+          if(!item.show) return;
+          var $bottomItem = document.createElement("div");
+          $bottomItem.setAttribute("class","pi-bottom-item");
+          $bottomItem.setAttribute("id",item.id);
+          var imgUrl = item.img;
+          var text = item.text;
+          if(item.id === pi_tools.buttonId.FREESECRET){
+              imgUrl = pi_store.freeSecret ? item.startImg : item.closeImg;
+              text = pi_store.freeSecret ? item.startText : item.closeText;
+          }
+          
+          $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${pi_config.imgUrlPre}${imgUrl}" class="pi-item-img"/></div>
+              <div class="pi-text">${text}</div>`;
+          $bottomItem.addEventListener("click",function(){
+              (pi_tools.throttle(item.clickCb))();
+              if(item.clickedClose){
+                  pi_tools.closePopBox();
+              }
+          });
+  
+          $bottomBox.appendChild($bottomItem);
+        });
+  
+        var $root = document.createElement("div");
+        $root.setAttribute("id","pi-root");
+        $root.addEventListener("click",function(){
+          document.querySelector(".pi-bottom-box").style.bottom = "-400px";
+          setTimeout(function(){
+            document.querySelector("body").removeChild(document.querySelector("#pi-root"));
+          },300);
+        });
+        $root.appendChild($bottomBox);
+        document.querySelector("body").appendChild($root);
+        requestAnimationFrame(function(){
+          $bottomBox.style.bottom = "0px";
+        });
+  
+    });
+};
+
+/**
+ * 选择按钮
+ */
+pi_tools.buttonModInit = function(){
+    return function(){
+        console.log("buttonModInit",pi_config.buttonMod);
+        if(pi_config.buttonMod === pi_config.buttonMods.FLOATBUTTON){  // 可拖动悬浮框
+            pi_tools.floatButtonInit();
+        }else if(pi_config.buttonMod === pi_config.buttonMods.WXBUTTON){   // 微信小程序悬浮框
+            pi_tools.WxButtionInit();
+        }
+    }
+};
+/**
  * 悬浮框按钮初始化
  */
 pi_tools.floatButtonInit = function (){
-    console.log("floatButtonInit ---------floatButtonInit");
+  console.log("floatButtonInit ---------floatButtonInit");
   var $floatButton = document.createElement("div");
-  $floatButton.setAttribute("class","pi-float-button");
+  $floatButton.setAttribute("class","pi-float-button button-mod");
   $floatButton.innerHTML = `
   <span class="pi-dot1"></span>
   <span class="pi-dot2"></span>
   <span class="pi-dot1"></span>
   `;
-  $floatButton.addEventListener("click",pi_tools.throttle(function(){
-      var $bottomBox = document.createElement("div");
-      $bottomBox.setAttribute("class","pi-bottom-box");
-      $bottomBox.addEventListener("click",function(e){
-        e.stopPropagation();
-        e.preventDefault();
-      });
-      pi_tools.buttons.forEach(function(item,index){
-        if(!item.show) return;
-        var $bottomItem = document.createElement("div");
-        $bottomItem.setAttribute("class","pi-bottom-item");
-        $bottomItem.setAttribute("id",item.id);
-        var imgUrl = item.img;
-        var text = item.text;
-        if(item.id === pi_tools.buttonId.FREESECRET){
-            imgUrl = pi_store.freeSecret ? item.startImg : item.closeImg;
-            text = pi_store.freeSecret ? item.startText : item.closeText;
-        }
-        
-        $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${pi_config.imgUrlPre}${imgUrl}" class="pi-item-img"/></div>
-            <div class="pi-text">${text}</div>`;
-        $bottomItem.addEventListener("click",function(){
-            (pi_tools.throttle(item.clickCb))();
-            if(item.clickedClose){
-                pi_tools.closePopBox();
-            }
-        });
-
-        $bottomBox.appendChild($bottomItem);
-      });
-
-      var $root = document.createElement("div");
-      $root.setAttribute("id","pi-root");
-      $root.addEventListener("click",function(){
-        document.querySelector(".pi-bottom-box").style.bottom = "-400px";
-        setTimeout(function(){
-          document.querySelector("body").removeChild(document.querySelector("#pi-root"));
-        },300);
-      });
-      $root.appendChild($bottomBox);
-      document.querySelector("body").appendChild($root);
-      requestAnimationFrame(function(){
-        $bottomBox.style.bottom = "0px";
-      });
-
-  }));
+  $floatButton.addEventListener("click",pi_tools.popNewPanel());
   document.querySelector("body").appendChild($floatButton);
 
 
-  pi_tools.dragDom( $floatButton);
+  pi_tools.dragDom($floatButton);
 };
 
+/**
+ * 微信小程序按钮样式初始化
+ */
+pi_tools.WxButtionInit = function(){
+    var $wxBtns = document.createElement("div");
+    $wxBtns.setAttribute("class","pi-wx-btns button-mod");
+    
+
+    var $wxDots = document.createElement("div");
+    $wxDots.setAttribute("class","pi-wx-dots");
+    $wxDots.innerHTML = `<span class="pi-wx-dot1"></span>
+    <span class="pi-wx-dot2"></span>
+    <span class="pi-wx-dot1"></span>`;
+
+    var $wxCircle = document.createElement("div");
+    $wxCircle.setAttribute("class","pi-wx-circle");
+    $wxCircle.innerHTML = `<div class="pi-wx-circle1">
+        <div class="pi-wx-circle2">
+        </div>
+    </div>`;
+
+    // 弹出底部框
+    $wxDots.addEventListener("click",pi_tools.popNewPanel());
+
+    // 关闭游戏
+    var closeItem = pi_tools.getButtonItemById(pi_tools.buttonId.EXITGAME);
+    $wxCircle.addEventListener("click",closeItem.clickCb);
+
+    $wxBtns.appendChild($wxDots);
+    $wxBtns.appendChild($wxCircle);
+    document.querySelector("body").appendChild($wxBtns);
+
+};
 /**
  * 关闭弹框
  */
@@ -578,3 +693,11 @@ pi_tools.getFreeSecret = function(){
     });
 };
 
+
+/**
+ * 设置悬浮框按钮模式
+ */
+pi_tools.setButtonMod = function(buttonMod){
+    console.log("setButtonMod",buttonMod);
+    pi_config.buttonMod = buttonMod;
+};
