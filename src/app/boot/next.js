@@ -211,6 +211,11 @@ winit.initNext = function () {
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
 				loadWalletLoginSource();  // 登录相关
+				loadChatSource();  // 聊天
+				loadEarnSource();  // 活动
+				loadWalletFirstPageSource();  //钱包
+				loadImages(); // 预加载图片
+				
 			});
 		}, function (result) {
 			alert("加载基础模块失败, " + result.error + ":" + result.reason);
@@ -226,6 +231,7 @@ winit.initNext = function () {
 			"chat/client/app/net/login.js"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
+			console.log(11111,Date.now()-self.startTime)
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -233,19 +239,16 @@ winit.initNext = function () {
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init_1").exports.registerRpcStruct(fm);
 			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
+			
 			// erlang服务器推送注册
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
 			// erlang服务器连接登录
 			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.registerStore();
 			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.openConnect();
-			loadChatSource();  // 聊天
-			loadEarnSource();  // 活动
-			loadWalletFirstPageSource();  //钱包
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
-
 	
 	// 加载一些需要预加载的图片
 	var loadImages = function () {
@@ -261,6 +264,7 @@ winit.initNext = function () {
 	// 加载钱包首页所需资源
 	var loadWalletFirstPageSource = function () {
 		console.time("fp loadWalletFirstPageSource");
+		// var routerPathList = calcRouterPathList();
 		var sourceList = [
 			"pi/ui/lang.js",
 			"pi/ui/lang.tpl",
@@ -289,7 +293,6 @@ winit.initNext = function () {
 
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
-		loadImages(); // 预加载图片
 		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
 		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
 			console.time("enterApp ----");
