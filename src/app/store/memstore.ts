@@ -173,7 +173,9 @@ export const getAllAccount = () => {
         accounts.push(localAcccounts.accounts[key]);
     }
 
-    return accounts;
+    return accounts.sort((item1,item2) => {
+        return item2.wallet.logoutTimestamp - item1.wallet.logoutTimestamp;
+    });
 };
 
 /**
@@ -301,14 +303,14 @@ const initAccount = () => {
         const wallet: Wallet = {
             vault: localWallet.vault,
             setPsw:localWallet.setPsw,
-            backupTip:localWallet.backupTip,
             isBackup: localWallet.isBackup,
             sharePart:false,
             helpWord:false,
             showCurrencys: localWallet.showCurrencys,
             currencyRecords,
             changellyPayinAddress:localWallet.changellyPayinAddress || [],
-            changellyTempTxs:localWallet.changellyTempTxs || []
+            changellyTempTxs:localWallet.changellyTempTxs || [],
+            logoutTimestamp:localWallet.logoutTimestamp || 0
         };
         store.wallet = wallet;
     } else {
@@ -462,6 +464,7 @@ const accountChange = () => {
         const flags = getStore('flags');
         const saveAccount = flags.saveAccount;
         if (saveAccount) {
+            localAccounts.accounts[localAccounts.currenctId].wallet.logoutTimestamp = new Date().getTime();
             localAccounts.currenctId = '';
             setLocalStorage('accounts', localAccounts);
         } else {
@@ -518,12 +521,12 @@ const accountChange = () => {
         localWallet = {
             vault: wallet.vault,
             setPsw:wallet.setPsw,
-            backupTip:wallet.backupTip,
             isBackup: wallet.isBackup,
             showCurrencys: wallet.showCurrencys,
             currencyRecords: localCurrencyRecords,
             changellyPayinAddress:wallet.changellyPayinAddress,
-            changellyTempTxs:wallet.changellyTempTxs
+            changellyTempTxs:wallet.changellyTempTxs,
+            logoutTimestamp:wallet.logoutTimestamp
         };
     }
 
@@ -587,7 +590,7 @@ const store: Store = {
     user: {
         id: '',                      // 该账号的id
         offline: false,               // 连接状态
-        isLogin: true,              // 登录状态
+        isLogin: false,              // 登录状态
         allIsLogin:false,            // 所有服务登录状态  (钱包  活动  聊天)
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
@@ -734,12 +737,12 @@ export interface LocalCloudWallet {
 export interface LocalWallet {
     vault: string;                      // 钱包核心
     setPsw:boolean;                     // 是否已经设置密码
-    backupTip:boolean;                  // 助记词备份是否已经提示
     isBackup: boolean;                  // 备份助记词与否
     showCurrencys: string[];            // 显示的货币列表
     currencyRecords: LocalCurrencyRecord[];  // 支持的所有货币记录
     changellyPayinAddress:ChangellyPayinAddr[]; // changelly payinAddress
     changellyTempTxs:ChangellyTempTxs[]; // changelly临时交易记录
+    logoutTimestamp?:number;      // 登出时间戳
 }
 
 /**

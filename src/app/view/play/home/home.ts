@@ -11,7 +11,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { register } from '../../../store/memstore';
+import { getStore, register } from '../../../store/memstore';
 import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
 
@@ -28,11 +28,14 @@ export class PlayHome extends Widget {
     
     constructor() {
         super();
+        console.time('loginMod thirdApiPromise');
+        console.time('loginMod thirdApiDependPromise');
         this.thirdApiPromise = new Promise((resolve) => {
             const path = 'app/api/thirdApi.js.txt';
             loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
+                console.timeEnd('loginMod thirdApiPromise');
                 resolve(content);
             }, () => {
                 //
@@ -46,6 +49,7 @@ export class PlayHome extends Widget {
             loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
+                console.timeEnd('loginMod thirdApiDependPromise');
                 resolve(content);
             }, () => {
                 //
@@ -64,7 +68,7 @@ export class PlayHome extends Widget {
         console.log(props);
         const userInfo = getUserInfo();
         if (userInfo) {
-            this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image/default_avater_big.png';
+            this.props.avatar = userInfo.avatar;
             this.props.refresh = false;
         }
         this.props.gameList = gameList;
@@ -139,7 +143,8 @@ export class PlayHome extends Widget {
      */
     public gameClick(num:number) {
         closePopFloatBox();
-        if (!this.state) {
+        if (!getStore('user/id')) return;
+        if (!getStore('user/isLogin')) {
             popNewMessage('登录中,请稍后再试');
 
             return;
@@ -166,7 +171,6 @@ export class PlayHome extends Widget {
             const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
             allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
                 const content =  configContent + thirdApiDependContent + thirdApiContent;
-
                 WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }
@@ -185,12 +189,12 @@ export class PlayHome extends Widget {
      * 默认进入游戏
      */
     public defaultEnterGame() {
-        console.log(`this.state = ${this.state},isActive = ${this.props.isActive}`);
+        console.log(`getStore('user/isLogin') = ${getStore('user/isLogin')},isActive = ${this.props.isActive}`);
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
         const phoneNumber = getUserInfo().phoneNumber;    
         console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
         if (!firstEnterGame || phoneNumber) {
-            if (!this.state  || !this.props.isActive || hasEnterGame) {
+            if (!getStore('user/isLogin')  || !this.props.isActive || hasEnterGame) {
                 console.log('defaultEnterGame failed');
     
                 return;
@@ -217,7 +221,6 @@ register('user/info',() => {
 });
 
 register('user/isLogin', (isLogin:boolean) => {
-    forelet.paint(isLogin);
     setTimeout(() => {
         const w:any = forelet.getWidget(WIDGET_NAME);
         w && w.defaultEnterGame();

@@ -526,10 +526,11 @@ pi_jsApi.setFreeSecrectPay = function (openFreeSecret) {
 };
 
 
-
+window.addEventListener("load",function(){console.log("window.load success");});
 window.addEventListener("load",pi_tools.createThirdBaseStyle);
-window.addEventListener("load",pi_tools.floatButtonInit);
+window.addEventListener("load",pi_tools.buttonModInit());
 window.addEventListener("load",function(){setTimeout(pi_tools.getFreeSecret,1000)});  // 直接调用没有返回 不知道为什么
 window.addEventListener("load",pi_tools.createThirdApiStyleTag);
 
 // PI_END
+

@@ -75,7 +75,7 @@ export class OfflineTip extends Widget {
 
     public updateDate(offlienType:OfflienType,isLogin:boolean) {
         if (offlienType === OfflienType.WALLET || offlienType === this.props.offlienType) {  // 钱包重连
-            this.props.isLogin = isLogin;
+            this.props.isLogin = getStore('user/id') ?  isLogin : true;
             this.props.reconnecting = false;
             this.paint();
         }

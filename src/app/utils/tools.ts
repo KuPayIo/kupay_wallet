@@ -24,6 +24,7 @@ import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCu
  */
 export const getCurrentAddrInfo = (currencyName: string) => {
     const wallet = getStore('wallet');
+    if (!wallet) return;
     for (const record of wallet.currencyRecords) {
         if (record.currencyName === currencyName) {
             for (const addrInfo of record.addrs) {
@@ -1294,7 +1295,12 @@ export const getPopPhoneTips = () => {
 };
 // 检查手机弹框提示
 export const checkPopPhoneTips = () => {
-    if (localStorage.getItem('popPhoneTips')) {
+    if (getStore('user/info/phoneNumber')) {
+        delPopPhoneTips();
+        
+        return;
+    }
+    if (localStorage.getItem('popPhoneTips') && getStore('user/id')) {
         
         popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
             popNew('app-view-mine-setting-phone',{ jump:true });

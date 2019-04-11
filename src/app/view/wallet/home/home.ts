@@ -70,9 +70,10 @@ export class Home extends Widget {
         this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
         this.paint();
     }
+    
     /**
-     *  刷新页面
-    */
+     * 刷新页面
+     */
     public loaded() {
         // toDo 更新数据 完成之后将loaded变成true 刷新页面
         setTimeout(() => {

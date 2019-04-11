@@ -258,7 +258,7 @@ function downloadClick() {
     var isIOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);     //判断是否是 ios终端
     var isIosQQ = (isIOS && / QQ/i.test(ua));    // ios内置qq浏览器
     var isAndroidQQ = (isAndroid && /MQQBrowser/i.test(ua) && /QQ/i.test(ua.split('MQQBrowser'))); // android内置qq浏览器
-    var isWX = ua.match(/MicroMessenger/i) == "micromessenger";   // 微信
+    var isWX = ua.match(/MicroMessenger/i) == "MicroMessenger";   // 微信
     // alert(`isIosQQ = ${isIosQQ},isAndroidQQ = ${isAndroidQQ},isWX = ${isWX}`);
     if(isWX || isIosQQ || isAndroidQQ){
         document.getElementsByClassName('tipsPage')[0].setAttribute('style','display:block;');
