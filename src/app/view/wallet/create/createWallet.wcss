@@ -113,11 +113,18 @@
 }
 .random{
     position:absolute;
-    top:30px;
+    top:12px;
     right:0px;
     height: 40px;
     width: 40px;
     border: 20px solid transparent;
+}
+.randomBox{
+    width: 100px;
+    height: 100px;
+    position:absolute;
+    top:5px;
+    right:0px;
 }
 .input-father{
     height: 110px;
@@ -141,6 +148,7 @@
 }
 .login-btns{
     margin: 60px 50px 0;
+    height: 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -152,6 +160,19 @@
 }
 .login-btn{
     border-bottom: 1px solid rgba(136,136,136,1);
+}
+.login-btnBox1{
+    flex: 1;
+    height: 100%;
+    line-height: 80px;
+    margin-top: -54px;
+}
+.login-btnBox2{
+    flex: 1;
+    height: 100%;
+    line-height: 80px;
+    text-align: right;
+    margin-top: -54px;
 }
 .user-agree{
     font-size: 28px;

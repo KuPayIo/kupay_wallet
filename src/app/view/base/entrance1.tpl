@@ -10,7 +10,7 @@
             <div w-class="pop-box {{it.noAnimate ? 'pop-box-no-animate' : ''}}" style="height:{{it.showMoreUser ? it.popHeight : 0}}px; {{it.forceCloseMoreUser ? 'display:none;' : ''}} ">
                 {{for index,item of it.accountList}}
                 <div w-class="user-item2" on-tap="chooseCurUser(e,{{index}})">
-                    <img src="{{item.avatar}}" w-class="avatar"/>
+                    <widget w-tag="app-components1-img-img" w-class="rank-headImg" >{imgURL:{{item.avatar}},width:"60px;"}</widget>
                     <div w-class="name">{{item.nickName}}</div>
                     <img src="../../res/image/30_gray.png" w-class="del" on-tap="delUserAccount(e,{{index}})"/>
                 </div>
