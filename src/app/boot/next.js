@@ -212,11 +212,11 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				loadWalletLoginSource();  // 登录相关
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
 				loadImages(); // 预加载图片
+				loadWalletLoginSource();  // 登录相关
 				
 			});
 		}, function (result) {
