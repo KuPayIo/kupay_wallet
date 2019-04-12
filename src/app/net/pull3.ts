@@ -13,7 +13,7 @@ export const getThirdFromServer = async (url:string,timestamp:number) => {
     const xorEncodeUrl = xorEncode(url,key);
     const realUrl = `${thirdUrlPre}?key=${key}&url=${xorEncodeUrl}&timestamp=${timestamp}&$forceServer=1`;
 
-    return fetch(realUrl).then(res => res.json()).catch();
+    return fetch(realUrl).then(res => res.json());
 
 };
 
@@ -219,5 +219,5 @@ export const changellyGetTransactions = (currencyName:string,addr:string) => {
 export const getOfficial = () => {
     const url = `http://${sourceIp}/wallet/appversion/official_service.json`;
 
-    return fetch(url).then(res => res.json()).catch();
+    return fetch(url).then(res => res.json());
 };

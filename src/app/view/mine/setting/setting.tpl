@@ -13,9 +13,11 @@
                 {"zh_Hans":"退出并清除信息","zh_Hant":"退出並清除信息","en":""}] }}
 
                 {{for ind,val of it.itemList}}
-                <div on-tap="itemClick({{ind}})" on-down="onShow">
-                    <app-components-basicItem-basicItem>{name:{{itemTitle[ind]}},describe:{{val.list[val.selected]}} }</app-components-basicItem-basicItem>
-                </div>
+                    {{if ind > 0}}
+                    <div on-tap="itemClick({{ind}})" on-down="onShow">
+                        <app-components-basicItem-basicItem>{name:{{itemTitle[ind]}},describe:{{val.list[val.selected]}} }</app-components-basicItem-basicItem>
+                    </div>
+                    {{end}}
                 {{end}}
                 <div w-class="item" ev-switch-click="onSwitchChange" style="border-bottom: none;">
                     <span w-class="itemName"><pi-ui-lang>{{itemTitle[3]}}</pi-ui-lang></span>

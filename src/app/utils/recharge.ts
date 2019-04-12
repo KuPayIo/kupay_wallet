@@ -8,7 +8,7 @@ import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { getModulConfig } from '../modulConfig';
 import { requestAsync } from '../net/pull';
-import { popNewLoading, popNewMessage } from './tools';
+import { popNewLoading } from './tools';
 
 export interface OrderDetail {
     total: number; // 总价

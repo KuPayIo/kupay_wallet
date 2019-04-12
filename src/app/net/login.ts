@@ -12,7 +12,7 @@ import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletTo
 import { CMD, defaultPassword } from '../utils/constants';
 import { closeAllPage, delPopPhoneTips, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
-import { fetchBtcFees, fetchGasPrices, getBindPhone, getInviteUserAccIds, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
+import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 
 // 登录成功之后的回调列表
 const loginedCallbackList:LoginType[] = [];

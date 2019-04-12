@@ -7,7 +7,7 @@ import { getModulConfig } from '../../../modulConfig';
 import { getOneUserInfo } from '../../../net/pull';
 import { TaskSid } from '../../../store/parse';
 import { SCPrecision } from '../../../utils/constants';
-import { getOrderDetail, getOrderLocal } from '../../../utils/recharge';
+import { getOrderDetail, getOrderLocal, PayType } from '../../../utils/recharge';
 import { popNewMessage, timestampFormat } from '../../../utils/tools';
 
 // ============================导出
@@ -58,7 +58,7 @@ export class TransactionDetails extends Widget {
      */
     public initData() {
         const itype = this.props.itype;
-        if (itype === TaskSid.Alipay || itype === TaskSid.Wxpay) {   // 微信支付宝支付
+        if (itype === TaskSid.Alipay || itype === TaskSid.Wxpay || itype === TaskSid.Apple_pay) {   // 微信 支付宝 IOS支付
             getOrderDetail(this.props.oid).then(res => {
                 this.setData(res);
             }).catch(() => {
@@ -66,6 +66,7 @@ export class TransactionDetails extends Widget {
                 this.props.state = PayState[3];                
                 this.paint();
             });
+
         } else {
             getOrderLocal(this.props.oid).then(res => {
                 this.setData1(res);
@@ -84,7 +85,20 @@ export class TransactionDetails extends Widget {
         this.props.amount = res.num / SCPrecision;
         this.props.money = res.total / SCPrecision;
         this.props.transactionTime = timestampFormat(res.time * 1000); 
-        this.props.transactionType = res.payType === 'alipay' ? '支付宝支付' :'微信支付' ;
+        let name = '微信支付';
+        switch (res.payType) {
+            case PayType.Alipay:
+                name = '支付宝支付';
+                break;
+            case PayType.WX:
+                name = '微信支付';
+                break;
+            case PayType.IOS:
+                name = '苹果支付';
+                break;
+            default:
+        }
+        this.props.transactionType = name;
         this.paint();
     }
 

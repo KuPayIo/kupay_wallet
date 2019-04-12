@@ -13,7 +13,7 @@ import { getCloudBalances, register } from '../../../store/memstore';
 import { TaskSid } from '../../../store/parse';
 import { rechargeGiftMultiple, SCPrecision, SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
-import { popNewLoading, popNewMessage } from '../../../utils/tools';
+import { popNewMessage } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -97,6 +97,7 @@ export class RechargeSC extends Widget {
         this.props.giveKT = giveKT;
         this.props.selectPayItemIndex = selectPayItemIndex;
     }
+
     /**
      * 充值
      */
@@ -121,29 +122,35 @@ export class RechargeSC extends Widget {
                 setStore('flags/firstRecharge',true); // 首次充值
                 getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
             } else {
-               
-                IAPManager.addTransactionListener((issuccess:Number,sd: string,transtion: string) => {
+                // 监听苹果支付成功回调
+                IAPManager.addTransactionListener((issuccess:Number,sd: string,transtion: string,num:number) => {
+                    IAPManager.removeTransactionListener(num); // 移除监听事件
                     if (issuccess) {
                         confirmApplePay(sd,transtion).then(res => {
                             console.log('================验证苹果支付是否成功',res);
+                            if (res.result === 'SUCCESS') {
+                                popNewMessage('支付成功');
+                            } else {
+                                popNewMessage('支付失败');
+                            }
                             this.initData();
                             this.paint();
 
-                            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: sd,ctype:1 });
+                            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: sd,itype:TaskSid.Apple_pay,ctype:1 });
                             setStore('flags/firstRecharge',true); // 首次充值
                             getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
-                            popNewMessage('支付成功');
                         });
-                            
+                
                     } else {
                         popNewMessage('支付失败');
-                           
+               
                     }
                 });
-
+    
             }
         });
     }
+
     /**
      * 修改支付方式
      * @param payType 支付方式
