@@ -136,9 +136,17 @@ export class Setting extends Widget {
      */
     public logOut() {
         if (!hasWallet()) return;
-        // const backup = this.props.wallet.isBackup;
+        const setPsw = getStore('wallet').setPsw;
+        if (!setPsw) {
+            this.language.modalBox2.sureText = this.language.modalBox2.sureText1;
+        }
         popNew('app-components-modalBox-modalBox', this.language.modalBox2 , () => {  
-            this.backUp();
+            if (!setPsw) {
+                this.ok && this.ok();
+            } else {
+                this.backUp();
+            }
+            
             console.log('取消1');
         }, () => {
             console.log(1);
@@ -153,9 +161,16 @@ export class Setting extends Widget {
      */
     public logOutDel() {
         if (!hasWallet()) return;
-        // const backup = this.props.wallet.isBackup;
+        const setPsw = getStore('wallet').setPsw;
+        if (!setPsw) {
+            this.language.modalBox3.sureText = this.language.modalBox3.sureText1;
+        }
         popNew('app-components-modalBox-modalBox', this.language.modalBox3 , () => {
-            this.backUp();
+            if (!setPsw) {
+                this.ok && this.ok();
+            } else {
+                this.backUp();
+            }
             console.log('取消2');
         }, () => {
             popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
