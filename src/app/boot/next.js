@@ -37,6 +37,8 @@ winit.initNext = function () {
 	pi_modules.depend.exports.init(winit.deps, winit.path);
 	pi_update.severIp = winit.severIp;
 	pi_update.severPort = winit.severPort;
+	pi_update.inAndroidApp = winit.inAndroidApp;
+	pi_update.inIOSApp = winit.inIOSApp;
 	winit = undefined; //一定要立即释放，保证不会重复执行
 	//先登录
 

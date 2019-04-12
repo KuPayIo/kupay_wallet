@@ -10,6 +10,7 @@ import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
+import { getDeviceId } from '../logic/native';
 import { getModulConfig } from '../modulConfig';
 import { logoutAccount } from '../net/login';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
@@ -1146,29 +1147,6 @@ export const rippleShow = (e:any) => {
     setTimeout(() => {
         getRealNode(e.node).classList.remove('ripple');
     }, 500);
-};
-
-/**
- * 获取设备唯一id
- */
-export const fetchDeviceId = async () => {
-    console.log('fetchDeviceId');
-    if (navigator.userAgent.indexOf('YINENG') < 0) { // ===================pc====================
-        return new Promise((resolve,reject) => {
-            const deviceId = cryptoRandomInt().toString();
-            resolve(deviceId);
-            
-        });
-    } else {// ============================mobile
-        return new Promise((resolve,reject) => {
-            piRequire(['app/logic/native']).then(mods => {
-                mods[0].getDeviceId((deviceId:string) => {
-                    resolve(deviceId);
-                });
-            });
-        });
-    }
-   
 };
 
 /**

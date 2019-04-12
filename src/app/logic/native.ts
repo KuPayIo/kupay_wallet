@@ -2,9 +2,11 @@
  * 一些底层操作
  */
 import { AdPlatform, ADUnion, PlayEvent } from '../../pi/browser/ad_unoin';
+import { DeviceIdProvider } from '../../pi/browser/device';
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { WebViewManager } from '../../pi/browser/webview';
-import { setStore } from '../store/memstore';
+import { cryptoRandomInt } from '../../pi/util/math';
+import { getStore, setStore } from '../store/memstore';
 import { piRequire } from '../utils/commonjsTools';
 import { popNewLoading } from '../utils/tools';
 
@@ -67,17 +69,95 @@ export const openNewActivity = (url:string,title:string= '') => {
 };
 
 /**
- * 获取设备信息
+ * 获取设备唯一id
  */
-export const getDeviceId = (okCB?) => {
-    piRequire(['pi/browser/device']).then(mods => {
-        const DeviceIdProvider = mods[0].DeviceIdProvider;
+export const getDeviceId = () => {
+    return new Promise(resolve => {
         const deviceIdProvider = new DeviceIdProvider();
-        deviceIdProvider.getUUId((result) => {
-            console.log(`获取设备的唯一id成功${JSON.stringify(result)}`);
-            okCB && okCB(result);
+        deviceIdProvider.getUUId((uuid:string) => {
+            console.log(`获取设备的唯一id = ${uuid}`);
+            resolve(uuid);
         });
     });
+};
+
+/**
+ * 获取设备信息
+ */
+export const getDeviceSystem = () => {
+    return new Promise(resolve => {
+        const deviceIdProvider = new DeviceIdProvider();
+        deviceIdProvider.getSystem((manufacturer:string,model:string,version:string) => {
+            console.log(`获取设备信息 设备制造商 = ${manufacturer},设备名称 = ${model},系统版本号 = ${version}`);
+            resolve({ manufacturer,model,version });
+        });
+    });
+};
+
+/**
+ * 获取设备总内存和当前可用内存
+ */
+export const getDeviceMemSize = () => {
+    return new Promise(resolve => {
+        const deviceIdProvider = new DeviceIdProvider();
+        deviceIdProvider.getMemSize((total:string,avail:string) => {
+            console.log(`获取设备内存 系统总内存 = ${total},当前可用内存 = ${avail}`);
+            resolve({ total,avail });
+        });
+    });
+};
+
+/**
+ * 获取当前网络状态
+ */
+export const getDeviceNetWorkStatus = () => {
+    return new Promise(resolve => {
+        const deviceIdProvider = new DeviceIdProvider();
+        deviceIdProvider.getNetWorkStatus((netWorkStatus) => {
+            console.log(`获取当前网络状态 = ${netWorkStatus}`);
+            resolve(netWorkStatus);
+        });
+    });
+};
+
+/**
+ * 获取网络供应商
+ */
+export const getOperatorName = () => {
+    return new Promise(resolve => {
+        const deviceIdProvider = new DeviceIdProvider();
+        deviceIdProvider.getOperatorName((operator:string) => {
+            console.log(`获取网络供应商 = ${operator}`);
+            resolve(operator);
+        });
+    });
+};
+
+declare var pi_update;
+/**
+ * 获取设备所有详情
+ */
+export const getDeviceAllDetail = ():Promise<any> => {
+    if (!pi_update.inAndroidApp && !pi_update.inIOSApp) {
+        return new Promise((resolve) => {
+            const uuid = getStore('setting/deviceId') || cryptoRandomInt().toString();
+            resolve({ uuid });
+        });
+    } else {
+        const allPromise = [getDeviceId(),getDeviceSystem(),getDeviceMemSize(),getDeviceNetWorkStatus(),getOperatorName()];
+
+        return Promise.all(allPromise).then(([uuid,system,mem,netWorkStatus,operator]) => {
+            console.log('获取 ==',[uuid,system,mem,netWorkStatus,operator]);
+
+            return {
+                uuid,
+                netWorkStatus,
+                operator,
+                ...system,
+                ...mem
+            };
+        });
+    }
     
 };
 

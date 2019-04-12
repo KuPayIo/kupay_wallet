@@ -19,17 +19,24 @@ export const relativeGet = (path:string) => {
  */
 export const piLoadDir = (sourceList:string[]) => {
     return new Promise((resolve,reject) => {
-        const util = relativeGet('pi/widget/util');
-        util.loadDir(sourceList, {}, undefined, undefined,  (fileMap) => {
-            const tab = util.loadCssRes(fileMap);
-            tab.timeout = 90000;
-            tab.release();
-            resolve();
-        },  (r) => {
-            reject(r);
-        }, () => {
-            // console.log();
+        const html = relativeGet('pi/util/html');
+        html.checkWebpFeature((r) => {
+            const flags:any = {};
+            flags.webp = flags.webp || r;
+            console.log('flags.webp ====',flags);
+            const util = relativeGet('pi/widget/util');
+            util.loadDir(sourceList, flags, undefined, undefined,  (fileMap) => {
+                const tab = util.loadCssRes(fileMap);
+                tab.timeout = 90000;
+                tab.release();
+                resolve();
+            },  (r) => {
+                reject(r);
+            }, () => {
+                // console.log();
+            });
         });
+        
     });
 };
 

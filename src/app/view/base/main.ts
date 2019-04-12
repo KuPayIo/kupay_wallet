@@ -9,11 +9,11 @@ import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore } from '../../../earn/client/app/store/memstore';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
+import { getDeviceAllDetail } from '../../logic/native';
 import { walletManualReconnect } from '../../net/login';
 import { LockScreen } from '../../store/interface';
 import { getAllAccount, getStore, setStore } from '../../store/memstore';
 import { piRequire } from '../../utils/commonjsTools';
-import { fetchDeviceId } from '../../utils/tools';
 
 // ============================== 导出
 export const run = (cb): void =>  {
@@ -57,12 +57,9 @@ const popNewPage = () => {
  * 预先从底层获取一些数据
  */
 const preFetchFromNative = () => {
-    const deviceId = getStore('setting/deviceId');
-    if (!deviceId) {
-        fetchDeviceId().then(hash256deviceId => {
-            setStore('setting/deviceId',hash256deviceId);
-        });
-    }
+    getDeviceAllDetail().then(deviceDetail => {
+        setStore('setting/deviceId',deviceDetail.uuid);
+    }); // 获取设备详细信息
 
     piRequire(['app/logic/native']).then(mods => {
         mods[0].getScreenModify();
