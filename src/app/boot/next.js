@@ -37,6 +37,8 @@ winit.initNext = function () {
 	pi_modules.depend.exports.init(winit.deps, winit.path);
 	pi_update.severIp = winit.severIp;
 	pi_update.severPort = winit.severPort;
+	pi_update.inAndroidApp = winit.inAndroidApp;
+	pi_update.inIOSApp = winit.inIOSApp;
 	winit = undefined; //一定要立即释放，保证不会重复执行
 	//先登录
 
@@ -210,11 +212,11 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				loadWalletLoginSource();  // 登录相关
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
 				loadImages(); // 预加载图片
+				loadWalletLoginSource();  // 登录相关
 				
 			});
 		}, function (result) {

@@ -6,14 +6,16 @@ import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, s
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
+import { getDeviceAllDetail } from '../logic/native';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
 import { Account, getAllAccount, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
 import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletToolsMod } from '../utils/commonjsTools';
 import { CMD, defaultPassword } from '../utils/constants';
-import { closeAllPage, delPopPhoneTips, fetchDeviceId, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
+import { closeAllPage, delPopPhoneTips, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 
+declare var pi_update;
 // 登录成功之后的回调列表
 const loginedCallbackList:LoginType[] = [];
 
@@ -107,8 +109,8 @@ const conReOpen = () => {
  * 申请自动登录token
  */
 export const applyAutoLogin = async () => {
-    const id = getStore('setting/deviceId') || await fetchDeviceId();
-    const deviceId = id.toString();
+    const deviceDetail =  await getDeviceAllDetail();
+    const deviceId = deviceDetail.uuid.toString();
     const msg = { 
         type: 'wallet/user@set_auto_login', 
         param: { 
@@ -119,7 +121,6 @@ export const applyAutoLogin = async () => {
         const cipherToolsMod = await getCipherToolsMod();
         const decryptToken = cipherToolsMod.encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
-
     });
 };
 
@@ -128,20 +129,25 @@ export const applyAutoLogin = async () => {
  */
 export const autoLogin = async (conRandom:string) => {
     console.time('loginMod autoLogin');
-    const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
-    console.log('deviceId -------',deviceId);
     console.time('loginMod getCipherToolsMod');
-    const cipherToolsMod = await getCipherToolsMod();
+    const [deviceDetail,cipherToolsMod] = await Promise.all([getDeviceAllDetail(),getCipherToolsMod()]);
     console.timeEnd('loginMod getCipherToolsMod');
-    const token = cipherToolsMod.decrypt(getStore('user/token'),deviceId.toString());
+    const token = cipherToolsMod.decrypt(getStore('user/token'),deviceDetail.uuid.toString());
+    const param:any = {
+        device_id: deviceDetail.uuid,
+        token,
+        random:conRandom
+    };
+    if (pi_update.inAndroidApp || pi_update.inIOSApp) {
+        param.operator = deviceDetail.operator;
+        param.network = deviceDetail.netWorkStatus;
+        param.app_version = pi_update.updateJson.version;
+    }
     const msg = { 
         type: 'wallet/user@auto_login', 
-        param: { 
-            device_id: deviceId,
-            token,
-            random:conRandom
-        }
+        param
     };
+    console.log('autoLogin = ',msg);
     requestAsync(msg).then(res => {
         loginWalletSuccess();
         console.timeEnd('loginMod autoLogin');
@@ -164,15 +170,26 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
     const walletToolsModPromise =  getWalletToolsMod();
     const GlobalWalletPromise =  getGlobalWalletClass();
     const genmnemonicModPromise =  getGenmnemonicMod();
+    const deviceDetailPromise = getDeviceAllDetail();
     // tslint:disable-next-line:max-line-length
-    const [walletToolsMod,GlobalWallet,genmnemonicMod] = await Promise.all([walletToolsModPromise,GlobalWalletPromise,genmnemonicModPromise]);
+    const [walletToolsMod,GlobalWallet,genmnemonicMod,deviceDetail] = await Promise.all([walletToolsModPromise,GlobalWalletPromise,genmnemonicModPromise,deviceDetailPromise]);
     const getMnemonicByHash = walletToolsMod.getMnemonicByHash;
     const mnemonic = getMnemonicByHash(hash);
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
     console.log('================',wlt.exportPrivateKey());
     const sign = genmnemonicMod.sign;
     const signStr = sign(conRandom, wlt.exportPrivateKey());
-    const msgLogin = { type: 'login', param: { sign: signStr } };
+    const param:any = { sign: signStr };
+    if (pi_update.inAndroidApp || pi_update.inIOSApp) {
+        param.operator = deviceDetail.operator;
+        param.network = deviceDetail.netWorkStatus;
+        param.app_version = pi_update.updateJson.version;
+    }
+    const msgLogin = { 
+        type: 'login', 
+        param
+    };
+    console.log('defaultLogin = ',msgLogin);
 
     return requestAsync(msgLogin).then((r:any) => {
         console.log('============================好嗨号acc_id:',r.acc_id);
@@ -208,14 +225,24 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     const wallet = getStore('wallet');
     if (!wallet) return;
     console.time('loginMod deviceId');
-    const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
+    const deviceDetail = await getDeviceAllDetail();
     console.timeEnd('loginMod deviceId');
     const param:any = {
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
-        device_id:deviceId,
+        device_id:deviceDetail.uuid,
         flag:1
     };
+    if (pi_update.inAndroidApp) {
+        param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
+        param.os = `android ${deviceDetail.version}`;
+        param.total_memory = deviceDetail.total;
+    } else if (pi_update.inIOSApp) {
+        param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
+        param.os = `ios ${deviceDetail.version}`;
+        param.total_memory = deviceDetail.total;
+    }
+    
     if (cmd) {
         param.cmd = cmd;
     }
@@ -232,6 +259,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         type: 'get_random', 
         param
     };
+    console.log('getRandom = ',msg);
     let resp;
     try {
         resp = await requestAsync(msg);
@@ -254,8 +282,8 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         setStore('user/conRandom', conRandom);
     } catch (res) {
         resp = res;
-        const deviceId = getStore('setting/deviceId') || await fetchDeviceId();
-        if (res.type === 1014 && res.why !== deviceId) {  // 避免自己踢自己下线
+        const deviceDetail = await getDeviceAllDetail();
+        if (res.type === 1014 && res.why !== deviceDetail.uuid) {  // 避免自己踢自己下线
             const flags = getStore('flags');
             console.log('flags =====',flags);
             if (flags.level_3_page_loaded) {  // 钱包创建成功直接提示,此时资源已经加载完成
