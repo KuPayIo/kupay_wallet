@@ -230,7 +230,11 @@ winit.initNext = function () {
 			"app/net/login.js",
 			"app/net/push.js",
 			"earn/client/app/net/login.js",
-			"chat/client/app/net/login.js"
+			"chat/client/app/net/login.js",
+			"earn/xlsx/awardCfg.c.js",
+			"earn/xlsx/awardCfg.s.js",
+			"earn/xlsx/item.c.js",
+			"earn/xlsx/item.s.js"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.log(11111,Date.now()-self.startTime)
@@ -410,11 +414,7 @@ winit.initNext = function () {
 			"earn/client/app/components1/",
 			"earn/client/app/view/activity/miningHome.tpl",
 			"earn/client/app/view/activity/miningHome.js",
-			"earn/client/app/view/activity/miningHome.wcss",
-			"earn/xlsx/awardCfg.c.js",
-			"earn/xlsx/awardCfg.s.js",
-			"earn/xlsx/item.c.js",
-			"earn/xlsx/item.s.js",
+			"earn/client/app/view/activity/miningHome.wcss"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadEarnSource");
