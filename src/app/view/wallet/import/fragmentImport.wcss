@@ -56,7 +56,7 @@
     height: 40px;
 }
 .btn{
-    margin: 480px 20px;
+    margin: 58vh 20px;
 }
 .canBox{
     width: 90px;
