@@ -1,10 +1,10 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    {{: topBarTitle = {"zh_Hans":"助记词登录","zh_Hant":"助記詞登錄","en":""} }}
+    {{: topBarTitle = {"zh_Hans":"片段登录","zh_Hant":"片段登錄","en":""} }}
     <app-components-topBar-topBar>{"title":{{topBarTitle}} }</app-components-topBar-topBar>
     <div w-class="body">
-        {{: createTips = {"zh_Hans":"按序输入助记词","zh_Hant":"按序輸入助記詞","en":""} }}
+        {{: createTips = {"zh_Hans":"输入好友保管的片段","zh_Hant":"輸入好友保管的片段","en":""} }}
         <div w-class="create-tips"><div w-class="tip-divid"></div><pi-ui-lang>{{createTips}}</pi-ui-lang></div>
-        {{: desc = {"zh_Hans":"请输入您创建账号时备份的12个英文单词，助记词登录能导入云端和本地所有资产","zh_Hant":"請輸入您創建賬號時備份的12個英文單詞，助記詞登錄能導入雲端和本地所有資產","en":""} }}
+        {{: desc = {"zh_Hans":"请输入两个您分享给好友的助记词片段，导入后建议销毁本地记录，以免被盗取。","zh_Hant":"請輸入兩個您分享給好友的助記詞片段，導入後建議銷毀本地記錄，以免被盜取。","en":""} }}
         <div w-class="desc"><pi-ui-lang>{{desc}}</pi-ui-lang></div>
         <div w-class="bottom-box">
             <div>
