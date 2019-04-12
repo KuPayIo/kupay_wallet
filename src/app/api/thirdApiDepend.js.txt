@@ -584,15 +584,17 @@ pi_tools.popNewPanel = function(){
 pi_tools.buttonModInit = function(){
     return function(){
         console.log("buttonModInit",pi_config.buttonMod);
-        if(pi_config.buttonMod === pi_config.buttonMods.FLOATBUTTON){  // 可拖动悬浮框
+        if(pi_config.buttonMod === pi_config.buttonMods.FLOATBUTTON){  // 可拖动悬浮框 三个点
             pi_tools.floatButtonInit();
         }else if(pi_config.buttonMod === pi_config.buttonMods.WXBUTTON){   // 微信小程序悬浮框
             pi_tools.WxButtionInit();
+        }else if(pi_config.buttonMod === pi_config.buttonMods.FLOATBUTTON2){ // 可拖动悬浮框 图标
+            pi_tools.floatButtonInit2();
         }
     }
 };
 /**
- * 悬浮框按钮初始化
+ * 悬浮框按钮样式1初始化
  */
 pi_tools.floatButtonInit = function (){
   console.log("floatButtonInit ---------floatButtonInit");
@@ -643,6 +645,27 @@ pi_tools.WxButtionInit = function(){
     document.querySelector("body").appendChild($wxBtns);
 
 };
+
+
+/**
+ * 悬浮框按钮样式2初始化
+ */
+pi_tools.floatButtonInit2 = function (){
+    console.log("floatButtonInit2 ---------floatButtonInit2");
+    var $floatButton = document.createElement("div");
+    $floatButton.setAttribute("class","pi-float-button2 button-mod");
+    $floatButton.setAttribute("style","position: absolute;top:133px;right: 0px; width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);z-index: 99999;");
+    $floatButton.innerHTML = `
+        <img src="${pi_config.imgUrlPre}wallet_logo.png" style="width:100%;height:100%;border-radius:50%;"/>
+        <img src="${pi_config.imgUrlPre}bubble.png" style="border-radius:50%;position: absolute;width:100%;height:100%;top:0;left:0;"/>
+    `;
+    $floatButton.addEventListener("click",pi_tools.popNewPanel());
+    document.querySelector("body").appendChild($floatButton);
+  
+  
+    pi_tools.dragDom($floatButton);
+  };
+
 /**
  * 关闭弹框
  */
