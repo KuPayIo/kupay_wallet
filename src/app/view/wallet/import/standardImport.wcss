@@ -48,7 +48,7 @@
 }
 .textarea-father{
     position: relative;
-    height: 570px;
+    height: 80vh;
     border: 1px solid #888;
     border-radius: 2px;
 }
