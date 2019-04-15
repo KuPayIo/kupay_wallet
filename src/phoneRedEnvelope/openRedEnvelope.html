@@ -28,10 +28,11 @@
 <script src="bignumber.js"></script>
 <script>
 var state = {};
+var lan = {};
 function winit(){
     var search = window.location.search;
     var itype = parseUrlParams(search,'type');
-    var lan = getLanguage();
+    lan = getLanguage();
     if(window.localStorage.takeRedBag){
         let localRid = JSON.parse(window.localStorage.takeRedBag).rid;
         if(parseUrlParams(search,'rid')==localRid){
