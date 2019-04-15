@@ -18,7 +18,7 @@ export const walletNameAvailable = (walletName) => {
  * 修改钱包名称
  * @param walletName wallet name
  */
-export const changeWalletName = (walletName) => {
+export const changeWalletName = (walletName:string) => {
     const userInfo = getStore('user/info');
     userInfo.nickName = walletName;
     setStore('user/info', userInfo);

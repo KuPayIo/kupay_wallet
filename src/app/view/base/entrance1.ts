@@ -10,7 +10,7 @@ import { loginSuccess } from '../../net/login';
 import { deleteAccount, getAllAccount } from '../../store/memstore';
 import { getLoginMod, getWalletToolsMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
-import { playerName, popNew3, popNewLoading, popNewMessage, uncodeUtf16 } from '../../utils/tools';
+import { playerName, popNew3, popNewLoading, popNewMessage } from '../../utils/tools';
 
 // ============================导出
 export class Entrance1 extends Widget {
@@ -24,7 +24,7 @@ export class Entrance1 extends Widget {
         const walletList = getAllAccount();
         const accountList = [];
         walletList.forEach(item => {
-            const nickName = uncodeUtf16(item.user.info.nickName);
+            const nickName = item.user.info.nickName;
             const avatar = item.user.info.avatar ? `${uploadFileUrlPrefix}${item.user.info.avatar}` : 'app/res/image1/default_avatar.png';
             const id = item.user.id;
             accountList.push({ nickName,avatar,id });

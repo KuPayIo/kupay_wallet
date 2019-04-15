@@ -5,12 +5,12 @@ import { request } from '../../pi/net/ui/con_mgr';
 import { MainChainCoin, uploadFileUrl } from '../config';
 import { getModulConfig } from '../modulConfig';
 import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
-import { getCloudBalances, getStore, setStore } from '../store/memstore';
+import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { base64ToFile, getUserInfo, popNewMessage, uncodeUtf16, unicodeArray2Str, utf16toEntities } from '../utils/tools';
+import { base64ToFile, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 import { defaultLogin } from './login';
 
@@ -464,7 +464,7 @@ export const getData = async (key) => {
  */
 export const setUserInfo = async () => {
     const userInfo = getStore('user/info');
-    userInfo.nickName = utf16toEntities(userInfo.nickName);
+    userInfo.nickName = userInfo.nickName;
     const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
     return requestAsync(msg);
