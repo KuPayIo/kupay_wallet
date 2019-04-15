@@ -2,6 +2,7 @@ import { applyToGroup, getChatUid } from '../../chat/client/app/net/rpc';
 import { GENERATOR_TYPE } from '../../chat/server/data/db/user.s';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
+import { logoutWallet } from '../net/login';
 import { getGameItem } from '../view/play/home/gameConfig';
 
 /**
@@ -9,7 +10,20 @@ import { getGameItem } from '../view/play/home/gameConfig';
  * 
  */
 
+// 悬浮框
 let popFloatBoxClose;
+
+// 当前打开的webviewName
+let curWebviewName;
+
+// 退出钱包后关闭悬浮框和游戏
+logoutWallet(() => {
+    closePopFloatBox();
+    if (curWebviewName) {
+        closeWebview(curWebviewName);
+        curWebviewName = undefined;
+    }
+});
 
 export const closePopFloatBox = () => {
     popFloatBoxClose && popFloatBoxClose.callback(popFloatBoxClose.widget);
@@ -41,6 +55,7 @@ export const minWebview = (payload:{webviewName: string;popFloatBox:boolean}) =>
  */
 export const minWebview1 = (webviewName: string) => {
     console.log('wallet minWebview called');
+    curWebviewName = webviewName;
     WebViewManager.minWebView(webviewName);
 };
 
