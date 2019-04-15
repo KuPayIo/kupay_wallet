@@ -10,7 +10,7 @@ import { getCloudBalances, getStore, setStore } from '../store/memstore';
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { base64ToFile, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
+import { base64ToFile, getUserInfo, popNewMessage, uncodeUtf16, unicodeArray2Str, utf16toEntities } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 import { defaultLogin } from './login';
 
@@ -464,6 +464,7 @@ export const getData = async (key) => {
  */
 export const setUserInfo = async () => {
     const userInfo = getStore('user/info');
+    userInfo.nickName = utf16toEntities(userInfo.nickName);
     const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
     return requestAsync(msg);
@@ -479,6 +480,7 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         const userInfoStr = unicodeArray2Str(res.value[0]);
         const localUserInfo = getStore('user/info');
         console.log('localUserInfo ==== ',localUserInfo);
+        console.log('serverUserInfoStr ==== ',userInfoStr);
         let userInfo = {
             ...localUserInfo
         };

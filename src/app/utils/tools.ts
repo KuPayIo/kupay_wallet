@@ -1115,7 +1115,7 @@ export const getCurrentEthAddr = () => {
  */
 export const getUserInfo = () => {
     const userInfo = getStore('user/info');
-    const nickName = userInfo.nickName;
+    const nickName = uncodeUtf16(userInfo.nickName);
     const phoneNumber = userInfo.phoneNumber;
     const isRealUser = userInfo.isRealUser;
     const areaCode = userInfo.areaCode;
@@ -1298,4 +1298,49 @@ export const setPopPhoneTips = () => {
  */
 export const delPopPhoneTips = () => {
     if (localStorage.getItem('popPhoneTips')) localStorage.removeItem('popPhoneTips');
+};
+
+/**
+ * 表情包转字符
+ */
+export const utf16toEntities = (str:string) => { // 检测utf16emoji表情 转换为实体字符以供后台存储
+    const patt = /[\ud800-\udbff][\udc00-\udfff]/g;
+    str = str.replace(patt, (char) => {
+        // tslint:disable-next-line:one-variable-per-declaration
+        let H, L, code;
+        if (char.length === 2) {   // 辅助平面字符（我们需要做处理的一类）
+            H = char.charCodeAt(0); // 取出高位
+            L = char.charCodeAt(1); // 取出低位
+            code = (H - 0xD800) * 0x400 + 0x10000 + L - 0xDC00; // 转换算法
+
+            return `&#${code};`;
+        } else {
+            return char;
+        }
+    });
+
+    return str;
+};
+
+/**
+ * 字符转表情
+ */
+export const uncodeUtf16 = (str:string) => {
+    const reg = /\&#.*?;/g;
+
+    return str.replace(reg,(char) => {
+        // tslint:disable-next-line:one-variable-per-declaration
+        let H,L,code;
+        if (char.length === 9) {
+            // tslint:disable-next-line:radix
+            code = parseInt(char.match(/[0-9]+/g).toString());
+            H = Math.floor((code - 0x10000) / 0x400) + 0xD800;
+            L = (code - 0x10000) % 0x400 + 0xDC00;
+
+            return unescape(`%u${H.toString(16)}%u${L.toString(16)}`);
+        } else {
+            return char;
+        }
+    });
+
 };
