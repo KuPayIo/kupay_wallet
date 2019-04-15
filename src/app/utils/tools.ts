@@ -1299,3 +1299,25 @@ export const setPopPhoneTips = () => {
 export const delPopPhoneTips = () => {
     if (localStorage.getItem('popPhoneTips')) localStorage.removeItem('popPhoneTips');
 };
+
+/**
+ * 表情包转换
+ */
+export const utf16toEntities = (str) => { // 检测utf16emoji表情 转换为实体字符以供后台存储
+    const patt = /[\ud800-\udbff][\udc00-\udfff]/g;
+    str = str.replace(patt, (char) => {
+        // tslint:disable-next-line:one-variable-per-declaration
+        let H, L, code;
+        if (char.length === 2) {   // 辅助平面字符（我们需要做处理的一类）
+            H = char.charCodeAt(0); // 取出高位
+            L = char.charCodeAt(1); // 取出低位
+            code = (H - 0xD800) * 0x400 + 0x10000 + L - 0xDC00; // 转换算法
+
+            return `&#${code};`;
+        } else {
+            return char;
+        }
+    });
+
+    return str;
+};
