@@ -3,10 +3,10 @@ import { isArray } from '../../pi/net/websocket/util';
 import { uploadFileUrlPrefix } from '../config';
 import { PAGELIMIT } from '../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { currencyType, formatBalance, GetDateDiff,getStaticLanguage,parseRtype, timestampFormat, timestampFormatToDate, transDate, uncodeUtf16, unicodeArray2Str } from '../utils/tools';
+import { currencyType, formatBalance, GetDateDiff,getStaticLanguage,parseRtype, timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 // tslint:disable-next-line:max-line-length
-import { CloudCurrencyType, LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, MiningRank, PurchaseHistory } from './interface';
+import { CloudCurrencyType, LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, PurchaseHistory } from './interface';
 import { getStore } from './memstore';
 /**
  * 解析数据
@@ -189,7 +189,7 @@ export const parseMiningRank = (data) => {
 
     for (let i = 0; i < data.value.length && i < 100; i++) {
         const user = unicodeArray2Str(data.value[i][2]);
-        const userData = user ? JSON.parse(uncodeUtf16(user)) :'';
+        const userData = user ? JSON.parse(user) :'';
         let avatar = userData ? userData.avatar :'';
         if (avatar && avatar.indexOf('data:image') < 0) {
             avatar = `${uploadFileUrlPrefix}${avatar}`;

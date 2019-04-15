@@ -4,13 +4,11 @@
 import { getStore as chatGetStore } from '../../chat/client/app/data/store';
 import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
-import { cryptoRandomInt } from '../../pi/util/math';
 import { Callback } from '../../pi/util/util';
 import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
-import { getDeviceId } from '../logic/native';
 import { getModulConfig } from '../modulConfig';
 import { logoutAccount } from '../net/login';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
@@ -1115,7 +1113,7 @@ export const getCurrentEthAddr = () => {
  */
 export const getUserInfo = () => {
     const userInfo = getStore('user/info');
-    const nickName = uncodeUtf16(userInfo.nickName);
+    const nickName = userInfo.nickName;
     const phoneNumber = userInfo.phoneNumber;
     const isRealUser = userInfo.isRealUser;
     const areaCode = userInfo.areaCode;
@@ -1300,6 +1298,22 @@ export const delPopPhoneTips = () => {
     if (localStorage.getItem('popPhoneTips')) localStorage.removeItem('popPhoneTips');
 };
 
+/**
+ * 过滤表情符号
+ */
+export const filterEomoji = (str:string) => {
+    const patt = /[\ud800-\udbff][\udc00-\udfff]/g;
+    str = str.replace(patt, (char) => {
+        if (char.length === 2) {   // 辅助平面字符（我们需要做处理的一类）
+
+            return '';
+        } else {
+            return char;
+        }
+    });
+
+    return str;
+};
 /**
  * 表情包转字符
  */

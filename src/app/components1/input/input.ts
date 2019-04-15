@@ -15,7 +15,7 @@ import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { getRealNode, paintCmd3, paintWidget } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
-import { popNewMessage } from '../../utils/tools';
+import { filterEomoji, popNewMessage } from '../../utils/tools';
 
 interface Props {
     input?: string;
@@ -106,7 +106,7 @@ export class Input extends Widget {
         if (this.props.inputLock) {
             return;
         }
-        let currentValue = event.currentTarget.value;
+        let currentValue:any = filterEomoji(event.currentTarget.value);
         // 最大长度限制
         if (this.props.maxLength) {
             currentValue = String(currentValue).slice(0, this.props.maxLength);
