@@ -19,7 +19,7 @@
         </div>
         <div w-class="input-father" ev-input-change="pswChange">
             {{: inputHolder = {"zh_Hans":"输入密码","zh_Hant":"輸入密碼","en":""} }}
-            <app-components1-input-input>{placeHolder:{{inputHolder}},itype:"password"}</app-components1-input-input>
+            <app-components1-input-input>{input:{{it.psw}},placeHolder:{{inputHolder}},itype:"password"}</app-components1-input-input>
         </div>
         {{: let loginName = {"zh_Hans":"登录","zh_Hant":"登錄","en":""} }}
         <div ev-btn-tap="loginClick" w-class="btn-father"><app-components1-btn-btn>{"name":{{ loginName }},"types":"big","color":"blue"}</app-components1-btn-btn></div>
