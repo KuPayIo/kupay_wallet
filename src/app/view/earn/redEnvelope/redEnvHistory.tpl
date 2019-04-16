@@ -6,7 +6,7 @@
         <div id="historyRecords" w-class="records">
 
             <div w-class="topBack">
-                <img src="{{it.avatar}}" w-class="userHead" />
+                <widget w-tag="app-components1-img-img" w-class="userHead" >{imgURL:{{it.avatar}},width:"120px;"}</widget>
                 <div style="margin-top: 20px;">
                     <pi-ui-lang>{"zh_Hans":"共发出","zh_Hant":"共發出","en":""}</pi-ui-lang>
                 </div>

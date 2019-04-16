@@ -3,7 +3,7 @@
     <div w-class="body2">
         <div w-class="users">
             <div w-class="user-item" on-tap="popMoreUser">
-                <img src="{{it.accountList[it.selectedAccountIndex].avatar}}" w-class="avatar"/>
+                <widget w-tag="app-components1-img-img" w-class="rank-headImg" >{imgURL:{{it.accountList[it.selectedAccountIndex].avatar}},width:"60px;"}</widget>
                 <div w-class="name">{{it.accountList[it.selectedAccountIndex].nickName}}</div>
                 <img src="../../res/image/40.png" w-class="more" />
             </div>

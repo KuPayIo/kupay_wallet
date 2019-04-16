@@ -3,7 +3,7 @@
     <app-components-topBar-topBar>{"title":{{topBarTitle}},nextImg:"../../res/image/share_white.png",background:"transparent"}</app-components-topBar-topBar>
     <div w-class="content">
         <div w-class="title">
-            <img src={{it.userHead}} w-class="userHead"/>
+            <widget w-tag="app-components1-img-img" w-class="userHead" >{imgURL:{{it.userHead}},width:"120px;"}</widget>
             <span w-class="userName">{{it.userName}}</span>
         </div>
         <div w-class="address" on-tap="copyAddr">好嗨号：{{it.acc_id}}
