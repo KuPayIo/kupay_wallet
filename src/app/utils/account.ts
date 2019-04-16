@@ -28,7 +28,7 @@ export const changeWalletName = (walletName:string) => {
  * 钱包密码是否合乎规则
  * @param walletPsw  wallet password
  */
-export const walletPswAvailable = (walletPsw) => {
+export const walletPswAvailable = (walletPsw:string) => {
     const reg = /^[.@$&*#a-zA-Z0-9]{8,}$/;
 
     return reg.test(walletPsw.trim());
