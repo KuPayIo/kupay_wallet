@@ -6,10 +6,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { makeScreenShot } from '../../../logic/native';
-import { copyToClipboard, getCurrentAddrByCurrencyName, popNewMessage } from '../../../utils/tools';
+import { copyToClipboard, getCurrentAddrByCurrencyName, getUserInfo, popNewMessage } from '../../../utils/tools';
 
 interface Props {
     currencyName:string;
+    avatar:string;
 }
 export class Receipt extends Widget {
     public ok:() => void;
@@ -24,10 +25,15 @@ export class Receipt extends Widget {
     }
     public init() {
         this.language = this.config.value[getLang()];
+        const userInfo = getUserInfo();
         this.props = {
             ...this.props,
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName)
         };
+        if (userInfo) {
+            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+        }
+        
     }
 
     public copyClick() {
