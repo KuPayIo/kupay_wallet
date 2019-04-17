@@ -146,7 +146,7 @@ export class LockScreenPage extends Widget {
                 } 
             }
         },(fg) => {
-            if (fg) {  // 退出当前钱包，跳转到登陆页面
+            if (fg) {  // 退出当前钱包，跳转到登录页面
                 getLoginMod().then(loginMod => {
                     loginMod.logoutAccount();
                 });
