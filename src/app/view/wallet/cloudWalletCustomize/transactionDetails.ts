@@ -1,8 +1,11 @@
 /**
  * 交易详情页面
  */
+import { ShareType } from '../../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { makeScreenShot } from '../../../logic/native';
 import { getModulConfig } from '../../../modulConfig';
 import { getOneUserInfo } from '../../../net/pull';
 import { TaskSid } from '../../../store/parse';
@@ -108,4 +111,15 @@ export class TransactionDetails extends Widget {
         this.ok && this.ok();
     }
 
+    /**
+     * 分享截图
+     */
+    public shareScreen() {
+        console.log('分享截图');
+        makeScreenShot((result) => { 
+            popNew('app-components-share-share',{ shareType:ShareType.TYPE_SCREEN });
+        },(result) => { 
+            popNewMessage('分享截图失败');
+        });
+    }
 }

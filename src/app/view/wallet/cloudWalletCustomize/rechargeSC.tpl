@@ -1,8 +1,8 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <div>
-        {{: topBarTitle = {"zh_Hans":"充值","zh_Hant":"充值","en":""} }}
-        <widget w-tag="app-components-topBar-topBar">{"title":{{topBarTitle}} }</widget>
-    </div>
+    {{: topBarTitle = {"zh_Hans":"充值","zh_Hant":"充值","en":""} }}
+    <widget w-tag="app-components-topBar-topBar">{"title":{{topBarTitle}} }</widget>
+    
     <div w-class="body">
         {{% 充值金额输入}}
         <div w-class="body-top">
@@ -30,7 +30,7 @@
             <div w-class="gift"><widget w-tag="pi-ui-lang">{{giftTip}}</widget></div>
         </div>
 
-
+        <div style="height:10px;background-color:rgba(242,242,242,1);width:100%;"></div>
         {{% 选择支付方式}}
         <div w-class="body-center">
             {{: let payTitle = {"zh_Hans":"支付方式","zh_Hant":"支付方式","en":""} }}
@@ -75,4 +75,5 @@
         </div>
         
     </div>
+</div>
 </div>

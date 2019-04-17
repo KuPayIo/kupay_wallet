@@ -1,12 +1,15 @@
 .new-page{
     display: flex;
     flex-direction: column;
-    background-color:rgba(242,242,242,1);
+    background-color:#fff;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 .body{
     display: flex;
     flex-direction: column;
-    flex: 1 0 0;
     border-radius: 12px;
 }
 .body-top{
@@ -93,12 +96,12 @@
 }
 
 .body-center{
-    flex: 1 0 0;
+    flex-basis: 1;
+    flex-grow: 1;
     width:100%;
     border-radius: 12px;
-    margin-top: 10px;
     background-color: #fff;
-    padding: 40px 30px;
+    padding: 40px 30px 130px;
 }
 .pay-title{
     font-size:28px;
