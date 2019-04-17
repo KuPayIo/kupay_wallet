@@ -6,7 +6,7 @@
     <div w-class="body">
         <div w-class="main">
             <div w-class="title">
-                <img src="../../../res/image1/default_avatar.png" w-class="avatar"/>
+                <widget w-tag="app-components1-img-img" w-class="avatar" >{imgURL:{{it.avatar}},width:"40px;"}</widget>
                 <div><pi-ui-lang>{"zh_Hans":"向他人收款","zh_Hant":"向他人收款","en":""}</pi-ui-lang></div>
             </div>
             <div w-class="content">
