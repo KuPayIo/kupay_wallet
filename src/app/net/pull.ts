@@ -464,7 +464,6 @@ export const getData = async (key) => {
  */
 export const setUserInfo = async () => {
     const userInfo = getStore('user/info');
-    userInfo.nickName = userInfo.nickName;
     const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
     return requestAsync(msg);
@@ -481,16 +480,18 @@ export const getUserInfoFromServer = async (uids: [number]) => {
         const localUserInfo = getStore('user/info');
         console.log('localUserInfo ==== ',localUserInfo);
         console.log('serverUserInfoStr ==== ',userInfoStr);
-        let userInfo = {
-            ...localUserInfo
-        };
+        
         if (userInfoStr !== JSON.stringify(localUserInfo)) {
             const serverUserInfo = userInfoStr ? JSON.parse(userInfoStr) : {} ; 
             console.log('serverUserInfo ==== ',serverUserInfo);
-            userInfo = {
-                ...userInfo,
-                ...serverUserInfo
-            };
+            const userInfo = {};
+            for (const key in serverUserInfo) {
+                if (!serverUserInfo[key] && localUserInfo[key]) {
+                    userInfo[key] = localUserInfo[key];
+                } else {
+                    userInfo[key] = serverUserInfo[key];
+                }
+            }
             console.log('userInfo ==== ',userInfo);
             setStore('user/info',userInfo);
         } 
