@@ -54,7 +54,6 @@ winit.initNext = function () {
 	});
 
 // ====================================更新开始=============================================================
-	pi_update.updateJson = pi_update.updateJson || JSON.parse(localStorage.getItem("updateJson") || "{}");
 	/**
 	 * 更新App和H5,策略如下:
 	 *     1. 同时检查是否需要更新，超时1秒钟即可
@@ -215,8 +214,8 @@ winit.initNext = function () {
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
-				loadImages(); // 预加载图片
 				loadWalletLoginSource();  // 登录相关
+				loadImages(); // 预加载图片
 				
 			});
 		}, function (result) {
@@ -638,7 +637,13 @@ function updateUiInit(){
  * 获取更新内容 版本号  修复的BUG等
  */
 function getUpdateContent(){
-	
+	var defaultUpdateJson = {
+		"version":"0.0.1",
+		"h5UpdateContent":["接入了新的支付","支持游戏悬浮窗","支持手机号注册","修复了部分bug"],
+		"androidUpdateContent":["接入了新的支付","支持游戏悬浮窗","支持手机号注册","修复了部分bug"],
+		"iosUpdateContent":["ios底层修复1","ios底层修复2","ios底层修复3","ios底层修复4"],
+	};
+	pi_update.updateJson = JSON.parse(localStorage.getItem("updateJson") || defaultUpdateJson);
 	var ajax = pi_modules.ajax.exports;
 	const url = winit.appURL + "/update.json";
 	const timeout = 1000;

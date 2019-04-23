@@ -34,7 +34,11 @@ setReloginCallback((res) => {
     if (rtype === 'logerror') {  //  重登录失败，登录流程重走一遍
         openConnect();
     } else {
-        setStore('user/isLogin',true);
+        if (getStore('flags').hasLogined) {
+            setStore('user/isLogin',true);
+        } else {
+            loginWalletFailed();
+        }
     }
 });
 
@@ -67,14 +71,14 @@ export const openConnect = (secrectHash:string = '') => {
 /**
  * 连接成功回调
  */
-const conSuccess = (secrectHash:string) => {
+const conSuccess = (secretHash:string) => {
     console.time('login');
     console.timeEnd('loginMod open connect');
 
     return () => {
         console.log('con success');
         setStore('user/offline',false);
-        getRandom(secrectHash);
+        getRandom(secretHash);
     };
 };
 
@@ -493,6 +497,8 @@ export const kickOffline = (secretHash:string = '',phone?:number,code?:number,nu
  * 登录钱包并获取openId成功
  */
 const loginWalletSuccess = () => {
+    setStore('flags/hasLogined',true);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
+
     for (const loginType of loginedCallbackList) {
         getOpenId(loginType.appId).then(res => {
             loginType.success(res.openid);

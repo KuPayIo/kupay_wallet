@@ -72,10 +72,19 @@ export const openNewActivity = (url:string,title:string= '') => {
  * 获取设备唯一id
  */
 export const getDeviceId = () => {
+    const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+    if (oldDeviceAllDetail) {
+        return Promise.resolve(oldDeviceAllDetail.uuid);
+    }
+
     return new Promise(resolve => {
         const deviceIdProvider = new DeviceIdProvider();
         deviceIdProvider.getUUId((uuid:string) => {
             console.log(`获取设备的唯一id = ${uuid}`);
+            if (!uuid) {
+                uuid = getStore('setting/deviceId') || cryptoRandomInt().toString();
+                setStore('setting/deviceId',uuid);
+            }
             resolve(uuid);
         });
     });
@@ -85,11 +94,24 @@ export const getDeviceId = () => {
  * 获取设备信息
  */
 export const getDeviceSystem = () => {
+    const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+    if (oldDeviceAllDetail) {
+        return Promise.resolve({ 
+            manufacturer:oldDeviceAllDetail.manufacturer ,
+            model:oldDeviceAllDetail.model,
+            version:oldDeviceAllDetail.version 
+        });
+    }
+
     return new Promise(resolve => {
         const deviceIdProvider = new DeviceIdProvider();
         deviceIdProvider.getSystem((manufacturer:string,model:string,version:string) => {
             console.log(`获取设备信息 设备制造商 = ${manufacturer},设备名称 = ${model},系统版本号 = ${version}`);
-            resolve({ manufacturer,model,version });
+            resolve({ 
+                manufacturer:manufacturer || 'default',
+                model:model || 'default',
+                version:version || 'default' 
+            });
         });
     });
 };
@@ -98,11 +120,22 @@ export const getDeviceSystem = () => {
  * 获取设备总内存和当前可用内存
  */
 export const getDeviceMemSize = () => {
+    const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+    if (oldDeviceAllDetail) {
+        return Promise.resolve({ 
+            total:oldDeviceAllDetail.total ,
+            avail: oldDeviceAllDetail.avail 
+        });
+    }
+
     return new Promise(resolve => {
         const deviceIdProvider = new DeviceIdProvider();
         deviceIdProvider.getMemSize((total:string,avail:string) => {
             console.log(`获取设备内存 系统总内存 = ${total},当前可用内存 = ${avail}`);
-            resolve({ total,avail });
+            resolve({ 
+                total:total || 'default',
+                avail: avail || 'default'
+            });
         });
     });
 };
@@ -111,11 +144,16 @@ export const getDeviceMemSize = () => {
  * 获取当前网络状态
  */
 export const getDeviceNetWorkStatus = () => {
+    const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+    if (oldDeviceAllDetail) {
+        return Promise.resolve(oldDeviceAllDetail.netWorkStatus);
+    }
+
     return new Promise(resolve => {
         const deviceIdProvider = new DeviceIdProvider();
         deviceIdProvider.getNetWorkStatus((netWorkStatus) => {
             console.log(`获取当前网络状态 = ${netWorkStatus}`);
-            resolve(netWorkStatus);
+            resolve(netWorkStatus || 'default');
         });
     });
 };
@@ -124,11 +162,16 @@ export const getDeviceNetWorkStatus = () => {
  * 获取网络供应商
  */
 export const getOperatorName = () => {
+    const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+    if (oldDeviceAllDetail) {
+        return Promise.resolve(oldDeviceAllDetail.operator);
+    }
+
     return new Promise(resolve => {
         const deviceIdProvider = new DeviceIdProvider();
         deviceIdProvider.getOperatorName((operator:string) => {
             console.log(`获取网络供应商 = ${operator}`);
-            resolve(operator);
+            resolve(operator || 'default');
         });
     });
 };
@@ -141,21 +184,28 @@ export const getDeviceAllDetail = ():Promise<any> => {
     if (!pi_update.inAndroidApp && !pi_update.inIOSApp) {
         return new Promise((resolve) => {
             const uuid = getStore('setting/deviceId') || cryptoRandomInt().toString();
+            setStore('setting/deviceId',uuid);
             resolve({ uuid });
         });
     } else {
+        const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+        if (oldDeviceAllDetail) {
+            return Promise.resolve(oldDeviceAllDetail);
+        }
         const allPromise = [getDeviceId(),getDeviceSystem(),getDeviceMemSize(),getDeviceNetWorkStatus(),getOperatorName()];
 
         return Promise.all(allPromise).then(([uuid,system,mem,netWorkStatus,operator]) => {
-            console.log('获取 ==',[uuid,system,mem,netWorkStatus,operator]);
-
-            return {
+            const deviceAllDetail = {
                 uuid,
                 netWorkStatus,
                 operator,
                 ...system,
                 ...mem
             };
+            console.log('获取设备所有信息 ==',deviceAllDetail);
+            setStore('flags/deviceAllDetail',deviceAllDetail);
+
+            return deviceAllDetail;
         });
     }
     
