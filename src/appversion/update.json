@@ -2,5 +2,5 @@
     "version":"0.0.1",
     "h5UpdateContent":["接入了新的支付","支持游戏悬浮窗","支持手机号注册","修复了部分bug"],
     "androidUpdateContent":["接入了新的支付","支持游戏悬浮窗","支持手机号注册","修复了部分bug"],
-    "iosUpdateContent":["ios底层修复1","ios底层修复2","ios底层修复3","ios底层修复4"],
+    "iosUpdateContent":["ios底层修复1","ios底层修复2","ios底层修复3","ios底层修复4"]
 }
