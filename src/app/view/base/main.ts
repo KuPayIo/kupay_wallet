@@ -57,10 +57,7 @@ const popNewPage = () => {
  * 预先从底层获取一些数据
  */
 const preFetchFromNative = () => {
-    getDeviceAllDetail().then(deviceDetail => {
-        setStore('setting/deviceId',deviceDetail.uuid);
-    }); // 获取设备详细信息
-
+    getDeviceAllDetail();
     piRequire(['app/logic/native']).then(mods => {
         mods[0].getScreenModify();
         // 预先随机下载
