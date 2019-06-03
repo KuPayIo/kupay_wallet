@@ -643,7 +643,8 @@ function getUpdateContent(){
 		"androidUpdateContent":["接入了新的支付","支持游戏悬浮窗","支持手机号注册","修复了部分bug"],
 		"iosUpdateContent":["ios底层修复1","ios底层修复2","ios底层修复3","ios底层修复4"],
 	};
-	pi_update.updateJson = JSON.parse(localStorage.getItem("updateJson") || defaultUpdateJson);
+	const updateJsonStr = localStorage.getItem("updateJson");
+	pi_update.updateJson = updateJsonStr ? JSON.parse(updateJsonStr) : defaultUpdateJson;
 	var ajax = pi_modules.ajax.exports;
 	const url = winit.appURL + "/update.json";
 	const timeout = 1000;
