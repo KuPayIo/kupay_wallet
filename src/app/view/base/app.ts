@@ -7,8 +7,8 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { registerStore } from '../../middleLayer/memBridge';
 import { getModulConfig } from '../../modulConfig';
-import { register } from '../../store/memstore';
 import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
 
 // ================================ 导出
@@ -108,7 +108,7 @@ export class App extends Widget {
 
 // ===================================================== 立即执行
 
-register('flags/level_3_page_loaded', (loaded: boolean) => {
+registerStore('flags/level_3_page_loaded', (loaded: boolean) => {
     const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
     dataCenter.init();
     checkPopPhoneTips();
@@ -120,12 +120,12 @@ register('flags/level_3_page_loaded', (loaded: boolean) => {
 });
 
 // 语言配置
-register('setting/language',(r) => {
+registerStore('setting/language',(r) => {
     setLang(r);
 });
 
 // 创建钱包成功
-register('flags/createWallet',(createWallet:boolean) => {
+registerStore('flags/createWallet',(createWallet:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.switchToPlay();
 });

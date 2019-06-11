@@ -3,15 +3,15 @@
  */
 
 import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
-import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
+import { sign } from '../core/genmnemonic';
+import { GlobalWallet } from '../core/globalWallet';
 import { getDeviceAllDetail } from '../logic/native';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
-import { Account, getAllAccount, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
-import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletToolsMod } from '../utils/commonjsTools';
-import { CMD, defaultPassword } from '../utils/constants';
-import { closeAllPage, delPopPhoneTips, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
+import { Account, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
+import { decrypt, encrypt } from '../utils/cipherTools';
+import { getMnemonicByHash } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 
@@ -21,6 +21,26 @@ const loginedCallbackList:LoginType[] = [];
 
 // 用户登出回调
 const logoutCallbackList:Function[] = [];
+
+// 登录失败回调
+let loginWalletFailed:Function = () => {
+    console.log('login failed');
+};
+
+// 踢人下线回调
+let kickOffline:Function = () => {
+    console.log('当前账号已登录');
+};
+
+// 设置登录失败回调
+export const setLoginWalletFailed = (callback:Function) => {
+    loginWalletFailed = callback;
+};
+
+// 设置踢人下线回调
+export const setKickOffline = (callback:Function) => {
+    kickOffline = callback;
+};
 
 interface LoginType {
     appId:string;
@@ -60,21 +80,15 @@ export const walletManualReconnect = () => {
 /**
  * 开启连接
  */
-export const openConnect = (secrectHash:string = '') => {
-    console.log('openConnect strat');
+export const openConnect = (secretHash?:string) => {
     setUrl(wsUrl);
-    console.time('loginMod start');
-    console.time('loginMod open connect');
-    open(conSuccess(secrectHash),conError,conClose,conReOpen);
+    open(conSuccess(secretHash),conError,conClose,conReOpen);
 };
 
 /**
  * 连接成功回调
  */
 const conSuccess = (secretHash:string) => {
-    console.time('login');
-    console.timeEnd('loginMod open connect');
-
     return () => {
         console.log('con success');
         setStore('user/offline',false);
@@ -122,8 +136,7 @@ export const applyAutoLogin = async () => {
         }
     };
     requestAsync(msg).then(async (res) => {
-        const cipherToolsMod = await getCipherToolsMod();
-        const decryptToken = cipherToolsMod.encrypt(res.token,deviceId);
+        const decryptToken = encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
     });
 };
@@ -132,11 +145,8 @@ export const applyAutoLogin = async () => {
  * 自动登录
  */
 export const autoLogin = async (conRandom:string) => {
-    console.time('loginMod autoLogin');
-    console.time('loginMod getCipherToolsMod');
-    const [deviceDetail,cipherToolsMod] = await Promise.all([getDeviceAllDetail(),getCipherToolsMod()]);
-    console.timeEnd('loginMod getCipherToolsMod');
-    const token = cipherToolsMod.decrypt(getStore('user/token'),deviceDetail.uuid.toString());
+    const deviceDetail = await getDeviceAllDetail();
+    const token = decrypt(getStore('user/token'),deviceDetail.uuid.toString());
     const param:any = {
         device_id: deviceDetail.uuid,
         token,
@@ -166,22 +176,16 @@ export const autoLogin = async (conRandom:string) => {
         }
     });
 };
+
 /**
  * 创建钱包后默认登录
- * @param mnemonic 助记词
  */
 export const defaultLogin = async (hash:string,conRandom:string) => {
-    const walletToolsModPromise =  getWalletToolsMod();
-    const GlobalWalletPromise =  getGlobalWalletClass();
-    const genmnemonicModPromise =  getGenmnemonicMod();
-    const deviceDetailPromise = getDeviceAllDetail();
-    // tslint:disable-next-line:max-line-length
-    const [walletToolsMod,GlobalWallet,genmnemonicMod,deviceDetail] = await Promise.all([walletToolsModPromise,GlobalWalletPromise,genmnemonicModPromise,deviceDetailPromise]);
-    const getMnemonicByHash = walletToolsMod.getMnemonicByHash;
+    const deviceDetail = await getDeviceAllDetail();
     const mnemonic = getMnemonicByHash(hash);
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
     console.log('================',wlt.exportPrivateKey());
-    const sign = genmnemonicMod.sign;
+    // const sign = genmnemonicMod.sign;
     const signStr = sign(conRandom, wlt.exportPrivateKey());
     const param:any = { sign: signStr };
     if (pi_update.inAndroidApp || pi_update.inIOSApp) {
@@ -267,6 +271,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     let resp;
     try {
         resp = await requestAsync(msg);
+        setBottomLayerReloginMsg(resp.user,resp.userType,resp.password);
         console.timeEnd('loginMod getRandom');
         const conRandom = resp.rand;
         if (secretHash) {
@@ -278,15 +283,11 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
                 loginWalletFailed();
             }
         }
-
-        setBottomLayerReloginMsg(resp.user,resp.userType,resp.password);
-        
         setStore('user/conUid', resp.uid);
         console.log('uid =',resp.uid);
         setStore('user/conRandom', conRandom);
     } catch (res) {
         resp = res;
-        const deviceDetail = await getDeviceAllDetail();
         if (res.type === 1014 && res.why !== deviceDetail.uuid) {  // 避免自己踢自己下线
             const flags = getStore('flags');
             console.log('flags =====',flags);
@@ -370,15 +371,6 @@ export const logoutAccountDel = (noLogin?:boolean) => {
     setTimeout(() => {
         openConnect();
     },100);
-    if (!noLogin) {
-        closeAllPage();
-        if (getAllAccount().length > 0) {
-            popNew('app-view-base-entrance1');
-        } else {
-            popNew('app-view-base-entrance');
-        }
-    }
-    delPopPhoneTips();
 };
 
 /**
@@ -475,25 +467,6 @@ export const logoutWallet = (success:Function) => {
 };
 
 /**
- * 踢人下线提示
- * @param secretHash 密码
- */
-export const kickOffline = (secretHash:string = '',phone?:number,code?:number,num?:string) => {
-    popNew('app-components-modalBoxCheckBox-modalBoxCheckBox',{ 
-        title:'检测到在其它设备有登录',
-        content:'清除其它设备账户信息' 
-    },(deleteAccount:boolean) => {
-        if (deleteAccount) {
-            getRandom(secretHash,CMD.FORCELOGOUTDEL,phone,code,num);
-        } else {
-            getRandom(secretHash,CMD.FORCELOGOUT,phone,code,num);
-        }
-    },() => {
-        getRandom(secretHash,CMD.FORCELOGOUT);
-    });
-};
-
-/**
  * 登录钱包并获取openId成功
  */
 const loginWalletSuccess = () => {
@@ -509,13 +482,6 @@ const loginWalletSuccess = () => {
 };
 
 /**
- * 钱包登录失败
- */
-const loginWalletFailed =  () => {
-    loginWalletFailedPop();
-};
-
-/**
  * 钱包登出成功
  */
 const logoutWalletSuccess =  () => {
@@ -524,40 +490,8 @@ const logoutWalletSuccess =  () => {
     }
 };
 
-/**
- * 密码弹框重新登录
- */
-const loginWalletFailedPop = async () => {
-    const wallet = getStore('wallet');
-    let psw;
-    let secretHash;
-    if (!wallet.setPsw) {
-        psw = defaultPassword;
-        const walletToolsMod = await getWalletToolsMod();
-        secretHash = await walletToolsMod.VerifyIdentidy(psw);
-    } else {
-        psw = await popPswBox([],true,true);
-        if (!psw) {
-            return;
-        }
-        const close = popNewLoading({ zh_Hans:'登录中',zh_Hant:'登錄中',en:'' });
-        const walletToolsMod = await getWalletToolsMod();
-        secretHash = await walletToolsMod.VerifyIdentidy(psw);
-        close && close.callback(close.widget);
-        if (!secretHash) {
-            popNewMessage('密码错误,请重新输入');
-            loginWalletFailedPop();
-
-            return;
-        }
-        
-    }
-    const conRandom = getStore('user/conRandom');
-    defaultLogin(secretHash,conRandom);
-};
-
 // 注册store
-export const registerStore = () => {
+const registerStore = () => {
     // 用户信息变化
     register('user/info', (userInfo: UserInfo) => {
         if (userInfo) {
@@ -584,3 +518,5 @@ export const registerStore = () => {
         fetchBtcFees();
     });
 };
+
+registerStore();

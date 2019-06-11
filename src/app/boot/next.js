@@ -226,7 +226,7 @@ winit.initNext = function () {
 	// 加载钱包项目登录相关资源
 	var loadWalletLoginSource = function(){
 		var sourceList = [
-			"app/net/login.js",
+			"app/logic/login.js",
 			"app/net/push.js",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",
@@ -248,8 +248,7 @@ winit.initNext = function () {
 			// erlang服务器推送注册
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
 			// erlang服务器连接登录
-			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.registerStore();
-			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.openConnect();
+			pi_modules.commonjs.exports.relativeGet("app/logic/login").exports.loginInit();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);

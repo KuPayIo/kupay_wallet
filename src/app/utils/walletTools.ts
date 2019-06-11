@@ -11,8 +11,8 @@ import { toMnemonic } from '../core/genmnemonic';
 import { buyProduct, getPurchaseRecord, getServerCloudBalance } from '../net/pull';
 import { getStore, setStore } from '../store/memstore';
 import { decrypt, encrypt, sha256 } from './cipherTools';
-import { getSecretsBaseMod } from './commonjsTools';
 import { defaultGasLimit, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from './constants';
+import { shareSecret } from './secretsBase';
 // tslint:disable-next-line:max-line-length
 import { calcHashValuePromise, fetchBtcMinerFee, fetchGasPrice, hexstrToU8Array, popNewLoading, popNewMessage } from './tools';
 import { sat2Btc, wei2Eth } from './unitTools';
@@ -204,9 +204,8 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
 export const fetchMnemonicFragment = async (hash) => {
     const mnemonicHexstr =  getMnemonicHexstr(hash);
     if (!mnemonicHexstr) return;
-    const secretsBase = await getSecretsBaseMod();
 
-    return secretsBase.shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
+    return shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
             .map(v => arrayBufferToBase64(hexstrToU8Array(v).buffer));
     
 };
