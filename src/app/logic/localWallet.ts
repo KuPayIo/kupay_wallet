@@ -3,21 +3,13 @@
  */
 import { base64ToArrayBuffer } from '../../pi/util/base64';
 import { ERC20Tokens } from '../config';
-import { AddrInfo, Wallet } from '../store/interface';
+import { GlobalWallet } from '../core/globalWallet';
+import { callCreateWalletRandom } from '../middleLayer/walletBridge';
+import { AddrInfo, CreateWalletOption, Wallet } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 import { getAhashMod, getDataCenter, getGenmnemonicMod, getGlobalWalletClass, getSecretsBaseMod, piRequire } from '../utils/commonjsTools';
 import { defalutShowCurrencys, lang } from '../utils/constants';
-import { calcHashValuePromise,getMnemonic,getXOR,hexstrToU8Array,popNewLoading, popNewMessage, u8ArrayToHexstr } from '../utils/tools';
-
-export interface Option {
-    psw: string; // 密码
-    nickName: string; // 昵称
-    imageBase64?: string; // 图片base64
-    imagePsw?: string; // 图片密码
-    mnemonic?: string; // 助记词
-    fragment1?: string; // 片段1
-    fragment2?: string; // 片段2
-}
+import { getMnemonic,getXOR,hexstrToU8Array,popNewLoading, popNewMessage, u8ArrayToHexstr } from '../utils/tools';
 
 /**
  * 创建钱包的方式
@@ -35,7 +27,7 @@ export enum CreateWalletType {
  * @param itype 创建钱包方式 1 随机 2 图片 3 标准导入 4 照片导入 5 片段导入
  * @param option 相关参数
  */
-export const createWallet = async (itype: CreateWalletType, option: Option) => {
+export const createWallet = async (itype: CreateWalletType, option: CreateWalletOption) => {
     let secrectHash;
     if (itype === CreateWalletType.Random) {
         const close = popNewLoading({ zh_Hans:'创建中...',zh_Hant:'創建中...',en:'' });
@@ -73,11 +65,11 @@ export const createWallet = async (itype: CreateWalletType, option: Option) => {
 /**
  * 游客登录创建钱包
  */
-export const touristLogin = async (option: Option) => {
+export const touristLogin = async (option: CreateWalletOption) => {
     const close = popNewLoading({ zh_Hans:'游客登录中',zh_Hant:'遊客登錄中',en:'' });
     let secrectHash;
     try {
-        secrectHash = await createWalletRandom(option,true);
+        secrectHash = await callCreateWalletRandom(option,true);
     } catch (err) {
         return '';
     } finally {
@@ -88,6 +80,7 @@ export const touristLogin = async (option: Option) => {
     getDataCenter().then(dataCenter => {
         dataCenter.refreshAllTx();
     });
+
     getDataCenter().then(dataCenter => {
         dataCenter.initErc20GasLimit();
     });
@@ -98,45 +91,13 @@ export const touristLogin = async (option: Option) => {
 /**
  * 手机号导入
  */
-export const phoneImport = async (option: Option) => {
+export const phoneImport = async (option: CreateWalletOption) => {
     let secrectHash;
     try {
-        secrectHash = await createWalletRandom(option,true);
+        secrectHash = await callCreateWalletRandom(option,true);
     } catch (err) {
         return '';
     }
-
-    return secrectHash;
-};
-/**
- * 随机创建钱包
- */
-export const createWalletRandom = async (option: Option,tourist?:boolean) => {
-    const secrectHashPromise = calcHashValuePromise(option.psw,getStore('user/salt'));
-    const GlobalWalletPromise = getGlobalWalletClass();
-    const [secrectHash,GlobalWallet] = await Promise.all([secrectHashPromise,GlobalWalletPromise]);
-    const gwlt = GlobalWallet.generate(secrectHash);
-    // 创建钱包基础数据
-    const wallet: Wallet = {
-        vault: gwlt.vault,
-        setPsw:tourist ? false : true,
-        isBackup: gwlt.isBackup,
-        sharePart:false,
-        helpWord:false,
-        showCurrencys: defalutShowCurrencys,
-        currencyRecords: gwlt.currencyRecords,
-        changellyPayinAddress:[],
-        changellyTempTxs:[]
-    };
-    const user = getStore('user');
-    user.id = gwlt.glwtId;
-    user.publicKey = gwlt.publicKey;
-    user.info = {
-        ...user.info,
-        nickName: option.nickName
-    };
-    setStore('wallet', wallet,false);
-    setStore('user', user);
 
     return secrectHash;
 };
@@ -145,7 +106,7 @@ export const createWalletRandom = async (option: Option,tourist?:boolean) => {
  * 图片创建钱包
  * @param option 参数
  */
-export const createWalletByImage = async (option: Option) => {
+export const createWalletByImage = async (option: CreateWalletOption) => {
     const secrectHashPromise = calcHashValuePromise(option.psw,getStore('user/salt'));
 
     const imgArgon2HashPromise = getStore('flags').imgArgon2HashPromise;
@@ -185,31 +146,6 @@ export const createWalletByImage = async (option: Option) => {
 };
 
 /**
- * 获取图片ahash
- * @param imageBase64 base64
- */
-const getImageAhash = (imageBase64: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-            piRequire(['pi/util/canvas']).then(mods => {
-                const drawImg = mods[0].drawImg;
-                const ab = drawImg(img);
-                getAhashMod().then(ahashMod => {
-                    const r = ahashMod.ahash(new Uint8Array(ab), img.width, img.height, 4);
-                    resolve(r);
-                });
-            });
-        };
-        img.onerror = e => {
-            reject(e);
-        };
-        img.crossOrigin = 'Anonymous';
-        img.src = imageBase64;
-    });
-};
-
-/**
  *
  * @param imagePsw 图片密码
  * @param ahash ahash
@@ -239,7 +175,7 @@ export const calcImgArgon2Hash = async (imageBase64: string,imagePsw: string) =>
 /**
  * 通过助记词导入钱包
  */
-export const importWalletByMnemonic = async (option: Option) => {
+export const importWalletByMnemonic = async (option: CreateWalletOption) => {
     const secrectHashPromise = calcHashValuePromise(option.psw,getStore('user/salt'));
     const GlobalWalletPromise = getGlobalWalletClass();
     const [secrectHash,GlobalWallet] = await Promise.all([secrectHashPromise,GlobalWalletPromise]);
@@ -272,7 +208,7 @@ export const importWalletByMnemonic = async (option: Option) => {
 /**
  * 冗余助记词导入
  */
-export const importWalletByFragment = async (option: Option) => {
+export const importWalletByFragment = async (option: CreateWalletOption) => {
     const shares = [option.fragment1, option.fragment2].map(v =>
     u8ArrayToHexstr(new Uint8Array(base64ToArrayBuffer(v)))
   );

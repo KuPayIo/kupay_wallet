@@ -9,6 +9,7 @@ import { getLang } from '../../../pi/util/lang';
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { sendCode } from '../../net/pull';
 import { getPullMod } from '../../utils/commonjsTools';
 import { popNewMessage } from '../../utils/tools';
 
@@ -51,8 +52,7 @@ export class BindPhone extends Widget {
 
             return;
         }
-        const pullMod = await getPullMod();
-        await pullMod.sendCode(this.props.phone, this.props.oldCode,this.props.verify);
+        await sendCode(this.props.phone, this.props.oldCode,this.props.verify);
         notify(event.node,'ev-getCode',{ value:this.props.phone,areaCode:this.props.oldCode });
         this.props.countdown = this.props.limitTime;
         clearTimeout(this.timer);

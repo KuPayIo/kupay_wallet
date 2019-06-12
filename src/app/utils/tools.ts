@@ -13,7 +13,7 @@ import { getModulConfig } from '../modulConfig';
 import { logoutAccount } from '../net/login';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
-import { getCipherToolsMod, getDataCenter, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
+import { getCipherToolsMod, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval, USD2CNYRateDefault } from './constants';
 
@@ -253,28 +253,6 @@ export const copyToClipboard = (copyText) => {
         document.execCommand('copy');
     }
     document.body.removeChild(input);
-};
-
-/**
- * 获取memery hash
- */
-export const calcHashValuePromise = (pwd, salt?):Promise<string> => {
-    return new Promise((resolve,reject) => {
-        console.time('pi_create  calc argonHash');
-        piRequire(['pi/browser/argonHash']).then(async (mods) => {
-            let secretHash;
-            const ArgonHash = mods[0].ArgonHash;
-            const argonHash = new ArgonHash();
-            argonHash.init();
-            secretHash = await argonHash.calcHashValuePromise({ pwd, salt });
-            console.timeEnd('pi_create  calc argonHash');
-            getDataCenter().then(dataCenter => {
-                dataCenter.checkAddr(secretHash);
-            });
-            
-            resolve(secretHash);
-        });
-    });
 };
 
 /**

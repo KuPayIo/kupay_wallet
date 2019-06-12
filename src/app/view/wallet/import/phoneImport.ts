@@ -7,6 +7,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { Option, phoneImport } from '../../../logic/localWallet';
+import { callGetRandom } from '../../../middleLayer/loginBridge';
 import { getRandom, logoutAccountDel } from '../../../net/login';
 import { regPhone, verifyPhone } from '../../../net/pull';
 import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
@@ -40,9 +41,6 @@ export class PhoneImport extends Widget {
         this.cancel && this.cancel();
     }
     
-    public customerServiceClick() {
-        popNew('app-view-wallet-import-customerService');
-    }
     /**
      * 输入完成后确认
      */
@@ -70,7 +68,7 @@ export class PhoneImport extends Widget {
             return;
         }
         if (verify) {  // 已经注册过
-            const itype = await getRandom(secretHash,undefined,phoneNum,this.props.code.join(''),this.props.areaCode);
+            const itype = await callGetRandom(secretHash,undefined,phoneNum,this.props.code.join(''),this.props.areaCode);
             console.log('getRandom itype = ',itype);
             close.callback(close.widget);
             if (itype === -301) {
@@ -83,7 +81,7 @@ export class PhoneImport extends Widget {
                 this.phoneImportError('出错啦');
             }
         } else {
-            const itype = await getRandom(secretHash);
+            const itype = await callGetRandom(secretHash);
             console.log('getRandom itype = ',itype);
             if (itype === 1) {
                 const data = await regPhone(this.props.phone, this.props.areaCode,this.props.code.join(''));

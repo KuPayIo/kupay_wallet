@@ -523,3 +523,16 @@ export interface Silver {
     price:number;          // 价格
     change:number;         // 涨跌
 }
+
+/**
+ * 创建钱包option
+ */
+export interface CreateWalletOption {
+    psw: string; // 密码
+    nickName: string; // 昵称
+    imageBase64?: string; // 图片base64
+    imagePsw?: string; // 图片密码
+    mnemonic?: string; // 助记词
+    fragment1?: string; // 片段1
+    fragment2?: string; // 片段2
+}

@@ -1,6 +1,5 @@
 // tslint:disable-next-line:max-line-length
-import { defaultLogin, getRandom, loginWallet, logoutAccountDel, logoutWallet, openConnect, setKickOffline, setLoginWalletFailed } from '../net/login';
-import { requestAsync } from '../net/pull';
+import { defaultLogin, getRandom, loginWallet, logoutAccountDel, logoutWallet, openConnect, requestAsync, setKickOffline, setLoginWalletFailed } from '../jsc/jscLogin';
 
 /**
  * login.ts 对应的 bridge layer
@@ -10,7 +9,10 @@ import { requestAsync } from '../net/pull';
   * 开启ws连接
   */
 export const openWSConnect = (secrectHash:string = '') => {
-    openConnect(secrectHash);
+    return new Promise(resolve => {
+        openConnect(secrectHash);
+        resolve();
+    });
 };
 
 /**

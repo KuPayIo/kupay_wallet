@@ -3,6 +3,7 @@
  */
 import { request } from '../../pi/net/ui/con_mgr';
 import { MainChainCoin, uploadFileUrl } from '../config';
+import { callRequestAsync } from '../middleLayer/loginBridge';
 import { getModulConfig } from '../modulConfig';
 import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
@@ -13,24 +14,6 @@ import { showError } from '../utils/toolMessages';
 import { base64ToFile, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
 import { defaultLogin } from './login';
-
-/**
- * 通用的异步通信
- */
-export const requestAsync = (msg: any):Promise<any> => {
-    return new Promise((resolve, reject) => {
-        request(msg, (resp: any) => {
-            if (resp.type) {
-                console.log(`错误信息为${resp.type}`);
-                reject(resp);
-            } else if (resp.result !== 1) {
-                reject(resp);
-            } else {
-                resolve(resp);
-            }
-        });
-    });
-};
 
 /**
  * 通用的异步通信 需要登录
@@ -48,36 +31,8 @@ export const requestAsyncNeedLogin = async (msg: any,secretHash:string) => {
         await defaultLogin(secretHash,getStore('user/conRandom'));
     }
 
-    return requestAsync(msg);
+    return callRequestAsync(msg);
     
-};
-
-/**
- * 获取所有的货币余额
- */
-export const getServerCloudBalance = () => {
-    const list = [];
-    list.push(CloudCurrencyType.KT);
-    list.push(CloudCurrencyType.SC);
-    for (const k in CloudCurrencyType) {
-        if (MainChainCoin.hasOwnProperty(k)) {
-            list.push(CloudCurrencyType[k]);
-        }
-    }
-    const msg = { type: 'wallet/account@get', param: { list:`[${list}]` } };
-    
-    return requestAsync(msg).then(balanceInfo => {
-        console.log('balanceInfo', balanceInfo);
-        const cloudBalances = parseCloudBalance(balanceInfo);
-        const cloudWallets = getStore('cloud/cloudWallets');
-        for (const [key,value] of cloudBalances) {
-            const cloudWallet = cloudWallets.get(key);
-            cloudWallet.balance = value;
-        }
-        setStore('cloud/cloudWallets',cloudWallets);
-    }).catch((res) => {
-        console.log(res);
-    });
 };
 
 /**
@@ -85,7 +40,7 @@ export const getServerCloudBalance = () => {
  */
 export const getBalance = async (currencyType: CloudCurrencyType) => {
     const msg = { type: 'wallet/account@get', param: { list: `[${currencyType}]` } };
-    requestAsync(msg).then(r => {
+    callRequestAsync(msg).then(r => {
         // todo 这里更新余额
     });
 };
@@ -99,7 +54,7 @@ export const getDividend = async () => {
     const num = (data.value !== '') ? wei2Eth(data.value[0][1]) :0;
     const yearIncome = (num * 365 / 7).toFixed(4); 
     
-    requestAsync(msg).then(data => {
+    callRequestAsync(msg).then(data => {
         const dividend: any = {
             totalDivid: wei2Eth(data.value[0]),
             totalDays: data.value[1],
@@ -116,7 +71,7 @@ export const getDividend = async () => {
 export const getBonusHistory = async() => {
     const msg = { type:'wallet/cloud@get_bonus_history',param:{} };
 
-    return requestAsync(msg);
+    return callRequestAsync(msg);
 };
 
 /**
@@ -124,7 +79,7 @@ export const getBonusHistory = async() => {
  */
 export const getMining = async () => {
     const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
-    requestAsync(msg).then(data => {
+    callRequestAsync(msg).then(data => {
         
         const totalNum = kpt2kt(data.mine_total);
         const holdNum = kpt2kt(data.mines);
@@ -158,7 +113,7 @@ export const getMiningHistory = async (start = '') => {
             count:PAGELIMIT
         } 
     };
-    requestAsync(msg).then(data => {
+    callRequestAsync(msg).then(data => {
         const miningHistory = parseMiningHistory(data);
         setStore('activity/mining/history', miningHistory);
     });
@@ -171,7 +126,7 @@ export const getMiningHistory = async (start = '') => {
 export const getInviteCode = async () => {
     const msg = { type: 'wallet/cloud@get_invite_code', param: {} };
 
-    return requestAsync(msg);
+    return callRequestAsync(msg);
 };
 
 /**
@@ -180,7 +135,7 @@ export const getInviteCode = async () => {
 export const inputInviteCdKey = async (code) => {
     const msg = { type: 'wallet/cloud@input_cd_key', param: { code: code } };
     try {
-        await requestAsync(msg);
+        await callRequestAsync(msg);
 
         return [];
     } catch (err) {
@@ -196,7 +151,7 @@ export const inputInviteCdKey = async (code) => {
  */
 export const getInviteCodeDetail = async () => {
     const msg = { type: 'wallet/cloud@get_invite_code_detail', param: {} };
-    const data = await requestAsync(msg);
+    const data = await callRequestAsync(msg);
 
     return parseMyInviteRedEnv(data.value);
 };
@@ -241,7 +196,7 @@ export const takeRedBag = async (rid) => {
     
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
 
         return res;
     } catch (err) {
@@ -259,7 +214,7 @@ export const convertRedBag = async (cid) => {
 
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
 
         return res;
     } catch (err) {
@@ -281,7 +236,7 @@ export const queryRedBagDesc = async (cid: string) => {
         }
     };
 
-    return requestAsync(msg);
+    return callRequestAsync(msg);
 };
 
 /**
@@ -307,7 +262,7 @@ export const querySendRedEnvelopeRecord = (start?: string) => {
     }
 
     try {
-        requestAsync(msg).then(async detail => {
+        callRequestAsync(msg).then(async detail => {
             const data = parseSendRedEnvLog(detail.value,start);
             setStore('activity/luckyMoney/sends',data);
         });
@@ -342,7 +297,7 @@ export const queryConvertLog = async (start?:string) => {
     }
 
     try {
-        requestAsync(msg).then(detail => {
+        callRequestAsync(msg).then(detail => {
             const data = parseConvertLog(detail,start);
             setStore('activity/luckyMoney/exchange',data);
         });
@@ -376,7 +331,7 @@ export const queryDetailLog = async (uid:number,rid: string,accId?:string) => {
     if (rid === '-1') return;
 
     try {
-        const detail = await requestAsync(msg);
+        const detail = await callRequestAsync(msg);
         
         return parseExchangeDetail(detail.value);
         
@@ -396,7 +351,7 @@ export const getAward = async () => {
 
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
-        const detail = await requestAsync(msg);
+        const detail = await callRequestAsync(msg);
         
         return detail;
         
@@ -418,7 +373,7 @@ export const getMineDetail = async (start = '') => {
             count:PAGELIMIT
         } 
     };
-    requestAsync(msg).then(detail => {
+    callRequestAsync(msg).then(detail => {
         const list = parseMineDetail(detail);
         setStore('activity/mining/addMine', list);
     });
@@ -435,7 +390,7 @@ export const getDividHistory = async (start = '') => {
             count:PAGELIMIT
         } 
     };
-    requestAsync(msg).then(data => {
+    callRequestAsync(msg).then(data => {
         const dividHistory = parseDividHistory(data);
         setStore('activity/dividend/history', dividHistory);
     });
@@ -447,7 +402,7 @@ export const getDividHistory = async (start = '') => {
 export const setData = async (param) => {
     const msg = { type: 'wallet/data@set', param: param };
 
-    return requestAsync(msg);
+    return callRequestAsync(msg);
 };
 
 /**
@@ -456,49 +411,9 @@ export const setData = async (param) => {
 export const getData = async (key) => {
     const msg = { type: 'wallet/data@get', param: { key } };
 
-    return requestAsync(msg);
+    return callRequestAsync(msg);
 };
 
-/**
- * 设置用户基础信息
- */
-export const setUserInfo = async () => {
-    const userInfo = getStore('user/info');
-    const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
-    
-    return requestAsync(msg);
-};
-
-/**
- * 获取当前用户信息
- */
-export const getUserInfoFromServer = async (uids: [number]) => {
-    const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
-
-    return requestAsync(msg).then(res => {
-        const userInfoStr = unicodeArray2Str(res.value[0]);
-        const localUserInfo = getStore('user/info');
-        console.log('localUserInfo ==== ',localUserInfo);
-        console.log('serverUserInfoStr ==== ',userInfoStr);
-        
-        if (userInfoStr !== JSON.stringify(localUserInfo)) {
-            const serverUserInfo = userInfoStr ? JSON.parse(userInfoStr) : {} ; 
-            console.log('serverUserInfo ==== ',serverUserInfo);
-            const userInfo = {};
-            for (const key in localUserInfo) {
-                if (!serverUserInfo[key]) {
-                    userInfo[key] = localUserInfo[key];
-                } else {
-                    userInfo[key] = serverUserInfo[key];
-                }
-            }
-            console.log('userInfo ==== ',userInfo);
-            setStore('user/info',userInfo);
-        } 
-        
-    });
-        
-};
 
 /**
  * 获取单个用户信息
@@ -512,7 +427,7 @@ export const getOneUserInfo = async (uids: number[], isOpenid?: number) => {
     }
 
     try {
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
         if (res.value[0]) {
 
             return JSON.parse(unicodeArray2Str(res.value[0]));
@@ -536,7 +451,7 @@ export const getUserList = async (uids: number[], isOpenid?: number) => {
     }
 
     try {
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
         if (res.value[0]) {
             const resAry = [];
             for (const element of res.value) {
@@ -558,7 +473,7 @@ export const getUserList = async (uids: number[], isOpenid?: number) => {
 export const doChat = async () => {
     const msg = { type: 'wallet/cloud@chat', param: {} };
 
-    requestAsync(msg).then(r => {
+    callRequestAsync(msg).then(r => {
         // 通信成功
     });
 };
@@ -582,7 +497,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
         param
     };
     try {
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
         const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
         const splitDetail = splitCloudCurrencyDetail(detail); 
@@ -621,7 +536,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
 //  */
 // export const getMineRank = async (num: number) => {
 //     const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
-//     requestAsync(msg).then(data => {
+//     callRequestAsync(msg).then(data => {
 //         const mineData = parseMineRank(data);
 //         setStore('activity/mining/mineRank', mineData);
 //     });
@@ -632,7 +547,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
 //  */
 // export const getMiningRank = async (num: number) => {
 //     const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
-//     requestAsync(msg).then(data => {
+//     callRequestAsync(msg).then(data => {
 //         const miningData = parseMiningRank(data);
 //         setStore('activity/mining/miningRank', miningData);
 //     });
@@ -644,7 +559,7 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
 export const getHighTop =  (num: number) => {
     const msg = { type: 'wallet/cloud@get_high_top', param: { num: num } };
 
-    return  requestAsync(msg).then(data => {
+    return  callRequestAsync(msg).then(data => {
         console.log('获取全部排名========================',data);
         
         return parseMiningRank(data);
@@ -656,7 +571,7 @@ export const getHighTop =  (num: number) => {
 export const getFriendsKTTops =  (arr:any) => {
     const msg = { type:'wallet/cloud@finds_high_top',param:{ finds:JSON.stringify(arr) } };
 
-    return  requestAsync(msg).then(data => {
+    return  callRequestAsync(msg).then(data => {
         console.log('获取好友排名========================',data);
 
         return parseMiningRank(data);
@@ -668,7 +583,7 @@ export const getFriendsKTTops =  (arr:any) => {
 export const verifyPhone = async (phone:string,num: string) => {
     const msg = { type: 'wallet/user@check_phone', param: { phone,num } };
     try {
-        await requestAsync(msg); 
+        await callRequestAsync(msg); 
 
         return false;
     } catch (err) {
@@ -692,7 +607,7 @@ export const sendCode = async (phone: string, num: string,verify:boolean = true)
     }
     const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: getModulConfig('WALLET_NAME') } };
     try {
-        return await requestAsync(msg);
+        return await callRequestAsync(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -713,7 +628,7 @@ export const regPhone = async (phone: string, num:string, code: string) => {
     const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code,num,old_num } };
     
     try {
-        return await requestAsync(msg);
+        return await callRequestAsync(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -731,7 +646,7 @@ export const checkPhoneCode = async (phone: string, code: string,cmd?:string) =>
     }
     const msg = { type: 'wallet/user@check_phoneCode', param };
     try {
-        return await requestAsync(msg);
+        return await callRequestAsync(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -746,7 +661,7 @@ export const unbindPhone = async (phone: string, code: string,num:string) => {
     const param:any = { phone, code,num };
     const msg = { type: 'wallet/user@unset_phone', param };
     try {
-        return await requestAsync(msg);
+        return await callRequestAsync(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -755,31 +670,12 @@ export const unbindPhone = async (phone: string, code: string,num:string) => {
 };
 
 /**
- * 获取绑定的手机号
- */
-export const getBindPhone = async () => {
-    const msg = { type: 'wallet/user@get_phone',param: {} };
-
-    return  requestAsync(msg).then(res => {
-        const userInfo  = getStore('user/info');
-        if (userInfo.phoneNumber !== res.phone || userInfo.areaCode !== res.num) {
-            userInfo.phoneNumber =  res.phone;
-            userInfo.areaCode = res.num;
-            setStore('user/info',userInfo);
-        }
-        
-    }).catch(err => {
-        // console.log(err);
-    });
-};
-
-/**
  * 获取代理
  */
 export const getProxy = async () => {
     const msg = { type: 'wallet/proxy@get_proxy', param: {} };
 
-    return requestAsync(msg);
+    return callRequestAsync(msg);
 };
 
 // ===============================充值提现
@@ -793,7 +689,7 @@ export const getBankAddr = async () => {
     };
 
     try {
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
 
         return res.value;
     } catch (err) {
@@ -812,7 +708,7 @@ export const getBtcBankAddr = async () => {
     };
 
     try {
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
 
         return res.value;
     } catch (err) {
@@ -839,7 +735,7 @@ export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,n
         }
     };
     try {
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
         console.log('rechargeToServer',res);
         
         return true;
@@ -869,7 +765,7 @@ export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,f
         }
     };
     try {
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
         console.log('btcRechargeToServer',res);
         
         return true;
@@ -960,7 +856,7 @@ export const getRechargeLogs = async (coin: string,start?) => {
     }
    
     try {
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
         const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
@@ -1016,7 +912,7 @@ export const getWithdrawLogs = async (coin: string,start?) => {
     }
    
     try {
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
         const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
         const detail = parseRechargeWithdrawalLog(coin,res.value);
         const canLoadMore = detail.length >= PAGELIMIT;
@@ -1051,7 +947,7 @@ export const getProductList = async () => {
     };
     
     try {
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
         const result = parseProductList(res);
         setStore('activity/financialManagement/products',result);
 
@@ -1108,7 +1004,7 @@ export const getPurchaseRecord = async (start = '') => {
     };
     
     try {
-        const res = await requestAsync(msg);
+        const res = await callRequestAsync(msg);
         console.log('getPurchaseRecord',res);
         const record = parsePurchaseRecord(res);
         setStore('activity/financialManagement/purchaseHistories',record);
@@ -1141,61 +1037,12 @@ export const buyBack = async (timeStamp:any,secretHash:string) => {
 };
 
 /**
- * 获取gasPrice
- */
-export const fetchGasPrices = async () => {
-    const msg = {
-        type: 'wallet/bank@get_gas',
-        param: {}
-    };
-    
-    try {
-        const res = await requestAsync(msg);
-        
-        const gasPrice = {
-            [MinerFeeLevel.Standard]:Number(res.standard),
-            [MinerFeeLevel.Fast]:Number(res.fast),
-            [MinerFeeLevel.Fastest]:Number(res.fastest)
-        };
-        setStore('third/gasPrice',gasPrice);
-
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-    }
-};
-
-/**
- * 获取gasPrice
- */
-export const fetchBtcFees = async () => {
-    const msg = {
-        type: 'wallet/bank@get_fees',
-        param: {}
-    };
-    
-    try {
-        const res = await requestAsync(msg);
-        const obj = JSON.parse(res.btc);
-        const btcMinerFee = {
-            [MinerFeeLevel.Standard]:Number(obj.low_fee_per_kb),
-            [MinerFeeLevel.Fast]:Number(obj.medium_fee_per_kb),
-            [MinerFeeLevel.Fastest]:Number(obj.high_fee_per_kb)
-        };
-        setStore('third/btcMinerFee',btcMinerFee);
-
-    } catch (err) {
-        showError(err && (err.result || err.type));
-    }
-};
-
-/**
  * 获取ST价格
  */
 export const getSilverPrice = async (ispay:number = 0) => {
     const msg = { type:'get_silverprice',param:{ ispay } };
     try {
-        const resData:any = await requestAsync(msg);
+        const resData:any = await callRequestAsync(msg);
         if (resData.result === 1) {
             setStore('third/silver',{ price:resData.price,change:resData.change });
         }
@@ -1203,25 +1050,6 @@ export const getSilverPrice = async (ispay:number = 0) => {
         // showError(err && (err.result || err.type));
 
     }
-};
-
-// 获取真实用户
-export const getRealUser = async () => {
-    const msg = {
-        type: 'wallet/user@get_real_user',
-        param: {}
-    };
-
-    requestAsync(msg).then(res => {
-        const userInfo  = getStore('user/info');
-        const isRealUser = res.value !== 'false';
-        
-        if (isRealUser !== userInfo.isRealUser) {
-            userInfo.isRealUser =  isRealUser;
-            setStore('user/info',userInfo);
-        }
-    });
-   
 };
 
 // 上传文件
@@ -1300,7 +1128,7 @@ export const changellySign = (data:any) => {
         }
     };
 
-    return requestAsync(msg);
+    return callRequestAsync(msg);
 };
 
 /**
@@ -1312,5 +1140,5 @@ export const getInviteUserAccIds = () => {
         param: {}
     };
 
-    return requestAsync(msg);
+    return callRequestAsync(msg);
 };

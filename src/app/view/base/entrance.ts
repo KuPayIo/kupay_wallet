@@ -1,6 +1,6 @@
 import { Widget } from '../../../pi/widget/widget';
 import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
-import { getLoginMod } from '../../utils/commonjsTools';
+import { openWSConnect } from '../../middleLayer/loginBridge';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewMessage } from '../../utils/tools';
 
@@ -22,15 +22,14 @@ export class Entrance extends Widget {
 
                 return;
             }
-            getLoginMod().then(mod => {
-                mod.openConnect(secrectHash);
-            });
+            openWSConnect(secrectHash);
             
             this.ok && this.ok();
             popNewMessage('登录成功');
         });
         console.log('游客登录');
     }
+    
     // 注册登录 
     public registerLoginClick() {
         console.log('注册登录');

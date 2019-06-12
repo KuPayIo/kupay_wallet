@@ -2,7 +2,7 @@
  * 钱包登录模块
  */
 
-import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
+import { closeCon, open, reopen, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { wsUrl } from '../config';
 import { sign } from '../core/genmnemonic';
@@ -13,7 +13,7 @@ import { Account, getStore, initCloudWallets, LocalCloudWallet,register, setStor
 import { decrypt, encrypt } from '../utils/cipherTools';
 import { getMnemonicByHash } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
-import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
+import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './jscPull';
 
 declare var pi_update;
 // 登录成功之后的回调列表
@@ -75,6 +75,24 @@ export const walletManualReconnect = () => {
         console.log('walletManualReconnect openConnect');
         openConnect();
     }
+};
+
+/**
+ * 通用的异步通信
+ */
+export const requestAsync = (msg: any):Promise<any> => {
+    return new Promise((resolve, reject) => {
+        request(msg, (resp: any) => {
+            if (resp.type) {
+                console.log(`错误信息为${resp.type}`);
+                reject(resp);
+            } else if (resp.result !== 1) {
+                reject(resp);
+            } else {
+                resolve(resp);
+            }
+        });
+    });
 };
 
 /**
