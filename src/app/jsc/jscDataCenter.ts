@@ -8,13 +8,13 @@ import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
 import { getSilverPrice } from '../net/pull';
 import { changellyGetCurrencies, fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
-import { BigNumber } from '../res/js/bignumber';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
 import { getStore,setStore } from '../store/memstore';
 import { erc20GasLimitRate, ethTokenTransferCode, lang } from '../utils/constants';
 import { formatBalance,getAddrsAll,getConfirmBlockNumber,getCurrentEthAddr, parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
 import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
 import { fetchLocalTxByHash,fetchTransactionList,getMnemonicByHash } from '../utils/walletTools';
+import { BigNumber } from './bignumber';
 /**
  * 创建事件处理器表
  * @example

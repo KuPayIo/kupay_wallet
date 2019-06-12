@@ -1,8 +1,8 @@
 import { popNew } from '../../pi/ui/root';
-import { callVerifyIdentidy } from '../middleLayer/coreBridge';
 // tslint:disable-next-line:max-line-length
 import { callDefaultLogin, callGetRandom, callLogoutAccountDel, callSetKickOffline, callSetLoginWalletFailed, openWSConnect } from '../middleLayer/loginBridge';
 import { callGetAllAccount, getStoreData } from '../middleLayer/memBridge';
+import { callVerifyIdentidy } from '../middleLayer/walletBridge';
 import { CMD, defaultPassword } from '../utils/constants';
 import { closeAllPage, delPopPhoneTips, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 

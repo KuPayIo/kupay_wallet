@@ -1,5 +1,6 @@
 // tslint:disable-next-line:max-line-length
 import { defaultLogin, getRandom, loginWallet, logoutAccountDel, logoutWallet, openConnect, requestAsync, setKickOffline, setLoginWalletFailed } from '../jsc/jscLogin';
+import { getServerCloudBalance } from '../jsc/jscPull';
 
 /**
  * login.ts 对应的 bridge layer
@@ -89,4 +90,9 @@ export const callSetKickOffline = (callback:Function) => {
         setKickOffline(callback);
         resolve();
     });
+};
+
+// 获取云端余额
+export const callGetServerCloudBalance = () => {
+    return getServerCloudBalance();
 };

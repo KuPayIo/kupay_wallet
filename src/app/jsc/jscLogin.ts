@@ -10,10 +10,10 @@ import { GlobalWallet } from '../core/globalWallet';
 import { getDeviceAllDetail } from '../logic/native';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
 import { Account, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
-import { decrypt, encrypt } from '../utils/cipherTools';
 import { getMnemonicByHash } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './jscPull';
+import { decrypt, encrypt } from './jscWallet';
 
 declare var pi_update;
 // 登录成功之后的回调列表

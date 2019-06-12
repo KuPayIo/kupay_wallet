@@ -13,7 +13,7 @@ import { getModulConfig } from '../modulConfig';
 import { logoutAccount } from '../net/login';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
-import { getCipherToolsMod, getGenmnemonicMod, piLoadDir, piRequire } from './commonjsTools';
+import { piLoadDir, piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval, USD2CNYRateDefault } from './constants';
 
@@ -181,23 +181,6 @@ export const hexstrToU8Array = (str: string) => {
 };
 
 /**
- * u8数组转十六进制字符串
- * 
- * @param u8Array 输入数组
- */
-export const u8ArrayToHexstr = (u8Array: Uint8Array) => {
-    let str = '';
-    for (let i = 0; i < u8Array.length; i++) {
-        str += Math.floor(u8Array[i] / 16).toString(16);
-        str += (u8Array[i] % 16).toString(16);
-        // str += u8Array[i].toString(16);
-    }
-    if (str[0] === '0') str = str.slice(1);
-
-    return str;
-};
-
-/**
  * 获取指定货币下余额总数
  * @param currencyName 货币名称
  */
@@ -216,25 +199,6 @@ export const fetchBalanceOfCurrency = (currencyName: string) => {
     }
 
     return balance;
-};
-
-/**
- * 获取异或值
- * @param first 前段
- * @param second 后段
- */
-
-export const getXOR = (first, second) => {
-    if (first.length !== second.length) return '';
-
-    const arr = [];
-    for (let i = 0; i < first.length; i++) {
-        const m = parseInt(first.substr(i, 1), 16);
-        const k = parseInt(second.substr(i, 1), 16);
-        arr.push((m ^ k).toString(16));
-    }
-
-    return arr.join('');
 };
 
 // 复制到剪切板
@@ -381,16 +345,6 @@ export const timestampFormatToDate = (timestamp: number) => {
     return `${year}-${month}-${day}`;
 };
 // ==========================================================new version tools
-
-// 获取gasPrice
-export const fetchGasPrice = (minerFeeLevel: MinerFeeLevel) => {
-    return getStore('third/gasPrice')[minerFeeLevel];
-};
-
-// 获取btc miner fee
-export const fetchBtcMinerFee = (minerFeeLevel: MinerFeeLevel) => {
-    return getStore('third/btcMinerFee')[minerFeeLevel];
-};
 
 /**
  * 获取总资产
@@ -1138,26 +1092,6 @@ export const playerName = async () => {
     name = unicodeArray2Str(nameWare[0][Math.floor(Math.random() * num1)]) + unicodeArray2Str(nameWare[1][Math.floor(Math.random() * num2)]);
     
     return name;
-};
-
-/**
- * 获取助记词
- */
-export const getMnemonic = async (passwd) => {
-    const wallet = getStore('wallet');
-    const hashPromise = calcHashValuePromise(passwd, getStore('user/salt'));
-    const cipherToolsrPromise = getCipherToolsMod();
-    const genmnemonicPromise = getGenmnemonicMod();
-    const [hash,cipherTools,genmnemonic] = await Promise.all([hashPromise,cipherToolsrPromise,genmnemonicPromise]);
-    try {
-        const r = cipherTools.decrypt(wallet.vault,hash);
-        
-        return genmnemonic.toMnemonic(lang, hexstrToU8Array(r));
-    } catch (error) {
-        console.log(error);
-
-        return '';
-    }
 };
 
 /**
