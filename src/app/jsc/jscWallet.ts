@@ -11,10 +11,10 @@ import { GlobalWallet } from '../core/globalWallet';
 import { AddrInfo, CreateWalletOption, MinerFeeLevel, Wallet } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 import { defalutShowCurrencys, defaultGasLimit, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from '../utils/constants';
-import { sat2Btc, wei2Eth } from '../utils/unitTools';
+import { wei2Eth } from '../utils/unitTools';
 import { ahash } from './ahash';
 import { dataCenter } from './jscDataCenter';
-import { getXOR, hexstrToU8Array, u8ArrayToHexstr } from './jscTools';
+import { getXOR, hexstrToU8Array, sat2Btc, u8ArrayToHexstr } from './jscTools';
 import { restoreSecret, shareSecret } from './secretsBase';
 
 /**
@@ -462,8 +462,8 @@ export const passwordChange = async (secretHash: string, newPsw: string) => {
     setStore('wallet',wallet);
 };
 
-// 更新矿工费
-export const fetchMinerFeeList = (currencyName) => {
+// 获取矿工费
+export const fetchMinerFeeList = (currencyName:string) => {
     const cn = (currencyName === 'ETH' || ERC20Tokens[currencyName]) ? 'ETH' : 'BTC';
     const toa = timeOfArrival[cn];
     const minerFeeList = [];

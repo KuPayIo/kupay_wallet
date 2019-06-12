@@ -3,19 +3,52 @@
  */
 import { getStore as gameGetStore, setStore as gameSetStore } from '../../earn/client/app/store/memstore';
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
-import { popModalBoxs, popNew } from '../../pi/ui/root';
-import { getLang } from '../../pi/util/lang';
 import { CloudCurrencyType } from '../store/interface';
-import { getAllAccount, getStore, register, setStore } from '../store/memstore';
+import { getStore, register, setStore } from '../store/memstore';
 import { CMD } from '../utils/constants';
-import { closeAllPage, getPopPhoneTips, getStaticLanguage, getUserInfo, popNewMessage } from '../utils/tools';
-import { logoutAccount, logoutAccountDel } from './login';
-import { getHighTop, getServerCloudBalance } from './pull';
+import { getUserInfo } from '../utils/tools';
+import { logoutAccount, logoutAccountDel } from './jscLogin';
+import { getHighTop, getServerCloudBalance } from './jscPull';
 
 // ===================================================== 导入
 
 // ===================================================== 导出
 
+let forceOffline:Function = () => {
+    console.log('强制被踢下线');
+};
+
+// 设置强制被踢下线提示弹框
+export const setForceOffline = (callback:Function) => {
+    forceOffline = callback;
+};
+
+let payOk:Function = () => {
+    console.log('充值成功');
+};
+
+// 设置充值成功提示
+export const setPayOk = (callback:Function) => {
+    payOk = callback;
+};
+
+let setPswPop:Function = () => {
+    console.log('余额变化  要求设置密码');
+};
+
+// 设置密码弹框
+export const setSetPswPop = (callback:Function) => {
+    setPswPop = callback;
+};
+
+let bindPhonePop:Function = () => {
+    console.log('余额变化 绑定手机弹框');
+};
+
+// 设置绑定手机弹框
+export const setBindPhonePop = (callback:Function) => {
+    bindPhonePop = callback;
+};
 /**
  * 主动推送初始化
  */ 
@@ -32,33 +65,7 @@ export const initPush = () => {
             logoutAccountDel(true);
         }
        
-        return () => {
-            popNew('app-components-modalBox-modalBox',{
-                sureText:{ zh_Hans:'重新登录',zh_Hant:'重新登錄',en:'' },
-                cancelText:{ zh_Hans:'退出',zh_Hant:'退出',en:'' },
-                title:{ zh_Hans:'下线通知',zh_Hant:'下線通知',en:'' },
-                content:{ zh_Hans:'您的账户已被下线，如非本人操作，则助记词可能已泄露。',zh_Hant:'您的賬戶已被下線，如非本人操作，則助記詞可能已洩露。',en:'' }
-            },() => {
-                setTimeout(() => {
-                    closeAllPage();
-                    if (getAllAccount().length > 0) {
-                        popNew('app-view-base-entrance1');
-                    } else {
-                        popNew('app-view-base-entrance');
-                    }
-                },100);
-            },() => {
-                setTimeout(() => {
-                    closeAllPage();
-                    if (getAllAccount().length > 0) {
-                        popNew('app-view-base-entrance1');
-                    } else {
-                        popNew('app-view-base-entrance');
-                    }
-                },100);
-            });
-        };
-
+        return forceOffline;
     });
 
     // 监听充值成功事件
@@ -69,9 +76,7 @@ export const initPush = () => {
         });
         console.log('服务器推送成功==========================',res);
 
-        return () => {
-            popNewMessage(getStaticLanguage().transfer.rechargeTips);
-        };
+        return payOk;
     });
 
     // 监听邀请好友成功事件
@@ -120,38 +125,12 @@ export const initPush = () => {
             const setPsw = getStore('flags').setPsw;
             if (setPsw) return;
             setStore('flags/setPsw',true);  // 防止多次弹窗
-            setTimeout(() => {
-                const modalBox = { 
-                    zh_Hans:{
-                        title:'设置密码',
-                        content:'为了您的资产安全，请您立即设置支付密码',
-                        sureText:'去设置',
-                        onlyOk:true
-                    },
-                    zh_Hant:{
-                        title:'設置密碼',
-                        content:'為了您的資產安全，請您立即設置支付密碼',
-                        sureText:'去設置',
-                        onlyOk:true
-                    },
-                    en:'' 
-                };
-                popModalBoxs('app-components-modalBox-modalBox',modalBox[getLang()],() => {  
-                    popNew('app-view-mine-setting-settingPsw',{});
-                },undefined,true);
-                
-            },3000);
-            
+            setPswPop();
         } else if (!userInfo.phoneNumber) {
             const bindPhone = getStore('flags').bindPhone;
             if (bindPhone) return;
             setStore('flags/bindPhone',true);  // 防止多次弹窗
-            setTimeout(() => {
-                popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
-                    popNew('app-view-mine-setting-phone',{ jump:true });
-                },undefined,true);      
-            },3000);
-            
+            bindPhonePop();
         }
         
     });

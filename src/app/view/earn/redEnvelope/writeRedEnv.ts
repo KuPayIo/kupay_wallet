@@ -6,12 +6,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { callGetRealUser, callGetServerCloudBalance } from '../../../middleLayer/netBridge';
+import { callVerifyIdentidy } from '../../../middleLayer/walletBridge';
 import { getModulConfig } from '../../../modulConfig';
-import { getRealUser, getServerCloudBalance, sendRedEnvlope } from '../../../net/pull';
+import { sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
 import { currencyType, popNewLoading, popNewMessage } from '../../../utils/tools';
-import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -61,7 +62,7 @@ export class WriteRedEnv extends Widget {
         this.language = this.config.value[getLang()];
         this.updateBalance();
         if (!this.props.realUser) {
-            getRealUser();
+            callGetRealUser();
         }
     }
 
@@ -235,7 +236,7 @@ export class WriteRedEnv extends Widget {
         },
             async (r) => {
                 const close = popNewLoading(this.language.loading);
-                const secretHash = await VerifyIdentidy(r);
+                const secretHash = await callVerifyIdentidy(r);
                 close.callback(close.widget);
                 if (secretHash) {
                     this.sendRedEnv(secretHash);
@@ -265,7 +266,7 @@ export class WriteRedEnv extends Widget {
             this.props.totalNum = 0;
             this.props.totalAmount = 0;
             this.props.message = '';
-            getServerCloudBalance();// 更新余额
+            callGetServerCloudBalance();// 更新余额
             setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
             this.paint(true);
         });

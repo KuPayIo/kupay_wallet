@@ -4,12 +4,11 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../logic/dataCenter';
+import { callFetchTransactionList } from '../../../middleLayer/walletBridge';
 import { TxHistory, TxType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { calCurrencyLogoUrl, currencyExchangeAvailable, fetchBalanceValueOfCoin, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, parseAccount, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
-import { fetchTransactionList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -31,11 +30,11 @@ export class TransactionHome extends Widget {
         this.init();
         dataCenter.updateAddrInfo(getCurrentAddrInfo(this.props.currencyName).addr,this.props.currencyName);
     }
-    public init() {
+    public async init() {
         const currencyName = this.props.currencyName;
         const balance = formatBalance(getCurrentAddrInfo(this.props.currencyName).balance);
         const balanceValue =  fetchBalanceValueOfCoin(currencyName,balance);
-        const txList = this.parseTxList();
+        const txList = await this.parseTxList();
         const canConvert = this.canConvert();
         const color = getStore('setting/changeColor','redUp');
         const addr = parseAccount(getCurrentAddrByCurrencyName(currencyName));
@@ -66,10 +65,10 @@ export class TransactionHome extends Widget {
         
     }
     // 解析txList
-    public parseTxList() {
+    public async parseTxList() {
         const currencyName = this.props.currencyName;
         const curAddr = getCurrentAddrByCurrencyName(currencyName);
-        const txList = fetchTransactionList(curAddr,currencyName);
+        const txList = await callFetchTransactionList(curAddr,currencyName);
         txList.forEach(item => {
             item.TimeShow = timestampFormat(item.time).slice(5);
             item.statusShow =  parseStatusShow(item).text; 

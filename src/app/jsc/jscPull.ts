@@ -1,8 +1,9 @@
 import { MainChainCoin } from '../config';
 import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
-import { parseCloudBalance } from '../store/parse';
-import { requestAsync } from './jscLogin';
+import { parseCloudBalance, parseMiningRank, parseRechargeWithdrawalLog } from '../store/parse';
+import { PAGELIMIT } from '../utils/constants';
+import { requestAsync, requestAsyncNeedLogin } from './jscLogin';
 import { unicodeArray2Str } from './jscTools';
 
 /**
@@ -161,4 +162,251 @@ export const setUserInfo = async () => {
     const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
     return requestAsync(msg);
+};
+
+/**
+ * 获取全部用户嗨豆排名列表
+ */
+export const getHighTop =  (num: number) => {
+    const msg = { type: 'wallet/cloud@get_high_top', param: { num: num } };
+
+    return  requestAsync(msg).then(data => {
+        console.log('获取全部排名========================',data);
+        
+        return parseMiningRank(data);
+    });
+    
+};
+
+/**
+ * 充值历史记录
+ */
+export const getRechargeLogs = async (coin: string,start?) => {
+    // tslint:disable-next-line:no-reserved-keywords
+    let type;
+    if (coin === 'BTC') {
+        type = 'wallet/bank@btc_pay_log';
+    } else if (coin === 'ETH') {
+        type = 'wallet/bank@pay_log';
+    } else { // KT
+        return;
+    }
+    let msg;
+    if (start) {
+        msg = {
+            type,
+            param: {
+                start,
+                count:PAGELIMIT
+            }
+        };
+    } else {
+        msg = {
+            type,
+            param: {
+                count:PAGELIMIT
+            }
+        };
+    }
+   
+    try {
+        const res = await requestAsync(msg);
+        const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
+        const detail = parseRechargeWithdrawalLog(coin,res.value);
+        const canLoadMore = detail.length >= PAGELIMIT;
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            if (start) {
+                cloudWallet.rechargeLogs.list.push(...detail);
+            } else {
+                cloudWallet.rechargeLogs.list = detail;
+            }
+            cloudWallet.rechargeLogs.start = nextStart;
+            cloudWallet.rechargeLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
+        }
+        
+    } catch (err) {
+
+        return;
+    }
+};
+
+/**
+ * 提现历史记录
+ */
+export const getWithdrawLogs = async (coin: string,start?) => {
+    // tslint:disable-next-line:no-reserved-keywords
+    let type;
+    if (coin === 'BTC') {
+        type = 'wallet/bank@btc_to_cash_log';
+    } else if (coin === 'ETH') {
+        type = 'wallet/bank@to_cash_log';
+    } else {// KT
+        return;
+    }
+    let msg;
+    if (start) {
+        msg = {
+            type,
+            param: {
+                start,
+                count:PAGELIMIT
+            }
+        };
+    } else {
+        msg = {
+            type,
+            param: {
+                count:PAGELIMIT
+            }
+        };
+    }
+   
+    try {
+        const res = await requestAsync(msg);
+        const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
+        const detail = parseRechargeWithdrawalLog(coin,res.value);
+        const canLoadMore = detail.length >= PAGELIMIT;
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            if (start) {
+                cloudWallet.withdrawLogs.list.push(...detail);
+            } else {
+                cloudWallet.withdrawLogs.list = detail;
+            }
+            cloudWallet.withdrawLogs.start = nextStart;
+            cloudWallet.withdrawLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
+        }
+        
+    } catch (err) {
+
+        return;
+    }
+
+};
+
+/**
+ * 获取服务端eth钱包地址
+ */
+export const getBankAddr = async () => {
+    const msg = {
+        type: 'wallet/bank@get_bank_addr',
+        param: { }
+    };
+
+    try {
+        const res = await requestAsync(msg);
+
+        return res.value;
+    } catch (err) {
+
+        return;
+    }
+};
+
+/**
+ * 向服务器发起充值请求
+ */
+// tslint:disable-next-line:max-line-length
+export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:string,coin:number= 101) => {
+    const msg = {
+        type: 'wallet/bank@pay',
+        param: {
+            from:fromAddr,
+            to:toAddr,
+            tx,
+            nonce,
+            gas,
+            value,
+            coin
+        }
+    };
+    try {
+        const res = await requestAsync(msg);
+        console.log('rechargeToServer',res);
+        
+        return true;
+    } catch (err) {
+
+        return false;
+    }
+
+};
+
+/**
+ * 向服务器发起充值请求
+ */
+// tslint:disable-next-line:max-line-length
+export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,fees:number,oldHash:string) => {
+    // tslint:disable-next-line:variable-name
+    const old_tx = oldHash || 'none';
+    const msg = {
+        type: 'wallet/bank@btc_pay',
+        param: {
+            to:toAddr,
+            tx,
+            value,
+            fees,
+            old_tx
+        }
+    };
+    try {
+        const res = await requestAsync(msg);
+        console.log('btcRechargeToServer',res);
+        
+        return true;
+    } catch (err) {
+
+        return false;
+    }
+
+};
+
+/**
+ * 提现
+ */
+export const withdrawFromServer = async (toAddr:string,value:string,secretHash:string) => {
+    const msg = {
+        type: 'wallet/bank@to_cash',
+        param: {
+            to:toAddr,
+            value
+        }
+    };
+
+    try {
+        const res = await requestAsyncNeedLogin(msg,secretHash);
+        console.log('withdrawFromServer',res);
+
+        return res.txid;
+    } catch (err) {
+
+        return;
+    }
+};
+
+/**
+ * btc提现
+ */
+export const btcWithdrawFromServer = async (toAddr:string,value:string,secretHash:string) => {
+    const msg = {
+        type: 'wallet/bank@btc_to_cash',
+        param: {
+            to:toAddr,
+            value
+        }
+    };
+
+    try {
+        const res = await requestAsyncNeedLogin(msg,secretHash);
+
+        return res.txid;
+    } catch (err) {
+
+        return ;
+    }
 };

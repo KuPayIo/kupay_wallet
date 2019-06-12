@@ -2,14 +2,13 @@
  * 云端绑定手机
  */
 // =================================================导入
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { Option, phoneImport } from '../../../logic/localWallet';
-import { callGetRandom } from '../../../middleLayer/loginBridge';
-import { getRandom, logoutAccountDel } from '../../../net/login';
+import { phoneImport } from '../../../logic/localWallet';
+import { callGetRandom, callLogoutAccountDel } from '../../../middleLayer/netBridge';
 import { regPhone, verifyPhone } from '../../../net/pull';
+import { CreateWalletOption } from '../../../store/interface';
 import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
 import { getDataCenter } from '../../../utils/commonjsTools';
 import { defaultPassword } from '../../../utils/constants';
@@ -54,7 +53,7 @@ export class PhoneImport extends Widget {
 
             return;
         }
-        const option:Option = {
+        const option:CreateWalletOption = {
             psw:defaultPassword,
             nickName:await playerName()
         };
@@ -69,7 +68,6 @@ export class PhoneImport extends Widget {
         }
         if (verify) {  // 已经注册过
             const itype = await callGetRandom(secretHash,undefined,phoneNum,this.props.code.join(''),this.props.areaCode);
-            console.log('getRandom itype = ',itype);
             close.callback(close.widget);
             if (itype === -301) {
                 this.phoneImportError('验证码错误');
@@ -82,7 +80,6 @@ export class PhoneImport extends Widget {
             }
         } else {
             const itype = await callGetRandom(secretHash);
-            console.log('getRandom itype = ',itype);
             if (itype === 1) {
                 const data = await regPhone(this.props.phone, this.props.areaCode,this.props.code.join(''));
                 close.callback(close.widget);
@@ -104,9 +101,9 @@ export class PhoneImport extends Widget {
         
     }
     // 手机导入失败
-    public phoneImportError(tips:string) {
+    public async phoneImportError(tips:string) {
         popNewMessage(tips);
-        logoutAccountDel(true);
+        await callLogoutAccountDel(true);
         this.props.code = [];
         this.setCode();
     }

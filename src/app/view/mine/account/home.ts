@@ -6,11 +6,11 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
+import { callBackupMnemonic, callGetMnemonic } from '../../../middleLayer/walletBridge';
 import { uploadFile } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
-import { getMnemonic, getUserInfo, imgResize, popNewLoading, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
-import { backupMnemonic } from '../../../utils/walletTools';
+import { getUserInfo, imgResize, popNewLoading, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -91,7 +91,7 @@ export class AccountHome extends Widget {
     public async backupWalletClick() {
         const psw = await popPswBox();
         if (!psw) return;
-        const ret = await backupMnemonic(psw);
+        const ret = await callBackupMnemonic(psw);
         if (ret) {
             popNew('app-view-wallet-backup-index', { ...ret,pi_norouter:true });
         }
@@ -104,7 +104,7 @@ export class AccountHome extends Widget {
         if (!psw) return;
         const close = popNewLoading(this.language.loading);
         try {
-            const mnemonic = await getMnemonic(psw);
+            const mnemonic = await callGetMnemonic(psw);
             if (mnemonic) {
                 popNew('app-view-mine-account-exportPrivateKey', { mnemonic });
             } else {

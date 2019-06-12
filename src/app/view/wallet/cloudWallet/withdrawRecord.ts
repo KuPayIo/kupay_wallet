@@ -5,11 +5,11 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
+import { callFetchLocalTxByHash1 } from '../../../middleLayer/walletBridge';
 import { getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register } from '../../../store/memstore';
 import { parseStatusShow, timestampFormat } from '../../../utils/tools';
-import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -53,8 +53,8 @@ export class WithdrawRecord extends Widget {
     // tslint:disable-next-line:typedef
     public parseRecordList(list) {
         const withdraw = { zh_Hans:'提币',zh_Hant:'提幣',en:'' };
-        list.forEach((item) => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
+        list.forEach(async (item) => {
+            const txDetail = await callFetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
             item.behavior = withdraw[getLang()];
@@ -67,8 +67,8 @@ export class WithdrawRecord extends Widget {
     }
     public updateTransaction() {
         const list = this.props.recordList;
-        list.forEach(item => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
+        list.forEach(async (item) => {
+            const txDetail = await callFetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
         });

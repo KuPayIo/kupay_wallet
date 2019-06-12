@@ -6,16 +6,14 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
-import { dataCenter } from '../../../logic/dataCenter';
 import { doScanQrCode } from '../../../logic/native';
-import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
-import { resendNormalTransfer, transfer, TxPayload } from '../../../net/pullWallet';
+import { callFetchBtcFees, callFetchGasPrices } from '../../../middleLayer/netBridge';
+import { callFetchMinerFeeList, callGetDataCenter } from '../../../middleLayer/walletBridge';
 import { MinerFeeLevel, TxHistory } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 import { doErrorShow } from '../../../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
 import { fetchBalanceValueOfCoin, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getStaticLanguage, judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox, updateLocalTx } from '../../../utils/tools';
-import { fetchMinerFeeList } from '../../../utils/walletTools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -35,14 +33,18 @@ export class Transfer extends Widget {
         this.init();
     }
 
-    public async init() {
+    public init() {
         this.language = this.config.value[getLang()];
         if (this.props.currencyName === 'BTC') {
-            fetchBtcFees();
+            callFetchBtcFees();
         } else {
-            fetchGasPrices();
+            callFetchGasPrices();
         }
-        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
+        callFetchMinerFeeList(this.props.currencyName).then(minerFeeList => {
+            this.props.minerFeeList = minerFeeList;
+            this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
+            this.paint();
+        });
         const tx = this.props.tx;
         const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
         this.props = {
@@ -52,8 +54,8 @@ export class Transfer extends Widget {
             toAddr:tx ? tx.toAddr : '' || (this.props.address || ''),
             amount:tx ? tx.pay : 0,
             balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
-            minerFee:minerFeeList[curLevel].minerFee,
-            minerFeeList,
+            minerFee:0,
+            minerFeeList:[],
             curLevel,
             minLevel:curLevel,
             inputDisabled:tx ? true : false,
@@ -63,10 +65,11 @@ export class Transfer extends Widget {
     }
 
     public updateMinerFeeList() {
-        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
-        this.props.minerFeeList = minerFeeList;
-        this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
-        this.paint();
+        callFetchMinerFeeList(this.props.currencyName).then(minerFeeList => {
+            this.props.minerFeeList = minerFeeList;
+            this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
+            this.paint();
+        });
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -154,7 +157,9 @@ export class Transfer extends Widget {
             transfer(passwd,txPayload).then(([err,tx]) => {
                 if (!err) {
                     updateLocalTx(tx);
-                    dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
+                    callGetDataCenter().then(dataCenter => {
+                        dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
+                    });
                     popNewMessage(getStaticLanguage().transfer.transSuccess);
                     popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
                     this.ok && this.ok();

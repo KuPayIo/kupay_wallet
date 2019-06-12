@@ -5,11 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { callVerifyIdentidy } from '../../../middleLayer/walletBridge';
 import { buyBack, getPurchaseRecord } from '../../../net/pull';
 import { PurchaseHistory } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 import { popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
-import { VerifyIdentidy } from '../../../utils/walletTools';
 interface Props {
     product:PurchaseHistory;
     index:number;
@@ -49,7 +49,7 @@ export class HoldedFmDetail extends Widget {
         const psw = await popPswBox();
         if (!psw) return;
         const close = popNewLoading(this.language.loading);
-        const secretHash = await VerifyIdentidy(psw);
+        const secretHash = await callVerifyIdentidy(psw);
         if (!secretHash) {
             popNewMessage(this.language.tips[0]);
             close.callback(close.widget);

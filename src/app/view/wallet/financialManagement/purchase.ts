@@ -4,14 +4,14 @@
 // ===============================================导入
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { recharge } from '../../../net/pullWallet';
+import { purchaseProduct } from '../../../logic/localWallet';
+import { callFetchGasPrice } from '../../../middleLayer/walletBridge';
 import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { getCloudBalances } from '../../../store/memstore';
 import { defaultGasLimit } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
 import { wei2Eth } from '../../../utils/unitTools';
-import { purchaseProduct } from '../../../utils/walletTools';
 import { forelet,WIDGET_NAME } from './productDetail';
 // ==================================================导出
 interface Props {
@@ -55,6 +55,7 @@ export class ProductDetail extends Widget {
         } else if (this.props.cloudBalance + this.props.localBalance >= this.props.spend) {
             const fromAddr = getCurrentAddrByCurrencyName('ETH');
             const pay = this.props.spend - this.props.cloudBalance;
+            const gasPrice = await callFetchGasPrice(MinerFeeLevel.Standard);
             const tx:TxHistory = {
                 hash:'',
                 txType:TxType.Recharge,
@@ -67,7 +68,7 @@ export class ProductDetail extends Widget {
                 needConfirmedBlockNumber:0,
                 info: '',
                 currencyName: 'ETH',
-                fee: wei2Eth(defaultGasLimit * fetchGasPrice(MinerFeeLevel.Standard)),
+                fee: wei2Eth(defaultGasLimit * gasPrice),
                 nonce:0,
                 minerFeeLevel:MinerFeeLevel.Standard,
                 addr:fromAddr

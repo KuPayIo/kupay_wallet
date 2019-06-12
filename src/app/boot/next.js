@@ -227,7 +227,6 @@ winit.initNext = function () {
 	var loadWalletLoginSource = function(){
 		var sourceList = [
 			"app/logic/login.js",
-			"app/net/push.js",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",
 			"earn/xlsx/awardCfg.c.js",
@@ -245,8 +244,6 @@ winit.initNext = function () {
 			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
 			
-			// erlang服务器推送注册
-			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
 			// erlang服务器连接登录
 			pi_modules.commonjs.exports.relativeGet("app/logic/login").exports.loginInit();
 		}, function (r) {

@@ -7,12 +7,12 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { makeScreenShot, openNewActivity } from '../../../logic/native';
+import { callFetchLocalTxByHash1 } from '../../../middleLayer/walletBridge';
 import { TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 import { blockchainUrl, etherscanUrl } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
 import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
-import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -32,7 +32,11 @@ export class TransactionDetails extends Widget {
     }
     public init() {
         this.language = this.config.value[getLang()];
-        const tx = fetchLocalTxByHash1(this.props.hash);
+        callFetchLocalTxByHash1(this.props.hash).then(tx => {
+            this.props.tx = tx;
+            this.paint();
+        });
+        const tx:any = {};
         console.log(`transactionDetails tx is `,tx);
         const obj = parseStatusShow(tx);
         const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;

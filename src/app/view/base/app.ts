@@ -109,8 +109,6 @@ export class App extends Widget {
 // ===================================================== 立即执行
 
 registerStore('flags/level_3_page_loaded', (loaded: boolean) => {
-    const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-    dataCenter.init();
     checkPopPhoneTips();
     if (localStorage.getItem('kickOffline')) {
         const kickOffline = pi_modules.commonjs.exports.relativeGet('app/net/login').exports.kickOffline;

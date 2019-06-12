@@ -1,8 +1,8 @@
 import { GlobalWallet } from '../core/globalWallet';
 import { dataCenter } from '../jsc/jscDataCenter';
 // tslint:disable-next-line:max-line-length
-import { backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, importWalletByFragment, importWalletByMnemonic, VerifyIdentidy, VerifyIdentidy1 } from '../jsc/jscWallet';
-import { CreateWalletOption } from '../store/interface';
+import { backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, fetchGasPrice, fetchLocalTxByHash1, fetchMinerFeeList, fetchTransactionList, getMnemonic, getMnemonicByHash, importWalletByFragment, importWalletByMnemonic, passwordChange, VerifyIdentidy, VerifyIdentidy1 } from '../jsc/jscWallet';
+import { CreateWalletOption, MinerFeeLevel } from '../store/interface';
 
 /**
  * 钱包相关
@@ -104,5 +104,60 @@ export const callBackupMnemonic = (passwd:string):Promise<any> => {
         backupMnemonic(passwd).then(res => {
             resolve(res);
         });
+    });
+};
+
+/**
+ * 获取助记词
+ */
+export const callGetMnemonic = (passwd:string) => {
+    return getMnemonic(passwd);
+};
+
+/**
+ * 修改密码
+ */
+export const callPasswordChange = (secretHash: string, newPsw: string) => {
+    return passwordChange(secretHash,newPsw);
+};
+
+/**
+ * 根据交易hash获取所有地址上本地交易详情
+ */
+export const callFetchLocalTxByHash1 = (hash:string):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(fetchLocalTxByHash1(hash));
+    });
+};
+
+/**
+ * 获取矿工费
+ */
+export const callFetchMinerFeeList = (currencyName:string) => {
+    return new Promise(resolve => {
+        resolve(fetchMinerFeeList(currencyName));
+    });
+};
+
+// 获取gasPrice
+export const callFetchGasPrice = (minerFeeLevel: MinerFeeLevel):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(fetchGasPrice(minerFeeLevel));
+    });
+};
+
+/**
+ * 获取某个地址的交易记录
+ */
+export const callFetchTransactionList = (addr:string,currencyName:string):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(fetchTransactionList(addr,currencyName));
+    });
+};
+
+// 根据hash获取助记词
+export const callGetMnemonicByHash = (hash:string):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(getMnemonicByHash(hash));
     });
 };

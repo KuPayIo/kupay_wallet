@@ -5,13 +5,13 @@ import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { getOpenId } from '../net/login';
-import { getOneUserInfo, requestAsync } from '../net/pull';
+import { callGetOpenId, callRequestAsync } from '../middleLayer/netBridge';
+import { callGetMnemonicByHash, callVerifyIdentidy } from '../middleLayer/walletBridge';
+import { getOneUserInfo } from '../net/pull';
 import { CloudCurrencyType } from '../store/interface';
 import { getCloudBalances } from '../store/memstore';
 import { SCPrecision } from '../utils/constants';
 import { getUserInfo } from '../utils/tools';
-import { getMnemonicByHash, VerifyIdentidy } from '../utils/walletTools';
 import { getGameItem } from '../view/play/home/gameConfig';
 import { minWebview1 } from './thirdBase';
 
@@ -34,7 +34,7 @@ export enum SetNoPassword {
  */
 export const authorize = (payload, callback) => {
     console.log('authorize called',payload);
-    getOpenId(payload.appId).then(resData => {
+    callGetOpenId(payload.appId).then(resData => {
         const ret:any = {};
         ret.openId = resData.openid;
         if (payload.avatar) {
@@ -68,7 +68,7 @@ export const querySetNoPassword = (appid, callback) => {
  * 设置免密支付
  */
 export const setFreeSecrectPay = (payload,callback) => {
-    VerifyIdentidy(payload.password).then(secretHash => {
+    callVerifyIdentidy(payload.password).then(secretHash => {
         if (!secretHash) {  //  密码错误
             callback(resCode.PASSWORD_ERROR, false);
     
@@ -101,7 +101,7 @@ export const thirdPay = (payload,callback) => {
  */
 export const thirdPayDirect = (payload,callback) => {
     console.log('thirdPayDirect payload=====',payload);
-    VerifyIdentidy(payload.password).then(secretHash => {
+    callVerifyIdentidy(payload.password).then(secretHash => {
         if (!secretHash) {
             callback(undefined,{ result:PayCode.ERRORPSW });
             
@@ -213,13 +213,13 @@ const openPayment = (order: any) => {
     const orderStr = JSON.stringify(order);
     const msg = { type: 'wallet/order@order_start', param: { json: orderStr } };
 
-    return requestAsync(msg);
+    return callRequestAsync(msg);
 };
 
 /**
  * 支付接口(输入密码进行支付)
  */
-const orderPay = (order: any,secretHash?:string) => {
+const orderPay = async (order: any,secretHash?:string) => {
     const signJson = {
         appid: order.appid,
         transaction_id: order.transaction_id,
@@ -229,7 +229,7 @@ const orderPay = (order: any,secretHash?:string) => {
     // tslint:disable-next-line:variable-name
     let no_password = SetNoPassword.SETED;  // 使用免密
     if (secretHash) {
-        signStr = getSign(signJson, secretHash);
+        signStr = await getSign(signJson, secretHash);
         no_password = SetNoPassword.NOSETED;
     }
     const param:any = {
@@ -246,7 +246,7 @@ const orderPay = (order: any,secretHash?:string) => {
     
     console.log('walletPay param-------------',msg);
     
-    return requestAsync(msg);
+    return callRequestAsync(msg);
 };
 
 /**
@@ -279,7 +279,7 @@ const queryNoPWD = async (appid:string,total_fee?:number) => {
 
     let setNoPassword;
     try {
-        await requestAsync(msg);
+        await callRequestAsync(msg);
         setNoPassword = SetNoPassword.SETED;
     } catch (err) {
         if (err.result === 2119) {  // 用户未开启免密支付
@@ -306,7 +306,7 @@ const setNoPWD = async (appid:string,noPSW:number,secretHash:string) => {
         no_password: noPSW,
         nonce_str: Math.random().toFixed(5)
     };
-    const signStr = getSign(signJson, secretHash);
+    const signStr = await getSign(signJson, secretHash);
     const msg = {
         type: 'wallet/order@set_nopwd',
         param:{
@@ -315,7 +315,7 @@ const setNoPWD = async (appid:string,noPSW:number,secretHash:string) => {
         }
     };
 
-    return requestAsync(msg);
+    return callRequestAsync(msg);
 };
 
 /**
@@ -330,7 +330,7 @@ export const closePayment = async (transactionId:string,okCb?:Function,failCb?:F
     }
     const msg = { type: 'wallet/order@close_order', param: { transaction_id:transactionId } };
     try {
-        const resData:any = await requestAsync(msg);
+        const resData:any = await callRequestAsync(msg);
         if (resData.result !== 1) {
             failCb && failCb(new Error('closePayment is failed'));
         } else {
@@ -345,8 +345,8 @@ export const closePayment = async (transactionId:string,okCb?:Function,failCb?:F
  * 获取签名
  * @param json 签名json
  */
-const getSign = (json:any,secretHash:string) => {
-    const mnemonic = getMnemonicByHash(secretHash);
+const getSign = async (json:any,secretHash:string) => {
+    const mnemonic = await callGetMnemonicByHash(secretHash);
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
 
     return sign(jsonUriSort(json), wlt.exportPrivateKey());

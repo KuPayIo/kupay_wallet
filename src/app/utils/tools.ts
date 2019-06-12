@@ -9,13 +9,13 @@ import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
 import { Config, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../config';
+import { callLogoutAccount } from '../middleLayer/netBridge';
 import { getModulConfig } from '../modulConfig';
-import { logoutAccount } from '../net/login';
 import { CloudCurrencyType, Currency2USDT, MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { piLoadDir, piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
-import { currencyConfirmBlockNumber, defalutShowCurrencys, lang, notSwtichShowCurrencys, preShowCurrencys, resendInterval, USD2CNYRateDefault } from './constants';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, notSwtichShowCurrencys, preShowCurrencys, resendInterval, USD2CNYRateDefault } from './constants';
 
 /**
  * 获取当前钱包对应货币正在使用的地址信息
@@ -234,8 +234,8 @@ export const popPswBox = (content = [],onlyOk:boolean = false,cancelDel:boolean 
         popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content,onlyOk }, (r: string) => {
             resolve(r);
             if (!r && cancelDel) popPswBox(content,onlyOk,cancelDel);
-        }, (forgetPsw:boolean) => {
-            if (cancelDel && !forgetPsw) logoutAccount();
+        }, async (forgetPsw:boolean) => {
+            if (cancelDel && !forgetPsw) await callLogoutAccount();
             resolve('');
         });
     });
@@ -486,23 +486,6 @@ export const fetchCloudWalletAssetList = () => {
     }
 
     return assetList;
-};
-
-/**
- * 没有创建钱包时
- */
-export const hasWallet = () => {
-    const wallet = getStore('wallet');
-    if (!wallet) {
-        popNew('app-components-modalBox-newUserWelfare',undefined, () => {
-            // popNew('app-view-wallet-create-home');
-            // popNew('app-view-base-localImg');
-        });
-
-        return false;
-    }
-
-    return true;
 };
 
 // 解析交易状态

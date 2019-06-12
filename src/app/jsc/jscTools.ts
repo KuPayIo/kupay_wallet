@@ -72,3 +72,32 @@ export const getXOR = (first, second) => {
 
     return arr.join('');
 };
+
+/**
+ * sat转btc
+ */
+export const sat2Btc = (num: number | string) => {
+    num = Number(num);
+
+    return formatBalance(num / Math.pow(10, 8));
+};
+
+/**
+ * btc转sat
+ */
+export const btc2Sat = (num: number | string) => {
+    num = Number(num);
+
+    return  Math.floor(num * Math.pow(10, 8));
+};
+
+/**
+ * 金额格式化
+ * @param banlance 金额
+ */
+export const formatBalance = (banlance: number) => {
+    banlance = Number(banlance);
+    if (!banlance) return 0;
+
+    return Number(banlance.toFixed(6));
+};

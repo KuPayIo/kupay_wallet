@@ -8,13 +8,12 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { ERC20Tokens } from '../../../config';
+import { callFetchMinerFeeList } from '../../../middleLayer/walletBridge';
 import { changellyCreateTransaction, changellyGetExchangeAmount, changellyGetMinAmount } from '../../../net/pull3';
-import { transfer, TxPayload } from '../../../net/pullWallet';
 import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel } from '../../../store/interface';
 import { getStore, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { calCurrencyLogoUrl, currencyExchangeAvailable, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox, popNewLoading } from '../../../utils/tools';
-import { fetchMinerFeeList } from '../../../utils/walletTools';
+import { calCurrencyLogoUrl, currencyExchangeAvailable, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -39,11 +38,13 @@ export class CoinConvert extends Widget {
     public rateDetail() {
         const outCurrency = this.props.outCurrency;
         const minerFeeLevel = MinerFeeLevel.Standard;
-        const minerFeeList = fetchMinerFeeList(this.props.outCurrency);
-        const fee = minerFeeList[minerFeeLevel].minerFee;
-        const cn = (outCurrency === 'ETH' || ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
-        const tips = `${this.language.tips[5]} ${fee} ${cn}`;
-        popNew('app-components-allModalBox-modalBox1',{ title:this.language.title,content:this.language.content,tips:tips });
+        callFetchMinerFeeList(this.props.outCurrency).then(minerFeeList => {
+            const fee = minerFeeList[minerFeeLevel].minerFee;
+            const cn = (outCurrency === 'ETH' || ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
+            const tips = `${this.language.tips[5]} ${fee} ${cn}`;
+            popNew('app-components-allModalBox-modalBox1',{ title:this.language.title,content:this.language.content,tips:tips });
+        });
+        
     }
 
     /**
@@ -87,11 +88,10 @@ export class CoinConvert extends Widget {
 
     // 更新矿工费
     public async updateMinerFee() {
-        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
-        console.log(minerFeeList);
-        // const gasLimit = obj.gasLimit;
-        this.props.outMinerFee = minerFeeList[0].minerFee;
-        this.paint();
+        callFetchMinerFeeList(this.props.currencyName).then(minerFeeList => {
+            this.props.outMinerFee = minerFeeList[0].minerFee;
+            this.paint();
+        });
     }
 
     public destroy() {
@@ -236,12 +236,12 @@ export class CoinConvert extends Widget {
         const close = popNewLoading(this.language.loading);
         const withdrawalAddress = this.props.curInAddr; // 入账币种的地址
         const returnAddress =  this.props.curOutAddr;// 失败后的退款地址
-        changellyCreateTransaction(outCurrency,inCurrency,withdrawalAddress,outAmount,returnAddress).then(res => {
+        changellyCreateTransaction(outCurrency,inCurrency,withdrawalAddress,outAmount,returnAddress).then(async (res) => {
             console.log('changellyCreateTransaction = ',res);
             if (res.result) {
                 const payinAddress = res.result.payinAddress;
                 const minerFeeLevel = MinerFeeLevel.Standard;
-                const minerFeeList = fetchMinerFeeList(outCurrency);
+                const minerFeeList = await callFetchMinerFeeList(outCurrency);
                 const fee = minerFeeList[minerFeeLevel].minerFee;
                 const payload:TxPayload = {
                     fromAddr:returnAddress,        

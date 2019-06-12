@@ -12,7 +12,7 @@ import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { getStore, register } from '../../../store/memstore';
-import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
+import { getUserInfo, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
@@ -181,7 +181,6 @@ export class PlayHome extends Widget {
      * @param index 序号
      */
     public activityClick(index:number) {
-        if (!hasWallet()) return;
         popNew3(this.props.activityList[index].url);
     }
 

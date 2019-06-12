@@ -1,39 +1,17 @@
 /**
  * 主动向后端通讯
  */
-import { request } from '../../pi/net/ui/con_mgr';
-import { MainChainCoin, uploadFileUrl } from '../config';
-import { callRequestAsync } from '../middleLayer/loginBridge';
+import { uploadFileUrl } from '../config';
+import { callRequestAsync, callRequestAsyncNeedLogin } from '../middleLayer/netBridge';
 import { getModulConfig } from '../modulConfig';
-import {  CloudCurrencyType , MinerFeeLevel } from '../store/interface';
+import {  CloudCurrencyType  } from '../store/interface';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail,parseMineRank, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
+import { parseCloudAccountDetail, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
 import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
 import { base64ToFile, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
 import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
-import { defaultLogin } from './login';
-
-/**
- * 通用的异步通信 需要登录
- * 
- * 需要登录权限的接口
- * emit_red_bag  发红包
- * to_cash       eth提现
- * btc_to_cash   btc提现
- * manage_money@buy    购买理财
- * manage_money@sell   出售理财
- */
-export const requestAsyncNeedLogin = async (msg: any,secretHash:string) => {
-    const isLogin = getStore('user/isLogin');
-    if (!isLogin) {
-        await defaultLogin(secretHash,getStore('user/conRandom'));
-    }
-
-    return callRequestAsync(msg);
-    
-};
 
 /**
  * 获取指定类型的货币余额
@@ -178,7 +156,7 @@ export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount:
     };
 
     try {
-        const res = await requestAsyncNeedLogin(msg,secretHash);
+        const res = await callRequestAsyncNeedLogin(msg,secretHash);
 
         return res.value;
     } catch (err) {
@@ -414,7 +392,6 @@ export const getData = async (key) => {
     return callRequestAsync(msg);
 };
 
-
 /**
  * 获取单个用户信息
  */
@@ -531,42 +508,6 @@ export const getAccountDetail = async (coin: string,filter:number,start = '') =>
 
 };
 
-// /**
-//  * 获取矿山排名列表
-//  */
-// export const getMineRank = async (num: number) => {
-//     const msg = { type: 'wallet/cloud@mine_top', param: { num: num } };
-//     callRequestAsync(msg).then(data => {
-//         const mineData = parseMineRank(data);
-//         setStore('activity/mining/mineRank', mineData);
-//     });
-// };
-
-// /**
-//  * 获取挖矿排名列表
-//  */
-// export const getMiningRank = async (num: number) => {
-//     const msg = { type: 'wallet/cloud@get_mine_top', param: { num: num } };
-//     callRequestAsync(msg).then(data => {
-//         const miningData = parseMiningRank(data);
-//         setStore('activity/mining/miningRank', miningData);
-//     });
-// };
-
-/**
- * 获取全部用户嗨豆排名列表
- */
-export const getHighTop =  (num: number) => {
-    const msg = { type: 'wallet/cloud@get_high_top', param: { num: num } };
-
-    return  callRequestAsync(msg).then(data => {
-        console.log('获取全部排名========================',data);
-        
-        return parseMiningRank(data);
-    });
-    
-};
-
 // 获取好友嗨豆排名
 export const getFriendsKTTops =  (arr:any) => {
     const msg = { type:'wallet/cloud@finds_high_top',param:{ finds:JSON.stringify(arr) } };
@@ -680,25 +621,6 @@ export const getProxy = async () => {
 
 // ===============================充值提现
 /**
- * 获取服务端eth钱包地址
- */
-export const getBankAddr = async () => {
-    const msg = {
-        type: 'wallet/bank@get_bank_addr',
-        param: { }
-    };
-
-    try {
-        const res = await callRequestAsync(msg);
-
-        return res.value;
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-        return;
-    }
-};
-/**
  * 获取服务端btc钱包地址
  */
 export const getBtcBankAddr = async () => {
@@ -716,225 +638,6 @@ export const getBtcBankAddr = async () => {
 
         return;
     }
-};
-/**
- * 向服务器发起充值请求
- */
-// tslint:disable-next-line:max-line-length
-export const rechargeToServer = async (fromAddr:string,toAddr:string,tx:string,nonce:number,gas:number,value:string,coin:number= 101) => {
-    const msg = {
-        type: 'wallet/bank@pay',
-        param: {
-            from:fromAddr,
-            to:toAddr,
-            tx,
-            nonce,
-            gas,
-            value,
-            coin
-        }
-    };
-    try {
-        const res = await callRequestAsync(msg);
-        console.log('rechargeToServer',res);
-        
-        return true;
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-        return false;
-    }
-
-};
-
-/**
- * 向服务器发起充值请求
- */
-// tslint:disable-next-line:max-line-length
-export const btcRechargeToServer = async (toAddr:string,tx:string,value:string,fees:number,oldHash:string) => {
-    // tslint:disable-next-line:variable-name
-    const old_tx = oldHash || 'none';
-    const msg = {
-        type: 'wallet/bank@btc_pay',
-        param: {
-            to:toAddr,
-            tx,
-            value,
-            fees,
-            old_tx
-        }
-    };
-    try {
-        const res = await callRequestAsync(msg);
-        console.log('btcRechargeToServer',res);
-        
-        return true;
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-        return false;
-    }
-
-};
-
-/**
- * 提现
- */
-export const withdrawFromServer = async (toAddr:string,value:string,secretHash:string) => {
-    const msg = {
-        type: 'wallet/bank@to_cash',
-        param: {
-            to:toAddr,
-            value
-        }
-    };
-
-    try {
-        const res = await requestAsyncNeedLogin(msg,secretHash);
-        console.log('withdrawFromServer',res);
-
-        return res.txid;
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-        return;
-    }
-};
-
-/**
- * btc提现
- */
-export const btcWithdrawFromServer = async (toAddr:string,value:string,secretHash:string) => {
-    const msg = {
-        type: 'wallet/bank@btc_to_cash',
-        param: {
-            to:toAddr,
-            value
-        }
-    };
-
-    try {
-        const res = await requestAsyncNeedLogin(msg,secretHash);
-
-        return res.txid;
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-        return ;
-    }
-};
-
-/**
- * 充值历史记录
- */
-export const getRechargeLogs = async (coin: string,start?) => {
-    // tslint:disable-next-line:no-reserved-keywords
-    let type;
-    if (coin === 'BTC') {
-        type = 'wallet/bank@btc_pay_log';
-    } else if (coin === 'ETH') {
-        type = 'wallet/bank@pay_log';
-    } else { // KT
-        return;
-    }
-    let msg;
-    if (start) {
-        msg = {
-            type,
-            param: {
-                start,
-                count:PAGELIMIT
-            }
-        };
-    } else {
-        msg = {
-            type,
-            param: {
-                count:PAGELIMIT
-            }
-        };
-    }
-   
-    try {
-        const res = await callRequestAsync(msg);
-        const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
-        const detail = parseRechargeWithdrawalLog(coin,res.value);
-        const canLoadMore = detail.length >= PAGELIMIT;
-        if (detail.length > 0) {
-            const cloudWallets = getStore('cloud/cloudWallets');
-            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
-            if (start) {
-                cloudWallet.rechargeLogs.list.push(...detail);
-            } else {
-                cloudWallet.rechargeLogs.list = detail;
-            }
-            cloudWallet.rechargeLogs.start = nextStart;
-            cloudWallet.rechargeLogs.canLoadMore = canLoadMore;
-            setStore('cloud/cloudWallets',cloudWallets);
-        }
-        
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-        return;
-    }
-};
-
-/**
- * 提现历史记录
- */
-export const getWithdrawLogs = async (coin: string,start?) => {
-    // tslint:disable-next-line:no-reserved-keywords
-    let type;
-    if (coin === 'BTC') {
-        type = 'wallet/bank@btc_to_cash_log';
-    } else if (coin === 'ETH') {
-        type = 'wallet/bank@to_cash_log';
-    } else {// KT
-        return;
-    }
-    let msg;
-    if (start) {
-        msg = {
-            type,
-            param: {
-                start,
-                count:PAGELIMIT
-            }
-        };
-    } else {
-        msg = {
-            type,
-            param: {
-                count:PAGELIMIT
-            }
-        };
-    }
-   
-    try {
-        const res = await callRequestAsync(msg);
-        const nextStart = res.start.toJSNumber ? res.start.toJSNumber() : res.start;
-        const detail = parseRechargeWithdrawalLog(coin,res.value);
-        const canLoadMore = detail.length >= PAGELIMIT;
-        if (detail.length > 0) {
-            const cloudWallets = getStore('cloud/cloudWallets');
-            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
-            if (start) {
-                cloudWallet.withdrawLogs.list.push(...detail);
-            } else {
-                cloudWallet.withdrawLogs.list = detail;
-            }
-            cloudWallet.withdrawLogs.start = nextStart;
-            cloudWallet.withdrawLogs.canLoadMore = canLoadMore;
-            setStore('cloud/cloudWallets',cloudWallets);
-        }
-        
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-        return;
-    }
-
 };
 
 /**
@@ -975,7 +678,7 @@ export const buyProduct = async (pid:any,count:any,secretHash:string) => {
     };
     
     try {
-        const res = await requestAsyncNeedLogin(msg,secretHash);
+        const res = await callRequestAsyncNeedLogin(msg,secretHash);
         console.log('buyProduct',res);
         if (res.result === 1) {
             getProductList();
@@ -1025,7 +728,7 @@ export const buyBack = async (timeStamp:any,secretHash:string) => {
     };
     
     try {
-        const res = await requestAsyncNeedLogin(msg,secretHash);
+        const res = await callRequestAsyncNeedLogin(msg,secretHash);
         console.log('buyBack',res);
 
         return true;
@@ -1061,39 +764,6 @@ export const uploadFile = async (base64) => {
         body: formData, // must match 'Content-Type' header
         // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
         // credentials: 'include',
-        // headers: {
-        //     'user-agent': 'Mozilla/4.0 MDN Example'
-        // },
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'cors' // no-cors, cors, *same-origin
-        // redirect: 'follow', // manual, *follow, error
-        // referrer: 'no-referrer' // *client, no-referrer
-    }).then(response => response.json())
-        .then(res => {
-            console.log('uploadFile success ',res);
-            popNewMessage('图片上传成功');
-            if (res.result === 1) {
-                const sid = res.sid;
-                const userInfo = getStore('user/info');
-                userInfo.avatar = sid;
-                setStore('user/info',userInfo);
-            }
-        }).catch(err => {
-            console.log('uploadFile fail ',err);
-            popNewMessage('图片上传失败');
-        });
-};
-
-/**
- * 上次文件
- */
-export const uploadFile1 = async (file:File) => {
-    const formData = new FormData();
-    formData.append('upload',file);
-    fetch(`${uploadFileUrl}?$forceServer=1`, {
-        body: formData, // must match 'Content-Type' header
-        // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        // credentials: 'same-origin', // include, same-origin, *omit
         // headers: {
         //     'user-agent': 'Mozilla/4.0 MDN Example'
         // },

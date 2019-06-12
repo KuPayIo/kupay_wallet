@@ -10,9 +10,9 @@ import { getStore as earnGetStore } from '../../../earn/client/app/store/memstor
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
 import { getDeviceAllDetail } from '../../logic/native';
-import { walletManualReconnect } from '../../net/login';
+import { callWalletManualReconnect } from '../../middleLayer/netBridge';
 import { LockScreen } from '../../store/interface';
-import { getAllAccount, getStore, setStore } from '../../store/memstore';
+import { getAllAccount, getStore } from '../../store/memstore';
 import { piRequire } from '../../utils/commonjsTools';
 
 // ============================== 导出
@@ -89,7 +89,7 @@ const addAppEvent = () => {
             }
             setTimeout(() => {
                 if (!getStore('user/isLogin')) {
-                    walletManualReconnect();
+                    callWalletManualReconnect();
                 }
                 if (!chatGetStore('isLogin')) {
                     chatManualReconnect();

@@ -2,13 +2,12 @@
  * changePSW
  */
 // =============================================导入
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { callPasswordChange, callVerifyIdentidy } from '../../../middleLayer/walletBridge';
 import { pswEqualed } from '../../../utils/account';
-import { passwordChange, VerifyIdentidy } from '../../../utils/walletTools';
-import { popNewMessage, popNewLoading } from '../../../utils/tools';
+import { popNewLoading, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -92,7 +91,7 @@ export class ChangePSW extends Widget {
             return;
         }
         const loading = popNewLoading(this.language.loading);
-        const secretHash = await VerifyIdentidy(oldPassword);
+        const secretHash = await callVerifyIdentidy(oldPassword);
         // 判断原密码是否正确
         if (!secretHash) {
             popNewMessage(this.language.tips[3]);
@@ -100,7 +99,7 @@ export class ChangePSW extends Widget {
 
             return;
         }
-        await passwordChange(secretHash, newPassword);
+        await callPasswordChange(secretHash, newPassword);
         loading.callback(loading.widget);
         popNewMessage(this.language.tips[4]);
         this.backPrePage();

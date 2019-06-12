@@ -9,10 +9,10 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { doScanQrCode } from '../../../logic/native';
+import { callBackupMnemonic } from '../../../middleLayer/walletBridge';
 import { getModulConfig } from '../../../modulConfig';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo, hasWallet, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
-import { backupMnemonic } from '../../../utils/walletTools';
+import { copyToClipboard, getUserInfo, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -153,7 +153,7 @@ export class Home extends Widget {
     public async backUp() {
         const psw = await popPswBox();
         if (!psw) return;
-        const ret = await backupMnemonic(psw);
+        const ret = await callBackupMnemonic(psw);
         if (ret) {
             popNew('app-view-wallet-backup-index',{ ...ret });
         }
@@ -164,7 +164,6 @@ export class Home extends Widget {
      */
     public itemClick(ind:number) {
         if (ind === 0) {
-            if (!hasWallet()) return;
             popNew('app-view-mine-account-home');
         } else {
             popNew(this.props.list[ind].components);

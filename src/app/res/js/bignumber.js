@@ -1,4 +1,4 @@
-_$define("app/jsc/bignumber", function (require, exports, module) {
+_$define("app/res/js/bignumber", function (require, exports, module) {
 ;(function (globalObject) {
   'use strict';
 

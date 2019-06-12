@@ -1,6 +1,7 @@
 import { Widget } from '../../../pi/widget/widget';
-import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
-import { openWSConnect } from '../../middleLayer/loginBridge';
+import { CreateWalletType, touristLogin } from '../../logic/localWallet';
+import { openWSConnect } from '../../middleLayer/netBridge';
+import { CreateWalletOption } from '../../store/interface';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewMessage } from '../../utils/tools';
 
@@ -12,7 +13,7 @@ export class Entrance extends Widget {
     public ok:() => void;
     // 游客登录
     public async touristLoginClick() {
-        const option:Option = {
+        const option:CreateWalletOption = {
             psw: defaultPassword,
             nickName: await playerName()
         };

@@ -4,11 +4,12 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { uploadFileUrlPrefix } from '../../config';
-import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
+import { CreateWalletType, touristLogin } from '../../logic/localWallet';
+import { callLoginSuccess, openWSConnect } from '../../middleLayer/netBridge';
 import { getModulConfig } from '../../modulConfig';
-import { loginSuccess } from '../../net/login';
+import { CreateWalletOption } from '../../store/interface';
 import { deleteAccount, getAllAccount } from '../../store/memstore';
-import { getLoginMod, getWalletToolsMod } from '../../utils/commonjsTools';
+import { getWalletToolsMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewLoading, popNewMessage } from '../../utils/tools';
 
@@ -103,7 +104,7 @@ export class Entrance1 extends Widget {
 
             return;
         }
-        loginSuccess(account,secretHash);
+        await callLoginSuccess(account,secretHash);
         this.ok && this.ok();
     }
 
@@ -149,7 +150,7 @@ export class Entrance1 extends Widget {
     // 游客登录
     public async touristLoginClick() {
         this.closePopBoxNoAnimate();
-        const option:Option = {
+        const option:CreateWalletOption = {
             psw: defaultPassword,
             nickName: await playerName()
         };
@@ -159,9 +160,7 @@ export class Entrance1 extends Widget {
 
                 return;
             }
-            getLoginMod().then(mod => {
-                mod.openConnect(secrectHash);
-            });
+            openWSConnect(secrectHash);
             
             this.ok && this.ok();
             popNewMessage('登录成功');

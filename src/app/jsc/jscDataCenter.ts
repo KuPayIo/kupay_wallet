@@ -13,8 +13,8 @@ import { getStore,setStore } from '../store/memstore';
 import { erc20GasLimitRate, ethTokenTransferCode, lang } from '../utils/constants';
 import { formatBalance,getAddrsAll,getConfirmBlockNumber,getCurrentEthAddr, parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
 import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
-import { fetchLocalTxByHash,fetchTransactionList,getMnemonicByHash } from '../utils/walletTools';
 import { BigNumber } from './bignumber';
+import { fetchLocalTxByHash, fetchTransactionList, getMnemonicByHash } from './jscWallet';
 /**
  * 创建事件处理器表
  * @example

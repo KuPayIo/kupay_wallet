@@ -5,7 +5,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { createWallet, CreateWalletType } from '../../../logic/localWallet';
 import { selectImage } from '../../../logic/native';
-import { openConnect } from '../../../net/login';
+import { openWSConnect } from '../../../middleLayer/netBridge';
 import { uploadFile } from '../../../net/pull';
 import { setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
@@ -135,10 +135,12 @@ export class CreateWallet extends Widget {
         console.timeEnd('pi_create createWallet all need');
         if (!secrectHash) {
             popNewMessage(this.language.tips[4]);
+
+            return;
         }
 
         setStore('flags/createWallet',true);
-        openConnect(secrectHash);
+        openWSConnect(secrectHash);
 
         if (this.props.chooseImage) {
             this.props.imagePicker.getContent({

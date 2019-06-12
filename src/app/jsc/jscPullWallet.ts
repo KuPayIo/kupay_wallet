@@ -11,16 +11,18 @@ import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet, initWeb3, web3 } from '../core/eth/wallet';
 import { GlobalWallet } from '../core/globalWallet';
-import { dataCenter } from '../logic/dataCenter';
+import { getBtcBankAddr } from '../net/pull';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { erc20GasLimitRate } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx, popNewMessage, popNewLoading } from '../utils/tools';
+import { deletLocalTx, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, popNewLoading, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
-import { fetchMinerFeeList, getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
+import { dataCenter } from './jscDataCenter';
 // tslint:disable-next-line:max-line-length
-import { btcRechargeToServer, btcWithdrawFromServer, getBankAddr, getBtcBankAddr, getRechargeLogs, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './pull';
+import { btcRechargeToServer, btcWithdrawFromServer, getBankAddr, getRechargeLogs, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './jscPull';
+import { fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getWltAddrIndex, VerifyIdentidy } from './jscWallet';
+// tslint:disable-next-line:max-line-length
 // ===================================================== 导出
 export interface TxPayload {
     fromAddr:string;        // 转出地址
@@ -417,7 +419,6 @@ export const doBtcTransfer = async (psw:string,addrIndex:number,txRecord:TxHisto
     wlt.unlock();
     await wlt.init();
 
-    // const retArr = await wlt.buildRawTransaction(output, fetchBtcMinerFee(minerFeeLevel));
     const retArr = await wlt.buildRawTransactionFromSingleAddress(fromAddr,output, fetchBtcMinerFee(minerFeeLevel));
     wlt.lock();
     // const rawHexString: string = retArr[0];
@@ -671,7 +672,6 @@ export const ethRecharge = async (psw:string,txRecord:TxHistory) => {
  */
 export const btcRecharge = async (psw:string,txRecord:TxHistory) => {
     const toAddr = await getBtcBankAddr();
-    
     if (!toAddr) return;
     const fromAddr = txRecord.fromAddr;
     const minerFeeLevel = txRecord.minerFeeLevel;

@@ -2,7 +2,6 @@
  * add asset 
  */
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../logic/dataCenter';
 import { getStore, setStore } from '../../../store/memstore';
 import { calCurrencyLogoUrl, fetchWalletAssetListAdded, getCurrentAddrInfo } from '../../../utils/tools';
 

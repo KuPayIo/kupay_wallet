@@ -5,14 +5,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { callFetchBtcFees, callFetchGasPrices } from '../../../middleLayer/netBridge';
+import { callFetchMinerFeeList } from '../../../middleLayer/walletBridge';
 import { getModulConfig } from '../../../modulConfig';
-import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
-import { recharge, resendRecharge } from '../../../net/pullWallet';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
-import { fetchMinerFeeList } from '../../../utils/walletTools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -35,11 +34,15 @@ export class Recharge extends Widget {
     public async init() {
         this.language = this.config.value[getLang()];
         if (this.props.currencyName === 'BTC') {
-            fetchBtcFees();
+            callFetchBtcFees();
         } else {
-            fetchGasPrices();
+            callFetchGasPrices();
         }
-        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
+        callFetchMinerFeeList(this.props.currencyName).then(minerFeeList => {
+            this.props.minerFeeList = minerFeeList;
+            this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
+            this.paint();
+        });
         const tx = this.props.tx;
         console.log(tx);
         const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
@@ -55,8 +58,8 @@ export class Recharge extends Widget {
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             amount:tx ? tx.pay : 0,
             balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
-            minerFee:minerFeeList[curLevel].minerFee,
-            minerFeeList,
+            minerFee:0,
+            minerFeeList:[],
             curLevel,
             minLevel:curLevel,
             inputDisabled:tx ? true : false
@@ -64,10 +67,11 @@ export class Recharge extends Widget {
         
     }
     public updateMinerFeeList() {
-        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
-        this.props.minerFeeList = minerFeeList;
-        this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
-        this.paint();
+        callFetchMinerFeeList(this.props.currencyName).then(minerFeeList => {
+            this.props.minerFeeList = minerFeeList;
+            this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
+            this.paint();
+        });
     }
     public backPrePage() {
         this.ok && this.ok();

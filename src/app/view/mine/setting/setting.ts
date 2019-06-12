@@ -6,10 +6,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { logoutAccount, logoutAccountDel } from '../../../net/login';
+import { callLogoutAccount, callLogoutAccountDel } from '../../../middleLayer/netBridge';
+import { callBackupMnemonic } from '../../../middleLayer/walletBridge';
 import { getStore, register, setStore } from '../../../store/memstore';
-import { hasWallet, popPswBox, rippleShow } from '../../../utils/tools';
-import { backupMnemonic } from '../../../utils/walletTools';
+import { popPswBox, rippleShow } from '../../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -113,7 +113,6 @@ export class Setting extends Widget {
      * 点击切换基础属性 
      */
     public itemClick(ind: number) {
-        // if (!hasWallet()) return;
         const data = this.props.itemList[ind];
         popNew('app-view-mine-setting-itemList', data);
     }
@@ -124,7 +123,7 @@ export class Setting extends Widget {
     public async backUp() {
         const psw = await popPswBox();
         if (!psw) return;
-        const ret = await backupMnemonic(psw);
+        const ret = await callBackupMnemonic(psw);
         if (ret) {
             popNew('app-view-wallet-backup-index', { ...ret,pi_norouter:true });
             this.ok && this.ok();
@@ -135,7 +134,6 @@ export class Setting extends Widget {
      * 退出账户不删除信息
      */
     public logOut() {
-        if (!hasWallet()) return;
         const setPsw = getStore('wallet').setPsw;
         if (!setPsw) {
             this.language.modalBox2.sureText = this.language.modalBox2.sureText1;
@@ -150,7 +148,7 @@ export class Setting extends Widget {
             console.log('取消1');
         }, () => {
             console.log(1);
-            logoutAccount();
+            callLogoutAccount();
             this.backPrePage();
         }
         );
@@ -160,7 +158,6 @@ export class Setting extends Widget {
      * 注销账户
      */
     public logOutDel() {
-        if (!hasWallet()) return;
         const setPsw = getStore('wallet').setPsw;
         if (!setPsw) {
             this.language.modalBox3.sureText = this.language.modalBox3.sureText1;
@@ -174,7 +171,7 @@ export class Setting extends Widget {
             console.log('取消2');
         }, () => {
             popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
-                logoutAccountDel();
+                callLogoutAccountDel();
                 this.backPrePage();
             });
         });

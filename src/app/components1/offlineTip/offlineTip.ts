@@ -7,7 +7,7 @@ import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore, register as earnRegister } from '../../../earn/client/app/store/memstore';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { walletManualReconnect } from '../../net/login';
+import { callWalletManualReconnect } from '../../middleLayer/netBridge';
 import { getStore, register } from '../../store/memstore';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -54,17 +54,17 @@ export class OfflineTip extends Widget {
         this.props.reconnecting = true;   // 正在连接
         const offlienType = this.props.offlienType;
         if (offlienType === OfflienType.WALLET) {  // 钱包重连
-            walletManualReconnect();
+            callWalletManualReconnect();
         } else if (offlienType === OfflienType.CHAT) {  // 聊天重连
             if (!getStore('user/isLogin')) {
-                walletManualReconnect();
+                callWalletManualReconnect();
             }
             if (!chatGetStore('isLogin')) {
                 chatManualReconnect();
             }
         } else {   // 活动重连
             if (!getStore('user/isLogin')) {
-                walletManualReconnect();
+                callWalletManualReconnect();
             }
             if (!earnGetStore('userInfo/isLogin')) {
                 earnManualReconnect();

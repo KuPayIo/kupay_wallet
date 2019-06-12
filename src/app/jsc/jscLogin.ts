@@ -10,10 +10,9 @@ import { GlobalWallet } from '../core/globalWallet';
 import { getDeviceAllDetail } from '../logic/native';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
 import { Account, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
-import { getMnemonicByHash } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './jscPull';
-import { decrypt, encrypt } from './jscWallet';
+import { decrypt, encrypt, getMnemonicByHash } from './jscWallet';
 
 declare var pi_update;
 // 登录成功之后的回调列表
@@ -93,6 +92,26 @@ export const requestAsync = (msg: any):Promise<any> => {
             }
         });
     });
+};
+
+/**
+ * 通用的异步通信 需要登录
+ * 
+ * 需要登录权限的接口
+ * emit_red_bag  发红包
+ * to_cash       eth提现
+ * btc_to_cash   btc提现
+ * manage_money@buy    购买理财
+ * manage_money@sell   出售理财
+ */
+export const requestAsyncNeedLogin = async (msg: any,secretHash:string) => {
+    const isLogin = getStore('user/isLogin');
+    if (!isLogin) {
+        await defaultLogin(secretHash,getStore('user/conRandom'));
+    }
+
+    return requestAsync(msg);
+    
 };
 
 /**
