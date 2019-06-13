@@ -7,9 +7,10 @@ import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { callFetchLocalTxByHash1 } from '../../../middleLayer/walletBridge';
 import { getAccountDetail } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { currencyType, timestampFormat } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
-import { currencyType, parseStatusShow, timestampFormat } from '../../../utils/tools';
+import { parseStatusShow } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

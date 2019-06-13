@@ -4,14 +4,15 @@
 // ===============================================导入
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { purchaseProduct } from '../../../logic/localWallet';
 import { callFetchGasPrice } from '../../../middleLayer/walletBridge';
-import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../store/interface';
+import { defaultGasLimit } from '../../../publicLib/config';
+import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../publicLib/interface';
+import { formatBalance } from '../../../publicLib/tools';
+import { wei2Eth } from '../../../publicLib/unitTools';
 import { getCloudBalances } from '../../../store/memstore';
-import { defaultGasLimit } from '../../../utils/constants';
 // tslint:disable-next-line:max-line-length
-import { formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
-import { wei2Eth } from '../../../utils/unitTools';
+import { popNewMessage, popPswBox } from '../../../utils/tools';
+import { purchaseProduct } from '../../../viewLogic/localWallet';
 import { forelet,WIDGET_NAME } from './productDetail';
 // ==================================================导出
 interface Props {

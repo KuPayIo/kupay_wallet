@@ -1,8 +1,10 @@
 import { GlobalWallet } from '../core/globalWallet';
-import { dataCenter } from '../jsc/jscDataCenter';
+import { CreateWalletOption, MinerFeeLevel, TxHistory } from '../publicLib/interface';
+import { dataCenter } from '../remote/dataCenter';
+import { resendNormalTransfer, transfer } from '../remote/pullWallet';
+import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from '../remote/tools';
 // tslint:disable-next-line:max-line-length
-import { backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, fetchGasPrice, fetchLocalTxByHash1, fetchMinerFeeList, fetchTransactionList, getMnemonic, getMnemonicByHash, importWalletByFragment, importWalletByMnemonic, passwordChange, VerifyIdentidy, VerifyIdentidy1 } from '../jsc/jscWallet';
-import { CreateWalletOption, MinerFeeLevel } from '../store/interface';
+import { backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, fetchGasPrice, fetchLocalTxByHash1, fetchMinerFeeList, fetchTransactionList, getMnemonic, getMnemonicByHash, importWalletByFragment, importWalletByMnemonic, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
 
 /**
  * 钱包相关
@@ -159,5 +161,68 @@ export const callFetchTransactionList = (addr:string,currencyName:string):Promis
 export const callGetMnemonicByHash = (hash:string):Promise<any> => {
     return new Promise(resolve => {
         resolve(getMnemonicByHash(hash));
+    });
+};
+
+/**
+ * 增加或者删除展示的币种
+ */
+export const callUpdateShowCurrencys = (currencyName:string,added:boolean) => {
+    return new Promise(resolve => {
+        updateShowCurrencys(currencyName,added);
+        resolve();
+    });
+};
+
+/**
+ * 获取当前钱包对应货币正在使用的地址信息
+ * @param currencyName 货币类型
+ */
+export const callGetCurrentAddrInfo = (currencyName: string):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(getCurrentAddrInfo(currencyName));
+    });
+};
+
+/**
+ * 获取钱包下指定货币类型的所有地址信息
+ * @param wallet wallet obj
+ */
+export const callGetAddrsInfoByCurrencyName = (currencyName: string):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(getAddrsInfoByCurrencyName(currencyName));
+    });
+};
+
+export interface TxPayload {
+    fromAddr:string;        // 转出地址
+    toAddr:string;          // 转入地址
+    pay:number;             // 转账金额
+    currencyName:string;    // 转账货币
+    fee:number;             // 矿工费
+    minerFeeLevel:MinerFeeLevel;   // 矿工费等级
+}
+
+/**
+ * 普通转账
+ */
+export const callTransfer = (psw:string,txPayload:TxPayload) => {
+    return transfer(psw,txPayload);
+};
+
+/**
+ * 普通转账重发
+ */
+export const callResendNormalTransfer = (psw:string,txRecord:TxHistory) => {
+    return resendNormalTransfer(psw,txRecord);
+};
+
+/**
+ * 更新本地交易记录
+ */
+export const callUpdateLocalTx = (tx: TxHistory) => {
+    return new Promise(resolve => {
+        updateLocalTx(tx);
+        resolve();
     });
 };

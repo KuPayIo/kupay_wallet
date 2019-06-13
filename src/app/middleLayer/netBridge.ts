@@ -1,6 +1,6 @@
 // tslint:disable-next-line:max-line-length
-import { defaultLogin, getOpenId, getRandom, loginSuccess, loginWallet, logoutAccount, logoutAccountDel, logoutWallet, openConnect, requestAsync, requestAsyncNeedLogin, setKickOffline, setLoginWalletFailed, walletManualReconnect } from '../jsc/jscLogin';
-import { fetchBtcFees, fetchGasPrices, getRealUser, getServerCloudBalance } from '../jsc/jscPull';
+import { defaultLogin, getOpenId, getRandom, loginSuccess, loginWallet, logoutAccount, logoutAccountDel, logoutWallet, openConnect, requestAsync, requestAsyncNeedLogin, setKickOffline, setLoginWalletFailed, walletManualReconnect } from '../remote/login';
+import { fetchBtcFees, fetchGasPrices, getHighTop, getRealUser, getServerCloudBalance } from '../remote/pull';
 
 /**
  * login.ts 对应的 bridge layer
@@ -162,4 +162,8 @@ export const callFetchGasPrices = () => {
  */
 export const callGetOpenId = (appId:string) => {
     return getOpenId(appId);
+};
+
+export const callGetHighTop = (num: number) => {
+    return getHighTop(num);
 };

@@ -8,11 +8,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { doScanQrCode } from '../../../logic/native';
+import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { callBackupMnemonic } from '../../../middleLayer/walletBridge';
-import { getModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../publicLib/modulConfig';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { copyToClipboard, getUserLevel, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { doScanQrCode } from '../../../viewLogic/native';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -92,25 +93,28 @@ export class Home extends Widget {
      * 更新数据
      */
     public initData() {
-        const userInfo = getUserInfo();
-        if (userInfo) {
-            this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
-            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
-            this.props.userLevel = userInfo.level;
-        }
-
-        const wallet = getStore('wallet');
-        if (wallet) {
-            this.props.hasWallet = true;
-            this.props.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
-            this.props.hasBackupMnemonic = wallet.isBackup;    
-            this.props.isTourist = !wallet.setPsw;        
-        } else {
-            this.props.hasWallet = false;
-            this.props.acc_id = '';
-        }
-        this.medalest();
-        this.paint();
+        const level = getUserLevel();
+        callGetUserInfo(level).then(userInfo => {
+            if (userInfo) {
+                this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
+                this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+                this.props.userLevel = userInfo.level;
+            }
+    
+            const wallet = getStore('wallet');
+            if (wallet) {
+                this.props.hasWallet = true;
+                this.props.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
+                this.props.hasBackupMnemonic = wallet.isBackup;    
+                this.props.isTourist = !wallet.setPsw;        
+            } else {
+                this.props.hasWallet = false;
+                this.props.acc_id = '';
+            }
+            this.medalest();
+            this.paint();
+        });
+        
     }
     // 获取最高勋章
     public medalest() {
@@ -237,10 +241,6 @@ export class Home extends Widget {
         // this.backPrePage();
     }
 
-    public tex() {
-        console.log(getUserInfo());
-        console.log(getStore('user/id'));
-    }
 }
 
 // ===================================================== 本地

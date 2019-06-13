@@ -9,10 +9,9 @@ import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore } from '../../../earn/client/app/store/memstore';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { getDeviceAllDetail } from '../../logic/native';
+import { callGetAllAccount, getStoreData } from '../../middleLayer/memBridge';
 import { callWalletManualReconnect } from '../../middleLayer/netBridge';
-import { LockScreen } from '../../store/interface';
-import { getAllAccount, getStore } from '../../store/memstore';
+import { LockScreen } from '../../publicLib/interface';
 import { piRequire } from '../../utils/commonjsTools';
 
 // ============================== 导出
@@ -22,13 +21,18 @@ export const run = (cb): void =>  {
     checkUpdate();
     // 打开首页面
     popNew('app-view-base-app');
-    if (!getStore('user/id')) {
-        if (getAllAccount().length > 0) {
-            popNew('app-view-base-entrance1');
-        } else {
-            popNew('app-view-base-entrance');
+    getStoreData('user/id').then(id => {
+        if (!id) {
+            callGetAllAccount().then(accounts => {
+                if (accounts.length > 0) {
+                    popNew('app-view-base-entrance1');
+                } else {
+                    popNew('app-view-base-entrance');
+                }
+            });
         }
-    }
+    });
+    
     // 锁屏页面
     popNewPage();
     // 预先从底层获取一些数据
@@ -46,18 +50,19 @@ export const run = (cb): void =>  {
  * 界面入口
  */
 const popNewPage = () => {
-    if (ifNeedUnlockScreen()) {
-        popNew('app-components1-lockScreenPage-lockScreenPage', {
-            openApp: true
-        });
-    }
+    ifNeedUnlockScreen().then(locked => {
+        if (locked) {
+            popNew('app-components1-lockScreenPage-lockScreenPage', {
+                openApp: true
+            });
+        }
+    });
 };
 
 /**
  * 预先从底层获取一些数据
  */
 const preFetchFromNative = () => {
-    getDeviceAllDetail();
     piRequire(['app/logic/native']).then(mods => {
         mods[0].getScreenModify();
         // 预先随机下载
@@ -82,15 +87,21 @@ const addAppEvent = () => {
         // 注册appResumed
         addAppResumed(() => {
             console.log('addAppResumed callback called');
-            if (ifNeedUnlockScreen()) {
-                popNew('app-components-lockScreenPage-lockScreenPage', {
-                    openApp: true
-                });
-            }
-            setTimeout(() => {
-                if (!getStore('user/isLogin')) {
-                    callWalletManualReconnect();
+            ifNeedUnlockScreen().then(loccked => {
+                if (loccked) {
+                    popNew('app-components-lockScreenPage-lockScreenPage', {
+                        openApp: true
+                    });
                 }
+            });
+            
+            setTimeout(() => {
+                getStoreData('user/isLogin').then(isLogin => {
+                    if (!isLogin) {
+                        callWalletManualReconnect();
+                    }
+                });
+                
                 if (!chatGetStore('isLogin')) {
                     chatManualReconnect();
                 }
@@ -132,10 +143,10 @@ const addAppEvent = () => {
 /**
  * 是否需要解锁屏幕
  */
-const ifNeedUnlockScreen = () => {
+const ifNeedUnlockScreen = async () => {
     const unlockScreen = document.getElementById('keyboard');
     if (unlockScreen) return false;
-    const ls: LockScreen = getStore('setting/lockScreen',{});
+    const ls: LockScreen = await getStoreData('setting/lockScreen',{});
     const lockScreenPsw = ls.psw;
     const openLockScreen = ls.open !== false;
 

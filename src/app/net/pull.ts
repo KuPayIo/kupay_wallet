@@ -3,15 +3,17 @@
  */
 import { uploadFileUrl } from '../config';
 import { callRequestAsync, callRequestAsyncNeedLogin } from '../middleLayer/netBridge';
-import { getModulConfig } from '../modulConfig';
-import {  CloudCurrencyType  } from '../store/interface';
+import { callGetUserInfo } from '../middleLayer/toolsBridge';
+import { PAGELIMIT } from '../publicLib/config';
+import { CloudCurrencyType } from '../publicLib/interface';
+import { getModulConfig } from '../publicLib/modulConfig';
+import { unicodeArray2Str } from '../publicLib/tools';
+import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../publicLib/unitTools';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
-import { PAGELIMIT } from '../utils/constants';
 import { showError } from '../utils/toolMessages';
-import { base64ToFile, getUserInfo, popNewMessage, unicodeArray2Str } from '../utils/tools';
-import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../utils/unitTools';
+import { base64ToFile, popNewMessage } from '../utils/tools';
 
 /**
  * 获取指定类型的货币余额
@@ -560,8 +562,9 @@ export const sendCode = async (phone: string, num: string,verify:boolean = true)
  * 注册手机
  */
 export const regPhone = async (phone: string, num:string, code: string) => {
-    const bphone = getUserInfo().phoneNumber;
-    const areaCode = getUserInfo().areaCode;
+    const userInfo = await callGetUserInfo();
+    const bphone = userInfo.phoneNumber;
+    const areaCode = userInfo.areaCode;
     // tslint:disable-next-line:variable-name
     const old_phone =  bphone ? bphone :'';
     // tslint:disable-next-line:variable-name
@@ -620,25 +623,6 @@ export const getProxy = async () => {
 };
 
 // ===============================充值提现
-/**
- * 获取服务端btc钱包地址
- */
-export const getBtcBankAddr = async () => {
-    const msg = {
-        type: 'wallet/bank@get_btc_bank_addr',
-        param: { }
-    };
-
-    try {
-        const res = await callRequestAsync(msg);
-
-        return res.value;
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-        return;
-    }
-};
 
 /**
  * 获取理财列表
@@ -736,22 +720,6 @@ export const buyBack = async (timeStamp:any,secretHash:string) => {
         showError(err && (err.result || err.type));
 
         return false;
-    }
-};
-
-/**
- * 获取ST价格
- */
-export const getSilverPrice = async (ispay:number = 0) => {
-    const msg = { type:'get_silverprice',param:{ ispay } };
-    try {
-        const resData:any = await callRequestAsync(msg);
-        if (resData.result === 1) {
-            setStore('third/silver',{ price:resData.price,change:resData.change });
-        }
-    } catch (err) {
-        // showError(err && (err.result || err.type));
-
     }
 };
 

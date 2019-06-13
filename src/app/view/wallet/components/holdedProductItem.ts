@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { PurchaseHistory } from '../../../store/interface';
+import { PurchaseHistory } from '../../../publicLib/interface';
 
 interface Props {
     product:PurchaseHistory;

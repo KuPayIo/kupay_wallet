@@ -8,10 +8,9 @@ import { GlobalWallet } from '../core/globalWallet';
 import { callGetOpenId, callRequestAsync } from '../middleLayer/netBridge';
 import { callGetMnemonicByHash, callVerifyIdentidy } from '../middleLayer/walletBridge';
 import { getOneUserInfo } from '../net/pull';
-import { CloudCurrencyType } from '../store/interface';
+import { SCPrecision } from '../publicLib/config';
+import { CloudCurrencyType } from '../publicLib/interface';
 import { getCloudBalances } from '../store/memstore';
-import { SCPrecision } from '../utils/constants';
-import { getUserInfo } from '../utils/tools';
 import { getGameItem } from '../view/play/home/gameConfig';
 import { minWebview1 } from './thirdBase';
 

@@ -11,8 +11,10 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { getStore, register } from '../../../store/memstore';
-import { getUserInfo, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
+import { getStoreData } from '../../../middleLayer/memBridge';
+import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
+import { register } from '../../../store/memstore';
+import { popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
@@ -66,14 +68,16 @@ export class PlayHome extends Widget {
         };
         super.setProps(this.props);
         console.log(props);
-        const userInfo = getUserInfo();
-        if (userInfo) {
-            this.props.avatar = userInfo.avatar;
-            this.props.refresh = false;
-        }
+        this.props.refresh = false;
         this.props.gameList = gameList;
         this.props.activityList = activityList;
         this.props.loaded = false;
+        callGetUserInfo().then(userInfo => {
+            if (userInfo) {
+                this.props.avatar = userInfo.avatar;
+                this.paint();
+            }
+        });
 
     }
 
@@ -141,10 +145,12 @@ export class PlayHome extends Widget {
     /**
      * 点击游戏
      */
-    public gameClick(num:number) {
+    public async gameClick(num:number) {
         closePopFloatBox();
-        if (!getStore('user/id')) return;
-        if (!getStore('user/isLogin')) {
+        const id = await getStoreData('user/id');
+        if (!id) return;
+        const isLogin = await getStoreData('user/isLogin');
+        if (!isLogin) {
             popNewMessage('登录中,请稍后再试');
 
             return;
@@ -188,21 +194,22 @@ export class PlayHome extends Widget {
      * 默认进入游戏
      */
     public defaultEnterGame() {
-        console.log(`getStore('user/isLogin') = ${getStore('user/isLogin')},isActive = ${this.props.isActive}`);
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
-        const phoneNumber = getUserInfo().phoneNumber;    
-        console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
-        if (!firstEnterGame || phoneNumber) {
-            if (!getStore('user/isLogin')  || !this.props.isActive || hasEnterGame) {
-                console.log('defaultEnterGame failed');
-    
-                return;
-            } else {
-                console.log('defaultEnterGame success');
-                this.gameClick(0);
-                localStorage.setItem('firstEnterGame','true');
+        Promise.all([callGetUserInfo(),getStoreData('user/isLogin')]).then(([userInfo,isLogin]) => {
+            const phoneNumber = userInfo.phoneNumber;    
+            console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
+            if (!firstEnterGame || phoneNumber) {
+                if (!isLogin  || !this.props.isActive || hasEnterGame) {
+                    console.log('defaultEnterGame failed');
+        
+                    return;
+                } else {
+                    console.log('defaultEnterGame success');
+                    this.gameClick(0);
+                    localStorage.setItem('firstEnterGame','true');
+                }
             }
-        }
+        });
     }
 
 }
@@ -211,11 +218,12 @@ let hasEnterGame = false;
 register('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        const userInfo = getUserInfo();
-        if (userInfo) {
-            w.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
-        }
-        w.paint();
+        callGetUserInfo().then(userInfo => {
+            if (userInfo) {
+                w.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
+                w.paint();
+            }
+        });
     }
 });
 

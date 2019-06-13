@@ -3,15 +3,15 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { uploadFileUrlPrefix } from '../../config';
-import { CreateWalletType, touristLogin } from '../../logic/localWallet';
 import { callLoginSuccess, openWSConnect } from '../../middleLayer/netBridge';
-import { getModulConfig } from '../../modulConfig';
-import { CreateWalletOption } from '../../store/interface';
+import { uploadFileUrlPrefix } from '../../publicLib/config';
+import { CreateWalletOption } from '../../publicLib/interface';
+import { getModulConfig } from '../../publicLib/modulConfig';
 import { deleteAccount, getAllAccount } from '../../store/memstore';
 import { getWalletToolsMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewLoading, popNewMessage } from '../../utils/tools';
+import { CreateWalletType, touristLogin } from '../../viewLogic/localWallet';
 
 // ============================导出
 export class Entrance1 extends Widget {

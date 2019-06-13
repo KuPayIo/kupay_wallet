@@ -8,7 +8,7 @@ import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { registerStore } from '../../middleLayer/memBridge';
-import { getModulConfig } from '../../modulConfig';
+import { getModulConfig } from '../../publicLib/modulConfig';
 import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
 
 // ================================ 导出

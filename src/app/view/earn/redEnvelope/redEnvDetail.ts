@@ -7,11 +7,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { sharePerUrl, uploadFileUrlPrefix } from '../../../config';
+import { sharePerUrl } from '../../../config';
+import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { getInviteCode, getOneUserInfo, queryDetailLog } from '../../../net/pull';
-import { LuckyMoneyType } from '../../../store/interface';
+import { uploadFileUrlPrefix } from '../../../publicLib/config';
+import { LuckyMoneyType } from '../../../publicLib/interface';
 import { getStore } from '../../../store/memstore';
-import { getUserInfo } from '../../../utils/tools';
 
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -60,7 +61,7 @@ export class RedEnvDetail extends Widget {
         this.props.redBagList = value[0];        
         this.props.message = value[1];
 
-        const user = getUserInfo();
+        const user = await callGetUserInfo();
         if (!user) return;
         this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
         this.props.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';

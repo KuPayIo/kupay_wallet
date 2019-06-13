@@ -7,11 +7,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
 import { getDividend, getDividHistory, getMining } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
+import { PAGELIMIT } from '../../../publicLib/config';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
-import { PAGELIMIT } from '../../../utils/constants';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

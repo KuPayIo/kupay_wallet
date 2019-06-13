@@ -4,11 +4,12 @@
 
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
+import { SCPrecision } from '../../../publicLib/config';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
 import { getCloudBalances, getStore } from '../../../store/memstore';
-import { SCPrecision, SCUnitprice, wxPayShow } from '../../../utils/constants';
+import { SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
 
 // ============================导出

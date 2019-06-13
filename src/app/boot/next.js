@@ -226,7 +226,7 @@ winit.initNext = function () {
 	// 加载钱包项目登录相关资源
 	var loadWalletLoginSource = function(){
 		var sourceList = [
-			"app/logic/login.js",
+			"app/viewLogic/login.js",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",
 			"earn/xlsx/awardCfg.c.js",
@@ -245,7 +245,7 @@ winit.initNext = function () {
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
 			
 			// erlang服务器连接登录
-			pi_modules.commonjs.exports.relativeGet("app/logic/login").exports.loginInit();
+			pi_modules.commonjs.exports.relativeGet("app/viewLogic/login").exports.loginInit();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);

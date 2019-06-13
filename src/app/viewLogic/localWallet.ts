@@ -3,13 +3,13 @@
  */
 import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
-import { Config } from '../config';
 import { callGetAllAccount } from '../middleLayer/memBridge';
 import { callGetServerCloudBalance } from '../middleLayer/netBridge';
 // tslint:disable-next-line:max-line-length
 import { callBackupMnemonic, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callGetDataCenter, callImportWalletByFragment, callImportWalletByMnemonic, callVerifyIdentidy } from '../middleLayer/walletBridge';
 import { buyProduct, getPurchaseRecord } from '../net/pull';
-import { CreateWalletOption } from '../store/interface';
+import { Config } from '../publicLib/config';
+import { CreateWalletOption } from '../publicLib/interface';
 import { closeAllPage, getPopPhoneTips, getStaticLanguage, popNewLoading, popNewMessage } from '../utils/tools';
 
 /**

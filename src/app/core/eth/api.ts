@@ -1,7 +1,7 @@
 /**
  * ETH api
  */
-import { DevMode } from '../../config';
+import { DevMode } from '../../publicLib/config';
 import { config } from '../config';
 import { Web3 } from '../thirdparty/web3.min';
 

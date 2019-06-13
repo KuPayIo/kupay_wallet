@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../publicLib/modulConfig';
 
 interface Props {
     mnemonic: string;

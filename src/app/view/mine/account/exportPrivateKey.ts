@@ -7,13 +7,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { btcNetwork, ERC20Tokens } from '../../../config';
 import { BTCWallet } from '../../../core/btc/wallet';
 import { EthWallet } from '../../../core/eth/wallet';
-import { AddrInfo } from '../../../store/interface';
+import { callGetAddrInfoByAddr } from '../../../middleLayer/toolsBridge';
+import { btcNetwork, ERC20Tokens, lang } from '../../../publicLib/config';
+import { AddrInfo } from '../../../publicLib/interface';
 import { getStore } from '../../../store/memstore';
-import { lang } from '../../../utils/constants';
-import { calCurrencyLogoUrl, getAddrInfoByAddr } from '../../../utils/tools';
+import { calCurrencyLogoUrl } from '../../../utils/tools';
 
 // ================================================导出
 interface Props {
@@ -100,14 +100,15 @@ export class ExportPrivateKey extends Widget {
     }
 
     // 导出以太坊私钥
-    public exportPrivateKeyETH(addrs: AddrInfo[]) {
+    public async exportPrivateKeyETH(addrs: AddrInfo[]) {
         const keys = [];
         const firstWlt = EthWallet.fromMnemonic(this.props.mnemonic, lang);
         for (let j = 0; j < addrs.length; j++) {
             const wlt = firstWlt.selectAddressWlt(j);
             const privateKey = wlt.exportPrivateKey();
             const addr = addrs[j];
-            const balance = getAddrInfoByAddr(addr.addr,'ETH').balance;
+            const addrInfo = await callGetAddrInfoByAddr(addr.addr,'ETH');
+            const balance = addrInfo.balance;
             keys.push({ addr:addr.addr,balance,privateKey });
         }
 
@@ -115,14 +116,15 @@ export class ExportPrivateKey extends Widget {
     }
 
     // 导出BTC私钥
-    public exportPrivateKeyBTC(addrs: AddrInfo[]) {
+    public async exportPrivateKeyBTC(addrs: AddrInfo[]) {
         const keys = [];
         const wlt = BTCWallet.fromMnemonic(this.props.mnemonic, btcNetwork, lang);
         wlt.unlock();
         for (let j = 0; j < addrs.length; j++) {
             const privateKey = wlt.privateKeyOf(j);
             const addr = addrs[j];
-            const balance = getAddrInfoByAddr(addr.addr,'BTC').balance;
+            const addrInfo = await callGetAddrInfoByAddr(addr.addr,'BTC');
+            const balance = addrInfo.balance;
             keys.push({ addr:addr.addr,balance,privateKey });
         }
         wlt.lock();

@@ -6,12 +6,13 @@ import { setStore } from '../../../../chat/client/app/data/store';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
+import { SCPrecision } from '../../../publicLib/config';
+import { TaskSid } from '../../../publicLib/interface';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
 import { getCloudBalances, register } from '../../../store/memstore';
-import { TaskSid } from '../../../store/parse';
-import { rechargeGiftMultiple, SCPrecision, SCUnitprice, wxPayShow } from '../../../utils/constants';
+import { rechargeGiftMultiple, SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
 
 // ============================导出

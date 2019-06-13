@@ -5,12 +5,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { selectImage } from '../../../logic/native';
+import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { callBackupMnemonic, callGetMnemonic } from '../../../middleLayer/walletBridge';
 import { uploadFile } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
-import { getUserInfo, imgResize, popNewLoading, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { imgResize, popNewLoading, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { selectImage } from '../../../viewLogic/native';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -26,7 +27,6 @@ export class AccountHome extends Widget {
         this.init();
     }
     public init() {
-        const userInfo = getUserInfo();
         const wallet = getStore('wallet');
         const backup = wallet.isBackup;
 
@@ -41,14 +41,16 @@ export class AccountHome extends Widget {
             chooseImage: false,
             avatarHtml: ''
         };
-        if (userInfo.phoneNumber) {
-            const str = String(userInfo.phoneNumber).substr(3, 6);
-            this.props.phone = userInfo.phoneNumber.replace(str, '******');
-        }
-        this.props.nickName = userInfo.nickName ? userInfo.nickName : this.language.defaultName;
-        this.props.editName = this.props.nickName;
-        this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
-        this.paint();
+        callGetUserInfo().then(userInfo => {
+            if (userInfo.phoneNumber) {
+                const str = String(userInfo.phoneNumber).substr(3, 6);
+                this.props.phone = userInfo.phoneNumber.replace(str, '******');
+            }
+            this.props.nickName = userInfo.nickName ? userInfo.nickName : this.language.defaultName;
+            this.props.editName = this.props.nickName;
+            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+            this.paint();
+        });
     }
 
     /**

@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
-import { LuckyMoneyType } from '../../../store/interface';
+import { LuckyMoneyType } from '../../../publicLib/interface';
 import { getStore } from '../../../store/memstore';
 
 interface Props {

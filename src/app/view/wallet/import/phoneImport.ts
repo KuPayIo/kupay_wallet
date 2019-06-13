@@ -5,14 +5,14 @@
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { phoneImport } from '../../../logic/localWallet';
 import { callGetRandom, callLogoutAccountDel } from '../../../middleLayer/netBridge';
 import { regPhone, verifyPhone } from '../../../net/pull';
-import { CreateWalletOption } from '../../../store/interface';
+import { CreateWalletOption } from '../../../publicLib/interface';
 import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
 import { getDataCenter } from '../../../utils/commonjsTools';
 import { defaultPassword } from '../../../utils/constants';
 import { delPopPhoneTips, playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
+import { phoneImport } from '../../../viewLogic/localWallet';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

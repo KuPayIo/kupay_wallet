@@ -1,20 +1,21 @@
 /**
  * 数据更新中心
  */
-import { btcNetwork, defaultEthToAddr, ERC20Tokens, MainChainCoin } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
-import { getSilverPrice } from '../net/pull';
-import { changellyGetCurrencies, fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
-import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
+import { BigNumber } from '../publicLib/bignumber';
+// tslint:disable-next-line:max-line-length
+import { btcNetwork, defaultEthToAddr, erc20GasLimitRate, ERC20Tokens, ethTokenTransferCode, lang, MainChainCoin } from '../publicLib/config';
+import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../publicLib/interface';
+import { changellyGetCurrencies, fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../publicLib/pull3';
+import { formatBalance } from '../publicLib/tools';
+import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../publicLib/unitTools';
 import { getStore,setStore } from '../store/memstore';
-import { erc20GasLimitRate, ethTokenTransferCode, lang } from '../utils/constants';
-import { formatBalance,getAddrsAll,getConfirmBlockNumber,getCurrentEthAddr, parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
-import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
-import { BigNumber } from './bignumber';
-import { fetchLocalTxByHash, fetchTransactionList, getMnemonicByHash } from './jscWallet';
+import { getSilverPrice } from './pull';
+import { getAddrsAll, getConfirmBlockNumber, getCurrentEthAddr, parseTransferExtraInfo, updateLocalTx } from './tools';
+import { fetchLocalTxByHash, fetchTransactionList, getMnemonicByHash } from './wallet';
 /**
  * 创建事件处理器表
  * @example

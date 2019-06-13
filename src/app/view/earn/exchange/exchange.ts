@@ -8,14 +8,15 @@ import { popModalBoxs, popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
+import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
 // tslint:disable-next-line:max-line-length
-import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
-import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
+import { convertRedBag, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
+import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { eth2Wei, smallUnit2LargeUnit } from '../../../publicLib/unitTools';
 import { setStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
-import {  popNewLoading, popNewMessage } from '../../../utils/tools';
-import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
+import { popNewLoading, popNewMessage } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -59,7 +60,7 @@ export class Exchange extends Widget {
         close.callback(close.widget);
         if (!res.value) return;
         setStore('activity/luckyMoney/exchange',undefined);
-        getServerCloudBalance();
+        callGetServerCloudBalance();
         const r: any = await this.queryDesc(code);
         const ktShow = getModulConfig('KT_SHOW');
         const redEnvelope = {

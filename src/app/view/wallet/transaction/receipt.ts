@@ -5,8 +5,8 @@ import { ShareToPlatforms, ShareType } from '../../../../pi/browser/shareToPlatf
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { makeScreenShot } from '../../../logic/native';
-import { copyToClipboard, getCurrentAddrByCurrencyName, getUserInfo, popNewMessage } from '../../../utils/tools';
+import { copyToClipboard, popNewMessage } from '../../../utils/tools';
+import { makeScreenShot } from '../../../viewLogic/native';
 
 interface Props {
     currencyName:string;

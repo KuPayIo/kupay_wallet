@@ -1,11 +1,10 @@
 /**
  * global wallet
  */
-import { btcNetwork, ERC20Tokens } from '../config';
-import { u8ArrayToHexstr } from '../jsc/jscTools';
-import { encrypt, getMnemonic } from '../jsc/jscWallet';
-import { AddrInfo, CurrencyRecord } from '../store/interface';
-import { lang, strength } from '../utils/constants';
+import { btcNetwork, ERC20Tokens, lang, strength } from '../publicLib/config';
+import { AddrInfo, CurrencyRecord } from '../publicLib/interface';
+import { u8ArrayToHexstr } from '../publicLib/tools';
+import { encrypt, getMnemonic } from '../remote/wallet';
 import { BTCWallet } from './btc/wallet';
 import { EthWallet } from './eth/wallet';
 import { generateRandomValues, getRandomValuesByMnemonic, toMnemonic } from './genmnemonic';

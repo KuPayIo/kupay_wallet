@@ -1,4 +1,4 @@
-import { dev_mode, DevMode } from '../config';
+import { dev_mode, DevMode } from '../publicLib/config';
 
 /**
  * config file

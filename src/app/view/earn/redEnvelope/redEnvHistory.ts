@@ -7,11 +7,11 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
+import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { getInviteCode, querySendRedEnvelopeRecord } from '../../../net/pull';
-import { LuckyMoneyType } from '../../../store/interface';
+import { PAGELIMIT } from '../../../publicLib/config';
+import { LuckyMoneyType } from '../../../publicLib/interface';
 import { getStore, register } from '../../../store/memstore';
-import { PAGELIMIT } from '../../../utils/constants';
-import { getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -47,9 +47,13 @@ export class RedEnvHistory extends Widget {
             sendNumber:0,  
             scrollHeight:0,
             topRefresh:false,
-            avatar:getUserInfo().avatar
+            avatar:''
         };
         this.initData();
+        callGetUserInfo().then(userInfo => {
+            this.props.avatar = userInfo.avatar;
+            this.paint();
+        });
     }
 
     /**

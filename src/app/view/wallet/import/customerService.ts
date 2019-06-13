@@ -1,5 +1,5 @@
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../publicLib/modulConfig';
 
 /**
  * 找客服

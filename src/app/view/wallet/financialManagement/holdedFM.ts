@@ -4,7 +4,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPurchaseRecord } from '../../../net/pull';
-import { PurchaseHistory } from '../../../store/interface';
+import { PurchaseHistory } from '../../../publicLib/interface';
 import { getStore, register } from '../../../store/memstore';
 
 // ================================ 导出

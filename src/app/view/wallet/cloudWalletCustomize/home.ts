@@ -4,12 +4,11 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
 import { getAccountDetail } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { formatBalance, formatBalanceValue } from '../../../publicLib/tools';
 import { getCloudBalances, getStore, register } from '../../../store/memstore';
-// tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, fetchCloudGain, formatBalance, formatBalanceValue, getCurrencyUnitSymbol } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

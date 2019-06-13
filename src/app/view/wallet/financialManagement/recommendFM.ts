@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getProductList } from '../../../net/pull';
-import { Product } from '../../../store/interface';
+import { Product } from '../../../publicLib/interface';
 import { register } from '../../../store/memstore';
 
 interface Props {

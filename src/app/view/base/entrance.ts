@@ -1,9 +1,9 @@
 import { Widget } from '../../../pi/widget/widget';
-import { CreateWalletType, touristLogin } from '../../logic/localWallet';
 import { openWSConnect } from '../../middleLayer/netBridge';
-import { CreateWalletOption } from '../../store/interface';
+import { CreateWalletOption } from '../../publicLib/interface';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewMessage } from '../../utils/tools';
+import { CreateWalletType, touristLogin } from '../../viewLogic/localWallet';
 
 /**
  * 登录注册

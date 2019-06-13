@@ -5,8 +5,9 @@ import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { makeScreenShot } from '../../../logic/native';
-import { getUserInfo, popNewMessage } from '../../../utils/tools';
+import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
+import { popNewMessage } from '../../../utils/tools';
+import { makeScreenShot } from '../../../viewLogic/native';
 
 export class ShareDownload extends Widget {
     public ok:() => void;
@@ -15,12 +16,15 @@ export class ShareDownload extends Widget {
         this.init();
     }
     public init() {
-        const userInfo = getUserInfo();
         this.props = {
-            nickName:userInfo.nickName,
-            avatar:userInfo.avatar
+            nickName:'',
+            avatar:''
         };
-
+        callGetUserInfo().then(userInfo => {
+            this.props.nickName = userInfo.nickName;
+            this.props.avatar = userInfo.avatar;
+            this.paint();
+        });
     }
     public firstPaint() {
         console.log('firstPaint');

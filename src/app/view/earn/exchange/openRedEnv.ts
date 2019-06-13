@@ -5,11 +5,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { convertRedBag, getServerCloudBalance, takeRedBag } from '../../../net/pull';
-import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
+import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
+import { convertRedBag, takeRedBag } from '../../../net/pull';
+import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
+import { currencyType } from '../../../publicLib/tools';
+import { smallUnit2LargeUnit } from '../../../publicLib/unitTools';
 import { setStore } from '../../../store/memstore';
-import { currencyType, popNewMessage } from '../../../utils/tools';
-import { smallUnit2LargeUnit } from '../../../utils/unitTools';
+import { popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -115,7 +117,7 @@ export class OpenRedEnvelope extends Widget {
             suid: ans.src_id
         };
         setStore('activity/luckyMoney/exchange',undefined);
-        getServerCloudBalance();
+        callGetServerCloudBalance();
 
         return true;
     }

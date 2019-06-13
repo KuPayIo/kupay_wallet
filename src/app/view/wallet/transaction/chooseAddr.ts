@@ -2,9 +2,10 @@
  * choose addr
  */
 import { Widget } from '../../../../pi/widget/widget';
-import { createNewAddr } from '../../../logic/localWallet';
+import { callGetAddrsInfoByCurrencyName, callGetCurrentAddrInfo } from '../../../middleLayer/walletBridge';
 import { getStore, setStore } from '../../../store/memstore';
-import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, parseAccount, popPswBox } from '../../../utils/tools';
+import { parseAccount, popPswBox } from '../../../utils/tools';
+import { createNewAddr } from '../../../viewLogic/localWallet';
 
 interface Props {
     currencyName: string;
@@ -20,19 +21,23 @@ export class ChooseAddr extends Widget {
     public init(): void {
         this.props = {
             ...this.props,
-            addrsInfo:this.parseAddrsInfo()
+            addrsInfo:[]
         };
+        this.parseAddrsInfo();
     }
 
     public parseAddrsInfo() {
-        const addrsInfo = getAddrsInfoByCurrencyName(this.props.currencyName);
-        const curAddr = getCurrentAddrInfo(this.props.currencyName).addr;
-        addrsInfo.forEach(item => {
-            item.addrShow = parseAccount(item.addr);
-            item.isChoosed = item.addr === curAddr;
-        });
+        const currencyName = this.props.currencyName;
+        Promise.all([callGetAddrsInfoByCurrencyName(currencyName),callGetCurrentAddrInfo(currencyName)]).then(([addrsInfo,curAddrInfo]) => {
+            const curAddr = curAddrInfo.addr;
+            addrsInfo.forEach(item => {
+                item.addrShow = parseAccount(item.addr);
+                item.isChoosed = item.addr === curAddr;
+            });
 
-        return addrsInfo;
+            this.props.addrsInfo = addrsInfo;
+            this.paint();
+        });
     }
 
     public maskClick() {

@@ -1,8 +1,7 @@
 import { thirdUrlPre } from '../config';
-import { sourceIp } from '../ipConfig';
 import { setStore } from '../store/memstore';
 import { xorDecode1, xorEncode } from '../utils/tools';
-import { changellySign } from './pull';
+import { sourceIp } from './config';
 
 // ==========================三方接口=======================================
 /**
@@ -70,6 +69,7 @@ export const fetchCurrency2USDTRate = (currencyName:string) => {
 // changelly api url
 const changellyApiUrl = 'https://api.changelly.com';
 const changellyPostId = 'kuplay';
+// TODO 先向服务器签名
 const changellyFetchPost = (data) => {
     return changellySign(data).then(res => {
         const apiKey = res.key;

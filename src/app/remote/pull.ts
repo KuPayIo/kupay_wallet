@@ -1,10 +1,9 @@
-import { MainChainCoin } from '../config';
-import { CloudCurrencyType, MinerFeeLevel } from '../store/interface';
+import { MainChainCoin, PAGELIMIT } from '../publicLib/config';
+import { CloudCurrencyType, MinerFeeLevel } from '../publicLib/interface';
+import { unicodeArray2Str } from '../publicLib/tools';
 import { getStore, setStore } from '../store/memstore';
 import { parseCloudBalance, parseMiningRank, parseRechargeWithdrawalLog } from '../store/parse';
-import { PAGELIMIT } from '../utils/constants';
-import { requestAsync, requestAsyncNeedLogin } from './jscLogin';
-import { unicodeArray2Str } from './jscTools';
+import { requestAsync, requestAsyncNeedLogin } from './login';
 
 /**
  * pull request
@@ -408,5 +407,40 @@ export const btcWithdrawFromServer = async (toAddr:string,value:string,secretHas
     } catch (err) {
 
         return ;
+    }
+};
+
+/**
+ * 获取ST价格
+ */
+export const getSilverPrice = async (ispay:number = 0) => {
+    const msg = { type:'get_silverprice',param:{ ispay } };
+    try {
+        const resData:any = await requestAsync(msg);
+        if (resData.result === 1) {
+            setStore('third/silver',{ price:resData.price,change:resData.change });
+        }
+    } catch (err) {
+        // showError(err && (err.result || err.type));
+
+    }
+};
+
+/**
+ * 获取服务端btc钱包地址
+ */
+export const getBtcBankAddr = async () => {
+    const msg = {
+        type: 'wallet/bank@get_btc_bank_addr',
+        param: { }
+    };
+
+    try {
+        const res = await requestAsync(msg);
+
+        return res.value;
+    } catch (err) {
+
+        return;
     }
 };

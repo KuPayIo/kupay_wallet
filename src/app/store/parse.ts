@@ -1,12 +1,12 @@
 
 import { isArray } from '../../pi/net/websocket/util';
-import { uploadFileUrlPrefix } from '../config';
-import { PAGELIMIT } from '../utils/constants';
+import { PAGELIMIT, uploadFileUrlPrefix } from '../publicLib/config';
 // tslint:disable-next-line:max-line-length
-import { currencyType, formatBalance, GetDateDiff,getStaticLanguage,parseRtype, timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
-import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
+import { CloudCurrencyType,LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, PurchaseHistory, TaskSid } from '../publicLib/interface';
 // tslint:disable-next-line:max-line-length
-import { CloudCurrencyType, LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, PurchaseHistory } from './interface';
+import { currencyType, formatBalance, GetDateDiff, parseRtype, timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../publicLib/tools';
+import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../publicLib/unitTools';
+import { getStaticLanguage } from '../remote/tools';
 import { getStore } from './memstore';
 /**
  * 解析数据
@@ -25,32 +25,6 @@ export const parseCloudBalance = (balanceInfo): Map<CloudCurrencyType, number> =
     
     return m;
 };
-
-/**
- * 后端定义的任务id
- */
-export enum TaskSid {
-    Mine = '11',                 // 游戏 实际上是appid
-    Recharge = 301,            // 充值
-    Withdraw = 302,            // 提现
-    CreateWallet = 1001,       // 创建钱包
-    FirstChargeEth = 1002,     // 以太坊首次转入
-    BindPhone = 1003,          // 注册手机
-    ChargeEth = 1004,          // 存币
-    InviteFriends = 1005,      // 邀请真实好友
-    BuyFinancial = 1007,       // 购买理财产品
-    Transfer = 1008,           // 交易奖励
-    Dividend = 1009,           // 分红
-    Mining = 1010,             // 挖矿
-    Chat = 1011,               // 聊天
-    FinancialManagement = 330, // 理财
-    LuckyMoney = 340,           // 红包
-    LuckyMoneyRetreat = 341,     // 回退红包
-    Wxpay = 370,                // 微信支付
-    Alipay = 371,               // 支付宝支付
-    Consume = 360,               // 消费
-    Receipt = 361               // 收款
-}
 
 /**
  * 解析云端账号详情

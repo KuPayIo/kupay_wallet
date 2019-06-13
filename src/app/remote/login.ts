@@ -4,15 +4,15 @@
 
 import { closeCon, open, reopen, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { wsUrl } from '../config';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { getDeviceAllDetail } from '../logic/native';
-import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
+import { wsUrl } from '../publicLib/config';
+import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
 import { Account, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './jscPull';
-import { decrypt, encrypt, getMnemonicByHash } from './jscWallet';
+import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';
+import { getDeviceAllDetail } from './tools';
+import { decrypt, encrypt, getMnemonicByHash } from './wallet';
 
 declare var pi_update;
 // 登录成功之后的回调列表

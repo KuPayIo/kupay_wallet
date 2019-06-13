@@ -1,14 +1,13 @@
 /**
  * 后端主动推消息给后端
  */
-import { getStore as gameGetStore, setStore as gameSetStore } from '../../earn/client/app/store/memstore';
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
-import { CloudCurrencyType } from '../store/interface';
+import { CMD } from '../publicLib/config';
+import { CloudCurrencyType } from '../publicLib/interface';
 import { getStore, register, setStore } from '../store/memstore';
-import { CMD } from '../utils/constants';
-import { getUserInfo } from '../utils/tools';
-import { logoutAccount, logoutAccountDel } from './jscLogin';
-import { getHighTop, getServerCloudBalance } from './jscPull';
+import { logoutAccount, logoutAccountDel } from './login';
+import { getServerCloudBalance } from './pull';
+import { getUserInfo } from './tools';
 
 // ===================================================== 导入
 
@@ -112,11 +111,12 @@ export const initPush = () => {
         console.log('alter_balance_ok服务器推送成功===========调用排名===============',res);
         getServerCloudBalance();
         if (res.cointype === CloudCurrencyType.KT) {
-            getHighTop(100).then((data) => {
-                const mine = gameGetStore('mine',{});
-                mine.miningRank = data.miningRank || 0;
-                gameSetStore('mine',mine);  
-            });
+            // TODO 界面层实现
+            // getHighTop(100).then((data) => {
+            //     const mine = gameGetStore('mine',{});
+            //     mine.miningRank = data.miningRank || 0;
+            //     gameSetStore('mine',mine);  
+            // });
         }
         
         const wallet = getStore('wallet');

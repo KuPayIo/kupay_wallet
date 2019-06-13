@@ -7,11 +7,12 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { callFetchBtcFees, callFetchGasPrices } from '../../../middleLayer/netBridge';
 import { callFetchMinerFeeList } from '../../../middleLayer/walletBridge';
-import { getModulConfig } from '../../../modulConfig';
-import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
+import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { formatBalance } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { popNewMessage, popPswBox } from '../../../utils/tools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords

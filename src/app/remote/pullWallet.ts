@@ -5,33 +5,22 @@
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
-import { ERC20Tokens } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet, initWeb3, web3 } from '../core/eth/wallet';
 import { GlobalWallet } from '../core/globalWallet';
-import { getBtcBankAddr } from '../net/pull';
-import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
-import { erc20GasLimitRate } from '../utils/constants';
+import { erc20GasLimitRate, ERC20Tokens } from '../publicLib/config';
+import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../publicLib/interface';
+import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../publicLib/unitTools';
 import { doErrorShow } from '../utils/toolMessages';
+import { popNewLoading, popNewMessage } from '../utils/tools';
+import { dataCenter } from './dataCenter';
 // tslint:disable-next-line:max-line-length
-import { deletLocalTx, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, popNewLoading, popNewMessage, setEthNonce, updateLocalTx } from '../utils/tools';
-import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
-import { dataCenter } from './jscDataCenter';
-// tslint:disable-next-line:max-line-length
-import { btcRechargeToServer, btcWithdrawFromServer, getBankAddr, getRechargeLogs, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './jscPull';
-import { fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getWltAddrIndex, VerifyIdentidy } from './jscWallet';
-// tslint:disable-next-line:max-line-length
+import { btcRechargeToServer, btcWithdrawFromServer, getBankAddr, getBtcBankAddr, getRechargeLogs, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './pull';
+import { deletLocalTx, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx } from './tools';
+import { fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getWltAddrIndex, VerifyIdentidy } from './wallet';
 // ===================================================== 导出
-export interface TxPayload {
-    fromAddr:string;        // 转出地址
-    toAddr:string;          // 转入地址
-    pay:number;             // 转账金额
-    currencyName:string;    // 转账货币
-    fee:number;             // 矿工费
-    minerFeeLevel:MinerFeeLevel;   // 矿工费等级
-}
 
 export interface TxPayload3 {
     fromAddr:string;        // 转出地址

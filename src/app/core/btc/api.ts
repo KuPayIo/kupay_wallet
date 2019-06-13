@@ -1,7 +1,7 @@
 /**
  * Api v2
  */
-import { DevMode } from '../../config';
+import { DevMode } from '../../publicLib/config';
 import { config } from '../config';
 
 /* tslint:disable:no-var-keyword */

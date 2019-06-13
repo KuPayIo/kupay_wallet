@@ -7,13 +7,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { ERC20Tokens } from '../../../config';
 import { callFetchMinerFeeList } from '../../../middleLayer/walletBridge';
-import { changellyCreateTransaction, changellyGetExchangeAmount, changellyGetMinAmount } from '../../../net/pull3';
-import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel } from '../../../store/interface';
+import { ERC20Tokens } from '../../../publicLib/config';
+import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel } from '../../../publicLib/interface';
 import { getStore, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { calCurrencyLogoUrl, currencyExchangeAvailable, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
+import { calCurrencyLogoUrl, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

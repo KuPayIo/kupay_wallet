@@ -4,12 +4,13 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
-import { getModulConfig } from '../../../modulConfig';
+import { callFetchCloudTotalAssets, callFetchCloudWalletAssetList, callGetCurrencyUnitSymbol } from '../../../middleLayer/toolsBridge';
 import { getProductList } from '../../../net/pull';
-import { CloudCurrencyType, Product } from '../../../store/interface';
+import { CloudCurrencyType, Product } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { formatBalanceValue } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
-// tslint:disable-next-line:max-line-length
-import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, popNew3 } from '../../../utils/tools';
+import { popNew3 } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -32,12 +33,19 @@ export class CloudHome extends Widget {
         const color = getStore('setting/changeColor','redUp');
         this.props = {
             ...this.props,
-            totalAsset:formatBalanceValue(fetchCloudTotalAssets()),
-            assetList:fetchCloudWalletAssetList(),
+            totalAsset:formatBalanceValue(0),
+            assetList:[],
             productList:getStore('activity/financialManagement/products',[]),
             redUp:color === 'redUp',
-            currencyUnitSymbol:getCurrencyUnitSymbol()
+            currencyUnitSymbol:''
         };
+        Promise.all([callFetchCloudTotalAssets(),callFetchCloudWalletAssetList(),
+            callGetCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
+                this.props.totalAsset = formatBalanceValue(totalAsset);
+                this.props.assetList = assetList;
+                this.props.currencyUnitSymbol = currencyUnitSymbol;
+                this.paint();
+            });
     }
 
     // 条目点击
@@ -57,9 +65,11 @@ export class CloudHome extends Widget {
     }
     
     public updateBalance() {
-        this.props.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
-        this.props.assetList = fetchCloudWalletAssetList();
-        this.paint();
+        Promise.all([callFetchCloudTotalAssets(),callFetchCloudWalletAssetList()]).then(([totalAsset,assetList]) => {
+            this.props.totalAsset = formatBalanceValue(totalAsset);
+            this.props.assetList = assetList;
+            this.paint();
+        });
     }
     public optimalClick() {
         popNew3('app-view-wallet-financialManagement-home',{ activeNum:0 });
@@ -70,10 +80,13 @@ export class CloudHome extends Widget {
     }
 
     public currencyUnitChange() {
-        this.props.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
-        this.props.assetList = fetchCloudWalletAssetList();
-        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
-        this.paint();
+        Promise.all([callFetchCloudTotalAssets(),callFetchCloudWalletAssetList(),
+            callGetCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
+                this.props.totalAsset = formatBalanceValue(totalAsset);
+                this.props.assetList = assetList;
+                this.props.currencyUnitSymbol = currencyUnitSymbol;
+                this.paint();
+            });
     }
 }
 

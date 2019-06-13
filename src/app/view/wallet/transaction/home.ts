@@ -4,11 +4,12 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callFetchTransactionList } from '../../../middleLayer/walletBridge';
-import { TxHistory, TxType } from '../../../store/interface';
+import { callFetchTransactionList, callGetCurrentAddrInfo, callGetDataCenter } from '../../../middleLayer/walletBridge';
+import { TxHistory, TxType } from '../../../publicLib/interface';
+import { timestampFormat } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { calCurrencyLogoUrl, currencyExchangeAvailable, fetchBalanceValueOfCoin, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, parseAccount, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
+import { calCurrencyLogoUrl, parseAccount, parseStatusShow, parseTxTypeShow } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -28,40 +29,53 @@ export class TransactionHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        dataCenter.updateAddrInfo(getCurrentAddrInfo(this.props.currencyName).addr,this.props.currencyName);
+        Promise.all([callGetDataCenter(),callGetCurrentAddrInfo(this.props.currencyName)]).then(([dataCenter,addrInfo]) => {
+            dataCenter.updateAddrInfo(addrInfo.addr,this.props.currencyName);
+            const balance = formatBalance(addrInfo.balance);
+            const balanceValue =  fetchBalanceValueOfCoin(this.props.currencyName,balance);
+            this.props.balance = balance;
+            this.props.balanceValue = balanceValue;
+            this.props.addrInfo = addrInfo;
+            this.paint();
+        });
     }
-    public async init() {
+    public init() {
         const currencyName = this.props.currencyName;
-        const balance = formatBalance(getCurrentAddrInfo(this.props.currencyName).balance);
-        const balanceValue =  fetchBalanceValueOfCoin(currencyName,balance);
-        const txList = await this.parseTxList();
         const canConvert = this.canConvert();
         const color = getStore('setting/changeColor','redUp');
         const addr = parseAccount(getCurrentAddrByCurrencyName(currencyName));
-        
         this.props = {
             ...this.props,
             currencyLogo:calCurrencyLogoUrl(currencyName),
-            balance,
-            balanceValue:formatBalanceValue(balanceValue),
+            balance:0,
+            balanceValue:formatBalanceValue(0),
             rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
-            txList,
+            txList:[],
             canConvert,
             redUp:color === 'redUp',
             currencyUnitSymbol:getCurrencyUnitSymbol(),
             tabs:[{
                 tab:'全部',
-                list:txList
+                list:[]
             },{
                 tab:'转账',
-                list:this.transferList(txList)
+                list:[]
             },{
                 tab:'收款',
-                list:this.receiptList(txList)
+                list:[]
             }],
             activeNum:0,
             address:addr
         };
+
+        this.parseTxList().then(txList => {
+            this.props.txList = txList;
+            this.props.tabs[0].list = txList;
+            this.props.tabs[1].list = this.transferList(txList);
+            this.props.tabs[2].list = this.receiptList(txList);
+            console.log(this.props.tabs);
+            this.paint();
+        });
         
     }
     // 解析txList
@@ -112,7 +126,8 @@ export class TransactionHome extends Widget {
         return false;
     }
     public txListItemClick(e:any,index:number) {
-        popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.props.txList[index].hash });
+        const hash = this.props.tabs[this.props.activeNum].list[index].hash;
+        popNew('app-view-wallet-transaction-transactionDetails',{ hash });
     }
     // 转账
     public doTransferClick() {
@@ -143,7 +158,9 @@ export class TransactionHome extends Widget {
     }
 
     public refreshClick() {
-        dataCenter.updateAddrInfo(getCurrentAddrInfo(this.props.currencyName).addr,this.props.currencyName);
+        callGetDataCenter().then(dataCenter => {
+            dataCenter.updateAddrInfo(this.props.addrInfo.addr,this.props.currencyName);
+        });
     }
 }
 

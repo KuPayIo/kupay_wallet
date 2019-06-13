@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { callVerifyIdentidy } from '../../../middleLayer/walletBridge';
 import { buyBack, getPurchaseRecord } from '../../../net/pull';
-import { PurchaseHistory } from '../../../store/interface';
+import { PurchaseHistory } from '../../../publicLib/interface';
 import { register } from '../../../store/memstore';
 import { popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 interface Props {

@@ -1,21 +1,21 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { arrayBufferToBase64, base64ToArrayBuffer } from '../../pi/util/base64';
 import { drawImg } from '../../pi/util/canvas';
-import { ERC20Tokens } from '../config';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { EthWallet } from '../core/eth/wallet';
 import { generateByHash, sha3, toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { AddrInfo, CreateWalletOption, MinerFeeLevel, Wallet } from '../store/interface';
+import { defalutShowCurrencys, defaultGasLimit, ERC20Tokens, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from '../publicLib/config';
+import { AddrInfo, CreateWalletOption, MinerFeeLevel, Wallet } from '../publicLib/interface';
+import { getXOR, hexstrToU8Array, u8ArrayToHexstr } from '../publicLib/tools';
+import { sat2Btc, wei2Eth } from '../publicLib/unitTools';
 import { getStore, setStore } from '../store/memstore';
-import { defalutShowCurrencys, defaultGasLimit, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from '../utils/constants';
-import { wei2Eth } from '../utils/unitTools';
 import { ahash } from './ahash';
-import { dataCenter } from './jscDataCenter';
-import { getXOR, hexstrToU8Array, sat2Btc, u8ArrayToHexstr } from './jscTools';
+import { dataCenter } from './dataCenter';
 import { restoreSecret, shareSecret } from './secretsBase';
+import { getCurrentAddrInfo } from './tools';
 
 /**
  * 密码加密
@@ -47,13 +47,11 @@ export const sha256 = (data: string) => {
 /**
  * 获取memery hash
  */
-export const calcHashValue = async (pwd, salt?) => {
+export const calcHashValue = (pwd, salt?) => {
     const argonHash = new ArgonHash();
     argonHash.init();
-    const secretHash = await argonHash.calcHashValuePromise({ pwd, salt });
-    dataCenter.checkAddr(secretHash);
 
-    return secretHash;
+    return argonHash.calcHashValuePromise({ pwd, salt });
 };
 
 /**
@@ -556,4 +554,24 @@ export const backupMnemonic = async (passwd:string) => {
         mnemonic,
         fragments
     };
+};
+
+/**
+ * 增加或者删除展示的币种
+ */
+export const updateShowCurrencys = (currencyName:string,added:boolean) => {
+    const wallet = getStore('wallet');
+    const showCurrencys = wallet.showCurrencys || [];
+    const oldIndex = showCurrencys.indexOf(currencyName);
+    if (added && oldIndex < 0) {
+        showCurrencys.push(currencyName);
+        const curAddr = getCurrentAddrInfo(currencyName);
+        dataCenter.updateAddrInfo(curAddr.addr, currencyName);
+        dataCenter.fetchErc20GasLimit(currencyName);
+    } else {
+        showCurrencys.splice(oldIndex, 1);
+    }
+    wallet.showCurrencys = showCurrencys;
+
+    setStore('wallet', wallet);
 };

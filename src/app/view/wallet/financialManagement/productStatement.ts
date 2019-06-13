@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { Product } from '../../../store/interface';
+import { Product } from '../../../publicLib/interface';
 import { getProductStatement } from './productStatementText';
 interface Props {
     product:Product;

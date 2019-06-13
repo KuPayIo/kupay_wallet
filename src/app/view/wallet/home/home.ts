@@ -5,12 +5,14 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { getServerCloudBalance } from '../../../net/pull';
+import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
+// tslint:disable-next-line:max-line-length
+import { callFetchCloudTotalAssets, callFetchLocalTotalAssets, callGetCurrencyUnitSymbol, callGetUserInfo } from '../../../middleLayer/toolsBridge';
+import { formatBalanceValue } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
 import { getDataCenter } from '../../../utils/commonjsTools';
-// tslint:disable-next-line:max-line-length
-import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getUserInfo } from '../../../utils/tools';
 // ============================导出
+
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
@@ -42,11 +44,14 @@ export class Home extends Widget {
     }
 
     public dataInit() {
-        const userInfo = getUserInfo();
-        this.props.avatar = userInfo && userInfo.avatar;
-        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
-        this.props.currencyUnitSymbol = getCurrencyUnitSymbol(); 
-        this.paint();
+        Promise.all([callGetUserInfo(),callFetchLocalTotalAssets(),
+            callFetchCloudTotalAssets(),callGetCurrencyUnitSymbol()]).then(([userInfo,localTotalAssets,
+                cloudTotalAssets,currencyUnitSymbol]) => {
+                this.props.avatar = userInfo && userInfo.avatar;
+                this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
+                this.props.currencyUnitSymbol = currencyUnitSymbol; 
+                this.paint();
+            });
     }
 
     public tabsChangeClick(event: any, value: number) {
@@ -55,20 +60,29 @@ export class Home extends Widget {
     }
 
     public userInfoChange() {
-        const userInfo = getUserInfo();
-        this.props.avatar = userInfo.avatar || '';
-        this.paint();
+        callGetUserInfo().then(userInfo => {
+            this.props.avatar = userInfo.avatar || '';
+            this.paint();
+        });
     }
 
     public updateTotalAsset() {
-        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
-        this.paint();
+        Promise.all([callFetchLocalTotalAssets(),
+            callFetchCloudTotalAssets()]).then(([localTotalAssets,
+                cloudTotalAssets]) => {
+                this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
+                this.paint();
+            });
     }
 
     public currencyUnitChange() {
-        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
-        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
-        this.paint();
+        Promise.all([callFetchLocalTotalAssets(),
+            callFetchCloudTotalAssets(),callGetCurrencyUnitSymbol()]).then(([localTotalAssets,
+                cloudTotalAssets,currencyUnitSymbol]) => {
+                this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
+                this.props.currencyUnitSymbol = currencyUnitSymbol; 
+                this.paint();
+            });
     }
     
     /**
@@ -103,7 +117,7 @@ export class Home extends Widget {
             this.props.refreshing = false;
             this.paint();
         },1000);
-        getServerCloudBalance();
+        callGetServerCloudBalance();
         const wallet = getStore('wallet');
         if (!wallet) return;
         const list = [];
@@ -130,6 +144,7 @@ register('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.dataInit();
+        w.paint();
     }
 });
 

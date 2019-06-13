@@ -5,10 +5,10 @@ import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { uploadFileUrlPrefix } from '../../../config';
 import { getOneUserInfo, queryDetailLog } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
-import { currencyType } from '../../../utils/tools';
+import { uploadFileUrlPrefix } from '../../../publicLib/config';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { currencyType } from '../../../publicLib/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

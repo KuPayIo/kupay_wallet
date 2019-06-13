@@ -3,9 +3,10 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { callFetchLocalTotalAssets, callFetchWalletAssetList, callGetCurrencyUnitSymbol } from '../../../middleLayer/toolsBridge';
+import { formatBalanceValue } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
-// tslint:disable-next-line:max-line-length
-import { fetchLocalTotalAssets, fetchWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, popNew3 } from '../../../utils/tools';
+import { popNew3 } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -20,18 +21,27 @@ export class WalletHome extends Widget {
         const color = getStore('setting/changeColor','redUp');
         this.props = {
             ...this.props,
-            totalAsset:formatBalanceValue(fetchLocalTotalAssets()),
-            assetList:fetchWalletAssetList(),
+            totalAsset:formatBalanceValue(0),
+            assetList:[],
             redUp:color === 'redUp',
-            currencyUnitSymbol:getCurrencyUnitSymbol()
+            currencyUnitSymbol:''
         };
-        // console.log('updateTest');
+        Promise.all([callFetchLocalTotalAssets(),
+            callFetchWalletAssetList(),callGetCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
+                this.props.totalAsset = formatBalanceValue(totalAsset);
+                this.props.assetList = assetList;
+                this.props.currencyUnitSymbol = currencyUnitSymbol;
+                this.paint();
+            });
     }
 
     public updateBalance() {
-        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets());
-        this.props.assetList = fetchWalletAssetList();
-        this.paint();
+        Promise.all([callFetchLocalTotalAssets(),
+            callFetchWalletAssetList()]).then(([totalAsset,assetList]) => {
+                this.props.totalAsset = formatBalanceValue(totalAsset);
+                this.props.assetList = assetList;
+                this.paint();
+            });
     }
     // 添加资产
     public addAssetClick() {
@@ -46,10 +56,13 @@ export class WalletHome extends Widget {
     }
 
     public currencyUnitChange() {
-        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets());
-        this.props.assetList = fetchWalletAssetList();
-        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
-        this.paint();
+        Promise.all([callFetchLocalTotalAssets(),
+            callFetchWalletAssetList(),callGetCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
+                this.props.totalAsset = formatBalanceValue(totalAsset);
+                this.props.assetList = assetList;
+                this.props.currencyUnitSymbol = currencyUnitSymbol;
+                this.paint();
+            });
     }
 }
 

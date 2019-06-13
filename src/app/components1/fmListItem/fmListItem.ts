@@ -1,5 +1,5 @@
 import { Widget } from '../../../pi/widget/widget';
-import { Product } from '../../store/interface';
+import { Product } from '../../publicLib/interface';
 
 /**
  * 理财列表item

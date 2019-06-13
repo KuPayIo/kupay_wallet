@@ -5,20 +5,21 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { ERC20Tokens } from '../../../config';
-import { doScanQrCode } from '../../../logic/native';
 import { callFetchBtcFees, callFetchGasPrices } from '../../../middleLayer/netBridge';
-import { callFetchMinerFeeList, callGetDataCenter } from '../../../middleLayer/walletBridge';
-import { MinerFeeLevel, TxHistory } from '../../../store/interface';
+// tslint:disable-next-line:max-line-length
+import { callFetchMinerFeeList, callGetCurrentAddrInfo, callGetDataCenter, callResendNormalTransfer, callTransfer, callUpdateLocalTx, TxPayload } from '../../../middleLayer/walletBridge';
+import { ERC20Tokens } from '../../../publicLib/config';
+import { MinerFeeLevel, TxHistory } from '../../../publicLib/interface';
 import { register } from '../../../store/memstore';
 import { doErrorShow } from '../../../utils/toolMessages';
-// tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getStaticLanguage, judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox, updateLocalTx } from '../../../utils/tools';
+import {  judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
+import { doScanQrCode } from '../../../viewLogic/native';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 interface Props {
     currencyName:string;
     tx?:TxHistory;
@@ -53,7 +54,7 @@ export class Transfer extends Widget {
             // tslint:disable-next-line:binary-expression-operand-order
             toAddr:tx ? tx.toAddr : '' || (this.props.address || ''),
             amount:tx ? tx.pay : 0,
-            balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
+            balance:formatBalance(0),
             minerFee:0,
             minerFeeList:[],
             curLevel,
@@ -62,6 +63,10 @@ export class Transfer extends Widget {
             amountShow:'0.00',
             currencyUnitSymbol:getCurrencyUnitSymbol()
         };
+        callGetCurrentAddrInfo(this.props.currencyName).then(addrInfo => {
+            this.props.balance = formatBalance(addrInfo.balance);
+            this.paint();
+        });
     }
 
     public updateMinerFeeList() {
@@ -117,7 +122,8 @@ export class Transfer extends Widget {
         }
 
         if (ERC20Tokens[this.props.currencyName]) {
-            if (this.props.balance < Number(this.props.amount) || this.props.minerFee > getCurrentAddrInfo('ETH').balance) {
+            const ethAddrInfo = await callGetCurrentAddrInfo('ETH');
+            if (this.props.balance < Number(this.props.amount) || this.props.minerFee > ethAddrInfo.balance) {
                 popNewMessage(this.language.tips[2]);
     
                 return;
@@ -154,9 +160,9 @@ export class Transfer extends Widget {
         let ret;
         if (!this.props.tx) {
             const loading = popNewLoading(getStaticLanguage().transfer.loading);
-            transfer(passwd,txPayload).then(([err,tx]) => {
+            callTransfer(passwd,txPayload).then(([err,tx]) => {
                 if (!err) {
-                    updateLocalTx(tx);
+                    callUpdateLocalTx(tx);
                     callGetDataCenter().then(dataCenter => {
                         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
                     });
@@ -171,7 +177,7 @@ export class Transfer extends Widget {
         } else {
             const tx = { ...this.props.tx };
             tx.minerFeeLevel = minerFeeLevel;
-            ret = await resendNormalTransfer(passwd,tx);
+            ret = await callResendNormalTransfer(passwd,tx);
             if (ret) {
                 this.ok && this.ok();
             }

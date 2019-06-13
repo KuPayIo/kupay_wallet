@@ -4,8 +4,7 @@
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { isValidMnemonic } from '../../../core/genmnemonic';
-import { CreateWalletType } from '../../../logic/localWallet';
-import { lang } from '../../../utils/constants';
+import { lang } from '../../../publicLib/config';
 import { popNew3, popNewMessage } from '../../../utils/tools';
 import { forelet,WIDGET_NAME } from './home';
 

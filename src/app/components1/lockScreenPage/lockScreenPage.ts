@@ -6,7 +6,7 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { LockScreen } from '../../store/interface';
+import { LockScreen } from '../../publicLib/interface';
 import { getStore, register, setStore  } from '../../store/memstore';
 import { getLoginMod, getWalletToolsMod } from '../../utils/commonjsTools';
 import { popNewLoading, popNewMessage } from '../../utils/tools';

@@ -1,8 +1,33 @@
-import { TaskSid } from './parse';
 
 /**
  * 内存中的数据结构
  */
+
+/**
+ * 后端定义的任务id
+ */
+export enum TaskSid {
+    Mine = '11',                 // 游戏 实际上是appid
+    Recharge = 301,            // 充值
+    Withdraw = 302,            // 提现
+    CreateWallet = 1001,       // 创建钱包
+    FirstChargeEth = 1002,     // 以太坊首次转入
+    BindPhone = 1003,          // 注册手机
+    ChargeEth = 1004,          // 存币
+    InviteFriends = 1005,      // 邀请真实好友
+    BuyFinancial = 1007,       // 购买理财产品
+    Transfer = 1008,           // 交易奖励
+    Dividend = 1009,           // 分红
+    Mining = 1010,             // 挖矿
+    Chat = 1011,               // 聊天
+    FinancialManagement = 330, // 理财
+    LuckyMoney = 340,           // 红包
+    LuckyMoneyRetreat = 341,     // 回退红包
+    Wxpay = 370,                // 微信支付
+    Alipay = 371,               // 支付宝支付
+    Consume = 360,               // 消费
+    Receipt = 361               // 收款
+}
 
 /**
  * 全局store数据
@@ -535,4 +560,13 @@ export interface CreateWalletOption {
     mnemonic?: string; // 助记词
     fragment1?: string; // 片段1
     fragment2?: string; // 片段2
+}
+
+export interface TxPayload {
+    fromAddr:string;        // 转出地址
+    toAddr:string;          // 转入地址
+    pay:number;             // 转账金额
+    currencyName:string;    // 转账货币
+    fee:number;             // 矿工费
+    minerFeeLevel:MinerFeeLevel;   // 矿工费等级
 }

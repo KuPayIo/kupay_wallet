@@ -14,9 +14,9 @@ export const registerStore = (key:string,callback:Function) => {
 /**
  * 获取store数据
  */
-export const getStoreData = (key:string):Promise<any> => {
+export const getStoreData = (key:string, defaultValue = undefined):Promise<any> => {
     return new Promise((resolve) => {
-        resolve(getStore(key));
+        resolve(getStore(key,defaultValue));
     });
 };
 

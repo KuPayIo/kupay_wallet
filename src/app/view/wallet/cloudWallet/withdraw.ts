@@ -5,11 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { withdrawMinerFee } from '../../../config';
-import { getModulConfig } from '../../../modulConfig';
-import { CloudCurrencyType } from '../../../store/interface';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
 import { getCloudBalances, getStore } from '../../../store/memstore';
 import { withdrawLimit } from '../../../utils/constants';
-import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
+import { parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
 interface Props {
     currencyName:string;
 }

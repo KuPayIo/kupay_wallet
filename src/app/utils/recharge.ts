@@ -6,7 +6,7 @@ import { getStore as earnGetStore, setStore  as earnSetStore } from '../../earn/
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { callRequestAsync } from '../middleLayer/netBridge';
-import { getModulConfig } from '../modulConfig';
+import { getModulConfig } from '../publicLib/modulConfig';
 import { popNewLoading } from './tools';
 
 export interface OrderDetail {

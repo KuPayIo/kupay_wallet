@@ -5,13 +5,14 @@ import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { makeScreenShot } from '../../../logic/native';
-import { getModulConfig } from '../../../modulConfig';
 import { getOneUserInfo } from '../../../net/pull';
-import { TaskSid } from '../../../store/parse';
-import { SCPrecision } from '../../../utils/constants';
+import { SCPrecision } from '../../../publicLib/config';
+import { TaskSid } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { timestampFormat } from '../../../publicLib/tools';
 import { getOrderDetail, getOrderLocal } from '../../../utils/recharge';
-import { popNewMessage, timestampFormat } from '../../../utils/tools';
+import { popNewMessage } from '../../../utils/tools';
+import { makeScreenShot } from '../../../viewLogic/native';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords

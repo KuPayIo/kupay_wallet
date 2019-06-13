@@ -8,11 +8,12 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { callGetRealUser, callGetServerCloudBalance } from '../../../middleLayer/netBridge';
 import { callVerifyIdentidy } from '../../../middleLayer/walletBridge';
-import { getModulConfig } from '../../../modulConfig';
 import { sendRedEnvlope } from '../../../net/pull';
-import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
+import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { currencyType } from '../../../publicLib/tools';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
-import { currencyType, popNewLoading, popNewMessage } from '../../../utils/tools';
+import { popNewLoading, popNewMessage } from '../../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

@@ -6,13 +6,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { makeScreenShot, openNewActivity } from '../../../logic/native';
+import { registerStore } from '../../../middleLayer/memBridge';
 import { callFetchLocalTxByHash1 } from '../../../middleLayer/walletBridge';
-import { TxType } from '../../../store/interface';
-import { register } from '../../../store/memstore';
+import { TxType } from '../../../publicLib/interface';
+import { timestampFormat } from '../../../publicLib/tools';
 import { blockchainUrl, etherscanUrl } from '../../../utils/constants';
-// tslint:disable-next-line:max-line-length
-import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
+import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage } from '../../../utils/tools';
+import { makeScreenShot, openNewActivity } from '../../../viewLogic/native';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -32,27 +32,34 @@ export class TransactionDetails extends Widget {
     }
     public init() {
         this.language = this.config.value[getLang()];
-        callFetchLocalTxByHash1(this.props.hash).then(tx => {
-            this.props.tx = tx;
-            this.paint();
-        });
-        const tx:any = {};
-        console.log(`transactionDetails tx is `,tx);
-        const obj = parseStatusShow(tx);
-        const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;
-        const webText = tx.currencyName === 'BTC' ? this.language.tips[0] : this.language.tips[1];
         this.props = {
             ...this.props,
-            tx,
-            hashShow:parseAccount(tx.hash),
-            timeShow:timestampFormat(tx.time),
-            statusShow:obj.text,
-            statusIcon:obj.icon,
-            minerFeeUnit:tx.currencyName !== 'BTC' ? 'ETH' : 'BTC',
-            canResend:canResend(tx),
-            qrcode:`${qrcodePrefix}${tx.hash}`,
-            webText
+            tx:undefined,
+            hashShow:'',
+            timeShow:'',
+            statusShow:'',
+            statusIcon:'',
+            minerFeeUnit:'',
+            canResend:false,
+            qrcode:'',
+            webText:''
         };
+
+        callFetchLocalTxByHash1(this.props.hash).then(tx => {
+            const obj = parseStatusShow(tx);
+            const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;
+            const webText = tx.currencyName === 'BTC' ? this.language.tips[0] : this.language.tips[1];
+            this.props.tx = tx;
+            this.props.hashShow = parseAccount(tx.hash);
+            this.props.timeShow = timestampFormat(tx.time);
+            this.props.statusShow = obj.text;
+            this.props.statusIcon = obj.icon;
+            this.props.minerFeeUnit = tx.currencyName !== 'BTC' ? 'ETH' : 'BTC';
+            this.props.canResend = canResend(tx);
+            this.props.qrcode = `${qrcodePrefix}${tx.hash}`;
+            this.props.webText = webText;
+            this.paint();
+        });
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -106,7 +113,7 @@ export class TransactionDetails extends Widget {
 }
 
 // 交易记录变化
-register('wallet/currencyRecords',() => {
+registerStore('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

@@ -4,8 +4,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
 import { getMineDetail } from '../../../net/pull';
+import { getModulConfig } from '../../../publicLib/modulConfig';
 import { getStore, register } from '../../../store/memstore';
 
 // ================================ 导出

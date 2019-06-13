@@ -4,10 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { ahashToArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
-import { selectImage } from '../../../logic/native';
-import { getStore, setStore } from '../../../store/memstore';
+import { setStore } from '../../../store/memstore';
 import { popNewMessage } from '../../../utils/tools';
+import { selectImage } from '../../../viewLogic/native';
 
 export class ImageImport extends Widget {
     public cancel: () => void;

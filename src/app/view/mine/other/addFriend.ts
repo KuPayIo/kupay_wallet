@@ -5,9 +5,10 @@ import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { makeScreenShot } from '../../../logic/native';
-import { getModulConfig } from '../../../modulConfig';
-import { copyToClipboard, getUserInfo, popNewMessage } from '../../../utils/tools';
+import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { copyToClipboard, popNewMessage } from '../../../utils/tools';
+import { makeScreenShot } from '../../../viewLogic/native';
 
 export class AddFriend extends Widget {
     public ok:() => void;
@@ -25,13 +26,15 @@ export class AddFriend extends Widget {
     }
 
     public initData() {
-        const user = getUserInfo();
-        if (user) {
-            this.props.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
-            this.props.userName = user.nickName ? user.nickName :this.language.defaultName;
-            this.props.acc_id = user.acc_id ? user.acc_id :'000000';
-        }
-        this.paint();
+        callGetUserInfo().then(user => {
+            if (user) {
+                this.props.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
+                this.props.userName = user.nickName ? user.nickName :this.language.defaultName;
+                this.props.acc_id = user.acc_id ? user.acc_id :'000000';
+                this.paint();
+            }
+        });
+        
     }
 
     /**
