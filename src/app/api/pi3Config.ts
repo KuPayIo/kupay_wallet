@@ -1,5 +1,5 @@
 import { getEthApiBaseUrl } from '../core/config';
-import { getCurrentEthAddr } from '../utils/tools';
+import { getCurrentEthAddr } from '../remote/tools';
 
 /**
  * 第三方注入配置

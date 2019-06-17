@@ -623,24 +623,6 @@ export const getEthNonce = (addr: string) => {
 };
 
 /**
- * 根据当前语言设置获取静态文字，对于组件模块
- */
-export const getLanguage =  (w) => {
-    const lan = getStore('setting/language', 'zh_Hans');
-
-    return w.config.value[lan];
-};
-
-/**
- * 根据当前语言设置获取静态文字，对于单独的ts文件
- */
-export const getStaticLanguage =  () => {
-    const lan = getStore('setting/language', 'zh_Hans');
-
-    return Config[lan];
-};
-
-/**
  * 获取货币单位符号 $ ￥
  */
 export const getCurrencyUnitSymbol = () => {

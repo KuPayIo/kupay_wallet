@@ -1,4 +1,4 @@
-import { getAllAccount, getStore, register } from '../store/memstore';
+import { getAllAccount, getStore, register, setStore } from '../store/memstore';
 
 /**
  * memstroe.ts 对应的 bridge
@@ -17,6 +17,16 @@ export const registerStore = (key:string,callback:Function) => {
 export const getStoreData = (key:string, defaultValue = undefined):Promise<any> => {
     return new Promise((resolve) => {
         resolve(getStore(key,defaultValue));
+    });
+};
+
+/**
+ * 更新store并通知
+ */
+export const setStoreData = (path: string, data: any, notified = true):Promise<any> => {
+    return new Promise((resolve) => {
+        setStore(path,data,notified);
+        resolve();
     });
 };
 

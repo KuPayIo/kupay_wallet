@@ -2,16 +2,21 @@
  * common tools
  */
 import { getStore as chatGetStore } from '../../chat/client/app/data/store';
+import { appLanguageList } from '../../pi/browser/localLanguage';
 import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { Callback } from '../../pi/util/util';
 import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
+import { Config } from '../config';
+import { getStoreData } from '../middleLayer/memBridge';
 import { callLogoutAccount } from '../middleLayer/netBridge';
-import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin } from '../publicLib/config';
+import { callGetUserInfo } from '../middleLayer/toolsBridge';
+import { defalutShowCurrencys, ERC20Tokens, MainChainCoin } from '../publicLib/config';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
+import { SettingLanguage } from '../view/base/app';
 import { piLoadDir, piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
 import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
@@ -497,34 +502,36 @@ export const calCurrencyLogoUrl = (currencyName:string) => {
  * 弹出三级页面
  */
 export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
-    const level_3_page_loaded = getStore('flags').level_3_page_loaded;
-    if (level_3_page_loaded) {
-        popNew(name,props,ok,cancel);
-    } else {
-        const loading = popNew('app-components1-loading-loading1');
-        const level3SourceList = [
-            'app/core/',
-            'app/logic/',
-            'app/components/',
-            'app/res/',
-            'app/api/',
-            'app/view/',
-            'chat/client/app/view/',
-            'chat/client/app/widget/',
-            'chat/client/app/res/',
-            'earn/client/app/view/',
-            'earn/client/app/test/',
-            'earn/client/app/components/',
-            'earn/client/app/res/',
-            'earn/client/app/xls/',
-            'earn/xlsx/'
-        ];
-        piLoadDir(level3SourceList).then(() => {
-            console.log('popNew3 ------ all resource loaded');
+    getStoreData('flags').then(flags => {
+        if (flags.level_3_page_loaded) {
             popNew(name,props,ok,cancel);
-            loading.callback(loading.widget);
-        });
-    }
+        } else {
+            const loading = popNew('app-components1-loading-loading1');
+            const level3SourceList = [
+                'app/core/',
+                'app/logic/',
+                'app/components/',
+                'app/res/',
+                'app/api/',
+                'app/view/',
+                'chat/client/app/view/',
+                'chat/client/app/widget/',
+                'chat/client/app/res/',
+                'earn/client/app/view/',
+                'earn/client/app/test/',
+                'earn/client/app/components/',
+                'earn/client/app/res/',
+                'earn/client/app/xls/',
+                'earn/xlsx/'
+            ];
+            piLoadDir(level3SourceList).then(() => {
+                console.log('popNew3 ------ all resource loaded');
+                popNew(name,props,ok,cancel);
+                loading.callback(loading.widget);
+            });
+        }
+    });
+    
 };
 
 /**
@@ -560,24 +567,27 @@ export const getPopPhoneTips = () => {
 };
 // 检查手机弹框提示
 export const checkPopPhoneTips = () => {
-    if (getStore('user/info/phoneNumber')) {
-        delPopPhoneTips();
-        
-        return;
-    }
-    if (localStorage.getItem('popPhoneTips') && getStore('user/id')) {
-        
-        popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
-            popNew('app-view-mine-setting-phone',{ jump:true });
-        },undefined,true);      
-    }
+    return Promise.all([getStoreData('user/info/phoneNumber'),getStoreData('user/id')]).then(([phoneNumber,uid]) => {
+        if (phoneNumber) {
+            delPopPhoneTips();
+            
+            return;
+        }
+        if (localStorage.getItem('popPhoneTips') && uid) {
+            
+            popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
+                popNew('app-view-mine-setting-phone',{ jump:true });
+            },undefined,true);      
+        }
+    });
 };
 
 // 设置手机弹框提示
 export const setPopPhoneTips = () => {
-    const userInfo = getUserInfo();
-    const popPhoneTips = localStorage.getItem('popPhoneTips');
-    if (!userInfo.phoneNumber && !popPhoneTips) localStorage.setItem('popPhoneTips','1');
+    callGetUserInfo().then(userInfo => {
+        const popPhoneTips = localStorage.getItem('popPhoneTips');
+        if (!userInfo.phoneNumber && !popPhoneTips) localStorage.setItem('popPhoneTips','1');
+    });
 };
 
 /**
@@ -653,4 +663,22 @@ export const uncodeUtf16 = (str:string) => {
  */
 export const getUserLevel = () => {
     return chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
+};
+
+/**
+ * 根据当前语言设置获取静态文字，对于组件模块
+ */
+export const getLanguage = (w) => {
+    const lan = localStorage.getItem(SettingLanguage) || appLanguageList[appLanguageList.zh_Hans];
+
+    return w.config.value[lan];
+};
+
+/**
+ * 根据当前语言设置获取静态文字，对于单独的ts文件
+ */
+export const getStaticLanguage =  () => {
+    const lan = localStorage.getItem(SettingLanguage) || appLanguageList[appLanguageList.zh_Hans];
+
+    return Config[lan];
 };

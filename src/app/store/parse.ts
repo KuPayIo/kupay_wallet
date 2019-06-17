@@ -307,7 +307,7 @@ export const parseRechargeWithdrawalLog = (coin,val) => {
 };
 
 /**
- * 解析购买记录
+ * 获取购买记录
  */
 const getproductById = (id:string) => {
     const productList = getStore('activity/financialManagement/products');
@@ -320,6 +320,9 @@ const getproductById = (id:string) => {
     return null;
 };
 
+/**
+ * 解析购买记录
+ */
 export const parsePurchaseRecord = (res:any) => {
     const record = [];
     for (let i = 0;i < res.value.length;i++) {

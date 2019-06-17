@@ -5,9 +5,10 @@
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { regPhone, unbindPhone } from '../../../net/pull';
 import { getStore, setStore } from '../../../store/memstore';
-import { delPopPhoneTips, getUserInfo, popNewMessage } from '../../../utils/tools';
+import { delPopPhoneTips, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -19,7 +20,7 @@ export class BindPhone extends Widget {
     public create() {
         this.props = {
             areaCode:'',
-            phone:getUserInfo().phoneNumber,
+            phone:'',
             code:[],
             isSuccess:true
         };
@@ -32,6 +33,10 @@ export class BindPhone extends Widget {
             ...props
         };
         super.setProps(this.props,oldProps);
+        callGetUserInfo().then(userInfo => {
+            this.props.phone = userInfo.phoneNumber;
+            this.paint();
+        });
     }
     public backPrePage() {
         this.ok && this.ok();

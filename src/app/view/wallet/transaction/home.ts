@@ -4,11 +4,12 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getStoreData } from '../../../middleLayer/memBridge';
+import { callcurrencyExchangeAvailable, callFetchBalanceValueOfCoin, callGetCurrencyUnitSymbol } from '../../../middleLayer/toolsBridge';
 import { callFetchTransactionList, callGetCurrentAddrInfo, callGetDataCenter } from '../../../middleLayer/walletBridge';
 import { TxHistory, TxType } from '../../../publicLib/interface';
-import { timestampFormat } from '../../../publicLib/tools';
-import { getStore, register } from '../../../store/memstore';
-// tslint:disable-next-line:max-line-length
+import { formatBalance, formatBalanceValue, timestampFormat } from '../../../publicLib/tools';
+import { register } from '../../../store/memstore';
 import { calCurrencyLogoUrl, parseAccount, parseStatusShow, parseTxTypeShow } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -29,31 +30,40 @@ export class TransactionHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        Promise.all([callGetDataCenter(),callGetCurrentAddrInfo(this.props.currencyName)]).then(([dataCenter,addrInfo]) => {
-            dataCenter.updateAddrInfo(addrInfo.addr,this.props.currencyName);
-            const balance = formatBalance(addrInfo.balance);
-            const balanceValue =  fetchBalanceValueOfCoin(this.props.currencyName,balance);
-            this.props.balance = balance;
-            this.props.balanceValue = balanceValue;
-            this.props.addrInfo = addrInfo;
-            this.paint();
-        });
+        const currencyName = this.props.currencyName;
+        Promise.all([callGetDataCenter(),
+            callGetCurrentAddrInfo(currencyName),
+            callFetchBalanceValueOfCoin(currencyName,1),
+            callGetCurrencyUnitSymbol(),
+            getStoreData('setting/changeColor','redUp')]).then(([dataCenter,addrInfo,oneBalanceValue,currencyUnitSymbol,color]) => {
+                dataCenter.updateAddrInfo(addrInfo.addr,currencyName);
+                const balance = formatBalance(addrInfo.balance);
+                const balanceValue =  balance * oneBalanceValue;
+                this.props.balance = balance;
+                this.props.balanceValue = balanceValue;
+                this.props.addrInfo = addrInfo;
+                this.props.rate = formatBalanceValue(oneBalanceValue);
+                this.props.address = parseAccount(addrInfo.addr);
+                this.props.currencyUnitSymbol = currencyUnitSymbol;
+                this.props.redUp = (color === 'redUp');
+                this.paint();
+                callFetchTransactionList(addrInfo.addr,currencyName).then(orginTxList => {
+                    this.parseTxList(orginTxList);
+                });
+            });
     }
     public init() {
         const currencyName = this.props.currencyName;
-        const canConvert = this.canConvert();
-        const color = getStore('setting/changeColor','redUp');
-        const addr = parseAccount(getCurrentAddrByCurrencyName(currencyName));
         this.props = {
             ...this.props,
             currencyLogo:calCurrencyLogoUrl(currencyName),
             balance:0,
             balanceValue:formatBalanceValue(0),
-            rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
+            rate:formatBalanceValue(0),
             txList:[],
-            canConvert,
-            redUp:color === 'redUp',
-            currencyUnitSymbol:getCurrencyUnitSymbol(),
+            canConvert:false,
+            redUp:true,
+            currencyUnitSymbol:'',
             tabs:[{
                 tab:'全部',
                 list:[]
@@ -65,31 +75,25 @@ export class TransactionHome extends Widget {
                 list:[]
             }],
             activeNum:0,
-            address:addr
+            address:''
         };
 
-        this.parseTxList().then(txList => {
-            this.props.txList = txList;
-            this.props.tabs[0].list = txList;
-            this.props.tabs[1].list = this.transferList(txList);
-            this.props.tabs[2].list = this.receiptList(txList);
-            console.log(this.props.tabs);
-            this.paint();
-        });
-        
+        this.canConvert();
     }
+
     // 解析txList
-    public async parseTxList() {
-        const currencyName = this.props.currencyName;
-        const curAddr = getCurrentAddrByCurrencyName(currencyName);
-        const txList = await callFetchTransactionList(curAddr,currencyName);
+    public parseTxList(txList:any) {
         txList.forEach(item => {
             item.TimeShow = timestampFormat(item.time).slice(5);
             item.statusShow =  parseStatusShow(item).text; 
             item.txTypeShow = parseTxTypeShow(item.txType);
         });
 
-        return txList;
+        this.props.txList = txList;
+        this.props.tabs[0].list = txList;
+        this.props.tabs[1].list = this.transferList(txList);
+        this.props.tabs[2].list = this.receiptList(txList);
+        this.paint();
     }
     /**
      * 转账记录
@@ -116,14 +120,17 @@ export class TransactionHome extends Widget {
     }
 
     public canConvert() {
-        const convertCurrencys = currencyExchangeAvailable();
-        for (let i = 0;i < convertCurrencys.length;i++) {
-            if (convertCurrencys[i] === this.props.currencyName) {
-                return true;
+        callcurrencyExchangeAvailable().then(convertCurrencys => {
+            let canConvert = false;
+            for (let i = 0;i < convertCurrencys.length;i++) {
+                if (convertCurrencys[i] === this.props.currencyName) {
+                    canConvert = true;
+                    break;
+                }
             }
-        }
-
-        return false;
+            this.props.canConvert = canConvert;
+            this.paint();
+        });
     }
     public txListItemClick(e:any,index:number) {
         const hash = this.props.tabs[this.props.activeNum].list[index].hash;
@@ -142,8 +149,11 @@ export class TransactionHome extends Widget {
         popNew('app-view-wallet-transaction-chooseAddr',{ currencyName:this.props.currencyName });
     }
     public updateRate() {
-        this.props.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
-        this.paint();
+        callFetchBalanceValueOfCoin(this.props.currencyName,1).then(rate => {
+            this.props.rate = formatBalanceValue(rate);
+            this.paint();
+        });
+        
     }
 
     public convertCurrencyClick() {
@@ -151,9 +161,22 @@ export class TransactionHome extends Widget {
     }
 
     public currencyUnitChange() {
-        this.props.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
-        this.props.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,this.props.balance));
-        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
+        const currencyName = this.props.currencyName;
+        Promise.all([callGetCurrentAddrInfo(currencyName),
+            callFetchBalanceValueOfCoin(currencyName,1),
+            callGetCurrencyUnitSymbol()]).then(([addrInfo,oneBalanceValue,currencyUnitSymbol]) => {
+                const balance = formatBalance(addrInfo.balance);
+                const balanceValue =  balance * oneBalanceValue;
+                this.props.balance = balance;
+                this.props.balanceValue = balanceValue;
+                this.props.addrInfo = addrInfo;
+                this.props.rate = formatBalanceValue(oneBalanceValue);
+                this.props.currencyUnitSymbol = currencyUnitSymbol;
+                this.paint();
+                callFetchTransactionList(addrInfo.addr,currencyName).then(orginTxList => {
+                    this.parseTxList(orginTxList);
+                });
+            });
         this.paint();
     }
 

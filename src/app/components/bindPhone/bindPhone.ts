@@ -10,7 +10,6 @@ import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { sendCode } from '../../net/pull';
-import { getPullMod } from '../../utils/commonjsTools';
 import { popNewMessage } from '../../utils/tools';
 
 // ================================ 导出

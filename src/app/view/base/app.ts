@@ -7,8 +7,8 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { registerStore } from '../../middleLayer/memBridge';
 import { getModulConfig } from '../../publicLib/modulConfig';
+import { register } from '../../store/memstore';
 import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
 
 // ================================ 导出
@@ -108,7 +108,7 @@ export class App extends Widget {
 
 // ===================================================== 立即执行
 
-registerStore('flags/level_3_page_loaded', (loaded: boolean) => {
+register('flags/level_3_page_loaded', (loaded: boolean) => {
     checkPopPhoneTips();
     if (localStorage.getItem('kickOffline')) {
         const kickOffline = pi_modules.commonjs.exports.relativeGet('app/net/login').exports.kickOffline;
@@ -117,13 +117,17 @@ registerStore('flags/level_3_page_loaded', (loaded: boolean) => {
     }
 });
 
+// localStorage key
+export const SettingLanguage = 'language';
+
 // 语言配置
-registerStore('setting/language',(r) => {
+register('setting/language',(r) => {
+    localStorage.setItem(SettingLanguage,r);
     setLang(r);
 });
 
 // 创建钱包成功
-registerStore('flags/createWallet',(createWallet:boolean) => {
+register('flags/createWallet',(createWallet:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.switchToPlay();
 });

@@ -6,10 +6,12 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { callFetchBtcFees, callFetchGasPrices } from '../../../middleLayer/netBridge';
+import { callFetchBalanceValueOfCoin, callGetCurrencyUnitSymbol } from '../../../middleLayer/toolsBridge';
 // tslint:disable-next-line:max-line-length
 import { callFetchMinerFeeList, callGetCurrentAddrInfo, callGetDataCenter, callResendNormalTransfer, callTransfer, callUpdateLocalTx, TxPayload } from '../../../middleLayer/walletBridge';
 import { ERC20Tokens } from '../../../publicLib/config';
 import { MinerFeeLevel, TxHistory } from '../../../publicLib/interface';
+import { formatBalance } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
 import { doErrorShow } from '../../../utils/toolMessages';
 import {  judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
@@ -50,7 +52,7 @@ export class Transfer extends Widget {
         const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
         this.props = {
             ...this.props,
-            fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
+            fromAddr:'',
             // tslint:disable-next-line:binary-expression-operand-order
             toAddr:tx ? tx.toAddr : '' || (this.props.address || ''),
             amount:tx ? tx.pay : 0,
@@ -61,12 +63,19 @@ export class Transfer extends Widget {
             minLevel:curLevel,
             inputDisabled:tx ? true : false,
             amountShow:'0.00',
-            currencyUnitSymbol:getCurrencyUnitSymbol()
+            currencyUnitSymbol:'',
+            rate:0
         };
-        callGetCurrentAddrInfo(this.props.currencyName).then(addrInfo => {
-            this.props.balance = formatBalance(addrInfo.balance);
-            this.paint();
-        });
+        Promise.all([callGetCurrentAddrInfo(this.props.currencyName),
+            callGetCurrencyUnitSymbol(),
+            callFetchBalanceValueOfCoin(this.props.currencyName,1)]).then(([addrInfo,currencyUnitSymbol,rate]) => {
+                this.props.balance = formatBalance(addrInfo.balance);
+                this.props.fromAddr = addrInfo.addr;
+                this.props.currencyUnitSymbol = currencyUnitSymbol;
+                this.props.rate = rate;
+                this.paint();
+            });
+        
     }
 
     public updateMinerFeeList() {
@@ -103,8 +112,8 @@ export class Transfer extends Widget {
     // 转账金额变化
     public amountChange(e:any) {
         this.props.amount = e.value;
-        const amountShow = formatBalance(fetchBalanceValueOfCoin(this.props.currencyName,e.value));
-        this.props.amountShow =  amountShow === 0 ? '0.00' :amountShow;
+        const amountShow = formatBalance(this.props.amount * this.props.rate);
+        this.props.amountShow =  amountShow === 0 ? '0.00' : amountShow;
         this.paint();
     }
 

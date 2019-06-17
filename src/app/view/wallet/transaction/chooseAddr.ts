@@ -2,8 +2,9 @@
  * choose addr
  */
 import { Widget } from '../../../../pi/widget/widget';
+import { getStoreData, setStoreData } from '../../../middleLayer/memBridge';
 import { callGetAddrsInfoByCurrencyName, callGetCurrentAddrInfo } from '../../../middleLayer/walletBridge';
-import { getStore, setStore } from '../../../store/memstore';
+import { defaultPassword } from '../../../utils/constants';
 import { parseAccount, popPswBox } from '../../../utils/tools';
 import { createNewAddr } from '../../../viewLogic/localWallet';
 
@@ -46,20 +47,28 @@ export class ChooseAddr extends Widget {
 
     public addrItemClick(e:any,index:number) {
         if (!this.props.addrsInfo[index].isChoosed) {
-            const wallet = getStore('wallet');
-            const record = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
-            if (record) {
-                record.currentAddr = this.props.addrsInfo[index].addr;
-                setStore('wallet/currencyRecords', wallet.currencyRecords);
-            }
+            getStoreData('wallet').then(wallet => {
+                const record = wallet.currencyRecords.filter(v => v.currencyName === this.props.currencyName)[0];
+                if (record) {
+                    record.currentAddr = this.props.addrsInfo[index].addr;
+                    setStoreData('wallet/currencyRecords', wallet.currencyRecords);
+                }
+                this.ok && this.ok();
+            });
         }
-        this.ok && this.ok();
     }
 
     public async addAddrClick() {
-        const psw = await popPswBox();
-        if (!psw) return;
-        this.ok && this.ok();
-        createNewAddr(psw,this.props.currencyName);
+        getStoreData('wallet/setPsw').then(async (setPsw) => {
+            let psw;
+            if (!setPsw) {
+                psw = defaultPassword;
+            } else {
+                psw = await popPswBox();
+            }
+            if (!psw) return;
+            this.ok && this.ok();
+            createNewAddr(psw,this.props.currencyName);
+        });
     }
 }

@@ -1,7 +1,7 @@
 
-import { TxHistory } from '../publicLib/interface';
+import { CloudCurrencyType, TxHistory } from '../publicLib/interface';
 // tslint:disable-next-line:max-line-length
-import { deletLocalTx, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchLocalTotalAssets, fetchWalletAssetList, getAddrInfoByAddr, getCurrencyUnitSymbol, getDeviceAllDetail, getUserInfo, setEthNonce } from '../remote/tools';
+import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchLocalTotalAssets, fetchWalletAssetList, getAddrInfoByAddr, getCurrencyUnitSymbol, getDeviceAllDetail, getScreenModify, getUserInfo, setEthNonce } from '../remote/tools';
 
 /**
  * tools 对应的bridge
@@ -88,5 +88,31 @@ export const callGetCurrencyUnitSymbol = () => {
 export const callGetAddrInfoByAddr = (addr: string, currencyName: string):Promise<any> => {
     return new Promise(resolve => {
         resolve(getAddrInfoByAddr(addr,currencyName));
+    });
+};
+
+/**
+ * 获取屏幕刘海与下部分高度
+ */
+export const callGetScreenModify = () => {
+    return new Promise(resolve => {
+        getScreenModify();
+        resolve();
+    });
+};
+
+// 计算支持的币币兑换的币种
+export const callcurrencyExchangeAvailable = ():Promise<any> => {
+    return new Promise(resolve => {
+        resolve(currencyExchangeAvailable());
+    });
+};
+
+/**
+ * 获取某个币种对应的货币价值
+ */
+export const callFetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(fetchBalanceValueOfCoin(currencyName,balance));
     });
 };
