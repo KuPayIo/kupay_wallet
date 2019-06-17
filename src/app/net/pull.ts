@@ -640,7 +640,7 @@ export const getProductList = async () => {
 
         return result;
     } catch (err) {
-        showError(err && (err.result || err.type));
+        // showError(err && (err.result || err.type));
 
         return [];
     }

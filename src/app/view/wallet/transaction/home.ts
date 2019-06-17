@@ -7,7 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/memBridge';
 import { callcurrencyExchangeAvailable, callFetchBalanceValueOfCoin, callGetCurrencyUnitSymbol } from '../../../middleLayer/toolsBridge';
 import { callFetchTransactionList, callGetCurrentAddrInfo, callGetDataCenter } from '../../../middleLayer/walletBridge';
-import { TxHistory, TxType } from '../../../publicLib/interface';
+import { CurrencyRecord, TxHistory, TxType } from '../../../publicLib/interface';
 import { formatBalance, formatBalanceValue, timestampFormat } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
 import { calCurrencyLogoUrl, parseAccount, parseStatusShow, parseTxTypeShow } from '../../../utils/tools';
@@ -185,16 +185,32 @@ export class TransactionHome extends Widget {
             dataCenter.updateAddrInfo(this.props.addrInfo.addr,this.props.currencyName);
         });
     }
+
+    public updateCurrencyRecords(currencyRecords: CurrencyRecord[]) {
+        const currencyName = this.props.currencyName;
+        callGetCurrentAddrInfo(currencyName).then(addrInfo => {
+            const balance = formatBalance(addrInfo.balance);
+            const balanceValue =  balance * this.props.rate;
+            this.props.balance = balance;
+            this.props.balanceValue = balanceValue;
+            this.props.addrInfo = addrInfo;
+            this.props.address = parseAccount(addrInfo.addr);
+            this.paint();
+            callFetchTransactionList(addrInfo.addr,currencyName).then(orginTxList => {
+                this.parseTxList(orginTxList);
+            });
+        });
+        
+    }
 }
 
 // ==========================本地
 
 // 当前钱包变化
-register('wallet/currencyRecords',() => {
+register('wallet/currencyRecords',(currencyRecords: CurrencyRecord[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
-        w.paint();
+        w.updateCurrencyRecords(currencyRecords);
     }
 });
 

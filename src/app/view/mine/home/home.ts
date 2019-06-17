@@ -12,7 +12,7 @@ import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { callBackupMnemonic } from '../../../middleLayer/walletBridge';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserLevel, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { copyToClipboard, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { doScanQrCode } from '../../../viewLogic/native';
 
 // ================================ 导出
@@ -93,8 +93,7 @@ export class Home extends Widget {
      * 更新数据
      */
     public initData() {
-        const level = getUserLevel();
-        callGetUserInfo(level).then(userInfo => {
+        callGetUserInfo().then(userInfo => {
             if (userInfo) {
                 this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
                 this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';

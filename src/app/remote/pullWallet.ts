@@ -18,7 +18,7 @@ import { popNewLoading, popNewMessage } from '../utils/tools';
 import { dataCenter } from './dataCenter';
 // tslint:disable-next-line:max-line-length
 import { btcRechargeToServer, btcWithdrawFromServer, getBankAddr, getBtcBankAddr, getRechargeLogs, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './pull';
-import { deletLocalTx, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx } from './tools';
+import { deletLocalTx, getConfirmBlockNumber, getCurrentAddrInfo, getEthNonce, setEthNonce, updateLocalTx } from './tools';
 import { fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getWltAddrIndex, VerifyIdentidy } from './wallet';
 // ===================================================== 导出
 
@@ -36,7 +36,7 @@ export interface TxPayload3 {
 export const rpcProviderSendAsync = (payload, callback) => {
     initWeb3();    
     if (payload.method === 'eth_accounts') {
-        let addr = getCurrentEthAddr();
+        let addr = getCurrentAddrInfo('ETH').addr;
         addr = addr ? [addr] : [];
         callback(null,{ jsonrpc: '2.0', result: addr, id: payload.id });
     } else if (payload.method === 'eth_sendTransaction') {

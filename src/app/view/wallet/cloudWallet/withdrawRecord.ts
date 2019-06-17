@@ -5,11 +5,11 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { callFetchLocalTxByHash1 } from '../../../middleLayer/walletBridge';
-import { CloudCurrencyType } from '../../../publicLib/interface';
+import { getStoreData } from '../../../middleLayer/memBridge';
+import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
-import { parseStatusShow } from '../../../utils/tools';
+import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -37,7 +37,7 @@ export class WithdrawRecord extends Widget {
             canLoadMore:withdrawLogs.canLoadMore,
             isRefreshing:false
         };
-        this.props.recordList = this.parseRecordList(withdrawLogs.list);
+        this.parseRecordList(withdrawLogs.list);
     }
     public updateRecordList() {
         if (!this.props.currencyName) return;
@@ -45,34 +45,40 @@ export class WithdrawRecord extends Widget {
         const list = withdrawLogs.list;
         this.props.nextStart = withdrawLogs.start;
         this.props.canLoadMore = withdrawLogs.canLoadMore;
-        this.props.recordList = this.parseRecordList(list);
         this.props.isRefreshing = false;
+        this.parseRecordList(list);
         this.paint();
     }
 
-    // tslint:disable-next-line:typedef
-    public parseRecordList(list) {
-        const withdraw = { zh_Hans:'提币',zh_Hant:'提幣',en:'' };
-        list.forEach(async (item) => {
-            const txDetail = await callFetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
-            item.behavior = withdraw[getLang()];
-            item.amountShow = `-${item.amount}`;
-            item.timeShow = timestampFormat(item.time).slice(5);
-            item.iconShow = `cloud_withdraw_icon.png`;
+    public parseRecordList(list:any) {
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const withdraw = { zh_Hans:'提币',zh_Hant:'提幣',en:'' };
+            list.forEach((item) => {
+                const txDetail = fetchLocalTxByHash1(currencyRecords,item.hash);
+                const obj = parseStatusShow(txDetail);
+                item.statusShow = obj.text;
+                item.behavior = withdraw[getLang()];
+                item.amountShow = `-${item.amount}`;
+                item.timeShow = timestampFormat(item.time).slice(5);
+                item.iconShow = `cloud_withdraw_icon.png`;
+            });
+    
+            this.props.recordList = list;
+            this.paint();
         });
-
-        return list;
     }
     public updateTransaction() {
-        const list = this.props.recordList;
-        list.forEach(async (item) => {
-            const txDetail = await callFetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const list = this.props.recordList;
+            list.forEach((item) => {
+                const txDetail = fetchLocalTxByHash1(currencyRecords,item.hash);
+                const obj = parseStatusShow(txDetail);
+                item.statusShow = obj.text;
+            });
+            this.props.recordList = list;
+            this.paint();
         });
-        this.paint();
+
     }
     
     public loadMore() {

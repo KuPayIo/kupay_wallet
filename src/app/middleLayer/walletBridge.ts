@@ -1,10 +1,12 @@
+import { LANGUAGE } from '../core/btc/wallet';
+import { isValidMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { CreateWalletOption, MinerFeeLevel, TxHistory } from '../publicLib/interface';
 import { dataCenter } from '../remote/dataCenter';
 import { resendNormalTransfer, transfer } from '../remote/pullWallet';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from '../remote/tools';
 // tslint:disable-next-line:max-line-length
-import { backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, fetchGasPrice, fetchLocalTxByHash1, fetchMinerFeeList, fetchTransactionList, getMnemonic, getMnemonicByHash, importWalletByFragment, importWalletByMnemonic, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
+import { backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonic, getMnemonicByHash, importWalletByFragment, importWalletByMnemonic, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
 
 /**
  * 钱包相关
@@ -124,15 +126,6 @@ export const callPasswordChange = (secretHash: string, newPsw: string) => {
 };
 
 /**
- * 根据交易hash获取所有地址上本地交易详情
- */
-export const callFetchLocalTxByHash1 = (hash:string):Promise<any> => {
-    return new Promise(resolve => {
-        resolve(fetchLocalTxByHash1(hash));
-    });
-};
-
-/**
  * 获取矿工费
  */
 export const callFetchMinerFeeList = (currencyName:string) => {
@@ -224,5 +217,14 @@ export const callUpdateLocalTx = (tx: TxHistory) => {
     return new Promise(resolve => {
         updateLocalTx(tx);
         resolve();
+    });
+};
+
+/**
+ * 判断助记词是否合法
+ */
+export const callisValidMnemonic = (language: LANGUAGE, mnemonic: string) => {
+    return new Promise(resolve => {
+        resolve(isValidMnemonic(language, mnemonic));
     });
 };

@@ -2,7 +2,7 @@ import { DeviceIdProvider } from '../../pi/browser/device';
 import { WebViewManager } from '../../pi/browser/webview';
 import { cryptoRandomInt } from '../../pi/util/math';
 // tslint:disable-next-line:max-line-length
-import { Config, currencyConfirmBlockNumber, defalutShowCurrencys, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix, USD2CNYRateDefault } from '../publicLib/config';
+import { currencyConfirmBlockNumber, defalutShowCurrencys, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix, USD2CNYRateDefault } from '../publicLib/config';
 import { CloudCurrencyType, Currency2USDT, TxHistory } from '../publicLib/interface';
 import { formatBalance, formatBalanceValue } from '../publicLib/tools';
 import { getCloudBalances, getStore, setStore } from '../store/memstore';
@@ -187,6 +187,34 @@ export const getCurrentAddrInfo = (currencyName: string) => {
 };
 
 /**
+ * 通过地址获取地址余额
+ */
+export const getAddrInfoByAddr = (addr: string, currencyName: string) => {
+    const wallet = getStore('wallet');
+    for (const record of wallet.currencyRecords) {
+        if (record.currencyName === currencyName) {
+            for (const addrInfo of record.addrs) {
+                if (addrInfo.addr === addr) {
+                    return addrInfo;
+                }
+            }
+        }
+    }
+};
+
+// 根据货币名获取当前正在使用的地址
+export const getCurrentAddrByCurrencyName = (currencyName: string) => {
+    const wallet = getStore('wallet');
+    for (const record of wallet.currencyRecords) {
+        if (record.currencyName === currencyName) {
+            return record.currentAddr;
+        }
+    }
+
+    return;
+};
+
+/**
  * 获取钱包下指定货币类型的所有地址信息
  * @param wallet wallet obj
  */
@@ -200,10 +228,80 @@ export const getAddrsInfoByCurrencyName = (currencyName: string) => {
 };
 
 /**
- * 获取当前正在使用的ETH地址
+ * 获取某个地址的nonce
+ * 只取ETH地址下的nonce
  */
-export const getCurrentEthAddr = () => {
-    return getCurrentAddrInfo('ETH').addr;
+export const getEthNonce = (addr: string) => {
+    const wallet = getStore('wallet');
+    for (const record of wallet.currencyRecords) {
+        if (record.currencyName === 'ETH') {
+            for (const addrInfo of record.addrs) {
+                if (addrInfo.addr === addr) {
+                    return addrInfo.nonce;
+                }
+            }
+        }
+
+    }
+};
+
+/**
+ * 设置某个地址的nonce
+ * 只设置ETH地址下的nonce
+ */
+export const setEthNonce = (newNonce: number, addr: string) => {
+    const wallet = getStore('wallet');
+    for (const record of wallet.currencyRecords) {
+        if (record.currencyName === 'ETH') {
+            for (const addrInfo of record.addrs) {
+                if (addrInfo.addr === addr) {
+                    addrInfo.nonce = newNonce;
+                    setStore('wallet', wallet);
+
+                    return;
+                }
+            }
+        }
+    }
+};
+
+/**
+ * 获取指定货币下余额总数
+ * @param currencyName 货币名称
+ */
+export const fetchBalanceOfCurrency = (currencyName: string) => {
+    const wallet = getStore('wallet');
+    if (!wallet) return 0;
+    let balance = 0;
+    let currencyRecord = null;
+    for (const item of wallet.currencyRecords) {
+        if (item.currencyName === currencyName) {
+            currencyRecord = item;
+        }
+    }
+    for (const addrInfo of currencyRecord.addrs) {
+        balance += addrInfo.balance;
+    }
+
+    return balance;
+};
+
+/**
+ * 获取总资产
+ */
+export const fetchLocalTotalAssets = () => {
+    const wallet = getStore('wallet');
+    if (!wallet) return 0;
+    let totalAssets = 0;
+    wallet.currencyRecords.forEach(item => {
+        if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
+            const balance = fetchBalanceOfCurrency(item.currencyName);
+            totalAssets += fetchBalanceValueOfCoin(item.currencyName, balance);
+        }
+
+    });
+
+    return totalAssets;
 };
 
 /**
@@ -307,27 +405,6 @@ export const deletLocalTx = (tx: TxHistory) => {
 };
 
 /**
- * 设置某个地址的nonce
- * 只设置ETH地址下的nonce
- */
-export const setEthNonce = (newNonce: number, addr: string) => {
-    const wallet = getStore('wallet');
-    for (const record of wallet.currencyRecords) {
-        if (record.currencyName === 'ETH') {
-            for (const addrInfo of record.addrs) {
-                if (addrInfo.addr === addr) {
-                    addrInfo.nonce = newNonce;
-                    setStore('wallet', wallet);
-
-                    return;
-                }
-            }
-        }
-
-    }
-};
-
-/**
  * 获取某个币种对应的货币价值
  */
 export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
@@ -355,27 +432,6 @@ export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType
     }
 
     return balanceValue;
-};
-
-/**
- * 获取指定货币下余额总数
- * @param currencyName 货币名称
- */
-export const fetchBalanceOfCurrency = (currencyName: string) => {
-    const wallet = getStore('wallet');
-    if (!wallet) return 0;
-    let balance = 0;
-    let currencyRecord = null;
-    for (const item of wallet.currencyRecords) {
-        if (item.currencyName === currencyName) {
-            currencyRecord = item;
-        }
-    }
-    for (const addrInfo of currencyRecord.addrs) {
-        balance += addrInfo.balance;
-    }
-
-    return balance;
 };
 
 // 获取货币的涨跌情况
@@ -410,24 +466,6 @@ export const fetchCloudTotalAssets = () => {
     for (const [k, v] of cloudBalances) {
         totalAssets += fetchBalanceValueOfCoin(CloudCurrencyType[k], v);
     }
-
-    return totalAssets;
-};
-
-/**
- * 获取总资产
- */
-export const fetchLocalTotalAssets = () => {
-    const wallet = getStore('wallet');
-    if (!wallet) return 0;
-    let totalAssets = 0;
-    wallet.currencyRecords.forEach(item => {
-        if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
-            const balance = fetchBalanceOfCurrency(item.currencyName);
-            totalAssets += fetchBalanceValueOfCoin(item.currencyName, balance);
-        }
-
-    });
 
     return totalAssets;
 };
@@ -514,22 +552,6 @@ export const fetchCloudWalletAssetList = () => {
     return assetList;
 };
 
-/**
- * 通过地址获取地址余额
- */
-export const getAddrInfoByAddr = (addr: string, currencyName: string) => {
-    const wallet = getStore('wallet');
-    for (const record of wallet.currencyRecords) {
-        if (record.currencyName === currencyName) {
-            for (const addrInfo of record.addrs) {
-                if (addrInfo.addr === addr) {
-                    return addrInfo;
-                }
-            }
-        }
-    }
-};
-
 // 计算支持的币币兑换的币种
 export const currencyExchangeAvailable = () => {
     const changellyCurrencies = getStore('third/changellyCurrencies', []);
@@ -546,18 +568,6 @@ export const currencyExchangeAvailable = () => {
     });
 };
 
-// 根据货币名获取当前正在使用的地址
-export const getCurrentAddrByCurrencyName = (currencyName: string) => {
-    const wallet = getStore('wallet');
-    for (const record of wallet.currencyRecords) {
-        if (record.currencyName === currencyName) {
-            return record.currentAddr;
-        }
-    }
-
-    return;
-};
-
 /**
  * 获取某id理财产品持有量，不算已经赎回的
  */
@@ -572,54 +582,6 @@ export const fetchHoldedProductAmount = (id: string) => {
     }
 
     return holdAmout;
-};
-
-/**
- * 获取用户基本信息
- */
-export const getUserInfo = (level:number = 0) => {
-    const userInfo = getStore('user/info');
-    const nickName = userInfo.nickName;
-    const phoneNumber = userInfo.phoneNumber;
-    const isRealUser = userInfo.isRealUser;
-    const areaCode = userInfo.areaCode;
-    const acc_id = userInfo.acc_id;
-    let avatar = userInfo.avatar;
-    if (avatar && avatar.indexOf('data:image') < 0) {
-        avatar = `${uploadFileUrlPrefix}${avatar}`;
-    } else {
-        avatar = 'app/res/image/default_avater_big.png';
-    }
-    // TODO  
-    // const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
-
-    return {
-        nickName,
-        avatar,
-        phoneNumber,
-        areaCode,
-        isRealUser,
-        acc_id,
-        level
-    };
-};
-
-/**
- * 获取某个地址的nonce
- * 只取ETH地址下的nonce
- */
-export const getEthNonce = (addr: string) => {
-    const wallet = getStore('wallet');
-    for (const record of wallet.currencyRecords) {
-        if (record.currencyName === 'ETH') {
-            for (const addrInfo of record.addrs) {
-                if (addrInfo.addr === addr) {
-                    return addrInfo.nonce;
-                }
-            }
-        }
-
-    }
 };
 
 /**

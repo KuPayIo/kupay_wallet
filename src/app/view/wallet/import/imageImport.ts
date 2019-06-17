@@ -6,6 +6,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { setStore } from '../../../store/memstore';
 import { popNewMessage } from '../../../utils/tools';
+import { CreateWalletType } from '../../../viewLogic/localWallet';
 import { selectImage } from '../../../viewLogic/native';
 
 export class ImageImport extends Widget {

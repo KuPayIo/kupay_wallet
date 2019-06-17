@@ -14,7 +14,7 @@ import { MinerFeeLevel, TxHistory } from '../../../publicLib/interface';
 import { formatBalance } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
 import { doErrorShow } from '../../../utils/toolMessages';
-import {  judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
+import {  getStaticLanguage, judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 import { doScanQrCode } from '../../../viewLogic/native';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords

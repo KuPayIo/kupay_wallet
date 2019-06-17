@@ -14,7 +14,7 @@ import { formatBalance } from '../publicLib/tools';
 import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../publicLib/unitTools';
 import { getStore,setStore } from '../store/memstore';
 import { getSilverPrice } from './pull';
-import { getAddrsAll, getConfirmBlockNumber, getCurrentEthAddr, parseTransferExtraInfo, updateLocalTx } from './tools';
+import { getAddrsAll, getConfirmBlockNumber, getCurrentAddrInfo, parseTransferExtraInfo, updateLocalTx } from './tools';
 import { fetchLocalTxByHash, fetchTransactionList, getMnemonicByHash } from './wallet';
 /**
  * 创建事件处理器表
@@ -116,7 +116,7 @@ class DataCenter {
      */
     public fetchErc20GasLimit(currencyName:string) {
         const defaultPay = 0;
-        const fromAddr = getCurrentEthAddr();
+        const fromAddr = getCurrentAddrInfo('ETH').addr;
         estimateGasERC20(currencyName, defaultEthToAddr,fromAddr, defaultPay).then(res => {
             const gasLimitMap = getStore('third/gasLimitMap');
             gasLimitMap.set(currencyName, res * erc20GasLimitRate);

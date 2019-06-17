@@ -14,7 +14,7 @@ import { getStoreData } from '../middleLayer/memBridge';
 import { callLogoutAccount } from '../middleLayer/netBridge';
 import { callGetUserInfo } from '../middleLayer/toolsBridge';
 import { defalutShowCurrencys, ERC20Tokens, MainChainCoin } from '../publicLib/config';
-import { MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
+import { CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
 import { SettingLanguage } from '../view/base/app';
 import { piLoadDir, piRequire } from './commonjsTools';
@@ -659,13 +659,6 @@ export const uncodeUtf16 = (str:string) => {
 };
 
 /**
- * 获取用户聊天等级
- */
-export const getUserLevel = () => {
-    return chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
-};
-
-/**
  * 根据当前语言设置获取静态文字，对于组件模块
  */
 export const getLanguage = (w) => {
@@ -681,4 +674,22 @@ export const getStaticLanguage =  () => {
     const lan = localStorage.getItem(SettingLanguage) || appLanguageList[appLanguageList.zh_Hans];
 
     return Config[lan];
+};
+
+/**
+ * 根据交易hash获取所有地址上本地交易详情
+ */
+export const fetchLocalTxByHash1 = (currencyRecords:CurrencyRecord[],hash:string) => {
+    let txHistory = [];
+    for (const record of currencyRecords) {
+        for (const addrInfo of record.addrs) {
+            txHistory = txHistory.concat(addrInfo.txHistory);
+        }
+    }
+    for (const tx of txHistory) {
+        // tslint:disable-next-line:possible-timing-attack
+        if (tx.hash === hash) {
+            return tx;
+        }
+    }
 };

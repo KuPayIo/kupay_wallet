@@ -7,7 +7,6 @@ import { CloudCurrencyType } from '../publicLib/interface';
 import { getStore, register, setStore } from '../store/memstore';
 import { logoutAccount, logoutAccountDel } from './login';
 import { getServerCloudBalance } from './pull';
-import { getUserInfo } from './tools';
 
 // ===================================================== 导入
 
@@ -120,7 +119,7 @@ export const initPush = () => {
         }
         
         const wallet = getStore('wallet');
-        const userInfo = getUserInfo();
+        const userInfo = getStore('user/info');
         if (!wallet.setPsw) {
             const setPsw = getStore('flags').setPsw;
             if (setPsw) return;

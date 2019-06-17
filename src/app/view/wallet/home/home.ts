@@ -8,9 +8,9 @@ import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
 // tslint:disable-next-line:max-line-length
 import { callFetchCloudTotalAssets, callFetchLocalTotalAssets, callGetCurrencyUnitSymbol, callGetUserInfo } from '../../../middleLayer/toolsBridge';
+import { callGetDataCenter } from '../../../middleLayer/walletBridge';
 import { formatBalanceValue } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
-import { getDataCenter } from '../../../utils/commonjsTools';
 // ============================导出
 
 // tslint:disable-next-line:no-reserved-keywords
@@ -130,7 +130,7 @@ export class Home extends Widget {
             }
         });
        
-        getDataCenter().then(dataCenter => {
+        callGetDataCenter().then(dataCenter => {
             list.forEach(v => {
                 dataCenter.updateBalance(v.addr, v.currencyName);
             });

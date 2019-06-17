@@ -3,9 +3,10 @@
  */
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { isValidMnemonic } from '../../../core/genmnemonic';
+import { callisValidMnemonic } from '../../../middleLayer/walletBridge';
 import { lang } from '../../../publicLib/config';
 import { popNew3, popNewMessage } from '../../../utils/tools';
+import { CreateWalletType } from '../../../viewLogic/localWallet';
 import { forelet,WIDGET_NAME } from './home';
 
 export class StandardImport extends Widget {
@@ -26,13 +27,14 @@ export class StandardImport extends Widget {
         const mnemonic = r.value;
         this.props.mnemonic = mnemonic;
     }
-    public nextClick(e:any) {
+    public async nextClick(e:any) {
         if (this.props.mnemonic.length <= 0) {
             popNewMessage(this.language.tips);
 
             return;
         }
-        if (!isValidMnemonic(lang,this.props.mnemonic)) {
+        const valid = await callisValidMnemonic(lang,this.props.mnemonic);
+        if (!valid) {
             popNewMessage(this.language.invalidMnemonicTips);
 
             return;
@@ -41,7 +43,6 @@ export class StandardImport extends Widget {
         if (w) {
             w.ok && w.ok();
         }
-        // tslint:disable-next-line:max-line-length
         popNew3('app-view-wallet-create-createWallet',{ itype:CreateWalletType.StrandarImport,mnemonic:this.props.mnemonic },() => {
             this.ok && this.ok();
         });

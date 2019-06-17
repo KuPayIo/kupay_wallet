@@ -3,12 +3,12 @@
  */
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { setStoreData } from '../../../middleLayer/memBridge';
 import { openWSConnect } from '../../../middleLayer/netBridge';
 import { uploadFile } from '../../../net/pull';
-import { setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { imgResize, playerName, popNew3, popNewMessage } from '../../../utils/tools';
-import { CreateWalletType } from '../../../viewLogic/localWallet';
+import { createWallet, CreateWalletType } from '../../../viewLogic/localWallet';
 import { selectImage } from '../../../viewLogic/native';
 interface Props {
     itype: CreateWalletType;
@@ -139,7 +139,8 @@ export class CreateWallet extends Widget {
             return;
         }
 
-        setStore('flags/createWallet',true);
+        setStoreData('flags/createWallet',true);
+        popNewMessage('创建成功');
         openWSConnect(secrectHash);
 
         if (this.props.chooseImage) {

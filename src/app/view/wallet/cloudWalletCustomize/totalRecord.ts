@@ -5,12 +5,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { callFetchLocalTxByHash1 } from '../../../middleLayer/walletBridge';
+import { getStoreData } from '../../../middleLayer/memBridge';
 import { getAccountDetail } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../publicLib/interface';
+import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { currencyType, timestampFormat } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
-import { parseStatusShow } from '../../../utils/tools';
+import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -110,13 +110,16 @@ export class TotalRecord extends Widget {
      * 更新交易状态
      */
     public updateTransaction() {
-        const list = this.props.rechargeList.concat(this.props.withdrawList);
-        list.forEach(async (item) => {
-            const txDetail = await callFetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const list = this.props.rechargeList.concat(this.props.withdrawList);
+            list.forEach((item) => {
+                const txDetail = fetchLocalTxByHash1(currencyRecords,item.hash);
+                const obj = parseStatusShow(txDetail);
+                item.statusShow = obj.text;
+            });
+            this.props.recordList = list;
+            this.paint();
         });
-        this.paint();
     }
 }
 

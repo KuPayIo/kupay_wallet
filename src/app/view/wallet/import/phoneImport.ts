@@ -6,10 +6,11 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { callGetRandom, callLogoutAccountDel } from '../../../middleLayer/netBridge';
+import { callGetDataCenter } from '../../../middleLayer/walletBridge';
 import { regPhone, verifyPhone } from '../../../net/pull';
 import { CreateWalletOption } from '../../../publicLib/interface';
 import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
-import { getDataCenter } from '../../../utils/commonjsTools';
+import {  } from '../../../utils/commonjsTools';
 import { defaultPassword } from '../../../utils/constants';
 import { delPopPhoneTips, playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { phoneImport } from '../../../viewLogic/localWallet';
@@ -117,7 +118,7 @@ export class PhoneImport extends Widget {
         popNewMessage('登录成功');
         this.ok && this.ok();
         // 刷新本地钱包
-        getDataCenter().then(dataCenter => {
+        callGetDataCenter().then(dataCenter => {
             dataCenter.refreshAllTx();
             dataCenter.initErc20GasLimit();
         });

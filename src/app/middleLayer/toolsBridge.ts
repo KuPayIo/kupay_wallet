@@ -1,7 +1,10 @@
 
+import { getStore as chatGetStore } from '../../chat/client/app/data/store';
+import { uploadFileUrlPrefix } from '../publicLib/config';
 import { CloudCurrencyType, TxHistory } from '../publicLib/interface';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchLocalTotalAssets, fetchWalletAssetList, getAddrInfoByAddr, getCurrencyUnitSymbol, getDeviceAllDetail, getScreenModify, getUserInfo, setEthNonce } from '../remote/tools';
+import { getStoreData } from './memBridge';
 
 /**
  * tools 对应的bridge
@@ -66,10 +69,30 @@ export const callFetchCloudWalletAssetList = () => {
 /**
  * 获取用户基本信息
  */
-export const callGetUserInfo = (level:number = 0):Promise<any> => {
-    // TODO 需要传入用户等级level
-    return new Promise(resolve => {
-        resolve(getUserInfo(level));
+export const callGetUserInfo = () => {
+    return getStoreData('user/info').then(userInfo => {
+        const nickName = userInfo.nickName;
+        const phoneNumber = userInfo.phoneNumber;
+        const isRealUser = userInfo.isRealUser;
+        const areaCode = userInfo.areaCode;
+        const acc_id = userInfo.acc_id;
+        let avatar = userInfo.avatar;
+        if (avatar && avatar.indexOf('data:image') < 0) {
+            avatar = `${uploadFileUrlPrefix}${avatar}`;
+        } else {
+            avatar = 'app/res/image/default_avater_big.png';
+        }
+        const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
+
+        return {
+            nickName,
+            avatar,
+            phoneNumber,
+            areaCode,
+            isRealUser,
+            acc_id,
+            level
+        };
     });
 };
 

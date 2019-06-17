@@ -6,12 +6,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { registerStore } from '../../../middleLayer/memBridge';
-import { callFetchLocalTxByHash1 } from '../../../middleLayer/walletBridge';
-import { TxType } from '../../../publicLib/interface';
+import { getStoreData, registerStore } from '../../../middleLayer/memBridge';
+import { CurrencyRecord, TxType } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
 import { blockchainUrl, etherscanUrl } from '../../../utils/constants';
-import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage } from '../../../utils/tools';
+import { canResend, copyToClipboard, fetchLocalTxByHash1, parseAccount, parseStatusShow, popNewMessage } from '../../../utils/tools';
 import { makeScreenShot, openNewActivity } from '../../../viewLogic/native';
 
 // ============================导出
@@ -44,8 +43,8 @@ export class TransactionDetails extends Widget {
             qrcode:'',
             webText:''
         };
-
-        callFetchLocalTxByHash1(this.props.hash).then(tx => {
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const tx = fetchLocalTxByHash1(currencyRecords,this.props.hash);
             const obj = parseStatusShow(tx);
             const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;
             const webText = tx.currencyName === 'BTC' ? this.language.tips[0] : this.language.tips[1];
@@ -60,6 +59,7 @@ export class TransactionDetails extends Widget {
             this.props.webText = webText;
             this.paint();
         });
+       
     }
     public backPrePage() {
         this.ok && this.ok();

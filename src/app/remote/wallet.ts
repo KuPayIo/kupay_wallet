@@ -388,25 +388,6 @@ export const fetchLocalTxByHash = (addr:string,currencyName:string,hash:string) 
     }
 };
 
-/**
- * 根据交易hash获取所有地址上本地交易详情
- */
-export const fetchLocalTxByHash1 = (hash:string) => {
-    const wallet = getStore('wallet');
-    let txHistory = [];
-    for (const record of wallet.currencyRecords) {
-        for (const addrInfo of record.addrs) {
-            txHistory = txHistory.concat(addrInfo.txHistory);
-        }
-    }
-    for (const tx of txHistory) {
-        // tslint:disable-next-line:possible-timing-attack
-        if (tx.hash === hash) {
-            return tx;
-        }
-    }
-};
-
 // 获取助记词片段
 export const fetchMnemonicFragment = (hash) => {
     const mnemonicHexstr =  getMnemonicHexstr(hash);

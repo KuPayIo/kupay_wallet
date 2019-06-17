@@ -6,12 +6,12 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { callFetchLocalTxByHash1 } from '../../../middleLayer/walletBridge';
+import { getStoreData } from '../../../middleLayer/memBridge';
 import {  } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../publicLib/interface';
+import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
-import { parseStatusShow } from '../../../utils/tools';
+import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -39,7 +39,7 @@ export class RechargeRecord extends Widget {
             canLoadMore:rechargeLogs.canLoadMore,
             isRefreshing:false
         };
-        this.props.recordList = this.parseRecordList(rechargeLogs.list);
+        this.parseRecordList(rechargeLogs.list);
     }
     public updateRecordList() {
         if (!this.props) return;
@@ -47,36 +47,48 @@ export class RechargeRecord extends Widget {
         const list = rechargeLogs.list;
         this.props.nextStart = rechargeLogs.start;
         this.props.canLoadMore = rechargeLogs.canLoadMore;
-        this.props.recordList = this.parseRecordList(list);
         this.props.isRefreshing = false;
         this.paint();
+        this.parseRecordList(list);
     }
-    // tslint:disable-next-line:typedef
-    public parseRecordList(list) {
-        const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
-        list.forEach(async (item) => {
-            const txDetail = await callFetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            console.log(txDetail);
-            item.statusShow = obj.text;
-            item.behavior = recharge[getLang()];
-            item.amountShow = `+${item.amount}`;
-            item.timeShow = timestampFormat(item.time).slice(5);
-            item.iconShow = `cloud_charge_icon.png`;
-        });
 
-        return list;
+    public parseRecordList(list:any) {
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
+            list.forEach((item) => {
+                const txDetail = fetchLocalTxByHash1(currencyRecords,item.hash);
+                const obj = parseStatusShow(txDetail);
+                console.log(txDetail);
+                item.statusShow = obj.text;
+                item.behavior = recharge[getLang()];
+                item.amountShow = `+${item.amount}`;
+                item.timeShow = timestampFormat(item.time).slice(5);
+                item.iconShow = `cloud_charge_icon.png`;
+            });
+            this.props.recordList = list;
+            this.paint();
+        });
     }
 
     public updateTransaction() {
-        const list = this.props.recordList;
-        list.forEach(async (item) => {
-            const txDetail = await callFetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
+            const list = this.props.recordList;
+            list.forEach((item) => {
+                const txDetail = fetchLocalTxByHash1(currencyRecords,item.hash);
+                const obj = parseStatusShow(txDetail);
+                console.log(txDetail);
+                item.statusShow = obj.text;
+                item.behavior = recharge[getLang()];
+                item.amountShow = `+${item.amount}`;
+                item.timeShow = timestampFormat(item.time).slice(5);
+                item.iconShow = `cloud_charge_icon.png`;
+            });
+            this.props.recordList = list;
+            this.paint();
         });
-        this.paint();
     }
+    
     public loadMore() {
         getRechargeLogs(this.props.currencyName,this.props.nextStart);
     }
