@@ -6,13 +6,13 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { callFetchBtcFees, callFetchGasPrices } from '../../../middleLayer/netBridge';
-import { callFetchMinerFeeList } from '../../../middleLayer/walletBridge';
+import {  callFetchMinerFeeList, callGetCurrentAddrInfo } from '../../../middleLayer/walletBridge';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { formatBalance } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
-// tslint:disable-next-line:max-line-length
 import { popNewMessage, popPswBox } from '../../../utils/tools';
+import { recharge, resendRecharge } from '../../../viewLogic/localWallet';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -39,11 +39,7 @@ export class Recharge extends Widget {
         } else {
             callFetchGasPrices();
         }
-        callFetchMinerFeeList(this.props.currencyName).then(minerFeeList => {
-            this.props.minerFeeList = minerFeeList;
-            this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
-            this.paint();
-        });
+       
         const tx = this.props.tx;
         console.log(tx);
         const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
@@ -56,16 +52,23 @@ export class Recharge extends Widget {
         this.props = {
             ...this.props,
             topBarTitle,
-            fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
+            fromAddr:'',
             amount:tx ? tx.pay : 0,
-            balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
+            balance:formatBalance(0),
             minerFee:0,
             minerFeeList:[],
             curLevel,
             minLevel:curLevel,
             inputDisabled:tx ? true : false
         };
-        
+        Promise.all([callFetchMinerFeeList(this.props.currencyName),
+            callGetCurrentAddrInfo(this.props.currencyName)]).then(([minerFeeList,addrInfo]) => {
+                this.props.minerFeeList = minerFeeList;
+                this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
+                this.props.fromAddr = addrInfo.addr;
+                this.props.balance = formatBalance(addrInfo.balance);
+                this.paint();
+            });
     }
     public updateMinerFeeList() {
         callFetchMinerFeeList(this.props.currencyName).then(minerFeeList => {

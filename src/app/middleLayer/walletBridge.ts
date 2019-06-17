@@ -3,10 +3,11 @@ import { isValidMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { AddrInfo, CreateWalletOption, MinerFeeLevel, TxHistory } from '../publicLib/interface';
 import { dataCenter } from '../remote/dataCenter';
-import { resendNormalTransfer, transfer } from '../remote/pullWallet';
+// tslint:disable-next-line:max-line-length
+import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, resendNormalTransfer, transfer } from '../remote/pullWallet';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from '../remote/tools';
 // tslint:disable-next-line:max-line-length
-import { backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, importWalletByFragment, importWalletByMnemonic, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
+import { backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
 
 /**
  * 钱包相关
@@ -237,4 +238,65 @@ export const callExportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[]
     return new Promise(resolve => {
         resolve(exportERC20TokenPrivateKey(mnemonic, addrs,currencyName));
     });
+};
+
+/**
+ * btc充值
+ */
+export const callBtcRecharge = (psw:string,txRecord:TxHistory) => {
+    return btcRecharge(psw,txRecord);
+};
+
+/**
+ * eth充值
+ */
+export const callEthRecharge = (psw:string,txRecord:TxHistory) => {
+    return ethRecharge(psw,txRecord);
+};
+
+/**
+ * btc重发充值
+ */
+export const callResendBtcRecharge = (psw:string,txRecord:TxHistory) => {
+    return resendBtcRecharge(psw,txRecord);
+};
+
+// eth提现
+export const callEthWithdraw = (secretHash:string,toAddr:string,amount:number | string) => {
+    return ethWithdraw(secretHash,toAddr,amount);
+};
+
+// btc提现
+export const callBtcWithdraw = (secretHash:string,toAddr:string,amount:number | string) => {
+    return btcWithdraw(secretHash,toAddr,amount);
+};
+
+/**
+ * 获取钱包地址的位置
+ */
+export const callGetWltAddrIndex = (addr: string, currencyName: string):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(getWltAddrIndex(addr,currencyName));
+    });
+};
+
+/**
+ * 处理ETH转账
+ */
+export const callDoEthTransfer = (psw:string,addrIndex:number,txRecord:TxHistory) => {
+    return doEthTransfer(psw,addrIndex,txRecord);
+};
+
+/**
+ * btc重发
+ */
+export const callResendBtcTransfer = (psw:string,addrIndex:number,txRecord:TxHistory) => {
+    return resendBtcTransfer(psw,addrIndex,txRecord);
+};
+
+/**
+ * 处理eth代币转账
+ */
+export const callDoERC20TokenTransfer = (psw:string,addrIndex:number, txRecord:TxHistory) => {
+    return doERC20TokenTransfer(psw,addrIndex,txRecord);
 };

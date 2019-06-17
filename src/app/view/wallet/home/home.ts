@@ -7,10 +7,11 @@ import { Widget } from '../../../../pi/widget/widget';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
 // tslint:disable-next-line:max-line-length
-import { callFetchCloudTotalAssets, callFetchLocalTotalAssets, callGetCurrencyUnitSymbol, callGetUserInfo } from '../../../middleLayer/toolsBridge';
+import { callFetchCloudTotalAssets, callFetchLocalTotalAssets, callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { callGetDataCenter } from '../../../middleLayer/walletBridge';
 import { formatBalanceValue } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
+import { getCurrencyUnitSymbol } from '../../../utils/tools';
 // ============================导出
 
 // tslint:disable-next-line:no-reserved-keywords
@@ -45,7 +46,7 @@ export class Home extends Widget {
 
     public dataInit() {
         Promise.all([callGetUserInfo(),callFetchLocalTotalAssets(),
-            callFetchCloudTotalAssets(),callGetCurrencyUnitSymbol()]).then(([userInfo,localTotalAssets,
+            callFetchCloudTotalAssets(),getCurrencyUnitSymbol()]).then(([userInfo,localTotalAssets,
                 cloudTotalAssets,currencyUnitSymbol]) => {
                 this.props.avatar = userInfo && userInfo.avatar;
                 this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
@@ -77,7 +78,7 @@ export class Home extends Widget {
 
     public currencyUnitChange() {
         Promise.all([callFetchLocalTotalAssets(),
-            callFetchCloudTotalAssets(),callGetCurrencyUnitSymbol()]).then(([localTotalAssets,
+            callFetchCloudTotalAssets(),getCurrencyUnitSymbol()]).then(([localTotalAssets,
                 cloudTotalAssets,currencyUnitSymbol]) => {
                 this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
                 this.props.currencyUnitSymbol = currencyUnitSymbol; 

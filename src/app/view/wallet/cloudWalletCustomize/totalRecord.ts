@@ -6,10 +6,10 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/memBridge';
-import { getAccountDetail } from '../../../net/pull';
+import { callGetAccountDetail } from '../../../middleLayer/netBridge';
 import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { currencyType, timestampFormat } from '../../../publicLib/tools';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -35,7 +35,7 @@ export class TotalRecord extends Widget {
             isRefreshing:false
         };
         if (this.props.isActive) {
-            getAccountDetail(this.props.currencyName,1);
+            callGetAccountDetail(this.props.currencyName,1);
         }
         this.updateRecordList();
     }
@@ -45,16 +45,17 @@ export class TotalRecord extends Widget {
      */
     public updateRecordList() {
         if (!this.props.currencyName) return;
-        const cloudWallets = getStore('cloud/cloudWallets');
-        const data = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
-        this.props.otherNext = data.start; 
-        this.props.recordList = this.parseList(data.list);
-        this.props.recordList.sort((v1,v2) => {
-            return v2.time - v1.time;
+        getStoreData('cloud/cloudWallets').then(cloudWallets => {
+            const data = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
+            this.props.otherNext = data.start; 
+            this.props.recordList = this.parseList(data.list);
+            this.props.recordList.sort((v1,v2) => {
+                return v2.time - v1.time;
+            });
+            this.props.canLoadMore = data.canLoadMore;
+            this.props.isRefreshing = false;
+            this.paint();
         });
-        this.props.canLoadMore = data.canLoadMore;
-        this.props.isRefreshing = false;
-        this.paint();
     }
 
     /**
@@ -89,7 +90,7 @@ export class TotalRecord extends Widget {
      * 请求更多数据
      */
     public loadMore() {
-        getAccountDetail(this.props.currencyName,0,this.props.otherNext);
+        callGetAccountDetail(this.props.currencyName,0,this.props.otherNext);
     }
 
     /**

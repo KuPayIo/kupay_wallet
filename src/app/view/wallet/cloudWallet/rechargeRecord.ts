@@ -7,10 +7,10 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/memBridge';
-import {  } from '../../../net/pull';
+import { callGetRechargeLogs } from '../../../middleLayer/netBridge';
 import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -27,29 +27,37 @@ export class RechargeRecord extends Widget {
         super.setProps(props,oldProps);
         this.init();
         if (this.props.isActive) {
-            getRechargeLogs(this.props.currencyName);
+            callGetRechargeLogs(this.props.currencyName);
         }
     }
     public init() {
-        const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
+        
         this.props = {
             ...this.props,
             recordList:[],
-            nextStart:rechargeLogs.start,
-            canLoadMore:rechargeLogs.canLoadMore,
+            nextStart:'',
+            canLoadMore:false,
             isRefreshing:false
         };
-        this.parseRecordList(rechargeLogs.list);
+        getStoreData('cloud/cloudWallets').then(cloudWallets => {
+            const rechargeLogs = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
+            this.props.nextStart = rechargeLogs.start;
+            this.props.canLoadMore = rechargeLogs.canLoadMore;
+            this.parseRecordList(rechargeLogs.list);
+            this.paint();
+        });
+        
     }
     public updateRecordList() {
         if (!this.props) return;
-        const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
-        const list = rechargeLogs.list;
-        this.props.nextStart = rechargeLogs.start;
-        this.props.canLoadMore = rechargeLogs.canLoadMore;
+        getStoreData('cloud/cloudWallets').then(cloudWallets => {
+            const rechargeLogs = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
+            this.props.nextStart = rechargeLogs.start;
+            this.props.canLoadMore = rechargeLogs.canLoadMore;
+            this.parseRecordList(rechargeLogs.list);
+            this.paint();
+        });
         this.props.isRefreshing = false;
-        this.paint();
-        this.parseRecordList(list);
     }
 
     public parseRecordList(list:any) {
@@ -90,7 +98,7 @@ export class RechargeRecord extends Widget {
     }
     
     public loadMore() {
-        getRechargeLogs(this.props.currencyName,this.props.nextStart);
+        callGetRechargeLogs(this.props.currencyName,this.props.nextStart);
     }
     public getMoreList() {
         const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 

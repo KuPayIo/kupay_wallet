@@ -4,10 +4,11 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail } from '../../../net/pull';
+import { getStoreData } from '../../../middleLayer/memBridge';
+import { callGetAccountDetail } from '../../../middleLayer/netBridge';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -25,29 +26,37 @@ export class OtherRecord extends Widget {
     }
     public init() {
         if (this.props.isActive) {
-            getAccountDetail(this.props.currencyName,1);
+            callGetAccountDetail(this.props.currencyName,1);
         }
-        const accountDetail = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).otherLogs;
         this.props = {
             ...this.props,
-            recordList:this.parseRecordList(accountDetail.list),
-            nextStart:accountDetail.start,
-            canLoadMore:accountDetail.canLoadMore,
+            recordList:[],
+            nextStart:'',
+            canLoadMore:false,
             isRefreshing:false
         };
+        getStoreData('cloud/cloudWallets').then(cloudWallets => {
+            const accountDetail = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
+            this.props.recordList = this.parseRecordList(accountDetail.list);
+            this.props.nextStart = accountDetail.start;
+            this.props.canLoadMore = accountDetail.canLoadMore;
+            this.paint();
+        });
+
     }
     public updateRecordList() {
         if (!this.props) return;
-        const accountDetail = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).otherLogs;
-        const list = accountDetail.list;
-        this.props.nextStart = accountDetail.start;
-        this.props.canLoadMore = accountDetail.canLoadMore;
-        this.props.recordList = this.parseRecordList(list);
+        getStoreData('cloud/cloudWallets').then(cloudWallets => {
+            const accountDetail = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
+            this.props.recordList = this.parseRecordList(accountDetail.list);
+            this.props.nextStart = accountDetail.start;
+            this.props.canLoadMore = accountDetail.canLoadMore;
+            this.paint();
+        });
         this.props.isRefreshing = false;
-        this.paint();
     }
-    // tslint:disable-next-line:typedef
-    public parseRecordList(list) {
+
+    public parseRecordList(list:any) {
         list.forEach((item) => {
             item.amountShow = item.amount >= 0 ? `+${item.amount}` : `${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
@@ -58,7 +67,7 @@ export class OtherRecord extends Widget {
     }
 
     public loadMore() {
-        getAccountDetail(this.props.currencyName,1,this.props.nextStart);
+        callGetAccountDetail(this.props.currencyName,1,this.props.nextStart);
     }
     public getMoreList() {
         const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 

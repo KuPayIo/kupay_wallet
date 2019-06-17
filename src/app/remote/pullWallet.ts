@@ -3,7 +3,6 @@
  */
 // ===================================================== 导入
 import { WebViewManager } from '../../pi/browser/webview';
-import { popNew } from '../../pi/ui/root';
 import { isNumber } from '../../pi/util/util';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
@@ -11,15 +10,13 @@ import { Api as EthApi } from '../core/eth/api';
 import { EthWallet, initWeb3, web3 } from '../core/eth/wallet';
 import { GlobalWallet } from '../core/globalWallet';
 import { erc20GasLimitRate, ERC20Tokens } from '../publicLib/config';
-import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../publicLib/interface';
+import { MinerFeeLevel, TxHistory, TxPayload, TxStatus, TxType } from '../publicLib/interface';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../publicLib/unitTools';
-import { doErrorShow } from '../utils/toolMessages';
-import { popNewLoading, popNewMessage } from '../utils/tools';
 import { dataCenter } from './dataCenter';
 // tslint:disable-next-line:max-line-length
-import { btcRechargeToServer, btcWithdrawFromServer, getBankAddr, getBtcBankAddr, getRechargeLogs, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './pull';
-import { deletLocalTx, getConfirmBlockNumber, getCurrentAddrInfo, getEthNonce, setEthNonce, updateLocalTx } from './tools';
-import { fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getWltAddrIndex, VerifyIdentidy } from './wallet';
+import { btcRechargeToServer, btcWithdrawFromServer, getBankAddr, getBtcBankAddr, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './pull';
+import { getConfirmBlockNumber, getCurrentAddrInfo, getEthNonce, setEthNonce, updateLocalTx } from './tools';
+import { fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getWltAddrIndex } from './wallet';
 // ===================================================== 导出
 
 export interface TxPayload3 {
@@ -280,31 +277,27 @@ export const doEthTransfer = async (psw:string,addrIndex:number,txRecord:TxHisto
  */
 export const signRawTransactionETH = async (psw:string,fromAddr:string,toAddr:string,
     pay:number,minerFeeLevel:MinerFeeLevel,info?:string,nonce?:number) => {
-    try {
-        const addrIndex = getWltAddrIndex(fromAddr, 'ETH');
-        if (addrIndex >= 0) {
-            const wlt:EthWallet = await GlobalWallet.createWlt('ETH', psw, addrIndex);
-            const api = new EthApi();
-            if (!nonce) {
-                const localNonce = getEthNonce(fromAddr);
-                const chainNonce = await api.getTransactionCount(fromAddr);
-                nonce = localNonce && localNonce >= chainNonce ? localNonce : chainNonce;
-            }
-            const gasLimit = await estimateGasETH(toAddr,info);
-            const txObj = {
-                to: toAddr,
-                nonce: nonce,
-                gasPrice: fetchGasPrice(minerFeeLevel),
-                gasLimit: gasLimit,
-                value: eth2Wei(pay),
-                data: info
-            };
-            console.log('txObj--------------',txObj);
-
-            return wlt.signRawTransactionHash(txObj);
+    const addrIndex = getWltAddrIndex(fromAddr, 'ETH');
+    if (addrIndex >= 0) {
+        const wlt:EthWallet = await GlobalWallet.createWlt('ETH', psw, addrIndex);
+        const api = new EthApi();
+        if (!nonce) {
+            const localNonce = getEthNonce(fromAddr);
+            const chainNonce = await api.getTransactionCount(fromAddr);
+            nonce = localNonce && localNonce >= chainNonce ? localNonce : chainNonce;
         }
-    } catch (error) {
-        doErrorShow(error);
+        const gasLimit = await estimateGasETH(toAddr,info);
+        const txObj = {
+            to: toAddr,
+            nonce: nonce,
+            gasPrice: fetchGasPrice(minerFeeLevel),
+            gasLimit: gasLimit,
+            value: eth2Wei(pay),
+            data: info
+        };
+        console.log('txObj--------------',txObj);
+
+        return wlt.signRawTransactionHash(txObj);
     }
 };
 /**
@@ -313,14 +306,8 @@ export const signRawTransactionETH = async (psw:string,fromAddr:string,toAddr:st
  */
 export const sendRawTransactionETH = async (signedTx) => {
     const api = new EthApi();
-    let hash = '';
-    try {
-        hash = await api.sendRawTransaction(signedTx);
-    } catch (err) {
-        doErrorShow(err);
-    }
 
-    return hash;
+    return api.sendRawTransaction(signedTx);
 };
 
 // ==============================================ERC20
@@ -336,7 +323,6 @@ export const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:stri
 /**
  * 处理eth代币转账
  */
-// tslint:disable-next-line:max-line-length
 export const doERC20TokenTransfer = async (psw:string,addrIndex:number, txRecord:TxHistory) => {
     const wltPromise = GlobalWallet.createWlt('ETH', psw, addrIndex);
     const api = new EthApi();
@@ -440,27 +426,23 @@ export const resendBtcTransfer = async (psw:string,addrIndex:number,txRecord:TxH
  */
 export const signRawTransactionBTC = async (psw:string,fromAddr:string,toAddr:string,
     pay:number,minerFeeLevel:MinerFeeLevel) => {
-    try {
-        const addrIndex = getWltAddrIndex(fromAddr, 'BTC');
-        if (addrIndex >= 0) {
-            const wlt:BTCWallet = await GlobalWallet.createWlt('BTC', psw, addrIndex);
-            const output = {
-                toAddr,
-                amount: pay,
-                chgAddr: fromAddr
-            };
-            console.log('output----------------',output);
-            wlt.unlock();
-            await wlt.init();
+    const addrIndex = getWltAddrIndex(fromAddr, 'BTC');
+    if (addrIndex >= 0) {
+        const wlt:BTCWallet = await GlobalWallet.createWlt('BTC', psw, addrIndex);
+        const output = {
+            toAddr,
+            amount: pay,
+            chgAddr: fromAddr
+        };
+        console.log('output----------------',output);
+        wlt.unlock();
+        await wlt.init();
 
             // const retArr = await wlt.buildRawTransaction(output, fetchBtcMinerFee(minerFeeLevel));
-            const retArr = await wlt.buildRawTransactionFromSingleAddress(fromAddr,output, fetchBtcMinerFee(minerFeeLevel));
-            wlt.lock();
+        const retArr = await wlt.buildRawTransactionFromSingleAddress(fromAddr,output, fetchBtcMinerFee(minerFeeLevel));
+        wlt.lock();
 
-            return retArr;
-        }
-    } catch (error) {
-        doErrorShow(error);
+        return retArr;
     }
 };
 
@@ -468,19 +450,15 @@ export const signRawTransactionBTC = async (psw:string,fromAddr:string,toAddr:st
  * BTC重发交易签名
  */
 export const resendSignRawTransactionBTC = async (hash:string,psw:string,fromAddr:string,minerFeeLevel:MinerFeeLevel) => {
-    try {
-        const addrIndex = getWltAddrIndex(fromAddr, 'BTC');
-        if (addrIndex >= 0) {
-            const wlt:BTCWallet = await GlobalWallet.createWlt('BTC', psw, addrIndex);
-            wlt.unlock();
-            await wlt.init();
-            const retArr = await wlt.resendTx(hash, fetchBtcMinerFee(minerFeeLevel));
-            wlt.lock();
+    const addrIndex = getWltAddrIndex(fromAddr, 'BTC');
+    if (addrIndex >= 0) {
+        const wlt:BTCWallet = await GlobalWallet.createWlt('BTC', psw, addrIndex);
+        wlt.unlock();
+        await wlt.init();
+        const retArr = await wlt.resendTx(hash, fetchBtcMinerFee(minerFeeLevel));
+        wlt.lock();
 
-            return retArr;
-        }
-    } catch (error) {
-        doErrorShow(error);
+        return retArr;
     }
 };
 
@@ -490,13 +468,9 @@ export const resendSignRawTransactionBTC = async (hash:string,psw:string,fromAdd
  */
 export const sendRawTransactionBTC = async (rawHexString) => {
     let hash = '';
-    try {
-        const ret = await BtcApi.sendRawTransaction(rawHexString);
-        hash = ret.txid;
-    } catch (err) {
-        doErrorShow(err);
-    }
-
+    const ret = await BtcApi.sendRawTransaction(rawHexString);
+    hash = ret.txid;
+    
     return hash;
 };
 
@@ -504,115 +478,8 @@ export const sendRawTransactionBTC = async (rawHexString) => {
 
 // ================================重发
 
-/**
- * 普通转账重发
- */
-export const resendNormalTransfer = async (psw:string,txRecord:TxHistory) => {
-    console.log('----------resendNormalTransfer--------------');
-    const loading = popNewLoading(getStaticLanguage().transfer.againSend);
-    const fromAddr = txRecord.fromAddr;
-    const currencyName = txRecord.currencyName;
-    let ret: any;
-    try {
-        const addrIndex = getWltAddrIndex(fromAddr, currencyName);
-        if (addrIndex >= 0) {
-            if (currencyName === 'ETH') {
-                ret = await doEthTransfer(psw,addrIndex,txRecord);
-                console.log('--------------ret',ret);
-            } else if (currencyName === 'BTC') {
-                const res = await resendBtcTransfer(psw,addrIndex, txRecord);
-                console.log('btc res-----',res);
-                ret = {
-                    hash:res.txid,
-                    nonce:-1
-                };
-            } else if (ERC20Tokens[currencyName]) {
-                ret = await doERC20TokenTransfer(psw,addrIndex,txRecord);
-            }
-        }
-    } catch (error) {
-        console.log(error.message);
-        doErrorShow(error);
-    } finally {
-        loading.callback(loading.widget);
-    }
-    if (ret) {
-        const t = new Date();
-        const tx = {
-            ...txRecord,
-            hash:ret.hash,
-            time: t.getTime()
-        };
-        
-        const oldHash = txRecord.hash;
-        deletLocalTx(txRecord);
-        updateLocalTx(tx);
-        dataCenter.clearTxTimer(oldHash);// 删除定时器
-        dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-        popNewMessage(getStaticLanguage().transfer.againSuccess);
-        popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
-    }
-
-    return ret;
-};
-
-/**
- * 充值重发
- */
-export const resendRecharge = async (psw:string,txRecord:TxHistory) => {
-    console.log('----------resendRecharge--------------');
-    const loading = popNewLoading(getStaticLanguage().transfer.againSend);
-    let tx;
-    try {
-        
-        if (txRecord.currencyName === 'BTC') {
-            tx = await resendBtcRecharge(psw,txRecord);
-        } else {
-            tx = await ethRecharge(psw,txRecord);
-        }
-    } catch (error) {
-        console.log(error.message);
-        doErrorShow(error);
-    } finally {
-        loading.callback(loading.widget);
-    }
-    if (tx) {
-        const oldHash = txRecord.hash;
-        deletLocalTx(txRecord);
-        updateLocalTx(tx);
-        dataCenter.clearTxTimer(oldHash);// 删除定时器
-        dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-        getRechargeLogs(tx.currencyName);
-        popNewMessage(getStaticLanguage().transfer.againSuccess);
-        popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
-    }
-
-    return tx.hash;
-};
-
 // ================================重发
 
-export const recharge = async (psw:string,txRecord:TxHistory) => {
-    let tx;
-    const close = popNewLoading(getStaticLanguage().transfer.recharge);
-    if (txRecord.currencyName === 'BTC') {
-        tx = await btcRecharge(psw,txRecord);
-    } else {
-        tx = await ethRecharge(psw,txRecord);
-    }
-    close.callback(close.widget);
-    if (tx) {
-        popNewMessage(getStaticLanguage().transfer.rechargeSuccess);
-        updateLocalTx(tx);
-        console.log(`recharge tx is `,tx);
-        dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-        getRechargeLogs(tx.currencyName);
-        popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
-        
-        return tx.hash;
-    }
-
-};
 /**
  * eth充值
  */
@@ -724,31 +591,10 @@ export const resendBtcRecharge = async (psw:string,txRecord:TxHistory) => {
     return record;
 };
 
-/**
- * 
- * 提现
- */
-export const withdraw = async (passwd:string,toAddr:string,currencyName:string,amount:number | string) => {
-    if (currencyName === 'BTC') {
-        return btcWithdraw(passwd,toAddr,amount);
-    } else {
-        return ethWithdraw(passwd,toAddr,amount);
-    }
-};
 // eth提现
-export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
-    const close = popNewLoading(getStaticLanguage().transfer.withdraw);
-    const secretHash = await VerifyIdentidy(passwd);
-    if (!secretHash) {
-        close.callback(close.widget);
-        popNewMessage(getStaticLanguage().transfer.wrongPsw);
-
-        return;
-    }
+export const ethWithdraw = async (secretHash:string,toAddr:string,amount:number | string) => {
     const hash = await withdrawFromServer(toAddr,eth2Wei(amount),secretHash);
-    close.callback(close.widget);
     if (hash) {
-        popNewMessage(getStaticLanguage().transfer.withdrawSuccess);
         const tx:TxHistory = {
             hash,
             addr:toAddr,
@@ -774,19 +620,9 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
 };
 
 // btc提现
-export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
-    const close = popNewLoading(getStaticLanguage().transfer.withdraw);
-    const secretHash = await VerifyIdentidy(passwd);
-    if (!secretHash) {
-        close.callback(close.widget);
-        popNewMessage(getStaticLanguage().transfer.wrongPsw);
-
-        return;
-    }
+export const btcWithdraw = async (secretHash:string,toAddr:string,amount:number | string) => {
     const hash = await btcWithdrawFromServer(toAddr,btc2Sat(amount).toString(),secretHash);
-    close.callback(close.widget);
     if (hash) {
-        popNewMessage(getStaticLanguage().transfer.withdrawSuccess);
         const tx:TxHistory = {
             hash,
             addr:toAddr,

@@ -1,4 +1,4 @@
-import { getAllAccount, getStore, register, setStore } from '../store/memstore';
+import { getAllAccount, getCloudBalances, getStore, register, setStore } from '../store/memstore';
 
 /**
  * memstroe.ts 对应的 bridge
@@ -36,5 +36,14 @@ export const setStoreData = (path: string, data: any, notified = true):Promise<a
 export const callGetAllAccount = ():Promise<any> => {
     return new Promise((resolve) => {
         resolve(getAllAccount());
+    });
+};
+
+/**
+ * 获取云端余额
+ */
+export const callGetCloudBalances = ():Promise<any> => {
+    return new Promise((resolve) => {
+        resolve(getCloudBalances());
     });
 };

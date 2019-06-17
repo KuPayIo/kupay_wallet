@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/memBridge';
-import { getAccountDetail } from '../../../net/pull';
+import { callGetAccountDetail, callGetRechargeLogs, callGetWithdrawLogs } from '../../../middleLayer/netBridge';
 import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
@@ -42,9 +42,9 @@ export class TotalRecord extends Widget {
             isRefreshing:false
         };
         if (this.props.isActive) {
-            getAccountDetail(this.props.currencyName,1);
-            getWithdrawLogs(this.props.currencyName);
-            getRechargeLogs(this.props.currencyName);
+            callGetAccountDetail(this.props.currencyName,1);
+            callGetWithdrawLogs(this.props.currencyName);
+            callGetRechargeLogs(this.props.currencyName);
         }
         this.updateRecordList();
     }
@@ -143,9 +143,9 @@ export class TotalRecord extends Widget {
      * 请求更多数据
      */
     public loadMore() {
-        getAccountDetail(this.props.currencyName,0,this.props.otherNext);
-        getWithdrawLogs(this.props.currencyName,this.props.withdrawNext);
-        getRechargeLogs(this.props.currencyName,this.props.rechargeNext);
+        callGetAccountDetail(this.props.currencyName,0,this.props.otherNext);
+        callGetWithdrawLogs(this.props.currencyName,this.props.withdrawNext);
+        callGetRechargeLogs(this.props.currencyName,this.props.rechargeNext);
     }
 
     /**

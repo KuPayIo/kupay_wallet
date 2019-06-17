@@ -709,3 +709,27 @@ export const sharePart = () => {
 export const helpWord = () => {
     setStoreData('wallet/helpWord',true);
 };
+
+/**
+ * 获取货币单位符号 $ ￥
+ */
+export const getCurrencyUnitSymbol = () => {
+    return getStoreData('setting/currencyUnit', 'CNY').then(currencyUnit => {
+        if (currencyUnit === 'CNY') {
+            return '￥';
+        } else if (currencyUnit === 'USD') {
+            return '$';
+        }
+    });
+};
+
+/**
+ * 转化rtype
+ */
+export const parseRtype = (rType) => {
+    if (rType === 0) return Config[getLang()].luckeyMoney.ordinary; // 普通
+    if (rType === 1) return Config[getLang()].luckeyMoney.random; // 随机
+    if (rType === 99) return Config[getLang()].luckeyMoney.invite; // 邀请
+
+    return '';
+};

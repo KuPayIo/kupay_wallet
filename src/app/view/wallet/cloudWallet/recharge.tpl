@@ -38,15 +38,19 @@
             <div w-class="item1">
                 <div w-class="inner-tip" >
                     <div>
-                            <pi-ui-lang>{{phrase[2]}}</pi-ui-lang>
+                        <pi-ui-lang>{{phrase[2]}}</pi-ui-lang>
                         <span w-class="speed">
+                            {{if it.minerFeeList[it.curLevel]}}
                             <pi-ui-lang>{{it.minerFeeList[it.curLevel].text}}</pi-ui-lang>
+                            {{end}}
                         </span>
                     </div>
                     <img src="../../../res/image/41_gray.png" on-tap="speedDescClick" style="border: 20px solid transparent;margin: -20px;width: 32px;"/>
                 </div>
                 <div w-class="speed-time">
+                    {{if it.minerFeeList[it.curLevel]}}
                     <pi-ui-lang>{{it.minerFeeList[it.curLevel].time}}</pi-ui-lang>
+                    {{end}}
                 </div>
             </div>
             <div w-class="choose-fee" on-tap="chooseMinerFee">

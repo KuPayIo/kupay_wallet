@@ -1,6 +1,6 @@
 // tslint:disable-next-line:max-line-length
 import { defaultLogin, getOpenId, getRandom, loginSuccess, loginWallet, logoutAccount, logoutAccountDel, logoutWallet, openConnect, requestAsync, requestAsyncNeedLogin, setKickOffline, setLoginWalletFailed, walletManualReconnect } from '../remote/login';
-import { fetchBtcFees, fetchGasPrices, getHighTop, getRealUser, getServerCloudBalance } from '../remote/pull';
+import { fetchBtcFees, fetchGasPrices, getAccountDetail, getHighTop, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs } from '../remote/pull';
 
 /**
  * login.ts 对应的 bridge layer
@@ -164,6 +164,31 @@ export const callGetOpenId = (appId:string) => {
     return getOpenId(appId);
 };
 
+/**
+ * 获取全部用户嗨豆排名列表
+ */
 export const callGetHighTop = (num: number) => {
     return getHighTop(num);
+};
+
+/**
+ * 获取指定货币流水
+ * filter（0表示不过滤，1表示过滤）
+ */
+export const callGetAccountDetail = (coin: string,filter:number,start = '') => {
+    return getAccountDetail(coin,filter,start);
+};
+
+/**
+ * 充值历史记录
+ */
+export const callGetRechargeLogs = (coin: string,start?) => {
+    return getRechargeLogs(coin,start);
+};
+
+/**
+ * 提现历史记录
+ */
+export const callGetWithdrawLogs = (coin: string,start?) => {
+    return getWithdrawLogs(coin,start);
 };

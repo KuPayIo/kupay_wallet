@@ -3,10 +3,10 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callFetchLocalTotalAssets, callFetchWalletAssetList, callGetCurrencyUnitSymbol } from '../../../middleLayer/toolsBridge';
+import { callFetchLocalTotalAssets, callFetchWalletAssetList } from '../../../middleLayer/toolsBridge';
 import { formatBalanceValue } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
-import { popNew3 } from '../../../utils/tools';
+import { getCurrencyUnitSymbol, popNew3 } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -27,7 +27,7 @@ export class WalletHome extends Widget {
             currencyUnitSymbol:''
         };
         Promise.all([callFetchLocalTotalAssets(),
-            callFetchWalletAssetList(),callGetCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
+            callFetchWalletAssetList(),getCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
                 this.props.totalAsset = formatBalanceValue(totalAsset);
                 this.props.assetList = assetList;
                 this.props.currencyUnitSymbol = currencyUnitSymbol;
@@ -57,7 +57,7 @@ export class WalletHome extends Widget {
 
     public currencyUnitChange() {
         Promise.all([callFetchLocalTotalAssets(),
-            callFetchWalletAssetList(),callGetCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
+            callFetchWalletAssetList(),getCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
                 this.props.totalAsset = formatBalanceValue(totalAsset);
                 this.props.assetList = assetList;
                 this.props.currencyUnitSymbol = currencyUnitSymbol;

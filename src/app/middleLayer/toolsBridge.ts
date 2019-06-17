@@ -3,7 +3,7 @@ import { getStore as chatGetStore } from '../../chat/client/app/data/store';
 import { uploadFileUrlPrefix } from '../publicLib/config';
 import { CloudCurrencyType, TxHistory } from '../publicLib/interface';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchLocalTotalAssets, fetchWalletAssetList, getAddrInfoByAddr, getCurrencyUnitSymbol, getDeviceAllDetail, getScreenModify, getUserInfo, setEthNonce } from '../remote/tools';
+import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList, getAddrInfoByAddr, getDeviceAllDetail, getScreenModify, getUserInfo, setEthNonce } from '../remote/tools';
 import { getStoreData } from './memBridge';
 
 /**
@@ -97,15 +97,6 @@ export const callGetUserInfo = () => {
 };
 
 /**
- * 获取货币单位符号 $ ￥
- */
-export const callGetCurrencyUnitSymbol = () => {
-    return new Promise(resolve => {
-        resolve(getCurrencyUnitSymbol());
-    });
-};
-
-/**
  * 通过地址获取地址余额
  */
 export const callGetAddrInfoByAddr = (addr: string, currencyName: string):Promise<any> => {
@@ -132,10 +123,17 @@ export const callcurrencyExchangeAvailable = ():Promise<any> => {
 };
 
 /**
- * 获取某个币种对应的货币价值
+ * 获取某个币种对应的货币价值即汇率
  */
 export const callFetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number):Promise<any> => {
     return new Promise(resolve => {
         resolve(fetchBalanceValueOfCoin(currencyName,balance));
+    });
+};
+
+// 获取货币的涨跌情况
+export const callFetchCoinGain = (currencyName: string) => {
+    return new Promise(resolve => {
+        resolve(fetchCoinGain(currencyName));
     });
 };

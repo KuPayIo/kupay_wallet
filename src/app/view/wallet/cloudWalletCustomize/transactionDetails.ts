@@ -43,7 +43,7 @@ enum PayState {
 export class TransactionDetails extends Widget {
     public ok:() => void;
 
-    public setProps(props:any) {
+    public setProps(props:Props) {
         this.props = {
             scShow:getModulConfig('SC_SHOW'),
             state:'查询失败',

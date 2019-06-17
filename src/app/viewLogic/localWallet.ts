@@ -5,11 +5,14 @@ import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { Config } from '../config';
 import { callGetAllAccount } from '../middleLayer/memBridge';
-import { callGetServerCloudBalance } from '../middleLayer/netBridge';
+import { callGetRechargeLogs, callGetServerCloudBalance } from '../middleLayer/netBridge';
+import { callDeletLocalTx } from '../middleLayer/toolsBridge';
 // tslint:disable-next-line:max-line-length
-import { callBackupMnemonic, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callGetDataCenter, callImportWalletByFragment, callImportWalletByMnemonic, callVerifyIdentidy } from '../middleLayer/walletBridge';
+import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetDataCenter, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callResendBtcRecharge, callResendBtcTransfer, callUpdateLocalTx, callVerifyIdentidy } from '../middleLayer/walletBridge';
 import { buyProduct, getPurchaseRecord } from '../net/pull';
-import { CreateWalletOption } from '../publicLib/interface';
+import { ERC20Tokens } from '../publicLib/config';
+import { CreateWalletOption, TxHistory } from '../publicLib/interface';
+import { doErrorShow } from '../utils/toolMessages';
 import { closeAllPage, getPopPhoneTips, getStaticLanguage, popNewLoading, popNewMessage } from '../utils/tools';
 
 /**
@@ -224,4 +227,147 @@ export const bindPhonePop = () => {
             popNew('app-view-mine-setting-phone',{ jump:true });
         },undefined,true);      
     },3000);
+};
+
+/**
+ * 充值
+ */
+export const recharge = async (psw:string,txRecord:TxHistory) => {
+    let tx;
+    const close = popNewLoading(getStaticLanguage().transfer.recharge);
+    if (txRecord.currencyName === 'BTC') {
+        tx = await callBtcRecharge(psw,txRecord);
+    } else {
+        tx = await callEthRecharge(psw,txRecord);
+    }
+    close.callback(close.widget);
+    if (tx) {
+        popNewMessage(getStaticLanguage().transfer.rechargeSuccess);
+        callUpdateLocalTx(tx);
+        console.log(`recharge tx is `,tx);
+        callGetDataCenter().then(dataCenter => {
+            dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
+        });
+        callGetRechargeLogs(tx.currencyName);
+        popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
+        
+        return tx.hash;
+    }
+};
+
+/**
+ * 充值重发
+ */
+export const resendRecharge = async (psw:string,txRecord:TxHistory) => {
+    console.log('----------resendRecharge--------------');
+    const loading = popNewLoading(getStaticLanguage().transfer.againSend);
+    let tx;
+    try {
+        if (txRecord.currencyName === 'BTC') {
+            tx = await callResendBtcRecharge(psw,txRecord);
+        } else {
+            tx = await callEthRecharge(psw,txRecord);
+        }
+    } catch (error) {
+        console.log(error.message);
+        doErrorShow(error);
+    } finally {
+        loading.callback(loading.widget);
+    }
+    if (tx) {
+        const oldHash = txRecord.hash;
+        callDeletLocalTx(txRecord);
+        callUpdateLocalTx(tx);
+        callGetDataCenter().then(dataCenter => {
+            dataCenter.clearTxTimer(oldHash);// 删除定时器
+            dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
+        });
+        callGetRechargeLogs(tx.currencyName);
+        popNewMessage(getStaticLanguage().transfer.againSuccess);
+        popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
+    }
+
+    return tx.hash;
+};
+
+/**
+ * 提现
+ */
+export const withdraw = async (passwd:string,toAddr:string,currencyName:string,amount:number | string) => {
+    const close = popNewLoading(getStaticLanguage().transfer.withdraw);
+    let hash;
+    try {
+        const secretHash = await callVerifyIdentidy(passwd);
+        if (!secretHash) {
+            popNewMessage(getStaticLanguage().transfer.wrongPsw);
+
+            return;
+        }
+        if (currencyName === 'BTC') {
+            hash = await callBtcWithdraw(passwd,toAddr,amount);
+        } else {
+            hash = await callEthWithdraw(passwd,toAddr,amount);
+        }
+        popNewMessage(getStaticLanguage().transfer.withdrawSuccess);
+    } catch (err) {
+        popNewMessage('出错啦');
+    } finally {
+        close.callback(close.widget);
+    }
+
+    return hash;
+};
+
+/**
+ * 普通转账重发
+ */
+export const resendNormalTransfer = async (psw:string,txRecord:TxHistory) => {
+    console.log('----------resendNormalTransfer--------------');
+    const loading = popNewLoading(getStaticLanguage().transfer.againSend);
+    const fromAddr = txRecord.fromAddr;
+    const currencyName = txRecord.currencyName;
+    let ret: any;
+    try {
+        const addrIndex = await callGetWltAddrIndex(fromAddr, currencyName);
+        if (addrIndex >= 0) {
+            if (currencyName === 'ETH') {
+                ret = await callDoEthTransfer(psw,addrIndex,txRecord);
+                console.log('--------------ret',ret);
+            } else if (currencyName === 'BTC') {
+                const res = await callResendBtcTransfer(psw,addrIndex, txRecord);
+                console.log('btc res-----',res);
+                ret = {
+                    hash:res.txid,
+                    nonce:-1
+                };
+            } else if (ERC20Tokens[currencyName]) {
+                ret = await callDoERC20TokenTransfer(psw,addrIndex,txRecord);
+            }
+        }
+    } catch (error) {
+        console.log(error.message);
+        doErrorShow(error);
+    } finally {
+        loading.callback(loading.widget);
+    }
+    if (ret) {
+        const t = new Date();
+        const tx = {
+            ...txRecord,
+            hash:ret.hash,
+            time: t.getTime()
+        };
+        
+        const oldHash = txRecord.hash;
+        callDeletLocalTx(txRecord);
+        callUpdateLocalTx(tx);
+        callGetDataCenter().then(dataCenter => {
+            dataCenter.clearTxTimer(oldHash);// 删除定时器
+            dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
+        });
+        popNewMessage(getStaticLanguage().transfer.againSuccess);
+        popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
+    }
+
+    return ret;
 };

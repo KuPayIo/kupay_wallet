@@ -4,7 +4,7 @@ import { cryptoRandomInt } from '../../pi/util/math';
 // tslint:disable-next-line:max-line-length
 import { currencyConfirmBlockNumber, defalutShowCurrencys, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix, USD2CNYRateDefault } from '../publicLib/config';
 import { CloudCurrencyType, Currency2USDT, TxHistory } from '../publicLib/interface';
-import { formatBalance, formatBalanceValue } from '../publicLib/tools';
+import { fetchCloudGain, formatBalance, formatBalanceValue } from '../publicLib/tools';
 import { getCloudBalances, getStore, setStore } from '../store/memstore';
 
 /**
@@ -389,7 +389,7 @@ export const deletLocalTx = (tx: TxHistory) => {
 };
 
 /**
- * 获取某个币种对应的货币价值
+ * 获取某个币种对应的货币价值即汇率
  */
 export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
     let balanceValue = 0;
@@ -434,11 +434,6 @@ export const fetchSTGain = () => {
     } else {
         return formatBalanceValue(goldGain * 100);
     }
-};
-
-// 获取SC涨跌情况 
-export const fetchCloudGain = () => {
-    return formatBalanceValue(0);
 };
 
 /**
@@ -566,16 +561,4 @@ export const fetchHoldedProductAmount = (id: string) => {
     }
 
     return holdAmout;
-};
-
-/**
- * 获取货币单位符号 $ ￥
- */
-export const getCurrencyUnitSymbol = () => {
-    const currencyUnit = getStore('setting/currencyUnit', 'CNY');
-    if (currencyUnit === 'CNY') {
-        return '￥';
-    } else if (currencyUnit === 'USD') {
-        return '$';
-    }
 };

@@ -5,11 +5,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { withdrawMinerFee } from '../../../config';
+import { callGetCloudBalances, getStoreData } from '../../../middleLayer/memBridge';
+import { callGetAddrsInfoByCurrencyName, callGetCurrentAddrInfo } from '../../../middleLayer/walletBridge';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
-import { getCloudBalances, getStore } from '../../../store/memstore';
 import { withdrawLimit } from '../../../utils/constants';
 import { parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
+import { withdraw } from '../../../viewLogic/localWallet';
 interface Props {
     currencyName:string;
 }
@@ -25,15 +27,21 @@ export class Withdraw extends Widget {
         this.language = this.config.value[getLang()];
         const currencyName = this.props.currencyName;
         const minerFee = withdrawMinerFee[currencyName];
-        const balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
         this.props = {
             ...this.props,
-            balance,
+            balance:0,
             amount:0,
             minerFee,
-            withdrawAddr:getCurrentAddrInfo(currencyName).addr,
-            withdrawAddrInfo:this.parseAddrsInfo()
+            withdrawAddr:'',
+            withdrawAddrInfo:[]
         };
+        Promise.all([callGetCloudBalances(),callGetCurrentAddrInfo(currencyName)]).then(([cloudBalances,addrInfo]) => {
+            const balance = cloudBalances.get(CloudCurrencyType[currencyName]);
+            this.props.balance = balance;
+            this.props.withdrawAddr = addrInfo.addr;
+            this.paint();
+        });
+        this.parseAddrsInfo();
     }
 
     public backPrePage() {
@@ -64,14 +72,16 @@ export class Withdraw extends Widget {
     }
 
     public parseAddrsInfo() {
-        const addrsInfo = getAddrsInfoByCurrencyName(this.props.currencyName);
-        const curAddr = getCurrentAddrInfo(this.props.currencyName).addr;
-        addrsInfo.forEach(item => {
-            item.addrShow = parseAccount(item.addr);
-            item.isChoosed = item.addr === curAddr;
-        });
-
-        return addrsInfo;
+        Promise.all([callGetAddrsInfoByCurrencyName(this.props.currencyName),
+            callGetCurrentAddrInfo(this.props.currencyName)]).then(([addrsInfo,addrInfo]) => {
+                const curAddr = addrInfo.addr;
+                addrsInfo.forEach(item => {
+                    item.addrShow = parseAccount(item.addr);
+                    item.isChoosed = item.addr === curAddr;
+                });
+                this.props.withdrawAddrInfo = addrsInfo;
+                this.paint();
+            });
     }
 
     public chooseWithdrawAddr() {
@@ -102,7 +112,7 @@ export class Withdraw extends Widget {
 
             return;
         }
-        const realUser = getStore('user/info/isRealUser');
+        const realUser = await getStoreData('user/info/isRealUser');
         if (!realUser) {
             popNewMessage(this.language.tips[2]);
 

@@ -4,13 +4,13 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
-import { callFetchCloudTotalAssets, callFetchCloudWalletAssetList, callGetCurrencyUnitSymbol } from '../../../middleLayer/toolsBridge';
+import { callFetchCloudTotalAssets, callFetchCloudWalletAssetList } from '../../../middleLayer/toolsBridge';
 import { getProductList } from '../../../net/pull';
 import { CloudCurrencyType, Product } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { formatBalanceValue } from '../../../publicLib/tools';
 import { getStore, register } from '../../../store/memstore';
-import { popNew3 } from '../../../utils/tools';
+import { getCurrencyUnitSymbol, popNew3 } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -40,7 +40,7 @@ export class CloudHome extends Widget {
             currencyUnitSymbol:''
         };
         Promise.all([callFetchCloudTotalAssets(),callFetchCloudWalletAssetList(),
-            callGetCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
+            getCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
                 this.props.totalAsset = formatBalanceValue(totalAsset);
                 this.props.assetList = assetList;
                 this.props.currencyUnitSymbol = currencyUnitSymbol;
@@ -81,7 +81,7 @@ export class CloudHome extends Widget {
 
     public currencyUnitChange() {
         Promise.all([callFetchCloudTotalAssets(),callFetchCloudWalletAssetList(),
-            callGetCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
+            getCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
                 this.props.totalAsset = formatBalanceValue(totalAsset);
                 this.props.assetList = assetList;
                 this.props.currencyUnitSymbol = currencyUnitSymbol;

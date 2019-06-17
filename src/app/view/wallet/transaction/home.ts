@@ -5,12 +5,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/memBridge';
-import { callcurrencyExchangeAvailable, callFetchBalanceValueOfCoin, callGetCurrencyUnitSymbol } from '../../../middleLayer/toolsBridge';
+import { callcurrencyExchangeAvailable, callFetchBalanceValueOfCoin } from '../../../middleLayer/toolsBridge';
 import { callFetchTransactionList, callGetCurrentAddrInfo, callGetDataCenter } from '../../../middleLayer/walletBridge';
 import { CurrencyRecord, TxHistory, TxType } from '../../../publicLib/interface';
 import { formatBalance, formatBalanceValue, timestampFormat } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
-import { calCurrencyLogoUrl, parseAccount, parseStatusShow, parseTxTypeShow } from '../../../utils/tools';
+import { calCurrencyLogoUrl, getCurrencyUnitSymbol, parseAccount, parseStatusShow, parseTxTypeShow } from '../../../utils/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -34,7 +34,7 @@ export class TransactionHome extends Widget {
         Promise.all([callGetDataCenter(),
             callGetCurrentAddrInfo(currencyName),
             callFetchBalanceValueOfCoin(currencyName,1),
-            callGetCurrencyUnitSymbol(),
+            getCurrencyUnitSymbol(),
             getStoreData('setting/changeColor','redUp')]).then(([dataCenter,addrInfo,oneBalanceValue,currencyUnitSymbol,color]) => {
                 dataCenter.updateAddrInfo(addrInfo.addr,currencyName);
                 const balance = formatBalance(addrInfo.balance);
@@ -164,7 +164,7 @@ export class TransactionHome extends Widget {
         const currencyName = this.props.currencyName;
         Promise.all([callGetCurrentAddrInfo(currencyName),
             callFetchBalanceValueOfCoin(currencyName,1),
-            callGetCurrencyUnitSymbol()]).then(([addrInfo,oneBalanceValue,currencyUnitSymbol]) => {
+            getCurrencyUnitSymbol()]).then(([addrInfo,oneBalanceValue,currencyUnitSymbol]) => {
                 const balance = formatBalance(addrInfo.balance);
                 const balanceValue =  balance * oneBalanceValue;
                 this.props.balance = balance;

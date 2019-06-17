@@ -69,17 +69,6 @@ export const timestampFormatToDate = (timestamp: number) => {
     return `${year}-${month}-${day}`;
 };
 
-/**
- * 转化rtype
- */
-export const parseRtype = (rType) => {
-    if (rType === 0) return Config[getLang()].luckeyMoney.ordinary; // 普通
-    if (rType === 1) return Config[getLang()].luckeyMoney.random; // 随机
-    if (rType === 99) return Config[getLang()].luckeyMoney.invite; // 邀请
-
-    return '';
-};
-
 // 时间戳格式化 毫秒为单位
 export const timestampFormat = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -197,4 +186,9 @@ export const getAddrInfoByAddr = (currencyRecords:CurrencyRecord[],addr: string,
             }
         }
     }
+};
+
+// 获取SC涨跌情况 
+export const fetchCloudGain = () => {
+    return formatBalanceValue(0);
 };

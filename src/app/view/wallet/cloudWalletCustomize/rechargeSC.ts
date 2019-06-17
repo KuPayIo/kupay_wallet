@@ -6,12 +6,12 @@ import { setStore } from '../../../../chat/client/app/data/store';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail } from '../../../net/pull';
+import { callGetCloudBalances } from '../../../middleLayer/memBridge';
+import { callGetAccountDetail } from '../../../middleLayer/netBridge';
 import { SCPrecision } from '../../../publicLib/config';
-import { TaskSid } from '../../../publicLib/interface';
-import { CloudCurrencyType } from '../../../publicLib/interface';
+import { CloudCurrencyType, TaskSid } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
-import { getCloudBalances, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { rechargeGiftMultiple, SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
 
@@ -35,7 +35,7 @@ interface Props {
 
 export class RechargeSC extends Widget {
     public ok: () => void;
-    public setProps(props: any) {
+    public setProps(props: Props) {
         this.props = {
             ...this.props,
             ...props
@@ -56,11 +56,10 @@ export class RechargeSC extends Widget {
         const selectPayItemIndex = 0;
         const SCNum = payList[selectPayItemIndex].sellNum;
         const giveKT = SCNum * rechargeGiftMultiple;
-        const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
         this.props = {
             ktShow:getModulConfig('KT_SHOW'),
             scShow:getModulConfig('SC_SHOW'),
-            scBalance,
+            scBalance:0,
             payType: PayType.WX,
             payList,
             giveKT,
@@ -68,6 +67,11 @@ export class RechargeSC extends Widget {
             SCNum,
             PayType
         };
+
+        callGetCloudBalances().then(cloudBalances => {
+            this.props.scBalance = cloudBalances.get(CloudCurrencyType.SC);
+            this.paint();
+        });
     }
 
     // 初始化
@@ -101,7 +105,7 @@ export class RechargeSC extends Widget {
                 popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: res.oid,itype,ctype:1 });
                 this.paint();
                 setStore('flags/firstRecharge',true); // 首次充值
-                getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+                callGetAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
             }
         });
     }
@@ -157,8 +161,9 @@ export class RechargeSC extends Widget {
 register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
-        w.props.scBalance = scBalance;
-        w.paint();
+        callGetCloudBalances().then(cloudBalances => {
+            w.props.scBalance = cloudBalances.get(CloudCurrencyType.SC);
+            w.paint();
+        });
     }
 });

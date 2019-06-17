@@ -4,9 +4,8 @@
 import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callGetCurrencyUnitSymbol } from '../../middleLayer/toolsBridge';
 import { getModulConfig } from '../../publicLib/modulConfig';
-import { calCurrencyLogoUrl, rippleShow } from '../../utils/tools';
+import { calCurrencyLogoUrl, getCurrencyUnitSymbol, rippleShow } from '../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -34,7 +33,7 @@ export class WalletAssetList extends Widget {
         this.props.assetList.map(item => {
             item.logo = calCurrencyLogoUrl(item.currencyName);
         });
-        callGetCurrencyUnitSymbol().then(currencyUnitSymbol => {
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
             this.props.currencyUnitSymbol = currencyUnitSymbol;
             this.paint();
         });

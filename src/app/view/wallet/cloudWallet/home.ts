@@ -5,11 +5,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail } from '../../../net/pull';
+import { callGetCloudBalances, getStoreData } from '../../../middleLayer/memBridge';
+import { callGetAccountDetail, callGetRechargeLogs, callGetWithdrawLogs } from '../../../middleLayer/netBridge';
+import { callFetchBalanceValueOfCoin, callFetchCoinGain } from '../../../middleLayer/toolsBridge';
 import { CloudCurrencyType } from '../../../publicLib/interface';
-// tslint:disable-next-line:max-line-length
 import { formatBalance, formatBalanceValue } from '../../../publicLib/tools';
-import { getCloudBalances, getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
+import { getCurrencyUnitSymbol } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -30,9 +32,6 @@ export class CloudWalletHome extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         const currencyName = this.props.currencyName;
-        const balance = formatBalance(getCloudBalances().get(CloudCurrencyType[currencyName]));
-        const balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,balance));
-        const color = getStore('setting/changeColor','redUp');
         this.props = {
             ...this.props,
             topBarTitle:this.props.currencyName,
@@ -50,20 +49,42 @@ export class CloudWalletHome extends Widget {
                 components:'app-view-wallet-cloudWallet-withdrawRecord'
             }],
             activeNum:0,
-            gain:fetchCoinGain(currencyName),
-            rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
-            balance,
-            balanceValue,
-            currencyUnitSymbol:getCurrencyUnitSymbol(),
-            redUp: color === 'redUp'
+            gain:0,
+            rate:formatBalanceValue(0),
+            balance:0,
+            balanceValue:formatBalanceValue(0),
+            currencyUnitSymbol:'',
+            redUp: true
         };
+        Promise.all([callGetCloudBalances(),callFetchCoinGain(currencyName),
+            callFetchBalanceValueOfCoin(currencyName,1),
+            getCurrencyUnitSymbol(),
+            getStoreData('setting/changeColor','redUp')]).then(([cloudBalances,gain,rate,currencyUnitSymbol,color]) => {
+                const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
+                const balanceValue = formatBalanceValue(balance * rate);
+                this.props.balance = balance;
+                this.props.balanceValue = balanceValue;
+                this.props.gain = gain;
+                this.props.rate = rate;
+                this.props.currencyUnitSymbol = currencyUnitSymbol;
+                this.props.redUp = color === 'redUp';
+                this.paint();
+            });
     }
 
     public updateBalance() {
         const currencyName = this.props.currencyName;
-        this.props.balance = getCloudBalances().get(CloudCurrencyType[currencyName]);
-        this.props.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(currencyName,this.props.balance));
-        this.paint();
+        Promise.all([callGetCloudBalances(),callFetchCoinGain(currencyName),
+            callFetchBalanceValueOfCoin(currencyName,1)]).then(([cloudBalances,gain,rate]) => {
+                const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
+                const balanceValue = formatBalanceValue(balance * rate);
+                this.props.balance = balance;
+                this.props.balanceValue = balanceValue;
+                this.props.gain = gain;
+                this.props.rate = rate;
+                this.paint();
+            });
+        
     }
     public tabsChangeClick(event: any, value: number) {
         this.props.activeNum = value;
@@ -89,9 +110,9 @@ export class CloudWalletHome extends Widget {
      * 更新事件
      */
     public initEvent() {
-        getAccountDetail(this.props.currencyName,0);
-        getRechargeLogs(this.props.currencyName);
-        getWithdrawLogs(this.props.currencyName);
+        callGetAccountDetail(this.props.currencyName,0);
+        callGetRechargeLogs(this.props.currencyName);
+        callGetWithdrawLogs(this.props.currencyName);
     }
 
     public currencyUnitChange() {

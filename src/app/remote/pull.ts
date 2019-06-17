@@ -2,7 +2,8 @@ import { MainChainCoin, PAGELIMIT } from '../publicLib/config';
 import { CloudCurrencyType, MinerFeeLevel } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
 import { getStore, setStore } from '../store/memstore';
-import { parseCloudBalance, parseMiningRank, parseRechargeWithdrawalLog } from '../store/parse';
+// tslint:disable-next-line:max-line-length
+import { parseCloudAccountDetail, parseCloudBalance, parseMiningRank, parseRechargeWithdrawalLog, splitCloudCurrencyDetail } from '../store/parse';
 import { requestAsync, requestAsyncNeedLogin } from './login';
 
 /**
@@ -175,6 +176,58 @@ export const getHighTop =  (num: number) => {
         return parseMiningRank(data);
     });
     
+};
+
+/**
+ * 获取指定货币流水
+ * filter（0表示不过滤，1表示过滤）
+ */
+export const getAccountDetail = async (coin: string,filter:number,start = '') => {
+    const param:any = {
+        coin:CloudCurrencyType[coin],
+        start,
+        filter,
+        count:PAGELIMIT
+    };
+    if (start) {
+        param.start = start;
+    } 
+    const msg = {
+        type: 'wallet/account@get_detail',
+        param
+    };
+    try {
+        const res = await requestAsync(msg);
+        const nextStart = res.start;
+        const detail = parseCloudAccountDetail(coin,res.value);
+        const splitDetail = splitCloudCurrencyDetail(detail); 
+        const canLoadMore = detail.length >= PAGELIMIT;
+        if (detail.length > 0) {
+            const cloudWallets = getStore('cloud/cloudWallets');
+            const cloudWallet = cloudWallets.get(CloudCurrencyType[coin]);
+            if (start) {
+                cloudWallet.otherLogs.list.push(...detail);
+                if (coin === CloudCurrencyType[CloudCurrencyType.SC] || coin === CloudCurrencyType[CloudCurrencyType.KT]) {
+                    cloudWallet.rechargeLogs.list.push(...splitDetail.rechangeList);
+                    cloudWallet.withdrawLogs.list.push(...splitDetail.withdrawList); 
+                }
+            } else {
+                cloudWallet.otherLogs.list = detail;
+                if (coin === CloudCurrencyType[CloudCurrencyType.SC] || coin === CloudCurrencyType[CloudCurrencyType.KT]) {
+                    cloudWallet.rechargeLogs.list = splitDetail.rechangeList;
+                    cloudWallet.withdrawLogs.list = splitDetail.withdrawList;
+                }
+            }
+                
+            cloudWallet.otherLogs.start = nextStart;
+            cloudWallet.otherLogs.canLoadMore = canLoadMore;
+            setStore('cloud/cloudWallets',cloudWallets);
+        }
+    } catch (err) {
+
+        return;
+    }
+
 };
 
 /**

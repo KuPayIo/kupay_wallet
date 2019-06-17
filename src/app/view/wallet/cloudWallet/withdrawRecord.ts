@@ -6,9 +6,10 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/memBridge';
+import { callGetWithdrawLogs } from '../../../middleLayer/netBridge';
 import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -25,29 +26,36 @@ export class WithdrawRecord extends Widget {
         super.setProps(props,oldProps);
         this.init();
         if (this.props.isActive) {
-            getWithdrawLogs(this.props.currencyName);
+            callGetWithdrawLogs(this.props.currencyName);
         }
     }
     public init() {
-        const withdrawLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
         this.props = {
             ...this.props,
             recordList:[],
-            nextStart:withdrawLogs.start,
-            canLoadMore:withdrawLogs.canLoadMore,
+            nextStart:'',
+            canLoadMore:false,
             isRefreshing:false
         };
-        this.parseRecordList(withdrawLogs.list);
+        getStoreData('cloud/cloudWallets').then(cloudWallets => {
+            const withdrawLogs = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
+            this.props.nextStart = withdrawLogs.start;
+            this.props.canLoadMore = withdrawLogs.canLoadMore;
+            this.parseRecordList(withdrawLogs.list);
+            this.paint();
+        });
+        
     }
     public updateRecordList() {
         if (!this.props.currencyName) return;
-        const withdrawLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
-        const list = withdrawLogs.list;
-        this.props.nextStart = withdrawLogs.start;
-        this.props.canLoadMore = withdrawLogs.canLoadMore;
+        getStoreData('cloud/cloudWallets').then(cloudWallets => {
+            const withdrawLogs = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
+            this.props.nextStart = withdrawLogs.start;
+            this.props.canLoadMore = withdrawLogs.canLoadMore;
+            this.parseRecordList(withdrawLogs.list);
+            this.paint();
+        });
         this.props.isRefreshing = false;
-        this.parseRecordList(list);
-        this.paint();
     }
 
     public parseRecordList(list:any) {
@@ -82,7 +90,7 @@ export class WithdrawRecord extends Widget {
     }
     
     public loadMore() {
-        getWithdrawLogs(this.props.currencyName,this.props.nextStart);
+        callGetWithdrawLogs(this.props.currencyName,this.props.nextStart);
     }
     public getMoreList() {
         const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
