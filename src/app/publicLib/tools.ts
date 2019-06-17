@@ -3,7 +3,7 @@
  * 共用 tools
  */
 import { getLang } from '../../pi/util/lang';
-import { Config } from './config';
+import { CurrencyRecord } from './interface';
 import { getModulConfig } from './modulConfig';
 
 /**
@@ -182,4 +182,19 @@ export const getXOR = (first, second) => {
     }
 
     return arr.join('');
+};
+
+/**
+ * 通过地址获取地址余额
+ */
+export const getAddrInfoByAddr = (currencyRecords:CurrencyRecord[],addr: string, currencyName: string) => {
+    for (const record of currencyRecords) {
+        if (record.currencyName === currencyName) {
+            for (const addrInfo of record.addrs) {
+                if (addrInfo.addr === addr) {
+                    return addrInfo;
+                }
+            }
+        }
+    }
 };

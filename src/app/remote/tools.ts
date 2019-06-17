@@ -186,22 +186,6 @@ export const getCurrentAddrInfo = (currencyName: string) => {
     return;
 };
 
-/**
- * 通过地址获取地址余额
- */
-export const getAddrInfoByAddr = (addr: string, currencyName: string) => {
-    const wallet = getStore('wallet');
-    for (const record of wallet.currencyRecords) {
-        if (record.currencyName === currencyName) {
-            for (const addrInfo of record.addrs) {
-                if (addrInfo.addr === addr) {
-                    return addrInfo;
-                }
-            }
-        }
-    }
-};
-
 // 根据货币名获取当前正在使用的地址
 export const getCurrentAddrByCurrencyName = (currencyName: string) => {
     const wallet = getStore('wallet');

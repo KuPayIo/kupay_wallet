@@ -7,9 +7,9 @@ import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { EthWallet } from '../core/eth/wallet';
 import { generateByHash, sha3, toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { defalutShowCurrencys, defaultGasLimit, ERC20Tokens, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from '../publicLib/config';
+import { btcNetwork, defalutShowCurrencys, defaultGasLimit, ERC20Tokens, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from '../publicLib/config';
 import { AddrInfo, CreateWalletOption, MinerFeeLevel, Wallet } from '../publicLib/interface';
-import { getXOR, hexstrToU8Array, u8ArrayToHexstr } from '../publicLib/tools';
+import { getAddrInfoByAddr, getXOR, hexstrToU8Array, u8ArrayToHexstr } from '../publicLib/tools';
 import { sat2Btc, wei2Eth } from '../publicLib/unitTools';
 import { getStore, setStore } from '../store/memstore';
 import { ahash } from './ahash';
@@ -226,21 +226,6 @@ export const importWalletByFragment = async (option: CreateWalletOption) => {
     const secretHash = await importWalletByMnemonic(option);
 
     return secretHash;
-};
-
-// 删除助记词
-export const deleteMnemonic = () => {
-    setStore('wallet/isBackup',true);
-};
-
-// 记录通过分享片段备份
-export const sharePart = () => {
-    setStore('wallet/sharePart',true);
-};
-
-// 记录通过助计词备份
-export const helpWord = () => {
-    setStore('wallet/helpWord',true);
 };
 
 /**
@@ -521,16 +506,18 @@ export const effectiveAddr = (currencyName: string, addr: string): [boolean, str
 };
 
 // 备份助记词
-export const backupMnemonic = async (passwd:string) => {
+export const backupMnemonic = async (passwd:string,needFragments:boolean = true) => {
     const hash = await calcHashValue(passwd, getStore('user/salt'));
     console.log('hash!!!!!!!!!!!!',hash);
     const mnemonic = getMnemonicByHash(hash);
     if (!mnemonic) {
-        
-        return;
+        throw new Error('psw error');        
     }
-    const fragments = fetchMnemonicFragment(hash);
-
+    let fragments = [];
+    if (needFragments) {
+        fragments = fetchMnemonicFragment(hash);
+    }
+    
     return {
         mnemonic,
         fragments
@@ -555,4 +542,56 @@ export const updateShowCurrencys = (currencyName:string,added:boolean) => {
     wallet.showCurrencys = showCurrencys;
 
     setStore('wallet', wallet);
+};
+
+// 导出以太坊私钥
+export const exportETHPrivateKey = (mnemonic:string,addrs: AddrInfo[]) => {
+    const keys = [];
+    const firstWlt = EthWallet.fromMnemonic(mnemonic, lang);
+    const currencyRecords = getStore('wallet/currencyRecords');
+    for (let j = 0; j < addrs.length; j++) {
+        const wlt = firstWlt.selectAddressWlt(j);
+        const privateKey = wlt.exportPrivateKey();
+        const addr = addrs[j];
+        const addrInfo = getAddrInfoByAddr(currencyRecords,addr.addr,'ETH');
+        const balance = addrInfo.balance;
+        keys.push({ addr:addr.addr,balance,privateKey });
+    }
+
+    return keys;
+};
+
+ // 导出BTC私钥
+export const exportBTCPrivateKey = (mnemonic:string,addrs: AddrInfo[]) => {
+    const keys = [];
+    const currencyRecords = getStore('wallet/currencyRecords');
+    const wlt = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
+    wlt.unlock();
+    for (let j = 0; j < addrs.length; j++) {
+        const privateKey = wlt.privateKeyOf(j);
+        const addr = addrs[j];
+        const addrInfo = getAddrInfoByAddr(currencyRecords,addr.addr,'BTC');
+        const balance = addrInfo.balance;
+        keys.push({ addr:addr.addr,balance,privateKey });
+    }
+    wlt.lock();
+
+    return keys;
+};
+
+// 导出ERC20私钥
+export const exportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],currencyName:string) => {
+    const keys = [];
+    const currencyRecords = getStore('wallet/currencyRecords');
+    const firstWlt = EthWallet.fromMnemonic(mnemonic, lang);
+    for (let j = 0; j < addrs.length; j++) {
+        const wlt = firstWlt.selectAddressWlt(j);
+        const privateKey = wlt.exportPrivateKey();
+        const addr = addrs[j];
+        const balance = getAddrInfoByAddr(currencyRecords,addr.addr,currencyName).balance;
+        keys.push({ addr:addr.addr,balance,privateKey });
+    }
+
+    return keys;
+    
 };

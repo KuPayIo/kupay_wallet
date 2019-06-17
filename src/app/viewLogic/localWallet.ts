@@ -117,18 +117,22 @@ export const createNewAddr = async (passwd: string, currencyName: string) => {
     });
 };
 
-// 备份助记词
-export const backupMnemonic = async (passwd:string) => {
+/**
+ * 导出助记词
+ */
+export const exportMnemonic = async (passwd:string,needFragments:boolean = true) => {
     const close = popNewLoading(Config[getLang()].userInfo.exporting);
-    const ret = await callBackupMnemonic(passwd);
-    close.callback(close.widget);
-    if (!ret.mnemonic) {
-        popNewMessage(Config[getLang()].transError[0]);
-        
-        return;
-    }
+    try {
+        const ret = await callBackupMnemonic(passwd,needFragments);
+        console.log('exportMnemonic',ret);
 
-    return ret;
+        return ret;
+    } catch (err) {
+        popNewMessage('密码错误');
+    } finally {
+        close.callback(close.widget);
+    }
+    
 };
 
 // 购买理财

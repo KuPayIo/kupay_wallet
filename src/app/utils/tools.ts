@@ -10,9 +10,10 @@ import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
 import { Config } from '../config';
-import { getStoreData } from '../middleLayer/memBridge';
+import { getStoreData, setStoreData } from '../middleLayer/memBridge';
 import { callLogoutAccount } from '../middleLayer/netBridge';
 import { callGetUserInfo } from '../middleLayer/toolsBridge';
+import { callBackupMnemonic } from '../middleLayer/walletBridge';
 import { defalutShowCurrencys, ERC20Tokens, MainChainCoin } from '../publicLib/config';
 import { CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
@@ -692,4 +693,19 @@ export const fetchLocalTxByHash1 = (currencyRecords:CurrencyRecord[],hash:string
             return tx;
         }
     }
+};
+
+// 删除助记词
+export const deleteMnemonic = () => {
+    setStoreData('wallet/isBackup',true);
+};
+
+// 记录通过分享片段备份
+export const sharePart = () => {
+    setStoreData('wallet/sharePart',true);
+};
+
+// 记录通过助计词备份
+export const helpWord = () => {
+    setStoreData('wallet/helpWord',true);
 };

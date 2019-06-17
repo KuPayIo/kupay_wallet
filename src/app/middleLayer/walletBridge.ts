@@ -1,12 +1,12 @@
 import { LANGUAGE } from '../core/btc/wallet';
 import { isValidMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { CreateWalletOption, MinerFeeLevel, TxHistory } from '../publicLib/interface';
+import { AddrInfo, CreateWalletOption, MinerFeeLevel, TxHistory } from '../publicLib/interface';
 import { dataCenter } from '../remote/dataCenter';
 import { resendNormalTransfer, transfer } from '../remote/pullWallet';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from '../remote/tools';
 // tslint:disable-next-line:max-line-length
-import { backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonic, getMnemonicByHash, importWalletByFragment, importWalletByMnemonic, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
+import { backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, importWalletByFragment, importWalletByMnemonic, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
 
 /**
  * 钱包相关
@@ -103,19 +103,8 @@ export const callCreateNewAddr = (passwd: string, currencyName: string) => {
  * 备份助记词
  * @param passwd 密码 
  */
-export const callBackupMnemonic = (passwd:string):Promise<any> => {
-    return new Promise((resolve,reject) => {
-        backupMnemonic(passwd).then(res => {
-            resolve(res);
-        });
-    });
-};
-
-/**
- * 获取助记词
- */
-export const callGetMnemonic = (passwd:string) => {
-    return getMnemonic(passwd);
+export const callBackupMnemonic = (passwd:string,needFragments:boolean = true):Promise<any> => {
+    return backupMnemonic(passwd,needFragments);
 };
 
 /**
@@ -226,5 +215,26 @@ export const callUpdateLocalTx = (tx: TxHistory) => {
 export const callisValidMnemonic = (language: LANGUAGE, mnemonic: string) => {
     return new Promise(resolve => {
         resolve(isValidMnemonic(language, mnemonic));
+    });
+};
+
+// 导出以太坊私钥
+export const callExportETHPrivateKey = (mnemonic:string,addrs: AddrInfo[]):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(exportETHPrivateKey(mnemonic, addrs));
+    });
+};
+
+ // 导出BTC私钥
+export const callExportBTCPrivateKey = (mnemonic:string,addrs: AddrInfo[]):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(exportBTCPrivateKey(mnemonic, addrs));
+    });
+};
+
+// 导出ERC20私钥
+export const callExportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],currencyName:string):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(exportERC20TokenPrivateKey(mnemonic, addrs,currencyName));
     });
 };

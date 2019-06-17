@@ -6,11 +6,11 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
-import { callBackupMnemonic, callGetMnemonic } from '../../../middleLayer/walletBridge';
 import { uploadFile } from '../../../net/pull';
 import { getStore, register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
 import { imgResize, popNewLoading, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { exportMnemonic } from '../../../viewLogic/localWallet';
 import { selectImage } from '../../../viewLogic/native';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -93,9 +93,9 @@ export class AccountHome extends Widget {
     public async backupWalletClick() {
         const psw = await popPswBox();
         if (!psw) return;
-        const ret = await callBackupMnemonic(psw);
+        const ret = await exportMnemonic(psw);
         if (ret) {
-            popNew('app-view-wallet-backup-index', { ...ret,pi_norouter:true });
+            popNew('app-view-wallet-backup-index', { ...ret });
         }
 
     }
@@ -104,19 +104,10 @@ export class AccountHome extends Widget {
     public async exportPrivateKeyClick() {
         const psw = await popPswBox();
         if (!psw) return;
-        const close = popNewLoading(this.language.loading);
-        try {
-            const mnemonic = await callGetMnemonic(psw);
-            if (mnemonic) {
-                popNew('app-view-mine-account-exportPrivateKey', { mnemonic });
-            } else {
-                popNewMessage(this.language.tips[1]);
-            }
-        } catch (error) {
-            console.log(error);
-            popNewMessage(this.language.tips[1]);
+        const ret = await exportMnemonic(psw,false);
+        if (ret && ret.mnemonic) {
+            popNew('app-view-mine-account-exportPrivateKey', { mnemonic:ret.mnemonic });
         }
-        close.callback(close.widget);
     }
 
     public uploadAvatar() {
