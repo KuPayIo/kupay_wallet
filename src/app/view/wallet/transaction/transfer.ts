@@ -8,13 +8,15 @@ import { Widget } from '../../../../pi/widget/widget';
 import { callFetchBtcFees, callFetchGasPrices } from '../../../middleLayer/netBridge';
 import { callFetchBalanceValueOfCoin } from '../../../middleLayer/toolsBridge';
 // tslint:disable-next-line:max-line-length
-import { callFetchMinerFeeList, callGetCurrentAddrInfo, callGetDataCenter, callResendNormalTransfer, callTransfer, callUpdateLocalTx, TxPayload } from '../../../middleLayer/walletBridge';
+import { callFetchMinerFeeList, callGetCurrentAddrInfo, callGetDataCenter, callTransfer, callUpdateLocalTx, TxPayload } from '../../../middleLayer/walletBridge';
 import { ERC20Tokens } from '../../../publicLib/config';
 import { MinerFeeLevel, TxHistory } from '../../../publicLib/interface';
 import { formatBalance } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
 import { doErrorShow } from '../../../utils/toolMessages';
+// tslint:disable-next-line:max-line-length
 import {  getCurrencyUnitSymbol, getStaticLanguage, judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
+import { resendNormalTransfer } from '../../../viewLogic/localWallet';
 import { doScanQrCode } from '../../../viewLogic/native';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -186,7 +188,7 @@ export class Transfer extends Widget {
         } else {
             const tx = { ...this.props.tx };
             tx.minerFeeLevel = minerFeeLevel;
-            ret = await callResendNormalTransfer(passwd,tx);
+            ret = await resendNormalTransfer(passwd,tx);
             if (ret) {
                 this.ok && this.ok();
             }

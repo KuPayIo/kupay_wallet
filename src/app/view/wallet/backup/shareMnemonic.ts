@@ -6,7 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { getModulConfig } from '../../../publicLib/modulConfig';
-import { mnemonicFragmentEncrypt, popNewMessage } from '../../../utils/tools';
+import { deleteMnemonic, mnemonicFragmentEncrypt, popNewMessage, sharePart } from '../../../utils/tools';
 interface Props {
     fragments:any[];
 }

@@ -2,7 +2,7 @@ import { DeviceIdProvider } from '../../pi/browser/device';
 import { WebViewManager } from '../../pi/browser/webview';
 import { cryptoRandomInt } from '../../pi/util/math';
 // tslint:disable-next-line:max-line-length
-import { currencyConfirmBlockNumber, defalutShowCurrencys, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix, USD2CNYRateDefault } from '../publicLib/config';
+import { Config, currencyConfirmBlockNumber, defalutShowCurrencys, ERC20Tokens, MainChainCoin, USD2CNYRateDefault } from '../publicLib/config';
 import { CloudCurrencyType, Currency2USDT, TxHistory } from '../publicLib/interface';
 import { fetchCloudGain, formatBalance, formatBalanceValue } from '../publicLib/tools';
 import { getCloudBalances, getStore, setStore } from '../store/memstore';
@@ -561,4 +561,13 @@ export const fetchHoldedProductAmount = (id: string) => {
     }
 
     return holdAmout;
+};
+
+/**
+ * 获取文字配置
+ */
+export const getStaticLanguage = () => {
+    const lan = getStore('setting/language');
+    
+    return Config[lan];
 };

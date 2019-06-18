@@ -7,7 +7,8 @@ import { CloudCurrencyType,LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMone
 import { currencyType, formatBalance, GetDateDiff, parseRtype, timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../publicLib/tools';
 import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../publicLib/unitTools';
 import { getStaticLanguage } from '../remote/tools';
-import { getStore } from './memstore';
+import { getStore } from '../store/memstore';
+
 /**
  * 解析数据
  */
@@ -436,7 +437,7 @@ export const parseConvertLog = (data,sta) => {
             suid: r[i][0],
             rid: r[i][1].toString(),
             rtype: r[i][2],
-            rtypeShow: parseRtype(r[i][2]),
+            rtypeShow: parseRtype(r[i][2],getStaticLanguage()),
             ctype: r[i][3],
             ctypeShow:currencyType(currencyName),
             amount: smallUnit2LargeUnit(currencyName, r[i][4]),

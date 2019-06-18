@@ -2,7 +2,6 @@
  * coinconvert
  */
 // =======================================导入
-import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -11,7 +10,6 @@ import { callFetchMinerFeeList } from '../../../middleLayer/walletBridge';
 import { ERC20Tokens } from '../../../publicLib/config';
 import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel } from '../../../publicLib/interface';
 import { getStore, setStore } from '../../../store/memstore';
-// tslint:disable-next-line:max-line-length
 import { calCurrencyLogoUrl, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -53,7 +51,7 @@ export class CoinConvert extends Widget {
         popNew('app-view-wallet-coinConvert-convertHistory',{ currencyName:this.props.outCurrency,addr:this.props.curOutAddr });
     }
 
-    public setProps(props:Json,oldProps:Json) {
+    public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
         const dataList = currencyExchangeAvailable();

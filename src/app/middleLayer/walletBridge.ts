@@ -4,10 +4,10 @@ import { GlobalWallet } from '../core/globalWallet';
 import { AddrInfo, CreateWalletOption, MinerFeeLevel, TxHistory } from '../publicLib/interface';
 import { dataCenter } from '../remote/dataCenter';
 // tslint:disable-next-line:max-line-length
-import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, resendNormalTransfer, transfer } from '../remote/pullWallet';
+import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from '../remote/pullWallet';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from '../remote/tools';
 // tslint:disable-next-line:max-line-length
-import { backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
+import { ahashToArgon2Hash, backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
 
 /**
  * 钱包相关
@@ -194,13 +194,6 @@ export const callTransfer = (psw:string,txPayload:TxPayload) => {
 };
 
 /**
- * 普通转账重发
- */
-export const callResendNormalTransfer = (psw:string,txRecord:TxHistory) => {
-    return resendNormalTransfer(psw,txRecord);
-};
-
-/**
  * 更新本地交易记录
  */
 export const callUpdateLocalTx = (tx: TxHistory) => {
@@ -299,4 +292,13 @@ export const callResendBtcTransfer = (psw:string,addrIndex:number,txRecord:TxHis
  */
 export const callDoERC20TokenTransfer = (psw:string,addrIndex:number, txRecord:TxHistory) => {
     return doERC20TokenTransfer(psw,addrIndex,txRecord);
+};
+
+/**
+ * ahash to argonhash
+ * @param imagePsw 图片密码
+ * @param ahash ahash
+ */
+export const callAhashToArgon2Hash = (ahash: string, imagePsw: string) => {
+    return ahashToArgon2Hash(ahash,imagePsw);
 };

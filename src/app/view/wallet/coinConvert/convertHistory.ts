@@ -2,7 +2,6 @@
  * convertHistory
  */
 // =======================================导入
-import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -44,7 +43,7 @@ export class ConvertHistory extends Widget {
     public ok: () => void;
     public close:any;
     
-    public setProps(props:Json,oldProps:Json) {
+    public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }

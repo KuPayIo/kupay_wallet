@@ -3,7 +3,7 @@ import { getStore as chatGetStore } from '../../chat/client/app/data/store';
 import { uploadFileUrlPrefix } from '../publicLib/config';
 import { CloudCurrencyType, TxHistory } from '../publicLib/interface';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList, getAddrInfoByAddr, getDeviceAllDetail, getScreenModify, getUserInfo, setEthNonce } from '../remote/tools';
+import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList, getScreenModify, setEthNonce } from '../remote/tools';
 import { getStoreData } from './memBridge';
 
 /**
@@ -93,15 +93,6 @@ export const callGetUserInfo = () => {
             acc_id,
             level
         };
-    });
-};
-
-/**
- * 通过地址获取地址余额
- */
-export const callGetAddrInfoByAddr = (addr: string, currencyName: string):Promise<any> => {
-    return new Promise(resolve => {
-        resolve(getAddrInfoByAddr(addr,currencyName));
     });
 };
 

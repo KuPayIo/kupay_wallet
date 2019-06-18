@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { callAhashToArgon2Hash } from '../../../middleLayer/walletBridge';
 import { setStore } from '../../../store/memstore';
 import { popNewMessage } from '../../../utils/tools';
 import { CreateWalletType } from '../../../viewLogic/localWallet';
@@ -64,7 +65,7 @@ export class ImageImport extends Widget {
             this.props.imagePicker.getAHash({
                 success(ahash:string) {
                     console.log('image ahash = ',ahash);
-                    resolve(ahashToArgon2Hash(ahash,imagePsw));
+                    resolve(callAhashToArgon2Hash(ahash,imagePsw));
                 }
             });
         });

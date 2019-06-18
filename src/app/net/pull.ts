@@ -2,16 +2,13 @@
  * 主动向后端通讯
  */
 import { uploadFileUrl } from '../config';
+import { getStoreData, setStoreData } from '../middleLayer/memBridge';
 import { callRequestAsync, callRequestAsyncNeedLogin } from '../middleLayer/netBridge';
 import { callGetUserInfo } from '../middleLayer/toolsBridge';
-import { PAGELIMIT } from '../publicLib/config';
 import { CloudCurrencyType } from '../publicLib/interface';
 import { getModulConfig } from '../publicLib/modulConfig';
 import { unicodeArray2Str } from '../publicLib/tools';
-import { kpt2kt, largeUnit2SmallUnit, wei2Eth } from '../publicLib/unitTools';
-import { getStore, setStore } from '../store/memstore';
-// tslint:disable-next-line:max-line-length
-import { parseCloudAccountDetail, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../store/parse';
+import { largeUnit2SmallUnit } from '../publicLib/unitTools';
 import { showError } from '../utils/toolMessages';
 import { base64ToFile, popNewMessage } from '../utils/tools';
 
@@ -22,80 +19,6 @@ export const getBalance = async (currencyType: CloudCurrencyType) => {
     const msg = { type: 'wallet/account@get', param: { list: `[${currencyType}]` } };
     callRequestAsync(msg).then(r => {
         // todo 这里更新余额
-    });
-};
-
-/**
- * 获取分红汇总信息
- */
-export const getDividend = async () => {
-    const msg = { type: 'wallet/cloud@get_bonus_total', param: {} };
-    const data = await getBonusHistory();
-    const num = (data.value !== '') ? wei2Eth(data.value[0][1]) :0;
-    const yearIncome = (num * 365 / 7).toFixed(4); 
-    
-    callRequestAsync(msg).then(data => {
-        const dividend: any = {
-            totalDivid: wei2Eth(data.value[0]),
-            totalDays: data.value[1],
-            thisDivid: wei2Eth(data.value[2]),
-            yearIncome: yearIncome
-        };
-        setStore('dividTotal', dividend);
-    });
-};
-
-/**
- * 获取后台发起分红历史记录
- */
-export const getBonusHistory = async() => {
-    const msg = { type:'wallet/cloud@get_bonus_history',param:{} };
-
-    return callRequestAsync(msg);
-};
-
-/**
- * 获取挖矿汇总信息
- */
-export const getMining = async () => {
-    const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
-    callRequestAsync(msg).then(data => {
-        
-        const totalNum = kpt2kt(data.mine_total);
-        const holdNum = kpt2kt(data.mines);
-        const today = kpt2kt(data.today);
-        let nowNum = Math.round((totalNum - holdNum + today) * 0.25) - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖 再四舍五入取整
-        if (nowNum <= 0) {
-            nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
-        } else if ((totalNum - holdNum) >= 100) {
-            nowNum = (nowNum < 100 && (totalNum - holdNum) >= 100) ? 100 : nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
-        } else {
-            nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
-        }
-        const mining: any = {
-            totalNum: totalNum,
-            thisNum: nowNum,
-            holdNum: holdNum
-        };
-        console.log('-------------------',mining);
-        setStore('activity/mining/total', mining);
-    });
-};
-
-/**
- * 获取挖矿历史记录
- */
-export const getMiningHistory = async (start = '') => {
-    const msg = { 
-        type: 'wallet/cloud@get_pool_detail', 
-        param: {
-            start,
-            count:PAGELIMIT
-        } 
-    };
-    callRequestAsync(msg).then(data => {
-        const miningHistory = parseMiningHistory(data);
-        setStore('activity/mining/history', miningHistory);
     });
 };
 
@@ -124,16 +47,6 @@ export const inputInviteCdKey = async (code) => {
 
         return;
     }
-};
-
-/**
- * 获取邀请码领取明细
- */
-export const getInviteCodeDetail = async () => {
-    const msg = { type: 'wallet/cloud@get_invite_code_detail', param: {} };
-    const data = await callRequestAsync(msg);
-
-    return parseMyInviteRedEnv(data.value);
 };
 
 /**
@@ -219,108 +132,6 @@ export const queryRedBagDesc = async (cid: string) => {
     return callRequestAsync(msg);
 };
 
-/**
- * 查询发送红包记录
- */
-export const querySendRedEnvelopeRecord = (start?: string) => {
-    let msg;
-    if (start) {
-        msg = {
-            type: 'query_emit_log',
-            param: {
-                start,
-                count: PAGELIMIT
-            }
-        };
-    } else {
-        msg = {
-            type: 'query_emit_log',
-            param: {
-                count: PAGELIMIT
-            }
-        };
-    }
-
-    try {
-        callRequestAsync(msg).then(async detail => {
-            const data = parseSendRedEnvLog(detail.value,start);
-            setStore('activity/luckyMoney/sends',data);
-        });
-
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-        return;
-    }
-};
-
-/**
- * 查询红包兑换记录
- */
-export const queryConvertLog = async (start?:string) => {
-    let msg;
-    if (start) {
-        msg = {
-            type: 'query_convert_log',
-            param: {
-                start,
-                count: PAGELIMIT
-            }
-        };
-    } else {
-        msg = {
-            type: 'query_convert_log',
-            param: {
-                count: PAGELIMIT
-            }
-        };
-    }
-
-    try {
-        callRequestAsync(msg).then(detail => {
-            const data = parseConvertLog(detail,start);
-            setStore('activity/luckyMoney/exchange',data);
-        });
-
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-        return;
-    }
-};
-
-/**
- * 查询某个红包兑换详情
- */
-export const queryDetailLog = async (uid:number,rid: string,accId?:string) => {
-    const msg = {
-        type: 'query_detail_log',
-        param: {}
-    };
-    if (accId) {  // 与聊天通用的账户id
-        msg.param = {
-            acc_id: accId,
-            rid
-        };
-    } else {
-        msg.param = {
-            uid,
-            rid
-        };
-    }
-    if (rid === '-1') return;
-
-    try {
-        const detail = await callRequestAsync(msg);
-        
-        return parseExchangeDetail(detail.value);
-        
-    } catch (err) {
-        showError(err && (err.result || err.type));
-
-        return;
-    }
-};
 // ==========================================红包end
 
 /**
@@ -340,40 +151,6 @@ export const getAward = async () => {
 
         return;
     }
-};
-
-/**
- * 矿山增加记录
- */
-export const getMineDetail = async (start = '') => {
-    const msg = { 
-        type: 'wallet/cloud@grant_detail', 
-        param: {
-            start,
-            count:PAGELIMIT
-        } 
-    };
-    callRequestAsync(msg).then(detail => {
-        const list = parseMineDetail(detail);
-        setStore('activity/mining/addMine', list);
-    });
-};
-
-/**
- * 获取分红历史记录
- */
-export const getDividHistory = async (start = '') => {
-    const msg = { 
-        type: 'wallet/cloud@get_bonus_info', 
-        param: {
-            start,
-            count:PAGELIMIT
-        } 
-    };
-    callRequestAsync(msg).then(data => {
-        const dividHistory = parseDividHistory(data);
-        setStore('activity/dividend/history', dividHistory);
-    });
 };
 
 /**
@@ -457,16 +234,6 @@ export const doChat = async () => {
     });
 };
 
-// 获取好友嗨豆排名
-export const getFriendsKTTops =  (arr:any) => {
-    const msg = { type:'wallet/cloud@finds_high_top',param:{ finds:JSON.stringify(arr) } };
-
-    return  callRequestAsync(msg).then(data => {
-        console.log('获取好友排名========================',data);
-
-        return parseMiningRank(data);
-    });
-};
 /**
  * 验证手机号是否被注册
  */
@@ -572,82 +339,6 @@ export const getProxy = async () => {
 // ===============================充值提现
 
 /**
- * 获取理财列表
- */
-export const getProductList = async () => {
-    const msg = {
-        type: 'wallet/manage_money@get_product_list',
-        param: {}
-    };
-    
-    try {
-        const res = await callRequestAsync(msg);
-        const result = parseProductList(res);
-        setStore('activity/financialManagement/products',result);
-
-        return result;
-    } catch (err) {
-        // showError(err && (err.result || err.type));
-
-        return [];
-    }
-};
-
-/**
- * 购买理财
- */
-export const buyProduct = async (pid:any,count:any,secretHash:string) => {
-    pid = Number(pid);
-    count = Number(count);
-    const msg = {
-        type: 'wallet/manage_money@buy',
-        param: {
-            pid,
-            count
-        }
-        
-    };
-    
-    try {
-        const res = await callRequestAsyncNeedLogin(msg,secretHash);
-        console.log('buyProduct',res);
-        if (res.result === 1) {
-            getProductList();
-
-            return true;
-        } else {
-            return false;
-        }
-    } catch (err) {
-        showError(err && (err.result || err.type));
-        
-        return false;
-    }
-};
-
-/**
- * 理财购买记录
- */
-export const getPurchaseRecord = async (start = '') => {
-    const msg = {
-        type: 'wallet/manage_money@get_pay_list',
-        param: {
-            start,
-            count:PAGELIMIT
-        }
-    };
-    
-    try {
-        const res = await callRequestAsync(msg);
-        console.log('getPurchaseRecord',res);
-        const record = parsePurchaseRecord(res);
-        setStore('activity/financialManagement/purchaseHistories',record);
-
-    } catch (err) {
-        showError(err && (err.result || err.type));
-    }
-};
-/**
  * 赎回理财产品
  */
 export const buyBack = async (timeStamp:any,secretHash:string) => {
@@ -692,9 +383,10 @@ export const uploadFile = async (base64) => {
             popNewMessage('图片上传成功');
             if (res.result === 1) {
                 const sid = res.sid;
-                const userInfo = getStore('user/info');
-                userInfo.avatar = sid;
-                setStore('user/info',userInfo);
+                getStoreData('user/info').then(userInfo => {
+                    userInfo.avatar = sid;
+                    setStoreData('user/info',userInfo);
+                });
             }
         }).catch(err => {
             console.log('uploadFile fail ',err);

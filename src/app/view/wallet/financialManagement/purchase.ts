@@ -4,15 +4,14 @@
 // ===============================================导入
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { callFetchGasPrice } from '../../../middleLayer/walletBridge';
+import { callGetCloudBalances } from '../../../middleLayer/memBridge';
+import { callFetchGasPrice, callGetCurrentAddrInfo } from '../../../middleLayer/walletBridge';
 import { defaultGasLimit } from '../../../publicLib/config';
 import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../publicLib/interface';
 import { formatBalance } from '../../../publicLib/tools';
 import { wei2Eth } from '../../../publicLib/unitTools';
-import { getCloudBalances } from '../../../store/memstore';
-// tslint:disable-next-line:max-line-length
 import { popNewMessage, popPswBox } from '../../../utils/tools';
-import { purchaseProduct } from '../../../viewLogic/localWallet';
+import { purchaseProduct, recharge } from '../../../viewLogic/localWallet';
 import { forelet,WIDGET_NAME } from './productDetail';
 // ==================================================导出
 interface Props {
@@ -32,18 +31,22 @@ export class ProductDetail extends Widget {
     }
     public init() {
         const spend = formatBalance(this.props.product.unitPrice * this.props.amount);
-        const cloudBalance = getCloudBalances().get(CloudCurrencyType.ETH);
-        const localBalance = getCurrentAddrInfo('ETH').balance;
         this.props = {
             ...this.props,
             spend,
-            cloudBalance,
-            localBalance
+            cloudBalance:0,
+            localBalance:0
         }; 
+        Promise.all([callGetCurrentAddrInfo('ETH'),callGetCloudBalances()]).then(([addrInfo,cloudBalances]) => {
+            this.props.cloudBalance = cloudBalances.get(CloudCurrencyType.ETH);
+            this.props.localBalance = addrInfo.balance;
+            this.paint();
+        });
     }
     public close() {
         this.ok && this.ok();
     }
+
     public async purchaseClicked() {
         const psw = await popPswBox();
         if (!psw) return;
@@ -54,7 +57,8 @@ export class ProductDetail extends Widget {
                 w.ok && w.ok();
             }
         } else if (this.props.cloudBalance + this.props.localBalance >= this.props.spend) {
-            const fromAddr = getCurrentAddrByCurrencyName('ETH');
+            const addrInfo = await callGetCurrentAddrInfo('ETH');
+            const fromAddr = addrInfo.addr;
             const pay = this.props.spend - this.props.cloudBalance;
             const gasPrice = await callFetchGasPrice(MinerFeeLevel.Standard);
             const tx:TxHistory = {

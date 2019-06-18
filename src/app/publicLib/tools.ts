@@ -2,7 +2,7 @@
 /***
  * 共用 tools
  */
-import { getLang } from '../../pi/util/lang';
+import { Config } from './config';
 import { CurrencyRecord } from './interface';
 import { getModulConfig } from './modulConfig';
 
@@ -191,4 +191,15 @@ export const getAddrInfoByAddr = (currencyRecords:CurrencyRecord[],addr: string,
 // 获取SC涨跌情况 
 export const fetchCloudGain = () => {
     return formatBalanceValue(0);
+};
+
+/**
+ * 转化rtype
+ */
+export const parseRtype = (rType:number,lang:string) => {
+    if (rType === 0) return Config[lang].luckeyMoney.ordinary; // 普通
+    if (rType === 1) return Config[lang].luckeyMoney.random; // 随机
+    if (rType === 99) return Config[lang].luckeyMoney.invite; // 邀请
+
+    return '';
 };
