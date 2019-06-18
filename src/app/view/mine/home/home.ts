@@ -8,10 +8,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getStoreData } from '../../../middleLayer/memBridge';
 import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { callBackupMnemonic } from '../../../middleLayer/walletBridge';
 import { getModulConfig } from '../../../publicLib/modulConfig';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { copyToClipboard, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { doScanQrCode } from '../../../viewLogic/native';
 
@@ -93,14 +94,12 @@ export class Home extends Widget {
      * 更新数据
      */
     public initData() {
-        callGetUserInfo().then(userInfo => {
+        Promise.all([callGetUserInfo(),getStoreData('wallet')]).then(([userInfo,wallet]) => {
             if (userInfo) {
                 this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
                 this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
                 this.props.userLevel = userInfo.level;
             }
-    
-            const wallet = getStore('wallet');
             if (wallet) {
                 this.props.hasWallet = true;
                 this.props.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';

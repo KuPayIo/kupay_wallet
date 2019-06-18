@@ -5,12 +5,13 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
+import { getStoreData } from '../../../middleLayer/memBridge';
 import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
 // tslint:disable-next-line:max-line-length
 import { callFetchCloudTotalAssets, callFetchLocalTotalAssets, callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { callGetDataCenter } from '../../../middleLayer/walletBridge';
 import { formatBalanceValue } from '../../../publicLib/tools';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { getCurrencyUnitSymbol } from '../../../utils/tools';
 // ============================导出
 
@@ -119,21 +120,22 @@ export class Home extends Widget {
             this.paint();
         },1000);
         callGetServerCloudBalance();
-        const wallet = getStore('wallet');
-        if (!wallet) return;
-        const list = [];
-        wallet.currencyRecords.forEach(v => {
-            if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
-                v.addrs.forEach(addrInfo => {
-                    list.push({ addr: addrInfo.addr, currencyName: v.currencyName });
+        getStoreData('wallet').then(wallet => {
+            if (!wallet) return;
+            const list = [];
+            wallet.currencyRecords.forEach(v => {
+                if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
+                    v.addrs.forEach(addrInfo => {
+                        list.push({ addr: addrInfo.addr, currencyName: v.currencyName });
+                    });
+                    
+                }
+            });
+           
+            callGetDataCenter().then(dataCenter => {
+                list.forEach(v => {
+                    dataCenter.updateBalance(v.addr, v.currencyName);
                 });
-                
-            }
-        });
-       
-        callGetDataCenter().then(dataCenter => {
-            list.forEach(v => {
-                dataCenter.updateBalance(v.addr, v.currencyName);
             });
         });
     }

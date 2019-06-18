@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/memBridge';
-import { callcurrencyExchangeAvailable, callFetchBalanceValueOfCoin } from '../../../middleLayer/toolsBridge';
+import { callCurrencyExchangeAvailable, callFetchBalanceValueOfCoin } from '../../../middleLayer/toolsBridge';
 import { callFetchTransactionList, callGetCurrentAddrInfo, callGetDataCenter } from '../../../middleLayer/walletBridge';
 import { CurrencyRecord, TxHistory, TxType } from '../../../publicLib/interface';
 import { formatBalance, formatBalanceValue, timestampFormat } from '../../../publicLib/tools';
@@ -120,7 +120,7 @@ export class TransactionHome extends Widget {
     }
 
     public canConvert() {
-        callcurrencyExchangeAvailable().then(convertCurrencys => {
+        callCurrencyExchangeAvailable().then(convertCurrencys => {
             let canConvert = false;
             for (let i = 0;i < convertCurrencys.length;i++) {
                 if (convertCurrencys[i] === this.props.currencyName) {

@@ -2,17 +2,17 @@
  * RedEnvDetail
  */
 import { ShareType } from '../../../../pi/browser/shareToPlatforms';
-import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
+import { getStoreData } from '../../../middleLayer/memBridge';
+import { callQueryDetailLog } from '../../../middleLayer/netBridge';
 import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
-import { getInviteCode, getOneUserInfo, queryDetailLog } from '../../../net/pull';
+import { getInviteCode, getOneUserInfo } from '../../../net/pull';
 import { uploadFileUrlPrefix } from '../../../publicLib/config';
 import { LuckyMoneyType } from '../../../publicLib/interface';
-import { getStore } from '../../../store/memstore';
 
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -34,7 +34,7 @@ export class RedEnvDetail extends Widget {
     public language:any;
     public ok: () => void;
 
-    public setProps(props: Json, oldProps?: Json)  {
+    public setProps(props: Props, oldProps?: Props)  {
         super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
         this.props = {
@@ -56,7 +56,8 @@ export class RedEnvDetail extends Widget {
     }
 
     public async initData() {
-        const value = await queryDetailLog(getStore('user/conUid'),this.props.rid);
+        const uid = await getStoreData('user/conUid');
+        const value = await callQueryDetailLog(uid,this.props.rid);
         if (!value) return;
         this.props.redBagList = value[0];        
         this.props.message = value[1];
@@ -103,7 +104,7 @@ export class RedEnvDetail extends Widget {
     public async againSend() {
         let url = '';
         let title = '';
-        const lanSet = getStore('setting/language');
+        const lanSet = await getStoreData('setting/language');
         let lan:any;
         if (lanSet) {
             lan = lanSet;

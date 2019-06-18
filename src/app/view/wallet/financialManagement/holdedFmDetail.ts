@@ -5,8 +5,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { callGetPurchaseRecord } from '../../../middleLayer/netBridge';
 import { callVerifyIdentidy } from '../../../middleLayer/walletBridge';
-import { buyBack, getPurchaseRecord } from '../../../net/pull';
+import { buyBack } from '../../../net/pull';
 import { PurchaseHistory } from '../../../publicLib/interface';
 import { register } from '../../../store/memstore';
 import { popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
@@ -60,7 +61,7 @@ export class HoldedFmDetail extends Widget {
         close.callback(close.widget);
         if (result) {
             popNewMessage(this.language.tips[1]);
-            getPurchaseRecord();
+            callGetPurchaseRecord();
         } else {
             popNewMessage(this.language.tips[2]);
         }

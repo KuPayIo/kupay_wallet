@@ -107,7 +107,7 @@ export const callGetScreenModify = () => {
 };
 
 // 计算支持的币币兑换的币种
-export const callcurrencyExchangeAvailable = ():Promise<any> => {
+export const callCurrencyExchangeAvailable = ():Promise<any> => {
     return new Promise(resolve => {
         resolve(currencyExchangeAvailable());
     });

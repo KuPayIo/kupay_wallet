@@ -1,14 +1,19 @@
 /**
  * ExchangeHistory
  */
+import { appLanguageList } from '../../../../pi/browser/localLanguage';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getData, getOneUserInfo, queryConvertLog } from '../../../net/pull';
-import { getStore, register, setStore } from '../../../store/memstore';
-import { PAGELIMIT } from '../../../utils/constants';
-import { getUserInfo, parseRtype, timestampFormat } from '../../../utils/tools';
+import { getStoreData, setStoreData } from '../../../middleLayer/memBridge';
+import { callQueryConvertLog } from '../../../middleLayer/netBridge';
+import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
+import { getData, getOneUserInfo } from '../../../net/pull';
+import { PAGELIMIT } from '../../../publicLib/config';
+import { parseRtype, timestampFormat } from '../../../publicLib/tools';
+import { register } from '../../../store/memstore';
+import { SettingLanguage } from '../../base/app';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -34,7 +39,7 @@ export class ExchangeHistory extends Widget {
     public state:Props;
     public language:any;
 
-    public async create() {
+    public create() {
         super.create();
         this.language = this.config.value[getLang()];
         this.props = {
@@ -50,32 +55,33 @@ export class ExchangeHistory extends Widget {
             showMoreTips:false, 
             inviteObj:null,
             userList:[],
-            avatar:getUserInfo().avatar,
+            avatar:'',
             scrollHeight:0
         };
         this.initData();
-        
+        callGetUserInfo().then(userInfo => {
+            this.props.avatar = userInfo.avatar;
+            this.paint();
+        });
     }
 
     /**
      * 更新数据
      */
-    public initData() {
-       
+    public async initData() {
         this.getInviteRedEnvelope();     
-                               
-        const cHisRec = getStore('activity/luckyMoney/exchange');
+        const cHisRec = await getStoreData('activity/luckyMoney/exchange');
         if (cHisRec) {
             const hList = cHisRec.list;
             if (hList && hList.length > this.props.recordList.length) {
                 console.log('load more from local');
             } else {
                 console.log('load more from server');
-                queryConvertLog(this.props.start);
+                callQueryConvertLog(this.props.start);
             }
         } else {
             console.log('load more from server');
-            queryConvertLog(this.props.start);
+            callQueryConvertLog(this.props.start);
         }
         this.loadMore();    
     }
@@ -108,7 +114,7 @@ export class ExchangeHistory extends Widget {
 
     // 获取邀请码记录
     public async getInviteRedEnvelope() {
-        const inviteRedBagRec = getStore('activity/luckyMoney/invite');
+        const inviteRedBagRec = await getStoreData('activity/luckyMoney/invite');
         if (inviteRedBagRec) {
             console.log('inviteRedBagRec from local');
             this.props.inviteObj = inviteRedBagRec;
@@ -122,14 +128,14 @@ export class ExchangeHistory extends Widget {
                 suid: 0,
                 rid: '-1',
                 rtype: '99',
-                rtypeShow: parseRtype(99),
+                rtypeShow: parseRtype(99,localStorage.getItem(SettingLanguage) || appLanguageList[appLanguageList.zh_Hans]),
                 ctypeShow: '银锄',
                 amount: 1,
                 time: data.value,
                 timeShow: timestampFormat(data.value),
                 userName:this.language.inviteRedEnv
             };
-            setStore('activity/luckyMoney/invite',this.props.inviteObj);
+            setStoreData('activity/luckyMoney/invite',this.props.inviteObj);
             this.innerPaint();
         }
     }
@@ -157,7 +163,7 @@ export class ExchangeHistory extends Widget {
      * 实际加载数据
      */
     public async loadMore() {
-        const cHisRec = getStore('activity/luckyMoney/exchange');
+        const cHisRec = await getStoreData('activity/luckyMoney/exchange');
         if (!cHisRec) return;
         const hList = cHisRec.list;
         const start = this.props.recordList.length;
@@ -195,7 +201,7 @@ export class ExchangeHistory extends Widget {
      * 页面刷新
      */
     public refreshPage() {
-        queryConvertLog();
+        callQueryConvertLog();
         this.props.topRefresh = true;
         this.paint();
         setTimeout(() => {

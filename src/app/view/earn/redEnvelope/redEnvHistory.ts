@@ -7,11 +7,13 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
+import { getStoreData } from '../../../middleLayer/memBridge';
+import { callQuerySendRedEnvelopeRecord } from '../../../middleLayer/netBridge';
 import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
-import { getInviteCode, querySendRedEnvelopeRecord } from '../../../net/pull';
+import { getInviteCode } from '../../../net/pull';
 import { PAGELIMIT } from '../../../publicLib/config';
 import { LuckyMoneyType } from '../../../publicLib/interface';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -59,8 +61,8 @@ export class RedEnvHistory extends Widget {
     /**
      * 更新数据
      */
-    public initData() {
-        const sHisRec = getStore('activity/luckyMoney/sends');
+    public async initData() {
+        const sHisRec = await getStoreData('activity/luckyMoney/sends');
         if (sHisRec) {
             const hList = sHisRec.list;
             if (hList && hList.length > this.props.recordList.length) {
@@ -68,11 +70,11 @@ export class RedEnvHistory extends Widget {
                   
             } else {
                 console.log('load more from server');
-                querySendRedEnvelopeRecord(this.props.start);
+                callQuerySendRedEnvelopeRecord(this.props.start);
             }
         } else {
             console.log('load more from server');
-            querySendRedEnvelopeRecord(this.props.start);
+            callQuerySendRedEnvelopeRecord(this.props.start);
         }
         this.loadMore(); 
     }
@@ -86,7 +88,7 @@ export class RedEnvHistory extends Widget {
 
     // 实际加载数据
     public async loadMore() {
-        const sHisRec = getStore('activity/luckyMoney/sends');
+        const sHisRec = await getStoreData('activity/luckyMoney/sends');
         if (!sHisRec) return;
         const hList = sHisRec.list;
         const start = this.props.recordList.length;
@@ -105,14 +107,6 @@ export class RedEnvHistory extends Widget {
     public async initRedEn() {
         for (const i in this.props.recordList) {
             this.props.recordList[i].outDate = Number(this.props.recordList[i].time) + (60 * 60 * 24 * 1000) < new Date().getTime();
-            // const data = await queryDetailLog(getStore('user/conUid'),this.props.recordList[i].rid);
-            // if (data) {
-            //     this.props.recordList[i].curNum = data[2];
-            //     this.props.recordList[i].totalNum = data[3];
-            // } else {
-            //     this.props.recordList[i].curNum = 0;
-            //     this.props.recordList[i].totalNum = 0;
-            // }
         }
         this.paint();
     }
@@ -153,7 +147,7 @@ export class RedEnvHistory extends Widget {
             this.props.topRefresh = false;
             this.paint();
         }, 1000);
-        querySendRedEnvelopeRecord('');
+        callQuerySendRedEnvelopeRecord('');
     }
 
     /**
@@ -165,7 +159,7 @@ export class RedEnvHistory extends Widget {
         console.log(item);
         let url = '';
         let title = '';
-        const lanSet = getStore('setting/language');
+        const lanSet = await getStoreData('setting/language');
         let lan:any;
         if (lanSet) {
             lan = lanSet;

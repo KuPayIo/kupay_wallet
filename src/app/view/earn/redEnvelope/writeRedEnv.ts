@@ -6,13 +6,14 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { callGetCloudBalances, setStoreData } from '../../../middleLayer/memBridge';
 import { callGetRealUser, callGetServerCloudBalance } from '../../../middleLayer/netBridge';
 import { callVerifyIdentidy } from '../../../middleLayer/walletBridge';
 import { sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { currencyType } from '../../../publicLib/tools';
-import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { popNewLoading, popNewMessage } from '../../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -49,7 +50,7 @@ export class WriteRedEnv extends Widget {
         totalNum: 0,
         oneAmount: 0,
         message: '',
-        realUser: getStore('user/info/isRealUser'),
+        realUser: false,
         forceHide:false,
         ktBalance:0,
         inFlag:''
@@ -62,9 +63,7 @@ export class WriteRedEnv extends Widget {
         super.create();
         this.language = this.config.value[getLang()];
         this.updateBalance();
-        if (!this.props.realUser) {
-            callGetRealUser();
-        }
+        callGetRealUser();
     }
 
     public setProps(props:any) {
@@ -81,25 +80,26 @@ export class WriteRedEnv extends Widget {
     /**
      * 更新真实用户
      */
-    public updateRealUser() {
-        this.props.realUser = getStore('user/info/isRealUser');
+    public updateRealUser(isRealUser:boolean) {
+        this.props.realUser = isRealUser;
     }
 
     /**
      * 更新余额
      */
     public updateBalance() {
-        const list = [
-            { img: '../../res/image1/currency/KT.png', name: 'KT', num: 500 },
-            { img: '../../res/image1/currency/BTC.png', name: 'BTC', num: 0.01 },
-            { img: '../../res/image1/currency/ETH.png', name: 'ETH', num: 0.5 }
-        ];
-        const data = getCloudBalances();
-        for (const i in list) {
-            list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
-        }
-        this.props.list = list;
-        this.paint(true);
+        callGetCloudBalances().then(data => {
+            const list = [
+                { img: '../../res/image1/currency/KT.png', name: 'KT', num: 500 },
+                { img: '../../res/image1/currency/BTC.png', name: 'BTC', num: 0.01 },
+                { img: '../../res/image1/currency/ETH.png', name: 'ETH', num: 0.5 }
+            ];
+            for (const i in list) {
+                list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
+            }
+            this.props.list = list;
+            this.paint(true);
+        });
     }
 
     public backPrePage() {
@@ -268,7 +268,7 @@ export class WriteRedEnv extends Widget {
             this.props.totalAmount = 0;
             this.props.message = '';
             callGetServerCloudBalance();// 更新余额
-            setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
+            setStoreData('activity/luckyMoney/sends', undefined);// 更新红包记录
             this.paint(true);
         });
         if (this.props.inFlag === 'chat_user' || this.props.inFlag === 'chat_group') {
@@ -314,9 +314,9 @@ register('cloud/cloudWallets', () => {
     }
 });
 
-register('user/info/isRealUser', () => {
+register('user/info/isRealUser', (isRealUser:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.updateRealUser();
+        w.updateRealUser(isRealUser);
     }
 });

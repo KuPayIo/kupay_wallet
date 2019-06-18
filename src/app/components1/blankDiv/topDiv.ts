@@ -3,8 +3,8 @@
  */
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getStore, register } from '../../store/memstore';
-import { topHeight } from '../../utils/constants';
+import { getStoreData } from '../../middleLayer/memBridge';
+import { register } from '../../store/memstore';
 
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -14,8 +14,12 @@ export class TopDiv extends Widget {
     public create() {
         super.create();
         this.props = {
-            height:getStore('setting/topHeight',topHeight)
+            height:0
         };
+        getStoreData('setting/topHeight').then(topHeight => {
+            this.props.height = topHeight;
+            this.paint();
+        });
     }
 }
 

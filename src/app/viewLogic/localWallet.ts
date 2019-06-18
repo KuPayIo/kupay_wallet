@@ -3,14 +3,12 @@
  */
 import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
-import { Config } from '../config';
 import { callGetAllAccount } from '../middleLayer/memBridge';
-import { callGetRechargeLogs, callGetServerCloudBalance } from '../middleLayer/netBridge';
+import { callBuyProduct, callGetPurchaseRecord, callGetRechargeLogs, callGetServerCloudBalance } from '../middleLayer/netBridge';
 import { callDeletLocalTx } from '../middleLayer/toolsBridge';
 // tslint:disable-next-line:max-line-length
 import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetDataCenter, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callResendBtcRecharge, callResendBtcTransfer, callUpdateLocalTx, callVerifyIdentidy } from '../middleLayer/walletBridge';
-import { buyProduct, getPurchaseRecord } from '../net/pull';
-import { ERC20Tokens } from '../publicLib/config';
+import { Config, ERC20Tokens } from '../publicLib/config';
 import { CreateWalletOption, TxHistory } from '../publicLib/interface';
 import { doErrorShow } from '../utils/toolMessages';
 import { closeAllPage, getPopPhoneTips, getStaticLanguage, popNewLoading, popNewMessage } from '../utils/tools';
@@ -148,13 +146,13 @@ export const purchaseProduct = async (psw:string,productId:string,amount:number)
         
         return;
     }
-    const data = await buyProduct(productId,amount,secretHash);
+    const data = await callBuyProduct(productId,amount,secretHash);
     close.callback(close.widget);
     if (data) {
         popNewMessage(Config[getLang()].bugProduct.buySuccess); // 购买成功
         callGetServerCloudBalance();
         console.log('data',data);
-        getPurchaseRecord();// 购买之后获取购买记录
+        callGetPurchaseRecord();// 购买之后获取购买记录
     }
     
     return data;

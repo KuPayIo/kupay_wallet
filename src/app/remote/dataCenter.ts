@@ -9,7 +9,7 @@ import { BigNumber } from '../publicLib/bignumber';
 // tslint:disable-next-line:max-line-length
 import { btcNetwork, defaultEthToAddr, erc20GasLimitRate, ERC20Tokens, ethTokenTransferCode, lang, MainChainCoin } from '../publicLib/config';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../publicLib/interface';
-import { changellyGetCurrencies, fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../publicLib/pull3';
+import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../publicLib/pull3';
 import { formatBalance } from '../publicLib/tools';
 import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../publicLib/unitTools';
 import { getStore,setStore } from '../store/memstore';
@@ -35,8 +35,6 @@ class DataCenter {
    * 初始化
    */
     public init() {
-        // 币币兑换可用货币获取
-        changellyGetCurrencies();
         // 更新黄金价格
         this.updateGoldPrice();
         // 更新人民币美元汇率

@@ -6,9 +6,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getStoreData, setStoreData } from '../../../middleLayer/memBridge';
 import { callLogoutAccount, callLogoutAccountDel } from '../../../middleLayer/netBridge';
 import { callBackupMnemonic } from '../../../middleLayer/walletBridge';
-import { getStore, register, setStore } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { popPswBox, rippleShow } from '../../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -30,36 +31,38 @@ export class Setting extends Widget {
 
     public init() {
         this.language = this.config.value[getLang()];
-        const lan = getStore('setting/language', 'zh_Hans');
-        const unit = getStore('setting/currencyUnit', 'CNY');
-        const color = getStore('setting/changeColor', 'redUp');
+        
         this.props = {
             lockScreenPsw: '',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 
             lockScreenTitle: '',  // 锁屏密码页面标题
             numberOfErrors: 0,  // 锁屏密码输入错误次数
-            itemList: [
-                { title: this.language.itemTitle[0], list: this.language.languageSet, selected: lan, flag: 0 },
-                { title: this.language.itemTitle[1], list: this.language.currencyUnit, selected: unit, flag: 1 },
-                { title: this.language.itemTitle[2], list: this.language.changeColor, selected: color, flag: 2 }
-            ],
+            itemList: [],
             wallet: null
         };
         this.initData();
     }
 
     public initData() {
-        const wallet = getStore('wallet');
-        if (wallet) {
+        Promise.all([getStoreData('wallet'),getStoreData('setting')]).then(([wallet,setting]) => {
             this.props.wallet = wallet;
-        }
-        const ls = getStore('setting/lockScreen');
-        if (ls) {
-            this.props.lockScreenPsw = ls.psw;
-            this.props.openLockScreen = ls.psw && ls.open !== false;
-        }
+            const ls = setting.lockScreen;
+            if (ls) {
+                this.props.lockScreenPsw = ls.psw;
+                this.props.openLockScreen = ls.psw && ls.open !== false;
+            }
+            const lan = setting.language || 'zh_Hans';
+            const unit = setting.currencyUnit || 'CNY';
+            const color = setting.changeColor || 'redUp';
 
-        this.paint();
+            const itemList = [
+                { title: this.language.itemTitle[0], list: this.language.languageSet, selected: lan, flag: 0 },
+                { title: this.language.itemTitle[1], list: this.language.currencyUnit, selected: unit, flag: 1 },
+                { title: this.language.itemTitle[2], list: this.language.changeColor, selected: color, flag: 2 }
+            ];
+            this.props.itemList = itemList;
+            this.paint();
+        });
     }
 
     // 动画效果执行
@@ -73,12 +76,12 @@ export class Setting extends Widget {
     /**
      * 处理锁屏开关切换
      */
-    public onSwitchChange() {
+    public async onSwitchChange() {
         if (this.props.openLockScreen) {   // 如果锁屏开关打开则直接关闭
-            const ls = getStore('setting/lockScreen');
+            const ls = await getStoreData('setting/lockScreen');
             ls.open = !ls.open;
             this.props.openLockScreen = false;
-            setStore('setting/lockScreen', ls);
+            setStoreData('setting/lockScreen', ls);
         } else if (this.props.wallet) {
             popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
                 if (!r) {
@@ -133,8 +136,9 @@ export class Setting extends Widget {
     /**
      * 退出账户不删除信息
      */
-    public logOut() {
-        const setPsw = getStore('wallet').setPsw;
+    public async logOut() {
+        const wallet = await getStoreData('wallet');
+        const setPsw = wallet.setPsw;
         if (!setPsw) {
             this.language.modalBox2.sureText = this.language.modalBox2.sureText1;
         }
@@ -157,8 +161,8 @@ export class Setting extends Widget {
     /**
      * 注销账户
      */
-    public logOutDel() {
-        const setPsw = getStore('wallet').setPsw;
+    public async logOutDel() {
+        const setPsw = await getStoreData('wallet/setPsw');
         if (!setPsw) {
             this.language.modalBox3.sureText = this.language.modalBox3.sureText1;
         }

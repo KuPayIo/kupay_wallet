@@ -5,11 +5,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getStoreData } from '../../../middleLayer/memBridge';
 import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { uploadFile } from '../../../net/pull';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
-import { imgResize, popNewLoading, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { imgResize, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { exportMnemonic } from '../../../viewLogic/localWallet';
 import { selectImage } from '../../../viewLogic/native';
 // ================================ 导出
@@ -27,21 +28,19 @@ export class AccountHome extends Widget {
         this.init();
     }
     public init() {
-        const wallet = getStore('wallet');
-        const backup = wallet.isBackup;
 
         this.props = {
-            isTourist:!wallet.setPsw,
+            isTourist:false,
             avatar: '',
             nickName: '',
             phone: '',
-            backup,
+            backup:false,
             canEditName: false,
             editName:'',
             chooseImage: false,
             avatarHtml: ''
         };
-        callGetUserInfo().then(userInfo => {
+        Promise.all([callGetUserInfo(),getStoreData('wallet')]).then(([userInfo,wallet]) => {
             if (userInfo.phoneNumber) {
                 const str = String(userInfo.phoneNumber).substr(3, 6);
                 this.props.phone = userInfo.phoneNumber.replace(str, '******');
@@ -49,6 +48,8 @@ export class AccountHome extends Widget {
             this.props.nickName = userInfo.nickName ? userInfo.nickName : this.language.defaultName;
             this.props.editName = this.props.nickName;
             this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+            this.props.backup = wallet.isBackup;
+            this.props.isTourist = !wallet.setPsw;
             this.paint();
         });
     }

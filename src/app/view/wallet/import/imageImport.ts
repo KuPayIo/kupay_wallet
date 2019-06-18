@@ -4,8 +4,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { setStoreData } from '../../../middleLayer/memBridge';
 import { callAhashToArgon2Hash } from '../../../middleLayer/walletBridge';
-import { setStore } from '../../../store/memstore';
 import { popNewMessage } from '../../../utils/tools';
 import { CreateWalletType } from '../../../viewLogic/localWallet';
 import { selectImage } from '../../../viewLogic/native';
@@ -69,7 +69,7 @@ export class ImageImport extends Widget {
                 }
             });
         });
-        setStore('flags/imgArgon2HashPromise',imgArgon2HashPromise);
+        setStoreData('flags/imgArgon2HashPromise',imgArgon2HashPromise);
         popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image },() => {
             this.ok && this.ok();
         });

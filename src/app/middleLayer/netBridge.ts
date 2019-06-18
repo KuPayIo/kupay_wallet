@@ -1,6 +1,7 @@
 // tslint:disable-next-line:max-line-length
 import { defaultLogin, getOpenId, getRandom, loginSuccess, loginWallet, logoutAccount, logoutAccountDel, logoutWallet, openConnect, requestAsync, requestAsyncNeedLogin, setKickOffline, setLoginWalletFailed, walletManualReconnect } from '../remote/login';
-import { fetchBtcFees, fetchGasPrices, getAccountDetail, getHighTop, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs } from '../remote/pull';
+// tslint:disable-next-line:max-line-length
+import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getMineDetail, getMining, getProductList, getPurchaseRecord, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from '../remote/pull';
 
 /**
  * login.ts 对应的 bridge layer
@@ -191,4 +192,74 @@ export const callGetRechargeLogs = (coin: string,start?) => {
  */
 export const callGetWithdrawLogs = (coin: string,start?) => {
     return getWithdrawLogs(coin,start);
+};
+
+/**
+ * 购买理财
+ */
+export const callBuyProduct = (pid:any,count:any,secretHash:string) => {
+    return buyProduct(pid,count,secretHash);
+};
+
+/**
+ * 获取理财列表
+ */
+export const callGetProductList = () => {
+    return getProductList();
+};
+
+/**
+ * 理财购买记录
+ */
+export const callGetPurchaseRecord = (start = '') => {
+    return getPurchaseRecord(start);
+};
+
+/**
+ * 查询发送红包记录
+ */
+export const callQuerySendRedEnvelopeRecord = (start?: string) => {
+    return querySendRedEnvelopeRecord(start);
+};
+
+/**
+ * 查询某个红包兑换详情
+ */
+export const callQueryDetailLog = (uid:number,rid: string,accId?:string) => {
+    return queryDetailLog(uid,rid,accId);
+};
+
+/**
+ * 获取分红汇总信息
+ */
+export const callGetDividend = () => {
+    return getDividend();
+};
+
+/**
+ * 获取分红历史记录
+ */
+export const callGetDividHistory = (start = '') => {
+    return getDividHistory(start);
+};
+
+/**
+ * 获取挖矿汇总信息
+ */
+export const callGetMining = () => {
+    return getMining();
+};
+
+/**
+ * 矿山增加记录
+ */
+export const callGetMineDetail = (start = '') => {
+    return getMineDetail();
+};
+
+/**
+ * 查询红包兑换记录
+ */
+export const callQueryConvertLog = (start?:string) => {
+    return queryConvertLog(start);
 };

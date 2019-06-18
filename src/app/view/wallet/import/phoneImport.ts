@@ -5,12 +5,11 @@
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { calldeleteAccount, callGetAllAccount, getStoreData, setStoreData } from '../../../middleLayer/memBridge';
 import { callGetRandom, callLogoutAccountDel } from '../../../middleLayer/netBridge';
 import { callGetDataCenter } from '../../../middleLayer/walletBridge';
 import { regPhone, verifyPhone } from '../../../net/pull';
 import { CreateWalletOption } from '../../../publicLib/interface';
-import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
-import {  } from '../../../utils/commonjsTools';
 import { defaultPassword } from '../../../utils/constants';
 import { delPopPhoneTips, playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { phoneImport } from '../../../viewLogic/localWallet';
@@ -85,10 +84,10 @@ export class PhoneImport extends Widget {
                 const data = await regPhone(this.props.phone, this.props.areaCode,this.props.code.join(''));
                 close.callback(close.widget);
                 if (data && data.result === 1) {
-                    const userinfo = getStore('user/info');
+                    const userinfo = await getStoreData('user/info');
                     userinfo.phoneNumber = this.props.phone;
                     userinfo.areaCode = this.props.areaCode;
-                    setStore('user/info',userinfo,false);
+                    setStoreData('user/info',userinfo,false);
                     delPopPhoneTips();
                     this.ok && this.ok();
                 } else {
@@ -110,11 +109,11 @@ export class PhoneImport extends Widget {
     }
     
     // 手机导入成功
-    public phoneImportSuccess(phoneNum:string) {
-        deletePrePhoneAccount(phoneNum);
-        const userInfo = getStore('user/info');
+    public async phoneImportSuccess(phoneNum:string) {
+        await deletePrePhoneAccount(phoneNum);
+        const userInfo = await getStoreData('user/info');
         userInfo.phoneNumber = phoneNum;
-        setStore('user/info',userInfo,false);
+        setStoreData('user/info',userInfo,false);
         popNewMessage('登录成功');
         this.ok && this.ok();
         // 刷新本地钱包
@@ -201,11 +200,13 @@ export class PhoneImport extends Widget {
  * 删除相同手机号绑定的账户
  */
 const deletePrePhoneAccount = (phoneNumber:string) => {
-    const accounts = getAllAccount();
-    for (const index in accounts) {
-        const account = accounts[index];
-        if (account.user.info.phoneNumber === phoneNumber) {
-            deleteAccount(account.user.id);
+    return callGetAllAccount().then(accounts => {
+        for (const index in accounts) {
+            const account = accounts[index];
+            if (account.user.info.phoneNumber === phoneNumber) {
+                return calldeleteAccount(account.user.id);
+            }
         }
-    }
+    });
+    
 };

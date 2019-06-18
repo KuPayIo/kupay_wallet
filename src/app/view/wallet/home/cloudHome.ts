@@ -3,13 +3,13 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
+import { getStoreData } from '../../../middleLayer/memBridge';
+import { callGetProductList, callGetServerCloudBalance } from '../../../middleLayer/netBridge';
 import { callFetchCloudTotalAssets, callFetchCloudWalletAssetList } from '../../../middleLayer/toolsBridge';
-import { getProductList } from '../../../net/pull';
 import { CloudCurrencyType, Product } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { formatBalanceValue } from '../../../publicLib/tools';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { getCurrencyUnitSymbol, popNew3 } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -25,25 +25,29 @@ export class CloudHome extends Widget {
         this.props.financialModulIsShow = getModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
         this.init();
         if (props.isActive) {
-            getProductList();
+            callGetProductList();
             callGetServerCloudBalance();
         }
     }
     public init() {
-        const color = getStore('setting/changeColor','redUp');
         this.props = {
             ...this.props,
             totalAsset:formatBalanceValue(0),
             assetList:[],
-            productList:getStore('activity/financialManagement/products',[]),
-            redUp:color === 'redUp',
+            productList:[],
+            redUp:true,
             currencyUnitSymbol:''
         };
         Promise.all([callFetchCloudTotalAssets(),callFetchCloudWalletAssetList(),
-            getCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
+            getCurrencyUnitSymbol(),
+            getStoreData('setting/changeColor','redUp'),
+            getStoreData('activity/financialManagement/products',[])]).then(([totalAsset,assetList,
+                currencyUnitSymbol,color,productList]) => {
                 this.props.totalAsset = formatBalanceValue(totalAsset);
                 this.props.assetList = assetList;
                 this.props.currencyUnitSymbol = currencyUnitSymbol;
+                this.props.redUp = color === 'redUp';
+                this.props.productList = productList;
                 this.paint();
             });
     }

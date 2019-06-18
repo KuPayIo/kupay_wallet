@@ -3,9 +3,10 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getPurchaseRecord } from '../../../net/pull';
+import { getStoreData } from '../../../middleLayer/memBridge';
+import { callGetPurchaseRecord } from '../../../middleLayer/netBridge';
 import { PurchaseHistory } from '../../../publicLib/interface';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -25,9 +26,12 @@ export class HoldedFM extends Widget {
             ...this.props,
             purchaseRecord:[]
         };
-        if (this.props.isActive && getStore('user/conUid')) {
-            getPurchaseRecord();
-        }
+        getStoreData('user/id').then(uid => {
+            if (this.props.isActive && uid) {
+                callGetPurchaseRecord();
+            }
+        });
+        
     }
 
     public updatePurchaseRecord(purchaseRecord:PurchaseHistory[]) {

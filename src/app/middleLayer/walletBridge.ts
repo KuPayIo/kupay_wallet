@@ -1,13 +1,13 @@
 import { LANGUAGE } from '../core/btc/wallet';
 import { isValidMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { AddrInfo, CreateWalletOption, MinerFeeLevel, TxHistory } from '../publicLib/interface';
+import { AddrInfo, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
 import { dataCenter } from '../remote/dataCenter';
 // tslint:disable-next-line:max-line-length
 import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from '../remote/pullWallet';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from '../remote/tools';
 // tslint:disable-next-line:max-line-length
-import { ahashToArgon2Hash, backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
+import { ahashToArgon2Hash, backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
 
 /**
  * 钱包相关
@@ -177,15 +177,6 @@ export const callGetAddrsInfoByCurrencyName = (currencyName: string):Promise<any
     });
 };
 
-export interface TxPayload {
-    fromAddr:string;        // 转出地址
-    toAddr:string;          // 转入地址
-    pay:number;             // 转账金额
-    currencyName:string;    // 转账货币
-    fee:number;             // 矿工费
-    minerFeeLevel:MinerFeeLevel;   // 矿工费等级
-}
-
 /**
  * 普通转账
  */
@@ -301,4 +292,18 @@ export const callDoERC20TokenTransfer = (psw:string,addrIndex:number, txRecord:T
  */
 export const callAhashToArgon2Hash = (ahash: string, imagePsw: string) => {
     return ahashToArgon2Hash(ahash,imagePsw);
+};
+
+// 锁屏密码hash算法
+export const callLockScreenHash = (psw:string):Promise<any> => {
+    return new Promise(resolve => {
+        resolve(lockScreenHash(psw));
+    });
+};
+
+// 锁屏密码验证
+export const callLockScreenVerify = (psw:string) => {
+    return new Promise(resolve => {
+        resolve(lockScreenVerify(psw));
+    });
 };

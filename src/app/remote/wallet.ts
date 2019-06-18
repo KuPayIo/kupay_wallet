@@ -7,6 +7,7 @@ import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { EthWallet } from '../core/eth/wallet';
 import { generateByHash, sha3, toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
+// tslint:disable-next-line:max-line-length
 import { btcNetwork, defalutShowCurrencys, defaultGasLimit, ERC20Tokens, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from '../publicLib/config';
 import { AddrInfo, CreateWalletOption, MinerFeeLevel, Wallet } from '../publicLib/interface';
 import { getAddrInfoByAddr, getXOR, hexstrToU8Array, u8ArrayToHexstr } from '../publicLib/tools';
@@ -460,14 +461,15 @@ export const fetchBtcMinerFee = (minerFeeLevel: MinerFeeLevel) => {
 };
 
 // 锁屏密码验证
-export const lockScreenVerify = (psw) => {
+export const lockScreenVerify = (psw:string) => {
     const hash256 = sha256(psw + getStore('user/salt'));
     const localHash256 = getStore('setting/lockScreen').psw;
 
     return hash256 === localHash256;
 };
+
 // 锁屏密码hash算法
-export const lockScreenHash = (psw) => {
+export const lockScreenHash = (psw:string) => {
     return sha256(psw + getStore('user/salt'));
 };
 

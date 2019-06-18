@@ -4,11 +4,12 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
+import { setStoreData } from '../../../middleLayer/memBridge';
+import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { callPasswordChange, callVerifyIdentidy } from '../../../middleLayer/walletBridge';
-import { setStore } from '../../../store/memstore';
 import { pswEqualed } from '../../../utils/account';
 import { defaultPassword } from '../../../utils/constants';
-import { getUserInfo, popNewLoading, popNewMessage } from '../../../utils/tools';
+import { popNewLoading, popNewMessage } from '../../../utils/tools';
 
 export class SettingPsw extends Widget {
     public props: any;
@@ -79,9 +80,9 @@ export class SettingPsw extends Widget {
         await callPasswordChange(secretHash, this.props.walletPsw);
         loading.callback(loading.widget);
         popNewMessage('设置成功');
-        setStore('flags/setPsw',false);
+        setStoreData('flags/setPsw',false);
         this.ok && this.ok();
-        const userInfo = getUserInfo();
+        const userInfo = await callGetUserInfo();
         if (!userInfo.phoneNumber) {
             popNew('app-view-mine-setting-phone',{ jump:true });
         }

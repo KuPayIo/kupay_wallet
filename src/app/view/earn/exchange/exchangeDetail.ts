@@ -5,7 +5,8 @@ import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getOneUserInfo, queryDetailLog } from '../../../net/pull';
+import { callQueryDetailLog } from '../../../middleLayer/netBridge';
+import { getOneUserInfo } from '../../../net/pull';
 import { uploadFileUrlPrefix } from '../../../publicLib/config';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { currencyType } from '../../../publicLib/tools';
@@ -62,7 +63,7 @@ export class ExchangeDetail extends Widget {
     }
 
     public async initData() {
-        const value = await queryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);
+        const value = await callQueryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);
         if (!value) return;
         this.props.redBagList = value[0];        
         this.props.message = value[1];

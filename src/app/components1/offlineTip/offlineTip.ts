@@ -7,8 +7,9 @@ import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore, register as earnRegister } from '../../../earn/client/app/store/memstore';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { getStoreData } from '../../middleLayer/memBridge';
 import { callWalletManualReconnect } from '../../middleLayer/netBridge';
-import { getStore, register } from '../../store/memstore';
+import { register } from '../../store/memstore';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -56,16 +57,21 @@ export class OfflineTip extends Widget {
         if (offlienType === OfflienType.WALLET) {  // 钱包重连
             callWalletManualReconnect();
         } else if (offlienType === OfflienType.CHAT) {  // 聊天重连
-            if (!getStore('user/isLogin')) {
-                callWalletManualReconnect();
-            }
+            getStoreData('user/isLogin').then(isLogin => {
+                if (!isLogin) {
+                    callWalletManualReconnect();
+                }
+            });
+           
             if (!chatGetStore('isLogin')) {
                 chatManualReconnect();
             }
         } else {   // 活动重连
-            if (!getStore('user/isLogin')) {
-                callWalletManualReconnect();
-            }
+            getStoreData('user/isLogin').then(isLogin => {
+                if (!isLogin) {
+                    callWalletManualReconnect();
+                }
+            });
             if (!earnGetStore('userInfo/isLogin')) {
                 earnManualReconnect();
             }
@@ -74,11 +80,14 @@ export class OfflineTip extends Widget {
     }
 
     public updateDate(offlienType:OfflienType,isLogin:boolean) {
-        if (offlienType === OfflienType.WALLET || offlienType === this.props.offlienType) {  // 钱包重连
-            this.props.isLogin = getStore('user/id') ?  isLogin : true;
-            this.props.reconnecting = false;
-            this.paint();
-        }
+        getStoreData('user/id').then(uid => {
+            if (offlienType === OfflienType.WALLET || offlienType === this.props.offlienType) {  // 钱包重连
+                this.props.isLogin = uid ?  isLogin : true;
+                this.props.reconnecting = false;
+                this.paint();
+            }
+        });
+        
     }
 }
 

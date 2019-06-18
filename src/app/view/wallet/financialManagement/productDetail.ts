@@ -5,9 +5,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getPurchaseRecord } from '../../../net/pull';
+import { getStoreData } from '../../../middleLayer/memBridge';
+import { callGetPurchaseRecord } from '../../../middleLayer/netBridge';
 import { Product, PurchaseHistory } from '../../../publicLib/interface';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { calPercent, popNewMessage } from '../../../utils/tools';
 
 // ====================================================导出
@@ -28,10 +29,12 @@ export class ProductDetail extends Widget {
         this.init();
     }
     public init() {
-        if (getStore('user/conUid')) {
-            // 获取购买记录
-            getPurchaseRecord();
-        }
+        getStoreData('user/id').then(uid => {
+            if (uid) {
+                // 获取购买记录
+                callGetPurchaseRecord();
+            }
+        });
         const product = this.props.product;
         const res = calPercent(product.surplus,product.total);
         // console.log(res);

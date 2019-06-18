@@ -6,8 +6,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getStoreData, setStoreData } from '../../../middleLayer/memBridge';
 import { timestampFormat } from '../../../publicLib/tools';
-import { getStore, setStore } from '../../../store/memstore';
 import { parseAccount, popNewLoading } from '../../../utils/tools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -63,7 +63,7 @@ export class ConvertHistory extends Widget {
     }
 
     public async getAllTransactions() {
-        const changellyPayinAddress = getStore('wallet/changellyPayinAddress');
+        const changellyPayinAddress = await getStoreData('wallet/changellyPayinAddress');
         let txHistory = [];
         const txPromises = [];
         for (const tmp of changellyPayinAddress) {
@@ -105,13 +105,13 @@ export class ConvertHistory extends Widget {
             console.log(err);
         } finally {
             this.close && this.close.callback(this.close.widget);
-            this.props.txsShow = this.filterTxHistory(txHistory);
+            this.props.txsShow = await this.filterTxHistory(txHistory);
             this.paint();
         }
     }
 
-    public filterTxHistory(txHistory:ChangellyTransactionsShow[]) {
-        let changellyTempTxs = getStore('wallet/changellyTempTxs');
+    public async filterTxHistory(txHistory:ChangellyTransactionsShow[]) {
+        let changellyTempTxs = await getStoreData('wallet/changellyTempTxs');
         const findIndexOf = (txId:string) => {
             let index = -1;
             for (let j = 0; j < txHistory.length;j++) {
@@ -152,7 +152,7 @@ export class ConvertHistory extends Widget {
             }
         }
             
-        setStore('wallet/changellyTempTxs',changellyTempTxs);
+        setStoreData('wallet/changellyTempTxs',changellyTempTxs);
         txHistory = txHistory.filter(tx => {
             return !!tx.payinHash;
         });

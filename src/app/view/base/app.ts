@@ -7,6 +7,7 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { changellyGetCurrencies } from '../../net/changellyPull';
 import { getModulConfig } from '../../publicLib/modulConfig';
 import { register } from '../../store/memstore';
 import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
@@ -66,6 +67,8 @@ export class App extends Widget {
         this.props.tabBarList = this.props.tabBarList.filter(item => {
             return getModulConfig(item.modulName);
         });
+        // 币币兑换可用货币获取
+        changellyGetCurrencies();
     }
 
     public tabBarChangeListener(event: any, index: number) {

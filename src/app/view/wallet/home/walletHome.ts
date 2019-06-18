@@ -3,9 +3,10 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getStoreData } from '../../../middleLayer/memBridge';
 import { callFetchLocalTotalAssets, callFetchWalletAssetList } from '../../../middleLayer/toolsBridge';
 import { formatBalanceValue } from '../../../publicLib/tools';
-import { getStore, register } from '../../../store/memstore';
+import { register } from '../../../store/memstore';
 import { getCurrencyUnitSymbol, popNew3 } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -18,19 +19,20 @@ export class WalletHome extends Widget {
         this.init();
     }
     public init() {
-        const color = getStore('setting/changeColor','redUp');
         this.props = {
             ...this.props,
             totalAsset:formatBalanceValue(0),
             assetList:[],
-            redUp:color === 'redUp',
+            redUp:true,
             currencyUnitSymbol:''
         };
         Promise.all([callFetchLocalTotalAssets(),
-            callFetchWalletAssetList(),getCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
+            callFetchWalletAssetList(),getCurrencyUnitSymbol(),
+            getStoreData('setting/changeColor','redUp')]).then(([totalAsset,assetList,currencyUnitSymbol,color]) => {
                 this.props.totalAsset = formatBalanceValue(totalAsset);
                 this.props.assetList = assetList;
                 this.props.currencyUnitSymbol = currencyUnitSymbol;
+                this.props.redUp = color === 'redUp';
                 this.paint();
             });
     }

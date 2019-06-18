@@ -1,7 +1,6 @@
 /**
  * common tools
  */
-import { getStore as chatGetStore } from '../../chat/client/app/data/store';
 import { appLanguageList } from '../../pi/browser/localLanguage';
 import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
@@ -9,12 +8,10 @@ import { Callback } from '../../pi/util/util';
 import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
-import { Config } from '../config';
 import { getStoreData, setStoreData } from '../middleLayer/memBridge';
 import { callLogoutAccount } from '../middleLayer/netBridge';
 import { callGetUserInfo } from '../middleLayer/toolsBridge';
-import { callBackupMnemonic } from '../middleLayer/walletBridge';
-import { defalutShowCurrencys, ERC20Tokens, MainChainCoin } from '../publicLib/config';
+import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin } from '../publicLib/config';
 import { CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
 import { SettingLanguage } from '../view/base/app';
@@ -429,43 +426,6 @@ export const judgeAddressAvailable = (ctype: string, addr: string) => {
     }
 };
 
-/**
- * 异或编码
- */
-export const xorEncode = (str:string, key:string) => {
-    const ord = []; 
-    let res = '';
-
-    for (let i = 1; i <= 255; i++) {ord[String.fromCharCode(i)] = i;}
-
-    for (let i = 0; i < str.length; i++) {
-        const code = ord[str.substr(i, 1)] ^ ord[key.substr(i %    key.length, 1)];
-        if (code < 16) {
-            res += `0${code.toString(16)}`;
-        } else {
-            res += code.toString(16);
-        }
-    }
-
-    return res;
-};
-
-/**
- * 异或解码 解析16进制
- */
-export const xorDecode1 = (str:string, key:string) => {
-    const u8arr = hexstrToU8Array(str);
-    const ord = []; 
-    let res = '';
-
-    for (let i = 1; i <= 255; i++) {ord[String.fromCharCode(i)] = i;}
-    for (let i = 0; i < u8arr.length;i++) {
-        res += String.fromCharCode(u8arr[i] ^ ord[key.substr(i %    key.length, 1)]);
-    }
-
-    return res;
-};
-
  // 水波纹动画效果展示
 export const rippleShow = (e:any) => {
     getRealNode(e.node).classList.add('ripple');
@@ -721,4 +681,21 @@ export const getCurrencyUnitSymbol = () => {
             return '$';
         }
     });
+};
+
+/**
+ * 获取当前使用货币的地址列表
+ */
+export const getCurrentAddrInfo1 = (currencyName:string,currencyRecords:CurrencyRecord[]) => {
+    for (const record of currencyRecords) {
+        if (record.currencyName === currencyName) {
+            for (const addrInfo of record.addrs) {
+                if (addrInfo.addr === record.currentAddr) {
+                    return addrInfo;
+                }
+            }
+        }
+    }
+    
+    return ;
 };
