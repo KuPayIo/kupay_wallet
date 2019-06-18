@@ -1,5 +1,5 @@
 // tslint:disable-next-line:max-line-length
-import { defaultLogin, getOpenId, getRandom, loginSuccess, loginWallet, logoutAccount, logoutAccountDel, logoutWallet, openConnect, requestAsync, requestAsyncNeedLogin, setKickOffline, setLoginWalletFailed, walletManualReconnect } from '../remote/login';
+import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, logoutAccountDel, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from '../remote/login';
 // tslint:disable-next-line:max-line-length
 import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getMineDetail, getMining, getProductList, getPurchaseRecord, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from '../remote/pull';
 
@@ -58,42 +58,6 @@ export const callDefaultLogin = (hash:string,conRandom:string) => {
         defaultLogin(hash,conRandom).then(() => {
             resolve();
         });
-    });
-};
-
-/**
- * 登录钱包
- */
-export const callLoginWallet = (appId:string,success:Function) => {
-    return new Promise((resolve) => {
-        loginWallet(appId,success);
-        resolve();
-    });
-};
-
-/**
- * 登出钱包
- */
-export const callLogoutWallet = (success:Function) => {
-    return new Promise((resolve) => {
-        logoutWallet(success);
-        resolve();
-    });
-};
-
-// 设置登录失败回调
-export const callSetLoginWalletFailed = (callback:Function) => {
-    return new Promise((resolve) => {
-        setLoginWalletFailed(callback);
-        resolve();
-    });
-};
-
-// 设置踢人下线回调
-export const callSetKickOffline = (callback:Function) => {
-    return new Promise((resolve) => {
-        setKickOffline(callback);
-        resolve();
     });
 };
 

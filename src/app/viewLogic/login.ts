@@ -1,9 +1,9 @@
 import { popNew } from '../../pi/ui/root';
-import { callGetAllAccount, getStoreData } from '../middleLayer/memBridge';
-// tslint:disable-next-line:max-line-length
-import { callDefaultLogin, callGetRandom, callLogoutAccountDel, callSetKickOffline, callSetLoginWalletFailed, openWSConnect } from '../middleLayer/netBridge';
+import { callGetAllAccount, getStoreData, setStoreData } from '../middleLayer/memBridge';
+import { callDefaultLogin, callGetOpenId, callGetRandom, callLogoutAccountDel, openWSConnect } from '../middleLayer/netBridge';
 import { callVerifyIdentidy } from '../middleLayer/walletBridge';
 import { CMD } from '../publicLib/config';
+import { register } from '../store/memstore';
 import { defaultPassword } from '../utils/constants';
 import { closeAllPage, delPopPhoneTips, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 
@@ -77,7 +77,78 @@ export const logoutAccountDel = async (noLogin?:boolean) => {
  * 登录初始化
  */
 export const loginInit = () => {
-    callSetLoginWalletFailed(loginWalletFailedPop);
-    callSetKickOffline(kickOffline);
     openWSConnect();
 };
+
+interface LoginType {
+    appId:string;
+    success:Function;
+}
+
+// 登录成功之后的回调列表
+const loginedCallbackList:LoginType[] = [];
+
+/**
+ * 登录钱包
+ */
+export const loginWallet = (appId:string,success:Function) => {
+    const loginType:LoginType = {
+        appId,
+        success
+    };
+    loginedCallbackList.push(loginType);
+};
+
+/**
+ * 登录钱包并获取openId成功
+ */
+const loginWalletSuccess = () => {
+    setStoreData('flags/hasLogined',true);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
+
+    for (const loginType of loginedCallbackList) {
+        callGetOpenId(loginType.appId).then(res => {
+            loginType.success(res.openid);
+        }).catch(err => {
+            console.log(`appId ${loginType.appId} get openId failed`,err);
+        });
+    }
+};
+
+// 用户登出回调
+const logoutCallbackList:Function[] = [];
+
+/**
+ * 登出钱包
+ */
+export const logoutWallet = (success:Function) => {
+    logoutCallbackList.push(success);
+};
+
+/**
+ * 钱包登出成功
+ */
+const logoutWalletSuccess =  () => {
+    for (const logout of logoutCallbackList) {
+        logout();
+    }
+};
+
+// 登录成功 执行成功操作
+register('flags/doLoginSuccess',(doLoginSuccess:boolean) => {
+    loginWalletSuccess();
+});
+
+// 登录失败 执行失败操作
+register('flags/doLoginFailed',(doLogoutSuccess:boolean) => {
+    loginWalletFailedPop();
+});
+
+// 登出成功 执行成功操作
+register('flags/doLogoutSuccess',(doLogoutSuccess:boolean) => {
+    logoutWalletSuccess();
+});
+
+// 账号已经登录  踢人下线
+register('flags/kickOffline',(res:any) => {
+    kickOffline(res.secretHash,res.phone,res.code,res.num);
+});

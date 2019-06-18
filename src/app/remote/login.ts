@@ -15,36 +15,6 @@ import { getDeviceAllDetail } from './tools';
 import { decrypt, encrypt, getMnemonicByHash } from './wallet';
 
 declare var pi_update;
-// 登录成功之后的回调列表
-const loginedCallbackList:LoginType[] = [];
-
-// 用户登出回调
-const logoutCallbackList:Function[] = [];
-
-// 登录失败回调
-let loginWalletFailed:Function = () => {
-    console.log('login failed');
-};
-
-// 踢人下线回调
-let kickOffline:Function = () => {
-    console.log('当前账号已登录');
-};
-
-// 设置登录失败回调
-export const setLoginWalletFailed = (callback:Function) => {
-    loginWalletFailed = callback;
-};
-
-// 设置踢人下线回调
-export const setKickOffline = (callback:Function) => {
-    kickOffline = callback;
-};
-
-interface LoginType {
-    appId:string;
-    success:Function;
-}
 
  // 设置重登录回调
 setReloginCallback((res) => {
@@ -56,7 +26,7 @@ setReloginCallback((res) => {
         if (getStore('flags').hasLogined) {
             setStore('user/isLogin',true);
         } else {
-            loginWalletFailed();
+            setStore('flags/doLoginFailed',true);
         }
     }
 });
@@ -200,16 +170,16 @@ export const autoLogin = async (conRandom:string) => {
     };
     console.log('autoLogin = ',msg);
     requestAsync(msg).then(res => {
-        loginWalletSuccess();
         console.timeEnd('loginMod autoLogin');
         setStore('user/isLogin', true);
+        setStore('flags/doLoginSuccess',true);
         console.timeEnd('loginMod start');
         console.log('自动登录成功-----------',res);
     }).catch((res) => {
         setStore('user/isLogin', false);
         if (res.error !== -69) {
             setStore('user/token','');
-            loginWalletFailed();
+            setStore('flags/doLoginFailed',true);
         }
     });
 };
@@ -239,13 +209,13 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
     return requestAsync(msgLogin).then((r:any) => {
         console.log('============================好嗨号acc_id:',r.acc_id);
         setStore('user/info/acc_id',r.acc_id,false);
-        loginWalletSuccess();
         applyAutoLogin();
         setStore('user/isLogin', true);
+        setStore('flags/doLoginSuccess',true);
     }).catch(err => {
         setStore('user/isLogin', false);
         if (err.error !== -69) {
-            loginWalletFailed();
+            setStore('flags/doLoginFailed',true);
         }
     });
 
@@ -317,7 +287,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
             if (getStore('user/token')) {
                 autoLogin(conRandom);
             } else {
-                loginWalletFailed();
+                setStore('flags/doLoginFailed',true);
             }
         }
         setStore('user/conUid', resp.uid);
@@ -329,7 +299,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
             const flags = getStore('flags');
             console.log('flags =====',flags);
             if (flags.level_3_page_loaded) {  // 钱包创建成功直接提示,此时资源已经加载完成
-                kickOffline(secretHash,phone,code,num);  // 踢人下线提示
+                setStore('flags/kickOffline',{ secretHash,phone,code,num });
             } else {  // 刷新页面后，此时资源没有加载完成,延迟到资源加载成功弹出提示
                 localStorage.setItem('kickOffline',JSON.stringify(true));
             }
@@ -402,9 +372,9 @@ export const logoutAccountDel = (noLogin?:boolean) => {
     setStore('activity',activity);
     setStore('setting/lockScreen',lockScreen);
     setStore('flags/saveAccount', false);  
+    setStore('flags/doLogoutSuccess',true);  // 登出钱包
     setBottomLayerReloginMsg('','','');
     closeCon();
-    logoutWalletSuccess();
     setTimeout(() => {
         openConnect();
     },100);
@@ -483,48 +453,6 @@ export const loginSuccess = (account:Account,secretHash:string) => {
     setStore('user',user);
     setStore('flags',{ level_3_page_loaded:true });
     openConnect(secretHash);
-};
-
-/**
- * 登录钱包
- */
-export const loginWallet = (appId:string,success:Function) => {
-    const loginType:LoginType = {
-        appId,
-        success
-    };
-    loginedCallbackList.push(loginType);
-};
-
-/**
- * 登出钱包
- */
-export const logoutWallet = (success:Function) => {
-    logoutCallbackList.push(success);
-};
-
-/**
- * 登录钱包并获取openId成功
- */
-const loginWalletSuccess = () => {
-    setStore('flags/hasLogined',true);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
-
-    for (const loginType of loginedCallbackList) {
-        getOpenId(loginType.appId).then(res => {
-            loginType.success(res.openid);
-        }).catch(err => {
-            console.log(`appId ${loginType.appId} get openId failed`,err);
-        });
-    }
-};
-
-/**
- * 钱包登出成功
- */
-const logoutWalletSuccess =  () => {
-    for (const logout of logoutCallbackList) {
-        logout();
-    }
 };
 
 // 注册store
