@@ -1,70 +1,75 @@
 /**
  * 中间件
  */
+import { WebViewManager } from '../../pi/browser/webview';
 import { LANGUAGE } from '../core/btc/wallet';
 import { getEthApiBaseUrl } from '../core/config';
 import { isValidMnemonic } from '../core/genmnemonic';
 import { AddrInfo, CloudCurrencyType, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
 import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, dcUpdateBalance } from '../remote/dataCenter';
 // tslint:disable-next-line:max-line-length
-import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, logoutAccountDel, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from '../remote/login';
+import { getRandom, loginSuccess, logoutAccount, logoutAccountDel, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from '../remote/login';
 // tslint:disable-next-line:max-line-length
 import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getMineDetail, getMining, getProductList, getPurchaseRecord, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from '../remote/pull';
 // tslint:disable-next-line:max-line-length
 import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from '../remote/pullWallet';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList,getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from '../remote/tools';
-// tslint:disable-next-line:max-line-length
 import { ahashToArgon2Hash, backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
-import { deleteAccount, getAllAccount, getCloudBalances, getStore, setStore } from '../store/memstore';
+
+const vmName = 'JSVM';   // 虚拟机rpc通信名称
+
+/**
+ * vm rpc 调用
+ * @param data 参数 
+ */
+const vmRpcCall = (moduleName:string,methodName:string,params: any[]):Promise<any> => {
+    return new Promise((resolve) => {
+        WebViewManager.rpc(vmName,{ moduleName,methodName,params },(res) => {
+            resolve(res);
+        });
+    });
+};
+
+const MEMSTOREMODULENAME = 'app/store/memstore';   // memstore moduleName
+const TOOLSMODULENAME = 'app/remote/tools';        // tools moduleName
+const LOGINMODULENAME = 'app/remote/login';        // login moduleName
+const PULLMODULENAME = 'app/remote/pull';          // pull moduleName
 
 // ===========================================memstroe相关===================================================================
 
 /**
  * 获取store数据
  */
-export const getStoreData = (key:string, defaultValue = undefined):Promise<any> => {
-    return new Promise((resolve) => {
-        resolve(getStore(key,defaultValue));
-    });
+export const getStoreData = (key:string, defaultValue = undefined) => {
+    return vmRpcCall(MEMSTOREMODULENAME,'getStore',[key,defaultValue]);
 };
 
 /**
  * 更新store并通知
  */
-export const setStoreData = (path: string, data: any, notified = true):Promise<any> => {
-    return new Promise((resolve) => {
-        setStore(path,data,notified);
-        resolve();
-    });
+export const setStoreData = (path: string, data: any, notified = true) => {
+    return vmRpcCall(MEMSTOREMODULENAME,'setStore',[path,data,notified]);
 };
 
 /**
  * 获取所有的账户列表
  */
-export const callGetAllAccount = ():Promise<any> => {
-    return new Promise((resolve) => {
-        resolve(getAllAccount());
-    });
+export const callGetAllAccount = () => {
+    return vmRpcCall(MEMSTOREMODULENAME,'getAllAccount',[]);
 };
 
 /**
  * 获取云端余额
  */
-export const callGetCloudBalances = ():Promise<any> => {
-    return new Promise((resolve) => {
-        resolve(getCloudBalances());
-    });
+export const callGetCloudBalances = () => {
+    return vmRpcCall(MEMSTOREMODULENAME,'getCloudBalances',[]);
 };
 
 /**
  * 删除账户
  */
 export const callDeleteAccount = (id: string) => {
-    return new Promise((resolve) => {
-        deleteAccount(id);
-        resolve();
-    });
+    return vmRpcCall(MEMSTOREMODULENAME,'deleteAccount',[id]);
 };
 
 // ===========================================memstroe相关===================================================================
@@ -75,98 +80,74 @@ export const callDeleteAccount = (id: string) => {
  * 删除本地交易记录
  */
 export const callDeletLocalTx = (tx: TxHistory) => {
-    return new Promise(resolve => {
-        deletLocalTx(tx);
-        resolve();
-    });
+    return vmRpcCall(TOOLSMODULENAME,'deletLocalTx',[tx]);
 };
 
 /**
  * 获取云端总资产
  */
-export const callFetchCloudTotalAssets = ():Promise<any> => {
-    return new Promise(resolve => {
-        resolve(fetchCloudTotalAssets());
-    });
+export const callFetchCloudTotalAssets = () => {
+    return vmRpcCall(TOOLSMODULENAME,'fetchCloudTotalAssets',[]);
 };
 
 /**
  * 获取总资产
  */
-export const callFetchLocalTotalAssets = ():Promise<any> => {
-    return new Promise(resolve => {
-        resolve(fetchLocalTotalAssets());
-    });
+export const callFetchLocalTotalAssets = () => {
+    return vmRpcCall(TOOLSMODULENAME,'fetchLocalTotalAssets',[]);
 };
 /**
  * 获取本地钱包资产列表
  */
 export const callFetchWalletAssetList = () => {
-    return new Promise(resolve => {
-        resolve(fetchWalletAssetList());
-    });
+    return vmRpcCall(TOOLSMODULENAME,'fetchWalletAssetList',[]);
 };
 
 /**
  * 获取云端钱包资产列表
  */
 export const callFetchCloudWalletAssetList = () => {
-    return new Promise(resolve => {
-        resolve(fetchCloudWalletAssetList());
-    });
+    return vmRpcCall(TOOLSMODULENAME,'fetchCloudWalletAssetList',[]);
 };
 
 // 计算支持的币币兑换的币种
-export const callCurrencyExchangeAvailable = ():Promise<any> => {
-    return new Promise(resolve => {
-        resolve(currencyExchangeAvailable());
-    });
+export const callCurrencyExchangeAvailable = () => {
+    return vmRpcCall(TOOLSMODULENAME,'currencyExchangeAvailable',[]);
 };
 
 /**
  * 获取某个币种对应的货币价值即汇率
  */
-export const callFetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number):Promise<any> => {
-    return new Promise(resolve => {
-        resolve(fetchBalanceValueOfCoin(currencyName,balance));
-    });
+export const callFetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
+    return vmRpcCall(TOOLSMODULENAME,'fetchBalanceValueOfCoin',[currencyName,balance]);
 };
 
 // 获取货币的涨跌情况
 export const callFetchCoinGain = (currencyName: string) => {
-    return new Promise(resolve => {
-        resolve(fetchCoinGain(currencyName));
-    });
+    return vmRpcCall(TOOLSMODULENAME,'fetchCoinGain',[currencyName]);
 };
 
 /**
  * 获取钱包下指定货币类型的所有地址信息
  * @param wallet wallet obj
  */
-export const callGetAddrsInfoByCurrencyName = (currencyName: string):Promise<any> => {
-    return new Promise(resolve => {
-        resolve(getAddrsInfoByCurrencyName(currencyName));
-    });
+export const callGetAddrsInfoByCurrencyName = (currencyName: string) => {
+    return vmRpcCall(TOOLSMODULENAME,'getAddrsInfoByCurrencyName',[currencyName]);
 };
 
 /**
  * 获取当前钱包对应货币正在使用的地址信息
  * @param currencyName 货币类型
  */
-export const callGetCurrentAddrInfo = (currencyName: string):Promise<any> => {
-    return new Promise(resolve => {
-        resolve(getCurrentAddrInfo(currencyName));
-    });
+export const callGetCurrentAddrInfo = (currencyName: string) => {
+    return vmRpcCall(TOOLSMODULENAME,'getCurrentAddrInfo',[currencyName]);
 };
 
 /**
  * 更新本地交易记录
  */
 export const callUpdateLocalTx = (tx: TxHistory) => {
-    return new Promise(resolve => {
-        updateLocalTx(tx);
-        resolve();
-    });
+    return vmRpcCall(TOOLSMODULENAME,'updateLocalTx',[tx]);
 };
 
 // ===========================================tools相关===================================================================
@@ -220,11 +201,7 @@ export const callGetRandom = (secretHash:string,cmd?:number,phone?:number,code?:
  * 创建钱包后默认登录
  */
 export const callDefaultLogin = (hash:string,conRandom:string) => {
-    return new Promise((resolve) => {
-        defaultLogin(hash,conRandom).then(() => {
-            resolve();
-        });
-    });
+    return vmRpcCall(LOGINMODULENAME,'defaultLogin',[hash,conRandom]);
 };
 
 // 获取云端余额
@@ -293,7 +270,7 @@ export const callFetchGasPrices = () => {
  * @param appId appId 
  */
 export const callGetOpenId = (appId:string) => {
-    return getOpenId(appId);
+    return vmRpcCall(LOGINMODULENAME,'getOpenId',[appId]);
 };
 
 /**
@@ -461,7 +438,7 @@ export const callDcClearTxTimer = (hash: string) => {
  * 验证当前账户身份
  * @param passwd 密码
  */
-export const callVerifyIdentidy = (passwd:string):Promise<any> => {
+export const callVerifyIdentidy = (passwd:string) => {
     return new Promise((resolve) => {
         VerifyIdentidy(passwd).then(hash => {
             resolve(hash);
@@ -472,7 +449,7 @@ export const callVerifyIdentidy = (passwd:string):Promise<any> => {
 /**
  * 验证某个账户身份
  */
-export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string):Promise<any> => {
+export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string) => {
     return new Promise((resolve) => {
         VerifyIdentidy1(passwd,vault,salt).then(hash => {
             resolve(hash);
@@ -483,28 +460,28 @@ export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string):Prom
 /**
  * 随机创建钱包
  */
-export const callCreateWalletRandom = (option: CreateWalletOption,tourist?:boolean):Promise<any> => {
+export const callCreateWalletRandom = (option: CreateWalletOption,tourist?:boolean) => {
     return createWalletRandom(option,tourist);
 };
 
 /**
  * 通过助记词导入钱包
  */
-export const callImportWalletByMnemonic = (option: CreateWalletOption):Promise<any> => {
+export const callImportWalletByMnemonic = (option: CreateWalletOption) => {
     return importWalletByMnemonic(option);
 };
 
 /**
  * 图片创建钱包
  */
-export const callCreateWalletByImage = (option: CreateWalletOption):Promise<any> => {
+export const callCreateWalletByImage = (option: CreateWalletOption) => {
     return createWalletByImage(option);
 };
 
 /**
  * 冗余助记词导入
  */
-export const callImportWalletByFragment = (option: CreateWalletOption):Promise<any> => {
+export const callImportWalletByFragment = (option: CreateWalletOption) => {
     return importWalletByFragment(option);
 };
 
@@ -527,7 +504,7 @@ export const callCreateNewAddr = (passwd: string, currencyName: string) => {
  * 备份助记词
  * @param passwd 密码 
  */
-export const callBackupMnemonic = (passwd:string,needFragments:boolean = true):Promise<any> => {
+export const callBackupMnemonic = (passwd:string,needFragments:boolean = true) => {
     return backupMnemonic(passwd,needFragments);
 };
 
@@ -548,7 +525,7 @@ export const callFetchMinerFeeList = (currencyName:string) => {
 };
 
 // 获取gasPrice
-export const callFetchGasPrice = (minerFeeLevel: MinerFeeLevel):Promise<any> => {
+export const callFetchGasPrice = (minerFeeLevel: MinerFeeLevel) => {
     return new Promise(resolve => {
         resolve(fetchGasPrice(minerFeeLevel));
     });
@@ -557,14 +534,14 @@ export const callFetchGasPrice = (minerFeeLevel: MinerFeeLevel):Promise<any> => 
 /**
  * 获取某个地址的交易记录
  */
-export const callFetchTransactionList = (addr:string,currencyName:string):Promise<any> => {
+export const callFetchTransactionList = (addr:string,currencyName:string) => {
     return new Promise(resolve => {
         resolve(fetchTransactionList(addr,currencyName));
     });
 };
 
 // 根据hash获取助记词
-export const callGetMnemonicByHash = (hash:string):Promise<any> => {
+export const callGetMnemonicByHash = (hash:string) => {
     return new Promise(resolve => {
         resolve(getMnemonicByHash(hash));
     });
@@ -597,21 +574,21 @@ export const callisValidMnemonic = (language: LANGUAGE, mnemonic: string) => {
 };
 
 // 导出以太坊私钥
-export const callExportETHPrivateKey = (mnemonic:string,addrs: AddrInfo[]):Promise<any> => {
+export const callExportETHPrivateKey = (mnemonic:string,addrs: AddrInfo[]) => {
     return new Promise(resolve => {
         resolve(exportETHPrivateKey(mnemonic, addrs));
     });
 };
 
  // 导出BTC私钥
-export const callExportBTCPrivateKey = (mnemonic:string,addrs: AddrInfo[]):Promise<any> => {
+export const callExportBTCPrivateKey = (mnemonic:string,addrs: AddrInfo[]) => {
     return new Promise(resolve => {
         resolve(exportBTCPrivateKey(mnemonic, addrs));
     });
 };
 
 // 导出ERC20私钥
-export const callExportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],currencyName:string):Promise<any> => {
+export const callExportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],currencyName:string) => {
     return new Promise(resolve => {
         resolve(exportERC20TokenPrivateKey(mnemonic, addrs,currencyName));
     });
@@ -651,7 +628,7 @@ export const callBtcWithdraw = (secretHash:string,toAddr:string,amount:number | 
 /**
  * 获取钱包地址的位置
  */
-export const callGetWltAddrIndex = (addr: string, currencyName: string):Promise<any> => {
+export const callGetWltAddrIndex = (addr: string, currencyName: string) => {
     return new Promise(resolve => {
         resolve(getWltAddrIndex(addr,currencyName));
     });
@@ -688,7 +665,7 @@ export const callAhashToArgon2Hash = (ahash: string, imagePsw: string) => {
 };
 
 // 锁屏密码hash算法
-export const callLockScreenHash = (psw:string):Promise<any> => {
+export const callLockScreenHash = (psw:string) => {
     return new Promise(resolve => {
         resolve(lockScreenHash(psw));
     });

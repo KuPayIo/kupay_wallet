@@ -124,6 +124,29 @@ export const callFetchCoinGain = (currencyName: string):Promise<any> => {
     return requireWrap().then(() => mod.callFetchCoinGain(currencyName));
 };
 
+/**
+ * 获取钱包下指定货币类型的所有地址信息
+ * @param wallet wallet obj
+ */
+export const callGetAddrsInfoByCurrencyName = (currencyName: string):Promise<any> => {
+    return requireWrap().then(() => mod.callGetAddrsInfoByCurrencyName(currencyName));
+};
+
+/**
+ * 获取当前钱包对应货币正在使用的地址信息
+ * @param currencyName 货币类型
+ */
+export const callGetCurrentAddrInfo = (currencyName: string):Promise<any> => {
+    return requireWrap().then(() => mod.callGetCurrentAddrInfo(currencyName));
+};
+
+/**
+ * 更新本地交易记录
+ */
+export const callUpdateLocalTx = (tx: TxHistory):Promise<any> => {
+    return requireWrap().then(() => mod.callUpdateLocalTx(tx));
+};
+
 // ===========================================tools相关===================================================================
 
 // ===========================================net相关===================================================================
@@ -469,33 +492,10 @@ export const callUpdateShowCurrencys = (currencyName:string,added:boolean):Promi
 };
 
 /**
- * 获取当前钱包对应货币正在使用的地址信息
- * @param currencyName 货币类型
- */
-export const callGetCurrentAddrInfo = (currencyName: string):Promise<any> => {
-    return requireWrap().then(() => mod.callGetCurrentAddrInfo(currencyName));
-};
-
-/**
- * 获取钱包下指定货币类型的所有地址信息
- * @param wallet wallet obj
- */
-export const callGetAddrsInfoByCurrencyName = (currencyName: string):Promise<any> => {
-    return requireWrap().then(() => mod.callGetAddrsInfoByCurrencyName(currencyName));
-};
-
-/**
  * 普通转账
  */
 export const callTransfer = (psw:string,txPayload:TxPayload):Promise<any> => {
     return requireWrap().then(() => mod.callTransfer(psw,txPayload));
-};
-
-/**
- * 更新本地交易记录
- */
-export const callUpdateLocalTx = (tx: TxHistory):Promise<any> => {
-    return requireWrap().then(() => mod.callUpdateLocalTx(tx));
 };
 
 /**

@@ -297,7 +297,7 @@ export const createNewAddr = async (passwd: string, currencyName: string) => {
         
         return true;
     } else {
-        return false;
+        throw new Error('failed');
     }
 };
 
