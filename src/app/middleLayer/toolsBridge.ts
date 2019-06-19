@@ -1,10 +1,7 @@
 
-import { getStore as chatGetStore } from '../../chat/client/app/data/store';
-import { uploadFileUrlPrefix } from '../publicLib/config';
 import { CloudCurrencyType, TxHistory } from '../publicLib/interface';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList, getScreenModify, setEthNonce } from '../remote/tools';
-import { getStoreData } from './memBridge';
+import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList } from '../remote/tools';
 
 /**
  * tools 对应的bridge
@@ -16,17 +13,6 @@ import { getStoreData } from './memBridge';
 export const callDeletLocalTx = (tx: TxHistory) => {
     return new Promise(resolve => {
         deletLocalTx(tx);
-        resolve();
-    });
-};
-
-/**
- * 设置某个地址的nonce
- * 只设置ETH地址下的nonce
- */
-export const callSetEthNonce = (newNonce: number, addr: string) => {
-    return new Promise(resolve => {
-        setEthNonce(newNonce,addr);
         resolve();
     });
 };
@@ -63,46 +49,6 @@ export const callFetchWalletAssetList = () => {
 export const callFetchCloudWalletAssetList = () => {
     return new Promise(resolve => {
         resolve(fetchCloudWalletAssetList());
-    });
-};
-
-/**
- * 获取用户基本信息
- */
-export const callGetUserInfo = () => {
-    return getStoreData('user/info').then(userInfo => {
-        const nickName = userInfo.nickName;
-        const phoneNumber = userInfo.phoneNumber;
-        const isRealUser = userInfo.isRealUser;
-        const areaCode = userInfo.areaCode;
-        const acc_id = userInfo.acc_id;
-        let avatar = userInfo.avatar;
-        if (avatar && avatar.indexOf('data:image') < 0) {
-            avatar = `${uploadFileUrlPrefix}${avatar}`;
-        } else {
-            avatar = 'app/res/image/default_avater_big.png';
-        }
-        const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
-
-        return {
-            nickName,
-            avatar,
-            phoneNumber,
-            areaCode,
-            isRealUser,
-            acc_id,
-            level
-        };
-    });
-};
-
-/**
- * 获取屏幕刘海与下部分高度
- */
-export const callGetScreenModify = () => {
-    return new Promise(resolve => {
-        getScreenModify();
-        resolve();
     });
 };
 

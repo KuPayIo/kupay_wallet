@@ -7,7 +7,7 @@ import { callGetAllAccount } from '../middleLayer/memBridge';
 import { callBuyProduct, callGetPurchaseRecord, callGetRechargeLogs, callGetServerCloudBalance } from '../middleLayer/netBridge';
 import { callDeletLocalTx } from '../middleLayer/toolsBridge';
 // tslint:disable-next-line:max-line-length
-import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetDataCenter, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callResendBtcRecharge, callResendBtcTransfer, callUpdateLocalTx, callVerifyIdentidy } from '../middleLayer/walletBridge';
+import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDcClearTxTimer, callDcInitErc20GasLimit, callDcRefreshAllTx, callDcUpdateAddrInfo, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callResendBtcRecharge, callResendBtcTransfer, callUpdateLocalTx, callVerifyIdentidy } from '../middleLayer/walletBridge';
 import { Config, ERC20Tokens } from '../publicLib/config';
 import { CreateWalletOption, TxHistory } from '../publicLib/interface';
 import { doErrorShow } from '../utils/toolMessages';
@@ -54,13 +54,9 @@ export const createWallet = async (itype: CreateWalletType, option: CreateWallet
     }
 
     // 刷新本地钱包
-    callGetDataCenter().then(dataCenter => {
-        dataCenter.refreshAllTx();
-    });
-    callGetDataCenter().then(dataCenter => {
-        dataCenter.initErc20GasLimit();
-    });
-
+    callDcRefreshAllTx();
+    callDcInitErc20GasLimit();
+   
     return secrectHash;
 };
 
@@ -79,13 +75,8 @@ export const touristLogin = async (option: CreateWalletOption) => {
     }
     
     // 刷新本地钱包
-    callGetDataCenter().then(dataCenter => {
-        dataCenter.refreshAllTx();
-    });
-
-    callGetDataCenter().then(dataCenter => {
-        dataCenter.initErc20GasLimit();
-    });
+    callDcRefreshAllTx();
+    callDcInitErc20GasLimit();
 
     return secrectHash;
 };
@@ -243,9 +234,7 @@ export const recharge = async (psw:string,txRecord:TxHistory) => {
         popNewMessage(getStaticLanguage().transfer.rechargeSuccess);
         callUpdateLocalTx(tx);
         console.log(`recharge tx is `,tx);
-        callGetDataCenter().then(dataCenter => {
-            dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-        });
+        callDcUpdateAddrInfo(tx.addr,tx.currencyName);
         callGetRechargeLogs(tx.currencyName);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
         
@@ -276,10 +265,8 @@ export const resendRecharge = async (psw:string,txRecord:TxHistory) => {
         const oldHash = txRecord.hash;
         callDeletLocalTx(txRecord);
         callUpdateLocalTx(tx);
-        callGetDataCenter().then(dataCenter => {
-            dataCenter.clearTxTimer(oldHash);// 删除定时器
-            dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-        });
+        callDcClearTxTimer(oldHash);// 删除定时器
+        callDcUpdateAddrInfo(tx.addr,tx.currencyName);
         callGetRechargeLogs(tx.currencyName);
         popNewMessage(getStaticLanguage().transfer.againSuccess);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
@@ -359,10 +346,8 @@ export const resendNormalTransfer = async (psw:string,txRecord:TxHistory) => {
         const oldHash = txRecord.hash;
         callDeletLocalTx(txRecord);
         callUpdateLocalTx(tx);
-        callGetDataCenter().then(dataCenter => {
-            dataCenter.clearTxTimer(oldHash);// 删除定时器
-            dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-        });
+        callDcClearTxTimer(oldHash);// 删除定时器
+        callDcUpdateAddrInfo(tx.addr,tx.currencyName);
         popNewMessage(getStaticLanguage().transfer.againSuccess);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }

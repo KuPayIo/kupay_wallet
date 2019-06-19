@@ -4,13 +4,12 @@
 import { uploadFileUrl } from '../config';
 import { getStoreData, setStoreData } from '../middleLayer/memBridge';
 import { callRequestAsync, callRequestAsyncNeedLogin } from '../middleLayer/netBridge';
-import { callGetUserInfo } from '../middleLayer/toolsBridge';
 import { CloudCurrencyType } from '../publicLib/interface';
 import { getModulConfig } from '../publicLib/modulConfig';
 import { unicodeArray2Str } from '../publicLib/tools';
 import { largeUnit2SmallUnit } from '../publicLib/unitTools';
 import { showError } from '../utils/toolMessages';
-import { base64ToFile, popNewMessage } from '../utils/tools';
+import { base64ToFile, getUserInfo, popNewMessage } from '../utils/tools';
 
 /**
  * 获取指定类型的货币余额
@@ -276,7 +275,7 @@ export const sendCode = async (phone: string, num: string,verify:boolean = true)
  * 注册手机
  */
 export const regPhone = async (phone: string, num:string, code: string) => {
-    const userInfo = await callGetUserInfo();
+    const userInfo = await getUserInfo();
     const bphone = userInfo.phoneNumber;
     const areaCode = userInfo.areaCode;
     // tslint:disable-next-line:variable-name

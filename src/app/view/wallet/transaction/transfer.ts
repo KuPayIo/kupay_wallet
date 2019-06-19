@@ -8,9 +8,9 @@ import { Widget } from '../../../../pi/widget/widget';
 import { callFetchBtcFees, callFetchGasPrices } from '../../../middleLayer/netBridge';
 import { callFetchBalanceValueOfCoin } from '../../../middleLayer/toolsBridge';
 // tslint:disable-next-line:max-line-length
-import { callFetchMinerFeeList, callGetCurrentAddrInfo, callGetDataCenter, callTransfer, callUpdateLocalTx, TxPayload } from '../../../middleLayer/walletBridge';
+import { callDcUpdateAddrInfo, callFetchMinerFeeList, callGetCurrentAddrInfo, callTransfer, callUpdateLocalTx } from '../../../middleLayer/walletBridge';
 import { ERC20Tokens } from '../../../publicLib/config';
-import { MinerFeeLevel, TxHistory } from '../../../publicLib/interface';
+import { MinerFeeLevel, TxHistory, TxPayload } from '../../../publicLib/interface';
 import { formatBalance } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
 import { doErrorShow } from '../../../utils/toolMessages';
@@ -174,9 +174,7 @@ export class Transfer extends Widget {
             callTransfer(passwd,txPayload).then(([err,tx]) => {
                 if (!err) {
                     callUpdateLocalTx(tx);
-                    callGetDataCenter().then(dataCenter => {
-                        dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-                    });
+                    callDcUpdateAddrInfo(tx.addr,tx.currencyName);
                     popNewMessage(getStaticLanguage().transfer.transSuccess);
                     popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
                     this.ok && this.ok();

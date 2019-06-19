@@ -23,11 +23,12 @@ export class ChatHome extends Widget {
 
     public setProps(props:Json) {
         super.setProps(props);
-        const userInfo = getUserInfo();
-        if (userInfo) {
+        getUserInfo().then(userInfo => {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
             this.props.refresh = false;
-        }
+            this.paint();
+        });
+        
     }
     
     public showMine() {
@@ -54,10 +55,9 @@ export class ChatHome extends Widget {
 register('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        const userInfo = getUserInfo();
-        if (userInfo) {
+        getUserInfo().then(userInfo => {
             w.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
-        }
-        w.paint();
+            w.paint();
+        });
     }
 });

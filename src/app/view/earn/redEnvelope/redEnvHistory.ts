@@ -9,11 +9,11 @@ import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
 import { getStoreData } from '../../../middleLayer/memBridge';
 import { callQuerySendRedEnvelopeRecord } from '../../../middleLayer/netBridge';
-import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { getInviteCode } from '../../../net/pull';
 import { PAGELIMIT } from '../../../publicLib/config';
 import { LuckyMoneyType } from '../../../publicLib/interface';
 import { register } from '../../../store/memstore';
+import { getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -52,7 +52,7 @@ export class RedEnvHistory extends Widget {
             avatar:''
         };
         this.initData();
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             this.props.avatar = userInfo.avatar;
             this.paint();
         });

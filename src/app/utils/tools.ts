@@ -1,6 +1,7 @@
 /**
  * common tools
  */
+import { getStore as chatGetStore } from '../../chat/client/app/data/store';
 import { appLanguageList } from '../../pi/browser/localLanguage';
 import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
@@ -9,16 +10,42 @@ import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
 import { getStoreData, setStoreData } from '../middleLayer/memBridge';
-import { callLogoutAccount } from '../middleLayer/netBridge';
-import { callGetUserInfo } from '../middleLayer/toolsBridge';
-import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin } from '../publicLib/config';
+import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../publicLib/config';
 import { CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
 import { SettingLanguage } from '../view/base/app';
 import { logoutAccount } from '../viewLogic/login';
 import { piLoadDir, piRequire } from './commonjsTools';
-// tslint:disable-next-line:max-line-length
 import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
+/**
+ * 获取用户基本信息
+ */
+export const getUserInfo = () => {
+    return getStoreData('user/info').then(userInfo => {
+        const nickName = userInfo.nickName;
+        const phoneNumber = userInfo.phoneNumber;
+        const isRealUser = userInfo.isRealUser;
+        const areaCode = userInfo.areaCode;
+        const acc_id = userInfo.acc_id;
+        let avatar = userInfo.avatar;
+        if (avatar && avatar.indexOf('data:image') < 0) {
+            avatar = `${uploadFileUrlPrefix}${avatar}`;
+        } else {
+            avatar = 'app/res/image/default_avater_big.png';
+        }
+        const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
+
+        return {
+            nickName,
+            avatar,
+            phoneNumber,
+            areaCode,
+            isRealUser,
+            acc_id,
+            level
+        };
+    });
+};
 
 /**
  * 解析显示的账号信息
@@ -549,7 +576,7 @@ export const checkPopPhoneTips = () => {
 
 // 设置手机弹框提示
 export const setPopPhoneTips = () => {
-    callGetUserInfo().then(userInfo => {
+    getUserInfo().then(userInfo => {
         const popPhoneTips = localStorage.getItem('popPhoneTips');
         if (!userInfo.phoneNumber && !popPhoneTips) localStorage.setItem('popPhoneTips','1');
     });

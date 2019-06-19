@@ -8,12 +8,13 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData, setStoreData } from '../../../middleLayer/memBridge';
 import { callQueryConvertLog } from '../../../middleLayer/netBridge';
-import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { getData, getOneUserInfo } from '../../../net/pull';
 import { PAGELIMIT } from '../../../publicLib/config';
 import { parseRtype, timestampFormat } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
+import { getUserInfo } from '../../../utils/tools';
 import { SettingLanguage } from '../../base/app';
+
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -59,7 +60,7 @@ export class ExchangeHistory extends Widget {
             scrollHeight:0
         };
         this.initData();
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             this.props.avatar = userInfo.avatar;
             this.paint();
         });

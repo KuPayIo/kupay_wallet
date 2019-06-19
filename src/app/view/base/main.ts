@@ -11,9 +11,9 @@ import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
 import { callGetAllAccount, getStoreData } from '../../middleLayer/memBridge';
 import { callWalletManualReconnect } from '../../middleLayer/netBridge';
-import { callGetScreenModify } from '../../middleLayer/toolsBridge';
 import { LockScreen } from '../../publicLib/interface';
 import { piRequire } from '../../utils/commonjsTools';
+import { getScreenModify } from '../../viewLogic/native';
 
 // ============================== 导出
 export const run = (cb): void =>  {
@@ -64,7 +64,7 @@ const popNewPage = () => {
  * 预先从底层获取一些数据
  */
 const preFetchFromNative = () => {
-    callGetScreenModify();
+    getScreenModify();
     piRequire(['app/viewLogic/native']).then(mods => {
         // 预先随机下载
         mods[0].preLoadAd(undefined,() => {

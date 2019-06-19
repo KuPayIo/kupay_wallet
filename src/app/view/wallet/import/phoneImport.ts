@@ -7,7 +7,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { callDeleteAccount, callGetAllAccount, getStoreData, setStoreData } from '../../../middleLayer/memBridge';
 import { callGetRandom } from '../../../middleLayer/netBridge';
-import { callGetDataCenter } from '../../../middleLayer/walletBridge';
+import { callDcInitErc20GasLimit, callDcRefreshAllTx } from '../../../middleLayer/walletBridge';
 import { regPhone, verifyPhone } from '../../../net/pull';
 import { CreateWalletOption } from '../../../publicLib/interface';
 import { defaultPassword } from '../../../utils/constants';
@@ -118,10 +118,8 @@ export class PhoneImport extends Widget {
         popNewMessage('登录成功');
         this.ok && this.ok();
         // 刷新本地钱包
-        callGetDataCenter().then(dataCenter => {
-            dataCenter.refreshAllTx();
-            dataCenter.initErc20GasLimit();
-        });
+        callDcRefreshAllTx();
+        callDcInitErc20GasLimit();
     }
 
     /**

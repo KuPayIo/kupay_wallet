@@ -1,30 +1,70 @@
 import { LANGUAGE } from '../core/btc/wallet';
+import { getEthApiBaseUrl } from '../core/config';
 import { isValidMnemonic } from '../core/genmnemonic';
-import { GlobalWallet } from '../core/globalWallet';
 import { AddrInfo, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
-import { dataCenter } from '../remote/dataCenter';
+import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, dcUpdateBalance } from '../remote/dataCenter';
 // tslint:disable-next-line:max-line-length
 import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from '../remote/pullWallet';
 import { getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from '../remote/tools';
 // tslint:disable-next-line:max-line-length
-import { ahashToArgon2Hash, backupMnemonic, calcHashValue, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
+import { ahashToArgon2Hash, backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
 
 /**
- * 钱包相关
+ * 获取eth api url
  */
-
-export const callGetGlobalWallet = ():Promise<any> => {
+export const callGetEthApiBaseUrl = () => {
     return new Promise((resolve) => {
-        resolve(GlobalWallet);
+        resolve(getEthApiBaseUrl());
     });
 };
 
 /**
- * 获取dataCenter
+ * dataCenter更新余额
  */
-export const callGetDataCenter = ():Promise<any> => {
+export const callDcUpdateBalance = (addr: string, currencyName: string) => {
     return new Promise((resolve) => {
-        resolve(dataCenter);
+        dcUpdateBalance(addr, currencyName);
+        resolve();
+    });
+};
+
+/**
+ * dataCenter刷新本地钱包
+ */
+export const callDcRefreshAllTx = () => {
+    return new Promise((resolve) => {
+        dcRefreshAllTx();
+        resolve();
+    });
+};
+
+/**
+ * dataCenter初始化ERC20代币GasLimit
+ */
+export const callDcInitErc20GasLimit = () => {
+    return new Promise((resolve) => {
+        dcInitErc20GasLimit();
+        resolve();
+    });
+};
+
+/**
+ * dataCenter更新地址相关 交易记录及余额定时更新
+ */
+export const callDcUpdateAddrInfo = (addr: string, currencyName: string) => {
+    return new Promise((resolve) => {
+        dcUpdateAddrInfo(addr,currencyName);
+        resolve();
+    });
+};
+
+/**
+ * dataCenter通过hash清楚定时器
+ */
+export const callDcClearTxTimer = (hash: string) => {
+    return new Promise((resolve) => {
+        dcClearTxTimer(hash);
+        resolve();
     });
 };
 /**
@@ -48,13 +88,6 @@ export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string):Prom
             resolve(hash);
         });
     });
-};
-
-/**
- * hash计算
- */
-export const callCalcHashValue = (pwd, salt?) => {
-    return calcHashValue(pwd,salt);
 };
 
 /**

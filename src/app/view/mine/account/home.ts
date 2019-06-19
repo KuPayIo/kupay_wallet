@@ -6,11 +6,10 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/memBridge';
-import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { uploadFile } from '../../../net/pull';
 import { register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
-import { imgResize, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { exportMnemonic } from '../../../viewLogic/localWallet';
 import { selectImage } from '../../../viewLogic/native';
 // ================================ 导出
@@ -40,7 +39,7 @@ export class AccountHome extends Widget {
             chooseImage: false,
             avatarHtml: ''
         };
-        Promise.all([callGetUserInfo(),getStoreData('wallet')]).then(([userInfo,wallet]) => {
+        Promise.all([getUserInfo(),getStoreData('wallet')]).then(([userInfo,wallet]) => {
             if (userInfo.phoneNumber) {
                 const str = String(userInfo.phoneNumber).substr(3, 6);
                 this.props.phone = userInfo.phoneNumber.replace(str, '******');

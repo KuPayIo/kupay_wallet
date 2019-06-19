@@ -12,9 +12,9 @@ import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { getStoreData } from '../../../middleLayer/memBridge';
-import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
+import { callGetCurrentAddrInfo, callGetEthApiBaseUrl } from '../../../middleLayer/walletBridge';
 import { register } from '../../../store/memstore';
-import { popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
+import { getUserInfo, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
@@ -72,7 +72,7 @@ export class PlayHome extends Widget {
         this.props.gameList = gameList;
         this.props.activityList = activityList;
         this.props.loaded = false;
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             if (userInfo) {
                 this.props.avatar = userInfo.avatar;
                 this.paint();
@@ -164,7 +164,10 @@ export class PlayHome extends Widget {
             const gameTitle = gameList[num].title.zh_Hans;
             const gameUrl =   gameList[num].url;
             const webviewName = gameList[num].webviewName;
-            const pi3Config:any = await getPi3Config();
+            const [addrInfo,baseUrl] = await Promise.all([callGetCurrentAddrInfo('ETH'),callGetEthApiBaseUrl()]);
+            const pi3Config:any = getPi3Config();
+            pi3Config.web3EthDefaultAccount = addrInfo.addr;
+            pi3Config.web3ProviderNetWork = baseUrl;
             pi3Config.appid = gameList[num].appid;
             pi3Config.gameName = gameTitle;
             pi3Config.webviewName = webviewName;
@@ -197,7 +200,7 @@ export class PlayHome extends Widget {
         // TODO  暂时屏蔽默认进入游戏
         return;
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
-        Promise.all([callGetUserInfo(),getStoreData('user/isLogin')]).then(([userInfo,isLogin]) => {
+        Promise.all([getUserInfo(),getStoreData('user/isLogin')]).then(([userInfo,isLogin]) => {
             const phoneNumber = userInfo.phoneNumber;    
             console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
             if (!firstEnterGame || phoneNumber) {
@@ -220,7 +223,7 @@ let hasEnterGame = false;
 register('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             if (userInfo) {
                 w.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
                 w.paint();

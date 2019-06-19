@@ -9,10 +9,10 @@ import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
 import { getStoreData } from '../../../middleLayer/memBridge';
 import { callQueryDetailLog } from '../../../middleLayer/netBridge';
-import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { getInviteCode, getOneUserInfo } from '../../../net/pull';
 import { uploadFileUrlPrefix } from '../../../publicLib/config';
 import { LuckyMoneyType } from '../../../publicLib/interface';
+import { getUserInfo } from '../../../utils/tools';
 
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -62,7 +62,7 @@ export class RedEnvDetail extends Widget {
         this.props.redBagList = value[0];        
         this.props.message = value[1];
 
-        const user = await callGetUserInfo();
+        const user = await getUserInfo();
         if (!user) return;
         this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
         this.props.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';

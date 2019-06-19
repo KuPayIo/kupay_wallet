@@ -4,9 +4,25 @@
 import { AdPlatform, ADUnion, PlayEvent } from '../../pi/browser/ad_unoin';
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { WebViewManager } from '../../pi/browser/webview';
+import { setStoreData } from '../middleLayer/memBridge';
 import { piRequire } from '../utils/commonjsTools';
 import { popNewLoading } from '../utils/tools';
 
+/**
+ * 获取屏幕刘海与下部分高度
+ */
+export const getScreenModify = () => {
+    WebViewManager.getScreenModify((high,low) => {
+        const calHigh = high / window.devicePixelRatio * 2;
+        const calLow = low / window.devicePixelRatio * 2;
+        setStoreData('setting/topHeight',calHigh);
+        setStoreData('setting/bottomHeight',calLow);
+    });
+};
+
+/**
+ * 图片选择
+ */
 export const selectImage = (ok?,cancel?) => {
     console.log('选择图片');
     const imagePicker = new ImagePicker();

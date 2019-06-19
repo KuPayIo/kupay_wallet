@@ -5,8 +5,7 @@ import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
-import { popNewMessage } from '../../../utils/tools';
+import { getUserInfo, popNewMessage } from '../../../utils/tools';
 import { makeScreenShot } from '../../../viewLogic/native';
 
 export class ShareDownload extends Widget {
@@ -20,7 +19,7 @@ export class ShareDownload extends Widget {
             nickName:'',
             avatar:''
         };
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             this.props.nickName = userInfo.nickName;
             this.props.avatar = userInfo.avatar;
             this.paint();

@@ -1,5 +1,4 @@
 import { DeviceIdProvider } from '../../pi/browser/device';
-import { WebViewManager } from '../../pi/browser/webview';
 import { cryptoRandomInt } from '../../pi/util/math';
 // tslint:disable-next-line:max-line-length
 import { Config, currencyConfirmBlockNumber, defalutShowCurrencys, ERC20Tokens, MainChainCoin, USD2CNYRateDefault } from '../publicLib/config';
@@ -10,17 +9,6 @@ import { getCloudBalances, getStore, setStore } from '../store/memstore';
 /**
  * common tools
  */
-/**
- * 获取屏幕刘海与下部分高度
- */
-export const getScreenModify = () => {
-    WebViewManager.getScreenModify((high,low) => {
-        const calHigh = high / window.devicePixelRatio * 2;
-        const calLow = low / window.devicePixelRatio * 2;
-        setStore('setting/topHeight',calHigh);
-        setStore('setting/bottomHeight',calLow);
-    });
-};
 
 /**
  * 获取设备唯一id

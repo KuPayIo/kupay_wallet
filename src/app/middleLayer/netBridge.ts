@@ -70,6 +70,7 @@ export const callGetServerCloudBalance = () => {
 export const callGetRealUser = () => {
     return getRealUser();
 };
+
 // 手动重连
 export const callWalletManualReconnect = () => {
     return new Promise(resolve => {
@@ -218,7 +219,7 @@ export const callGetMining = () => {
  * 矿山增加记录
  */
 export const callGetMineDetail = (start = '') => {
-    return getMineDetail();
+    return getMineDetail(start);
 };
 
 /**

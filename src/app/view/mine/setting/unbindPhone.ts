@@ -10,9 +10,14 @@ export class UnbindPhone extends Widget {
     public create() {
         super.create();
         this.props = {
-            phoneNumber:getUserInfo().phoneNumber,
-            areaCode:getUserInfo().areaCode
+            phoneNumber:'',
+            areaCode:''
         };
+        getUserInfo().then(userInfo => {
+            this.props.phoneNumber = userInfo.phoneNumber;
+            this.props.areaCode = userInfo.areaCode;
+            this.paint();
+        });
     }
     public backPrePage() {
         this.ok && this.ok();

@@ -8,11 +8,11 @@ import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { getStoreData } from '../../../middleLayer/memBridge';
 import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
 // tslint:disable-next-line:max-line-length
-import { callFetchCloudTotalAssets, callFetchLocalTotalAssets, callGetUserInfo } from '../../../middleLayer/toolsBridge';
-import { callGetDataCenter } from '../../../middleLayer/walletBridge';
+import { callFetchCloudTotalAssets, callFetchLocalTotalAssets } from '../../../middleLayer/toolsBridge';
+import { callDcUpdateBalance } from '../../../middleLayer/walletBridge';
 import { formatBalanceValue } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
-import { getCurrencyUnitSymbol } from '../../../utils/tools';
+import { getCurrencyUnitSymbol, getUserInfo } from '../../../utils/tools';
 // ============================导出
 
 // tslint:disable-next-line:no-reserved-keywords
@@ -46,7 +46,7 @@ export class Home extends Widget {
     }
 
     public dataInit() {
-        Promise.all([callGetUserInfo(),callFetchLocalTotalAssets(),
+        Promise.all([getUserInfo(),callFetchLocalTotalAssets(),
             callFetchCloudTotalAssets(),getCurrencyUnitSymbol()]).then(([userInfo,localTotalAssets,
                 cloudTotalAssets,currencyUnitSymbol]) => {
                 this.props.avatar = userInfo && userInfo.avatar;
@@ -62,7 +62,7 @@ export class Home extends Widget {
     }
 
     public userInfoChange() {
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             this.props.avatar = userInfo.avatar || '';
             this.paint();
         });
@@ -132,10 +132,8 @@ export class Home extends Widget {
                 }
             });
            
-            callGetDataCenter().then(dataCenter => {
-                list.forEach(v => {
-                    dataCenter.updateBalance(v.addr, v.currencyName);
-                });
+            list.forEach(v => {
+                callDcUpdateBalance(v.addr, v.currencyName);
             });
         });
     }

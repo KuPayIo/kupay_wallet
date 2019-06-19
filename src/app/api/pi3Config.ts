@@ -1,5 +1,3 @@
-import { getEthApiBaseUrl } from '../core/config';
-import { callGetCurrentAddrInfo } from '../middleLayer/walletBridge';
 
 /**
  * 第三方注入配置
@@ -12,16 +10,11 @@ enum ButtonMods {
     FLOATBUTTON2 = 3   // 悬浮框样式2  图标 可拖动
 }
 export const getPi3Config = () => {
-    return callGetCurrentAddrInfo('ETH').then(addrInfo => {
-        return {
-            buttonMods:ButtonMods,   // 所有按钮模式
-            buttonMod:ButtonMods.FLOATBUTTON2,   // 当前按钮模式
-            thirdBase:'app/api/thirdBase',
-            jsApi:'app/api/JSAPI',
-            imgUrlPre:'http://192.168.31.10/wallet/app/res/image/third/',
-            web3EthDefaultAccount:addrInfo.addr,
-            web3ProviderNetWork:getEthApiBaseUrl()
-        };
-    });
-    
+    return {
+        buttonMods:ButtonMods,   // 所有按钮模式
+        buttonMod:ButtonMods.FLOATBUTTON2,   // 当前按钮模式
+        thirdBase:'app/api/thirdBase',
+        jsApi:'app/api/JSAPI',
+        imgUrlPre:'http://192.168.31.10/wallet/app/res/image/third/'
+    };
 };

@@ -1,15 +1,8 @@
-import { deleteAccount, getAllAccount, getCloudBalances, getStore, register, setStore } from '../store/memstore';
+import { deleteAccount, getAllAccount, getCloudBalances, getStore, setStore } from '../store/memstore';
 
 /**
  * memstroe.ts 对应的 bridge
  */
-
-/**
- * 注册监听函数
- */
-export const registerStore = (key:string,callback:Function) => {
-    register(key,callback);
-};
 
 /**
  * 获取store数据

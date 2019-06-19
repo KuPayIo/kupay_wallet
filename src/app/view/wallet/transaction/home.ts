@@ -6,7 +6,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/memBridge';
 import { callCurrencyExchangeAvailable, callFetchBalanceValueOfCoin } from '../../../middleLayer/toolsBridge';
-import { callFetchTransactionList, callGetCurrentAddrInfo, callGetDataCenter } from '../../../middleLayer/walletBridge';
+import { callDcUpdateAddrInfo, callFetchTransactionList, callGetCurrentAddrInfo } from '../../../middleLayer/walletBridge';
 import { CurrencyRecord, TxHistory, TxType } from '../../../publicLib/interface';
 import { formatBalance, formatBalanceValue, timestampFormat } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
@@ -31,12 +31,11 @@ export class TransactionHome extends Widget {
         super.setProps(props,oldProps);
         this.init();
         const currencyName = this.props.currencyName;
-        Promise.all([callGetDataCenter(),
-            callGetCurrentAddrInfo(currencyName),
+        Promise.all([callGetCurrentAddrInfo(currencyName),
             callFetchBalanceValueOfCoin(currencyName,1),
             getCurrencyUnitSymbol(),
-            getStoreData('setting/changeColor','redUp')]).then(([dataCenter,addrInfo,oneBalanceValue,currencyUnitSymbol,color]) => {
-                dataCenter.updateAddrInfo(addrInfo.addr,currencyName);
+            getStoreData('setting/changeColor','redUp')]).then(([addrInfo,oneBalanceValue,currencyUnitSymbol,color]) => {
+                callDcUpdateAddrInfo(addrInfo.addr,currencyName);
                 const balance = formatBalance(addrInfo.balance);
                 const balanceValue =  balance * oneBalanceValue;
                 this.props.balance = balance;
@@ -181,9 +180,7 @@ export class TransactionHome extends Widget {
     }
 
     public refreshClick() {
-        callGetDataCenter().then(dataCenter => {
-            dataCenter.updateAddrInfo(this.props.addrInfo.addr,this.props.currencyName);
-        });
+        callDcUpdateAddrInfo(this.props.addrInfo.addr,this.props.currencyName);
     }
 
     public updateCurrencyRecords(currencyRecords: CurrencyRecord[]) {

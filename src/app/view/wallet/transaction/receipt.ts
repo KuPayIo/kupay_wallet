@@ -5,9 +5,8 @@ import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { callGetCurrentAddrInfo } from '../../../middleLayer/walletBridge';
-import { copyToClipboard, popNewMessage } from '../../../utils/tools';
+import { copyToClipboard, getUserInfo, popNewMessage } from '../../../utils/tools';
 import { makeScreenShot } from '../../../viewLogic/native';
 
 interface Props {
@@ -32,7 +31,7 @@ export class Receipt extends Widget {
             fromAddr:'',
             avatar:''
         };
-        Promise.all([callGetUserInfo(),callGetCurrentAddrInfo(this.props.currencyName)]).then(([userInfo,addrInfo]) => {
+        Promise.all([getUserInfo(),callGetCurrentAddrInfo(this.props.currencyName)]).then(([userInfo,addrInfo]) => {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
             this.props.fromAddr = addrInfo.addr;
             this.paint();

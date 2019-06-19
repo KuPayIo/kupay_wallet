@@ -9,11 +9,10 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/memBridge';
-import { callGetUserInfo } from '../../../middleLayer/toolsBridge';
 import { callBackupMnemonic } from '../../../middleLayer/walletBridge';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { register } from '../../../store/memstore';
-import { copyToClipboard, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { copyToClipboard, getUserInfo, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { doScanQrCode } from '../../../viewLogic/native';
 
 // ================================ 导出
@@ -94,7 +93,7 @@ export class Home extends Widget {
      * 更新数据
      */
     public initData() {
-        Promise.all([callGetUserInfo(),getStoreData('wallet')]).then(([userInfo,wallet]) => {
+        Promise.all([getUserInfo(),getStoreData('wallet')]).then(([userInfo,wallet]) => {
             if (userInfo) {
                 this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
                 this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';

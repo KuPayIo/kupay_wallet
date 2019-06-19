@@ -969,3 +969,38 @@ const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amou
  * 消息处理列表
  */
 export const dataCenter: DataCenter = new DataCenter();
+
+/**
+ * 更新余额
+ */
+export const dcUpdateBalance = (addr: string, currencyName: string) => {
+    dataCenter.updateBalance(addr,currencyName);
+};
+
+/**
+ * 刷新本地钱包
+ */
+export const dcRefreshAllTx = () => {
+    dataCenter.refreshAllTx();
+};
+
+/**
+ * 初始化ERC20代币GasLimit
+ */
+export const dcInitErc20GasLimit = () => {
+    dataCenter.initErc20GasLimit();
+};
+
+/**
+ * 更新地址相关 交易记录及余额定时更新
+ */
+export const dcUpdateAddrInfo = (addr: string, currencyName: string) => {
+    dataCenter.updateAddrInfo(addr,currencyName);
+};
+
+/**
+ * 通过hash清楚定时器
+ */
+export const dcClearTxTimer = (hash: string) => {
+    dataCenter.clearTxTimer(hash);
+};
