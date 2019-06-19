@@ -51,7 +51,7 @@ export const callGetCloudBalances = ():Promise<any> => {
 /**
  * 删除账户
  */
-export const calldeleteAccount = (id: string) => {
+export const callDeleteAccount = (id: string) => {
     return new Promise((resolve) => {
         deleteAccount(id);
         resolve();

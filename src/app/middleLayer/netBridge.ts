@@ -81,9 +81,9 @@ export const callWalletManualReconnect = () => {
 /**
  * 注销账户保留数据
  */
-export const callLogoutAccount = (noLogin?:boolean) => {
+export const callLogoutAccount = () => {
     return new Promise(resolve => {
-        logoutAccount(noLogin);
+        logoutAccount();
         resolve();
     });
 };
@@ -91,9 +91,9 @@ export const callLogoutAccount = (noLogin?:boolean) => {
 /**
  * 注销账户并删除数据
  */
-export const callLogoutAccountDel = (noLogin?:boolean) => {
+export const callLogoutAccountDel = () => {
     return new Promise((resolve) => {
-        logoutAccountDel(noLogin);
+        logoutAccountDel();
         resolve();
     });
 };

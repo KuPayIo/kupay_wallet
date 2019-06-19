@@ -273,7 +273,6 @@ winit.initNext = function () {
 			"app/components1/",
 			"app/res/css/",
 			"app/res/js/",
-			"app/view/ceshi/",
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",

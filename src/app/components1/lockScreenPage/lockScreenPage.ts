@@ -7,11 +7,11 @@ import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { getStoreData, setStoreData } from '../../middleLayer/memBridge';
-import { callLogoutAccount } from '../../middleLayer/netBridge';
 import { callLockScreenHash, callLockScreenVerify, callVerifyIdentidy } from '../../middleLayer/walletBridge';
 import { LockScreen } from '../../publicLib/interface';
 import { register  } from '../../store/memstore';
 import { popNewLoading, popNewMessage } from '../../utils/tools';
+import { logoutAccount } from '../../viewLogic/login';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -146,9 +146,7 @@ export class LockScreenPage extends Widget {
             }
         },(fg) => {
             if (fg) {  // 退出当前钱包，跳转到登录页面
-                callLogoutAccount().then(() => {
-                    popNew('app-view-wallet-create-home');
-                });
+                logoutAccount();
             }
         });
     }

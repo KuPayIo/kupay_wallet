@@ -56,17 +56,6 @@ export class CoinConvert extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
-        callCurrencyExchangeAvailable().then(dataList => {
-            const canCurrencyExchange = dataList.indexOf(props.currencyName) >= 0;
-            const outCurrency = canCurrencyExchange ? props.currencyName : 'ETH';
-            const inCurrency = (outCurrency === 'BTC' ||  ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
-            this.props.outCurrency = outCurrency;
-            this.props.outCurrencyLogo = calCurrencyLogoUrl(outCurrency);
-            this.props.inCurrency = inCurrency;
-            this.props.inCurrencyLogo = calCurrencyLogoUrl(inCurrency);
-            this.paint();
-        });
-        
         // ZRX   BAT
         this.props = {
             ...this.props,
@@ -86,8 +75,19 @@ export class CoinConvert extends Widget {
             curOutAddr:'',
             curInAddr:''
         };
-        this.init();
+        
         this.updateMinerFee();
+        callCurrencyExchangeAvailable().then(dataList => {
+            const canCurrencyExchange = dataList.indexOf(props.currencyName) >= 0;
+            const outCurrency = canCurrencyExchange ? props.currencyName : 'ETH';
+            const inCurrency = (outCurrency === 'BTC' ||  ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
+            this.props.outCurrency = outCurrency;
+            this.props.outCurrencyLogo = calCurrencyLogoUrl(outCurrency);
+            this.props.inCurrency = inCurrency;
+            this.props.inCurrencyLogo = calCurrencyLogoUrl(inCurrency);
+            this.init();
+            this.paint();
+        });
     }
 
     // 更新矿工费

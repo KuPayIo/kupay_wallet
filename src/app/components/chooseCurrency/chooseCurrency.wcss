@@ -5,9 +5,11 @@
     flex-direction: column;
     background: #2225;    
     justify-content: flex-start;
+    background-color: rgba(0, 0, 0, .3);
 }
 .top{
-    flex: 1;
+    flex: 1 0 0;
+    opacity: .3;
 }
 .bottom{
     height: 680px;

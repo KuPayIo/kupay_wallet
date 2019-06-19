@@ -7,10 +7,10 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData, setStoreData } from '../../../middleLayer/memBridge';
-import { callLogoutAccount, callLogoutAccountDel } from '../../../middleLayer/netBridge';
 import { callBackupMnemonic } from '../../../middleLayer/walletBridge';
 import { register } from '../../../store/memstore';
 import { popPswBox, rippleShow } from '../../../utils/tools';
+import { logoutAccount } from '../../../viewLogic/login';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -152,7 +152,7 @@ export class Setting extends Widget {
             console.log('取消1');
         }, () => {
             console.log(1);
-            callLogoutAccount();
+            logoutAccount();
             this.backPrePage();
         }
         );
@@ -175,7 +175,7 @@ export class Setting extends Widget {
             console.log('取消2');
         }, () => {
             popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
-                callLogoutAccountDel();
+                logoutAccount(true);
                 this.backPrePage();
             });
         });

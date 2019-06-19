@@ -4,7 +4,7 @@
 import { Widget } from '../../../pi/widget/widget';
 import { getStoreData } from '../../middleLayer/memBridge';
 import { formatBalance } from '../../publicLib/tools';
-import { getCurrentAddrInfo1 } from '../../utils/tools';
+import { calCurrencyLogoUrl, getCurrentAddrInfo1 } from '../../utils/tools';
 
 interface Props {
     list:string[];
@@ -28,10 +28,12 @@ export class ChooseCurrency extends Widget {
                 currencyShowList.push({
                     name:item,
                     balance:formatBalance(balance),
-                    img:`../../res/image/currency/${item}.png`
+                    img:calCurrencyLogoUrl(item)
 
                 });
             });
+            this.props.currencyShowList = currencyShowList;
+            this.paint();
         });
     }
 

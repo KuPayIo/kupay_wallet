@@ -1,6 +1,7 @@
 import { popNew } from '../../pi/ui/root';
 import { callGetAllAccount, getStoreData, setStoreData } from '../middleLayer/memBridge';
-import { callDefaultLogin, callGetOpenId, callGetRandom, callLogoutAccountDel, openWSConnect } from '../middleLayer/netBridge';
+// tslint:disable-next-line:max-line-length
+import { callDefaultLogin, callGetOpenId, callGetRandom, callLogoutAccount, callLogoutAccountDel, openWSConnect } from '../middleLayer/netBridge';
 import { callVerifyIdentidy } from '../middleLayer/walletBridge';
 import { CMD } from '../publicLib/config';
 import { register } from '../store/memstore';
@@ -59,8 +60,12 @@ export const kickOffline = (secretHash:string = '',phone?:number,code?:number,nu
 /**
  * 注销账户并删除数据
  */
-export const logoutAccountDel = async (noLogin?:boolean) => {
-    await callLogoutAccountDel();
+export const logoutAccount = async (del:boolean = false,noLogin:boolean = false) => {
+    if (del) {
+        await callLogoutAccountDel();
+    } else {
+        await callLogoutAccount();
+    }
     delPopPhoneTips();
     if (!noLogin) {
         closeAllPage();

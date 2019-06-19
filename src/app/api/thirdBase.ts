@@ -2,8 +2,8 @@ import { applyToGroup, getChatUid } from '../../chat/client/app/net/rpc';
 import { GENERATOR_TYPE } from '../../chat/server/data/db/user.s';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
-import { callLogoutWallet } from '../middleLayer/netBridge';
 import { getGameItem } from '../view/play/home/gameConfig';
+import { logoutWallet } from '../viewLogic/login';
 
 /**
  * 第三方应用调用的基础功能
@@ -17,7 +17,7 @@ let popFloatBoxClose;
 let curWebviewName;
 
 // 退出钱包后关闭悬浮框和游戏
-callLogoutWallet(() => {
+logoutWallet(() => {
     closePopFloatBox();
     if (curWebviewName) {
         closeWebview(curWebviewName);

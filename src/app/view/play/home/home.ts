@@ -194,6 +194,8 @@ export class PlayHome extends Widget {
      * 默认进入游戏
      */
     public defaultEnterGame() {
+        // TODO  暂时屏蔽默认进入游戏
+        return;
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
         Promise.all([callGetUserInfo(),getStoreData('user/isLogin')]).then(([userInfo,isLogin]) => {
             const phoneNumber = userInfo.phoneNumber;    

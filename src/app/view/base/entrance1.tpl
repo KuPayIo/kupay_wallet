@@ -3,8 +3,11 @@
     <div w-class="body2">
         <div w-class="users">
             <div w-class="user-item" on-tap="popMoreUser">
-                <widget w-tag="app-components1-img-img" w-class="rank-headImg" >{imgURL:{{it.accountList[it.selectedAccountIndex].avatar}},width:"60px;"}</widget>
-                <div w-class="name">{{it.accountList[it.selectedAccountIndex].nickName}}</div>
+                {{: selectItem = it.accountList[it.selectedAccountIndex]}}
+                {{if selectItem}}
+                <widget w-tag="app-components1-img-img" w-class="rank-headImg" >{imgURL:{{selectItem.avatar}},width:"60px;"}</widget>
+                <div w-class="name">{{selectItem.nickName}}</div>
+                {{end}}
                 <img src="../../res/image/40.png" w-class="more" />
             </div>
             <div w-class="pop-box {{it.noAnimate ? 'pop-box-no-animate' : ''}}" style="height:{{it.showMoreUser ? it.popHeight : 0}}px; {{it.forceCloseMoreUser ? 'display:none;' : ''}} ">

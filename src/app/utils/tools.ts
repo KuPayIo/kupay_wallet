@@ -15,6 +15,7 @@ import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin } from '../pub
 import { CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
 import { SettingLanguage } from '../view/base/app';
+import { logoutAccount } from '../viewLogic/login';
 import { piLoadDir, piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
 import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
@@ -110,8 +111,8 @@ export const popPswBox = (content = [],onlyOk:boolean = false,cancelDel:boolean 
         popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content,onlyOk }, (r: string) => {
             resolve(r);
             if (!r && cancelDel) popPswBox(content,onlyOk,cancelDel);
-        }, async (forgetPsw:boolean) => {
-            if (cancelDel && !forgetPsw) await callLogoutAccount();
+        }, (forgetPsw:boolean) => {
+            if (cancelDel && !forgetPsw)  logoutAccount();
             resolve('');
         });
     });
@@ -470,7 +471,10 @@ export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callb
             const loading = popNew('app-components1-loading-loading1');
             const level3SourceList = [
                 'app/core/',
-                'app/logic/',
+                'app/middleLayer/',
+                'app/publicLib/',
+                'app/remote/',
+                'app/viewLogic/',
                 'app/components/',
                 'app/res/',
                 'app/api/',

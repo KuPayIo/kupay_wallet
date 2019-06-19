@@ -5,14 +5,15 @@
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { calldeleteAccount, callGetAllAccount, getStoreData, setStoreData } from '../../../middleLayer/memBridge';
-import { callGetRandom, callLogoutAccountDel } from '../../../middleLayer/netBridge';
+import { callDeleteAccount, callGetAllAccount, getStoreData, setStoreData } from '../../../middleLayer/memBridge';
+import { callGetRandom } from '../../../middleLayer/netBridge';
 import { callGetDataCenter } from '../../../middleLayer/walletBridge';
 import { regPhone, verifyPhone } from '../../../net/pull';
 import { CreateWalletOption } from '../../../publicLib/interface';
 import { defaultPassword } from '../../../utils/constants';
 import { delPopPhoneTips, playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { phoneImport } from '../../../viewLogic/localWallet';
+import { logoutAccount } from '../../../viewLogic/login';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -103,7 +104,7 @@ export class PhoneImport extends Widget {
     // 手机导入失败
     public async phoneImportError(tips:string) {
         popNewMessage(tips);
-        await callLogoutAccountDel(true);
+        await logoutAccount(true,true);
         this.props.code = [];
         this.setCode();
     }
@@ -204,7 +205,7 @@ const deletePrePhoneAccount = (phoneNumber:string) => {
         for (const index in accounts) {
             const account = accounts[index];
             if (account.user.info.phoneNumber === phoneNumber) {
-                return calldeleteAccount(account.user.id);
+                return callDeleteAccount(account.user.id);
             }
         }
     });

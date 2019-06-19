@@ -42,7 +42,7 @@ export const callVerifyIdentidy = (passwd:string):Promise<any> => {
 /**
  * 验证某个账户身份
  */
-export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string) => {
+export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string):Promise<any> => {
     return new Promise((resolve) => {
         VerifyIdentidy1(passwd,vault,salt).then(hash => {
             resolve(hash);

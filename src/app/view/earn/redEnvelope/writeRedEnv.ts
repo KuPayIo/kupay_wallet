@@ -43,7 +43,11 @@ export class WriteRedEnv extends Widget {
 
     public props:Props = {
         ktShow:getModulConfig('KT_SHOW'),
-        list: [],
+        list: [
+            { img: '../../res/image1/currency/KT.png', name: 'KT', num: 0 },
+            { img: '../../res/image1/currency/BTC.png', name: 'BTC', num:0 },
+            { img: '../../res/image1/currency/ETH.png', name: 'ETH', num:0 }
+        ],
         selected: 0,
         showPin: false,
         totalAmount: 0,
@@ -89,11 +93,7 @@ export class WriteRedEnv extends Widget {
      */
     public updateBalance() {
         callGetCloudBalances().then(data => {
-            const list = [
-                { img: '../../res/image1/currency/KT.png', name: 'KT', num: 500 },
-                { img: '../../res/image1/currency/BTC.png', name: 'BTC', num: 0.01 },
-                { img: '../../res/image1/currency/ETH.png', name: 'ETH', num: 0.5 }
-            ];
+            const list = this.props.list;
             for (const i in list) {
                 list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
             }

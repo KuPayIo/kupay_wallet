@@ -313,7 +313,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
 /**
  * 注销账户并删除数据
  */
-export const logoutAccountDel = (noLogin?:boolean) => {
+export const logoutAccountDel = () => {
     setStore('user/token','');
     const user = {
         id: '',                      // 该账号的id
@@ -383,12 +383,12 @@ export const logoutAccountDel = (noLogin?:boolean) => {
 /**
  * 注销账户保留数据
  */
-export const logoutAccount = (noLogin?:boolean) => {
+export const logoutAccount = () => {
     const wallet = getStore('wallet');
     if (wallet.setPsw) {
         setStore('flags/saveAccount', true);
     }
-    logoutAccountDel(noLogin);
+    logoutAccountDel();
 };
 
 /**
