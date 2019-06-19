@@ -39,6 +39,7 @@ winit.initNext = function () {
 	pi_update.severPort = winit.severPort;
 	pi_update.inAndroidApp = winit.inAndroidApp;
 	pi_update.inIOSApp = winit.inIOSApp;
+	pi_update.inApp = winit.inApp;
 	winit = undefined; //一定要立即释放，保证不会重复执行
 	//先登录
 
@@ -226,6 +227,7 @@ winit.initNext = function () {
 	// 加载钱包项目登录相关资源
 	var loadWalletLoginSource = function(){
 		var sourceList = [
+			"app/middleLayer/wrap_browser.js",
 			"app/viewLogic/login.js",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",

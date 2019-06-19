@@ -15,7 +15,7 @@ import { GENERATOR_TYPE } from '../../../chat/server/data/db/user.s';
 import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Widget } from '../../../pi/widget/widget';
-import { getLoginMod } from '../../utils/commonjsTools';
+import { logoutAccount } from '../../viewLogic/login';
 
 interface Props {
     title:string;
@@ -32,7 +32,7 @@ export class ModalBoxInput extends Widget {
     public ok: (value:string) => void;
     public cancel: (fg:boolean) => void;   // fg为false表示退出APP(或点击取消)，true表示忘记密码
 
-    public setProps(props:any,oldProps:any) {
+    public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.props = { 
             ...this.props,
@@ -74,9 +74,7 @@ export class ModalBoxInput extends Widget {
             en:'' 
         };
         popNew('app-components-modalBox-modalBox',modalBox[getLang()],() => {  // 确认删除钱包
-            getLoginMod().then(loginMod => {
-                loginMod.logoutAccount();
-            });
+            logoutAccount();
         },() => {   // 取消删除钱包
             console.log('联系客服');
             getChatUid(getLocalStorage('officialService').HAOHAI_SERVANT).then((r) => {
