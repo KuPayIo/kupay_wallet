@@ -7,8 +7,7 @@ import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore, register as earnRegister } from '../../../earn/client/app/store/memstore';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getStoreData } from '../../middleLayer/memBridge';
-import { callWalletManualReconnect } from '../../middleLayer/netBridge';
+import { callWalletManualReconnect,getStoreData } from '../../middleLayer/wrap';
 import { register } from '../../store/memstore';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

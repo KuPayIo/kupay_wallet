@@ -6,7 +6,7 @@ import { appLanguageList, LocalLanguageMgr } from '../../../../pi/browser/localL
 import { Json } from '../../../../pi/lang/type';
 import { setLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { setStoreData } from '../../../middleLayer/memBridge';
+import { setStoreData } from '../../../middleLayer/wrap';
 // ================================================导出
 export class ItemList extends Widget {
     public ok: () => void;

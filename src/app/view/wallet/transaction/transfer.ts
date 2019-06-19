@@ -5,10 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callFetchBtcFees, callFetchGasPrices } from '../../../middleLayer/netBridge';
-import { callFetchBalanceValueOfCoin } from '../../../middleLayer/toolsBridge';
 // tslint:disable-next-line:max-line-length
-import { callDcUpdateAddrInfo, callFetchMinerFeeList, callGetCurrentAddrInfo, callTransfer, callUpdateLocalTx } from '../../../middleLayer/walletBridge';
+import { callDcUpdateAddrInfo, callFetchBalanceValueOfCoin, callFetchBtcFees, callFetchGasPrices, callFetchMinerFeeList,callGetCurrentAddrInfo, callTransfer,callUpdateLocalTx } from '../../../middleLayer/wrap';
 import { ERC20Tokens } from '../../../publicLib/config';
 import { MinerFeeLevel, TxHistory, TxPayload } from '../../../publicLib/interface';
 import { formatBalance } from '../../../publicLib/tools';

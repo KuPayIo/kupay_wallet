@@ -4,9 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetCloudBalances, getStoreData } from '../../../middleLayer/memBridge';
-import { callGetAccountDetail } from '../../../middleLayer/netBridge';
-import { callFetchBalanceValueOfCoin } from '../../../middleLayer/toolsBridge';
+import { callFetchBalanceValueOfCoin,callGetAccountDetail, callGetCloudBalances,getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { fetchCloudGain, formatBalance, formatBalanceValue } from '../../../publicLib/tools';

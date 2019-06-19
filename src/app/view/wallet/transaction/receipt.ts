@@ -5,7 +5,7 @@ import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetCurrentAddrInfo } from '../../../middleLayer/walletBridge';
+import { callGetCurrentAddrInfo } from '../../../middleLayer/wrap';
 import { copyToClipboard, getUserInfo, popNewMessage } from '../../../utils/tools';
 import { makeScreenShot } from '../../../viewLogic/native';
 

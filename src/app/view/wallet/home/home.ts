@@ -5,11 +5,8 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { getStoreData } from '../../../middleLayer/memBridge';
-import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
 // tslint:disable-next-line:max-line-length
-import { callFetchCloudTotalAssets, callFetchLocalTotalAssets } from '../../../middleLayer/toolsBridge';
-import { callDcUpdateBalance } from '../../../middleLayer/walletBridge';
+import { callDcUpdateBalance,callFetchCloudTotalAssets,callFetchLocalTotalAssets, callGetServerCloudBalance,getStoreData } from '../../../middleLayer/wrap';
 import { formatBalanceValue } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
 import { getCurrencyUnitSymbol, getUserInfo } from '../../../utils/tools';

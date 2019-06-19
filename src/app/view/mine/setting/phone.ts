@@ -5,7 +5,7 @@
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData, setStoreData } from '../../../middleLayer/memBridge';
+import { getStoreData, setStoreData } from '../../../middleLayer/wrap';
 import { regPhone, unbindPhone } from '../../../net/pull';
 import { delPopPhoneTips, getUserInfo, popNewMessage } from '../../../utils/tools';
 // ================================ 导出

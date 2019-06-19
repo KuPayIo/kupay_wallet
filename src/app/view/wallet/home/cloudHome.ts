@@ -3,9 +3,8 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/memBridge';
-import { callGetProductList, callGetServerCloudBalance } from '../../../middleLayer/netBridge';
-import { callFetchCloudTotalAssets, callFetchCloudWalletAssetList } from '../../../middleLayer/toolsBridge';
+// tslint:disable-next-line:max-line-length
+import { callFetchCloudTotalAssets, callFetchCloudWalletAssetList,callGetProductList, callGetServerCloudBalance,getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType, Product } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { formatBalanceValue } from '../../../publicLib/tools';

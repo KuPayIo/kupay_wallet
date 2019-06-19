@@ -1,8 +1,6 @@
 import { popNew } from '../../pi/ui/root';
-import { callGetAllAccount, getStoreData, setStoreData } from '../middleLayer/memBridge';
 // tslint:disable-next-line:max-line-length
-import { callDefaultLogin, callGetOpenId, callGetRandom, callLogoutAccount, callLogoutAccountDel, openWSConnect } from '../middleLayer/netBridge';
-import { callVerifyIdentidy } from '../middleLayer/walletBridge';
+import { callDefaultLogin, callGetAllAccount, callGetOpenId, callGetRandom, callLogoutAccount, callLogoutAccountDel,callVerifyIdentidy, getStoreData, openWSConnect,setStoreData } from '../middleLayer/wrap';
 import { CMD } from '../publicLib/config';
 import { register } from '../store/memstore';
 import { defaultPassword } from '../utils/constants';

@@ -3,9 +3,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { callDeleteAccount, callGetAllAccount } from '../../middleLayer/memBridge';
-import { callLoginSuccess, openWSConnect } from '../../middleLayer/netBridge';
-import { callVerifyIdentidy1 } from '../../middleLayer/walletBridge';
+import { callDeleteAccount,callGetAllAccount, callLoginSuccess,callVerifyIdentidy1, openWSConnect } from '../../middleLayer/wrap';
 import { uploadFileUrlPrefix } from '../../publicLib/config';
 import { CreateWalletOption } from '../../publicLib/interface';
 import { getModulConfig } from '../../publicLib/modulConfig';

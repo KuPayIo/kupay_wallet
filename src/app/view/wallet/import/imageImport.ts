@@ -4,8 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { setStoreData } from '../../../middleLayer/memBridge';
-import { callAhashToArgon2Hash } from '../../../middleLayer/walletBridge';
+import { callAhashToArgon2Hash,setStoreData } from '../../../middleLayer/wrap';
 import { popNewMessage } from '../../../utils/tools';
 import { CreateWalletType } from '../../../viewLogic/localWallet';
 import { selectImage } from '../../../viewLogic/native';

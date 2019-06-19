@@ -5,7 +5,7 @@
 import { getStore as earnGetStore, setStore  as earnSetStore } from '../../earn/client/app/store/memstore';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
-import { callRequestAsync } from '../middleLayer/netBridge';
+import { callRequestAsync } from '../middleLayer/wrap';
 import { getModulConfig } from '../publicLib/modulConfig';
 import { popNewLoading } from './tools';
 

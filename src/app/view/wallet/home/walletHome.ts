@@ -3,8 +3,7 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/memBridge';
-import { callFetchLocalTotalAssets, callFetchWalletAssetList } from '../../../middleLayer/toolsBridge';
+import { callFetchLocalTotalAssets, callFetchWalletAssetList,getStoreData } from '../../../middleLayer/wrap';
 import { formatBalanceValue } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';
 import { getCurrencyUnitSymbol, popNew3 } from '../../../utils/tools';

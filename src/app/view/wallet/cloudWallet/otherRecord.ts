@@ -4,8 +4,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/memBridge';
-import { callGetAccountDetail } from '../../../middleLayer/netBridge';
+import { callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';

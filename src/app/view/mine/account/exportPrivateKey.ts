@@ -7,8 +7,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/memBridge';
-import { callExportBTCPrivateKey, callExportERC20TokenPrivateKey, callExportETHPrivateKey } from '../../../middleLayer/walletBridge';
+import { callExportBTCPrivateKey, callExportERC20TokenPrivateKey, callExportETHPrivateKey,getStoreData } from '../../../middleLayer/wrap';
 import { ERC20Tokens } from '../../../publicLib/config';
 import { calCurrencyLogoUrl } from '../../../utils/tools';
 

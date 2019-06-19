@@ -2,8 +2,7 @@
  * add asset 
  */
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/memBridge';
-import { callUpdateShowCurrencys } from '../../../middleLayer/walletBridge';
+import { callUpdateShowCurrencys,getStoreData } from '../../../middleLayer/wrap';
 import { calCurrencyLogoUrl, fetchWalletAssetListAdded } from '../../../utils/tools';
 
 export class AddAsset extends Widget {

@@ -3,11 +3,8 @@
  */
 import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
-import { callGetAllAccount } from '../middleLayer/memBridge';
-import { callBuyProduct, callGetPurchaseRecord, callGetRechargeLogs, callGetServerCloudBalance } from '../middleLayer/netBridge';
-import { callDeletLocalTx } from '../middleLayer/toolsBridge';
 // tslint:disable-next-line:max-line-length
-import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDcClearTxTimer, callDcInitErc20GasLimit, callDcRefreshAllTx, callDcUpdateAddrInfo, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callResendBtcRecharge, callResendBtcTransfer, callUpdateLocalTx, callVerifyIdentidy } from '../middleLayer/walletBridge';
+import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callBuyProduct, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDcClearTxTimer, callDcInitErc20GasLimit, callDcRefreshAllTx, callDcUpdateAddrInfo, callDeletLocalTx, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetAllAccount, callGetPurchaseRecord, callGetRechargeLogs, callGetServerCloudBalance, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callResendBtcRecharge, callResendBtcTransfer ,callUpdateLocalTx,callVerifyIdentidy } from '../middleLayer/wrap';
 import { Config, ERC20Tokens } from '../publicLib/config';
 import { CreateWalletOption, TxHistory } from '../publicLib/interface';
 import { doErrorShow } from '../utils/toolMessages';

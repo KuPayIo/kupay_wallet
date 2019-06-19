@@ -4,8 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/memBridge';
-import { callGetMineDetail } from '../../../middleLayer/netBridge';
+import { callGetMineDetail,getStoreData } from '../../../middleLayer/wrap';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { register } from '../../../store/memstore';
 

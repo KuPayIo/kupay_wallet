@@ -3,8 +3,7 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/memBridge';
-import { callGetPurchaseRecord } from '../../../middleLayer/netBridge';
+import { callGetPurchaseRecord,getStoreData } from '../../../middleLayer/wrap';
 import { PurchaseHistory } from '../../../publicLib/interface';
 import { register } from '../../../store/memstore';
 

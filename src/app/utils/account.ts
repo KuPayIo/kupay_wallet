@@ -2,7 +2,7 @@
 /**
  * 和账号相关的工具
  */
-import { getStoreData, setStoreData } from '../middleLayer/memBridge';
+import { getStoreData, setStoreData } from '../middleLayer/wrap';
 import { getStrLen } from './tools';
 
 /**

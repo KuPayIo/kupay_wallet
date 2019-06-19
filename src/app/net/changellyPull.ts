@@ -1,4 +1,4 @@
-import { setStoreData } from '../middleLayer/memBridge';
+import { setStoreData } from '../middleLayer/wrap';
 import { changellySign } from './pull';
 
 // ============================= changelly =========================================

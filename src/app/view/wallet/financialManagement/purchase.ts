@@ -4,8 +4,7 @@
 // ===============================================导入
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetCloudBalances } from '../../../middleLayer/memBridge';
-import { callFetchGasPrice, callGetCurrentAddrInfo } from '../../../middleLayer/walletBridge';
+import { callFetchGasPrice, callGetCloudBalances,callGetCurrentAddrInfo } from '../../../middleLayer/wrap';
 import { defaultGasLimit } from '../../../publicLib/config';
 import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../publicLib/interface';
 import { formatBalance } from '../../../publicLib/tools';

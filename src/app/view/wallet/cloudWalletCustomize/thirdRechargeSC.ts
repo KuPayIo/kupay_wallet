@@ -4,8 +4,7 @@
 
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetCloudBalances, getStoreData } from '../../../middleLayer/memBridge';
-import { callGetAccountDetail } from '../../../middleLayer/netBridge';
+import { callGetAccountDetail, callGetCloudBalances,getStoreData } from '../../../middleLayer/wrap';
 import { SCPrecision } from '../../../publicLib/config';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';

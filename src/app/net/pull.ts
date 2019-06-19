@@ -2,8 +2,7 @@
  * 主动向后端通讯
  */
 import { uploadFileUrl } from '../config';
-import { getStoreData, setStoreData } from '../middleLayer/memBridge';
-import { callRequestAsync, callRequestAsyncNeedLogin } from '../middleLayer/netBridge';
+import { callRequestAsync, callRequestAsyncNeedLogin,getStoreData, setStoreData } from '../middleLayer/wrap';
 import { CloudCurrencyType } from '../publicLib/interface';
 import { getModulConfig } from '../publicLib/modulConfig';
 import { unicodeArray2Str } from '../publicLib/tools';

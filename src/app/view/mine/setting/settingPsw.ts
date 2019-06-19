@@ -4,8 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { setStoreData } from '../../../middleLayer/memBridge';
-import { callPasswordChange, callVerifyIdentidy } from '../../../middleLayer/walletBridge';
+import { callPasswordChange, callVerifyIdentidy,setStoreData } from '../../../middleLayer/wrap';
 import { pswEqualed } from '../../../utils/account';
 import { defaultPassword } from '../../../utils/constants';
 import { getUserInfo, popNewLoading, popNewMessage } from '../../../utils/tools';

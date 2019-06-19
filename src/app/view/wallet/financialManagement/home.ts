@@ -5,9 +5,8 @@
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/memBridge';
-import { callGetProductList, callGetPurchaseRecord } from '../../../middleLayer/netBridge';
-import { callFetchCloudTotalAssets, callFetchLocalTotalAssets } from '../../../middleLayer/toolsBridge';
+// tslint:disable-next-line:max-line-length
+import { callFetchCloudTotalAssets, callFetchLocalTotalAssets,callGetProductList,callGetPurchaseRecord, getStoreData } from '../../../middleLayer/wrap';
 import { formatBalanceValue } from '../../../publicLib/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords

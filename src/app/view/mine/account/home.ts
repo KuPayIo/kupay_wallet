@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/memBridge';
+import { getStoreData } from '../../../middleLayer/wrap';
 import { uploadFile } from '../../../net/pull';
 import { register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';

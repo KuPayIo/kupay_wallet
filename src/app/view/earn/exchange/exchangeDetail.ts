@@ -5,7 +5,7 @@ import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callQueryDetailLog } from '../../../middleLayer/netBridge';
+import { callQueryDetailLog } from '../../../middleLayer/wrap';
 import { getOneUserInfo } from '../../../net/pull';
 import { uploadFileUrlPrefix } from '../../../publicLib/config';
 import { CloudCurrencyType } from '../../../publicLib/interface';

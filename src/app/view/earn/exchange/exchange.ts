@@ -8,9 +8,7 @@ import { popModalBoxs, popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { setStoreData } from '../../../middleLayer/memBridge';
-import { callGetServerCloudBalance } from '../../../middleLayer/netBridge';
-// tslint:disable-next-line:max-line-length
+import { callGetServerCloudBalance,setStoreData } from '../../../middleLayer/wrap';
 import { convertRedBag, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';

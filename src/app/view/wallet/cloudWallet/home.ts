@@ -5,9 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetCloudBalances, getStoreData } from '../../../middleLayer/memBridge';
-import { callGetAccountDetail, callGetRechargeLogs, callGetWithdrawLogs } from '../../../middleLayer/netBridge';
-import { callFetchBalanceValueOfCoin, callFetchCoinGain } from '../../../middleLayer/toolsBridge';
+// tslint:disable-next-line:max-line-length
+import { callFetchBalanceValueOfCoin, callFetchCoinGain,callGetAccountDetail, callGetCloudBalances, callGetRechargeLogs,callGetWithdrawLogs, getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { formatBalance, formatBalanceValue } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';

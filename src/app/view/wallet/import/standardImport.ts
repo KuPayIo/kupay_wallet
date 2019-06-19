@@ -3,7 +3,7 @@
  */
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { callisValidMnemonic } from '../../../middleLayer/walletBridge';
+import { callisValidMnemonic } from '../../../middleLayer/wrap';
 import { lang } from '../../../publicLib/config';
 import { popNew3, popNewMessage } from '../../../utils/tools';
 import { CreateWalletType } from '../../../viewLogic/localWallet';

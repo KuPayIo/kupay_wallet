@@ -4,7 +4,7 @@
 import { AdPlatform, ADUnion, PlayEvent } from '../../pi/browser/ad_unoin';
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { WebViewManager } from '../../pi/browser/webview';
-import { setStoreData } from '../middleLayer/memBridge';
+import { setStoreData } from '../middleLayer/wrap';
 import { piRequire } from '../utils/commonjsTools';
 import { popNewLoading } from '../utils/tools';
 

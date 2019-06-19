@@ -1,5 +1,5 @@
 import { Widget } from '../../../pi/widget/widget';
-import { openWSConnect } from '../../middleLayer/netBridge';
+import { openWSConnect } from '../../middleLayer/wrap';
 import { CreateWalletOption } from '../../publicLib/interface';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewMessage } from '../../utils/tools';

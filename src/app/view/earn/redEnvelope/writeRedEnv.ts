@@ -6,9 +6,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetCloudBalances, setStoreData } from '../../../middleLayer/memBridge';
-import { callGetRealUser, callGetServerCloudBalance } from '../../../middleLayer/netBridge';
-import { callVerifyIdentidy } from '../../../middleLayer/walletBridge';
+// tslint:disable-next-line:max-line-length
+import { callGetCloudBalances, callGetRealUser,callGetServerCloudBalance,callVerifyIdentidy, setStoreData } from '../../../middleLayer/wrap';
 import { sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';

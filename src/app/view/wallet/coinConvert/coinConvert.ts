@@ -6,9 +6,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData, setStoreData } from '../../../middleLayer/memBridge';
-import { callCurrencyExchangeAvailable } from '../../../middleLayer/toolsBridge';
-import { callFetchMinerFeeList, callGetCurrentAddrInfo, callTransfer } from '../../../middleLayer/walletBridge';
+// tslint:disable-next-line:max-line-length
+import { callCurrencyExchangeAvailable, callFetchMinerFeeList, callGetCurrentAddrInfo,callTransfer, getStoreData,setStoreData } from '../../../middleLayer/wrap';
 import { changellyCreateTransaction, changellyGetExchangeAmount, changellyGetMinAmount } from '../../../net/changellyPull';
 import { ERC20Tokens } from '../../../publicLib/config';
 import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel, TxPayload } from '../../../publicLib/interface';

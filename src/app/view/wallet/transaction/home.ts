@@ -4,9 +4,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/memBridge';
-import { callCurrencyExchangeAvailable, callFetchBalanceValueOfCoin } from '../../../middleLayer/toolsBridge';
-import { callDcUpdateAddrInfo, callFetchTransactionList, callGetCurrentAddrInfo } from '../../../middleLayer/walletBridge';
+// tslint:disable-next-line:max-line-length
+import { callCurrencyExchangeAvailable, callDcUpdateAddrInfo, callFetchBalanceValueOfCoin,callFetchTransactionList, callGetCurrentAddrInfo,getStoreData } from '../../../middleLayer/wrap';
 import { CurrencyRecord, TxHistory, TxType } from '../../../publicLib/interface';
 import { formatBalance, formatBalanceValue, timestampFormat } from '../../../publicLib/tools';
 import { register } from '../../../store/memstore';

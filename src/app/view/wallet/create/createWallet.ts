@@ -3,8 +3,7 @@
  */
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { setStoreData } from '../../../middleLayer/memBridge';
-import { openWSConnect } from '../../../middleLayer/netBridge';
+import { openWSConnect,setStoreData } from '../../../middleLayer/wrap';
 import { uploadFile } from '../../../net/pull';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { imgResize, playerName, popNew3, popNewMessage } from '../../../utils/tools';
