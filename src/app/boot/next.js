@@ -227,7 +227,6 @@ winit.initNext = function () {
 	// 加载钱包项目登录相关资源
 	var loadWalletLoginSource = function(){
 		var sourceList = [
-			"app/middleLayer/wrap_browser.js",
 			"app/viewLogic/login.js",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",
