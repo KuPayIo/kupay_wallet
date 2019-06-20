@@ -560,6 +560,7 @@ export interface CreateWalletOption {
     mnemonic?: string; // 助记词
     fragment1?: string; // 片段1
     fragment2?: string; // 片段2
+    valut?:any;     // 图片密码
 }
 
 export interface TxPayload {
@@ -569,4 +570,20 @@ export interface TxPayload {
     currencyName:string;    // 转账货币
     fee:number;             // 矿工费
     minerFeeLevel:MinerFeeLevel;   // 矿工费等级
+}
+
+/**
+ * 推送消息模块
+ */ 
+export enum PostModule {
+    SERVER = 0,   // 服务端推送
+    THIRD = 1     // 第三方游戏推送
+}  
+
+/**
+ * vm 往 webview 推送消息类型
+ */
+export interface PostMessage {
+    moduleName:PostModule;   // 模块名
+    args:any;                // 参数
 }

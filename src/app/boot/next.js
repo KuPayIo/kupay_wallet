@@ -323,7 +323,6 @@ winit.initNext = function () {
 		var level2SourceList = [
 			"app/logic/",
 			"app/components/",
-			"app/api/",
 			"app/view/",
 			"chat/client/app/view/",
 			"chat/client/app/widget/",
@@ -341,8 +340,8 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
-			setStore('flags/level_3_page_loaded', true);
+			var emitSourceLoaded = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports.emitSourceLoaded;
+			emitSourceLoaded();
 			console.timeEnd('all resource loaded');
 			loadLeftImages();
 		}, function (r) {

@@ -11,6 +11,8 @@ import { registerStore } from '../../middleLayer/wrap';
 import { changellyGetCurrencies } from '../../net/changellyPull';
 import { getModulConfig } from '../../publicLib/modulConfig';
 import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
+import { kickOffline } from '../../viewLogic/login';
+import { setSourceLoadedCallbackList } from './main';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -111,12 +113,13 @@ export class App extends Widget {
 
 // ===================================================== 立即执行
 
-registerStore('flags/level_3_page_loaded', (loaded: boolean) => {
+setSourceLoadedCallbackList(() => {
     checkPopPhoneTips();
-    if (localStorage.getItem('kickOffline')) {
-        const kickOffline = pi_modules.commonjs.exports.relativeGet('app/net/login').exports.kickOffline;
+    let res:any = localStorage.getItem('kickOffline');
+    if (res) {
+        res = JSON.parse(res);
         localStorage.removeItem('kickOffline');
-        kickOffline();  // 踢人下线提示
+        kickOffline(res.secretHash,res.phone,res.code,res.num);  // 踢人下线提示
     }
 });
 

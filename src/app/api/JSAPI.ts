@@ -3,13 +3,12 @@
  */
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
-import { sign } from '../core/genmnemonic';
-import { GlobalWallet } from '../core/globalWallet';
-import { callGetMnemonicByHash, callGetOpenId,callRequestAsync, callVerifyIdentidy } from '../middleLayer/wrap';
+// tslint:disable-next-line:max-line-length
+import { callExportPrivateKeyByMnemonic, callGenmnemonicSign,callGetCloudBalances, callGetMnemonicByHash, callGetOpenId, callRequestAsync, callVerifyIdentidy } from '../middleLayer/wrap';
 import { getOneUserInfo } from '../net/pull';
 import { SCPrecision } from '../publicLib/config';
 import { CloudCurrencyType } from '../publicLib/interface';
-import { getCloudBalances } from '../store/memstore';
+import { getUserInfo } from '../utils/tools';
 import { getGameItem } from '../view/play/home/gameConfig';
 import { minWebview1 } from './thirdBase';
 
@@ -32,14 +31,14 @@ export enum SetNoPassword {
  */
 export const authorize = (payload, callback) => {
     console.log('authorize called',payload);
-    callGetOpenId(payload.appId).then(resData => {
+    Promise.all([callGetOpenId(payload.appId),getUserInfo()]).then(([resData,userInfo]) => {
         const ret:any = {};
         ret.openId = resData.openid;
         if (payload.avatar) {
-            ret.avatar = getUserInfo().avatar;
+            ret.avatar = userInfo.avatar;
         }
         if (payload.nickName) {
-            ret.nickName = getUserInfo().nickName;
+            ret.nickName = userInfo.nickName;
         }
         callback(undefined,ret);
     }).catch(err => {
@@ -144,8 +143,8 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
     try {
         // tslint:disable-next-line:variable-name
         const fee_total = order.total_fee;
-        const setNoPassword = await queryNoPWD(order.appid,fee_total);
-        const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
+        const [setNoPassword,cloudBalances] = await Promise.all([queryNoPWD(order.appid,fee_total),callGetCloudBalances()]);
+        const scBalance = cloudBalances.get(CloudCurrencyType.SC);
         console.log('thirdPay balance =========',scBalance * SCPrecision);
         console.log('thirdPay fee_total =========',fee_total);
         console.log('thirdPay setNoPassword =========',setNoPassword);
@@ -345,9 +344,9 @@ export const closePayment = async (transactionId:string,okCb?:Function,failCb?:F
  */
 const getSign = async (json:any,secretHash:string) => {
     const mnemonic = await callGetMnemonicByHash(secretHash);
-    const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
+    const privateKey = await callExportPrivateKeyByMnemonic(mnemonic);
 
-    return sign(jsonUriSort(json), wlt.exportPrivateKey());
+    return callGenmnemonicSign(jsonUriSort(json), privateKey);
 };
 
 /**

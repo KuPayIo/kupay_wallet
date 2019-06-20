@@ -4,6 +4,7 @@ import { callDefaultLogin, callGetAllAccount, callGetOpenId, callGetRandom, call
 import { CMD } from '../publicLib/config';
 import { defaultPassword } from '../utils/constants';
 import { closeAllPage, delPopPhoneTips, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
+import { getSourceLoaded } from '../view/base/main';
 
 /**
  * 密码弹框重新登录
@@ -152,5 +153,9 @@ registerStore('flags/doLogoutSuccess',(doLogoutSuccess:boolean) => {
 
 // 账号已经登录  踢人下线
 registerStore('flags/kickOffline',(res:any) => {
-    kickOffline(res.secretHash,res.phone,res.code,res.num);
+    if (getSourceLoaded()) {
+        kickOffline(res.secretHash,res.phone,res.code,res.num);
+    } else {
+        localStorage.setItem('kickOffline',JSON.stringify(res));
+    }
 });

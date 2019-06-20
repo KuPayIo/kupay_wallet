@@ -66,8 +66,7 @@ export class CreateWalletByImage extends Widget {
                     }
                 });
             });
-            setStoreData('flags/imgArgon2HashPromise',imgArgon2HashPromise);
-            popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });
+            popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image,imgArgon2HashPromise });
             this.ok && this.ok();
         } else {
             popNewMessage('照片名字格式错误');

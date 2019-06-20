@@ -5,7 +5,7 @@ import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { EthWallet } from '../core/eth/wallet';
-import { generateByHash, sha3, toMnemonic } from '../core/genmnemonic';
+import { generateByHash, sha3, sign, toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 // tslint:disable-next-line:max-line-length
 import { btcNetwork, defalutShowCurrencys, defaultGasLimit, ERC20Tokens, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from '../publicLib/config';
@@ -109,6 +109,22 @@ export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) =>
         return '';
     }
 };
+
+/**
+ * 签名
+ */
+export const genmnemonicSign = (random:string, privateKey:string) => {
+    return sign(random,privateKey);
+};
+
+/**
+ * 导出ETH第一个地址私钥
+ */
+export const exportPrivateKeyByMnemonic = (mnemonic:string) => {
+    const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
+
+    return wlt.exportPrivateKey();
+};
 /**
  * 随机创建钱包
  */
@@ -145,16 +161,9 @@ export const createWalletRandom = async (option: CreateWalletOption,tourist?:boo
  * @param option 参数
  */
 export const createWalletByImage = async (option: CreateWalletOption) => {
-    const secrectHashPromise = calcHashValue(option.psw,getStore('user/salt'));
-
-    const imgArgon2HashPromise = getStore('flags').imgArgon2HashPromise;
-
-    console.time('pi_create Promise all need');
-    const [secrectHash,vault] = await Promise.all([secrectHashPromise,imgArgon2HashPromise]);
-    console.timeEnd('pi_create Promise all need');
-    
+    const secrectHash = await calcHashValue(option.psw,getStore('user/salt'));
     console.time('pi_create GlobalWallet generate need');
-    const gwlt = GlobalWallet.generate(secrectHash, vault);
+    const gwlt = GlobalWallet.generate(secrectHash, option.valut);
     console.timeEnd('pi_create GlobalWallet generate need');
     // 创建钱包基础数据
     const wallet: Wallet = {

@@ -6,9 +6,10 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callLockScreenHash, callLockScreenVerify, callVerifyIdentidy,getStoreData, registerStore, setStoreData } from '../../middleLayer/wrap';
+import { callLockScreenHash, callLockScreenVerify, callVerifyIdentidy,getStoreData, setStoreData } from '../../middleLayer/wrap';
 import { LockScreen } from '../../publicLib/interface';
 import { popNewLoading, popNewMessage } from '../../utils/tools';
+import { getSourceLoaded, setSourceLoadedCallbackList } from '../../view/base/main';
 import { logoutAccount } from '../../viewLogic/login';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -153,7 +154,7 @@ export class LockScreenPage extends Widget {
      * 判断资源加载完成
      */
     public judgeLoading() {
-        const loaded = getStoreData('flags/level_3_page_loaded');
+        const loaded = getSourceLoaded();
         if (loaded) {
             this.props.loading = true;
             this.paint();
@@ -161,7 +162,7 @@ export class LockScreenPage extends Widget {
     }
 }
 
-registerStore('flags/level_3_page_loaded',(loaded:boolean) => {
+setSourceLoadedCallbackList(() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.judgeLoading();

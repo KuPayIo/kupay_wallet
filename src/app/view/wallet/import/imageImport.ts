@@ -68,8 +68,7 @@ export class ImageImport extends Widget {
                 }
             });
         });
-        setStoreData('flags/imgArgon2HashPromise',imgArgon2HashPromise);
-        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image },() => {
+        popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image,imgArgon2HashPromise },() => {
             this.ok && this.ok();
         });
         // const w:any = forelet.getWidget(WIDGET_NAME);

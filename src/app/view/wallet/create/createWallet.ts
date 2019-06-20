@@ -14,6 +14,7 @@ interface Props {
     mnemonic?: string;// 助记词
     fragment1?: string;// 片段1
     fragment2?: string;// 片段2
+    imgArgon2HashPromise?:any;   // 图片promise 
 }
 export class CreateWallet extends Widget {
     public props: any;
@@ -128,6 +129,8 @@ export class CreateWallet extends Widget {
         } else if (this.props.itype === CreateWalletType.FragmentImport) {
             option.fragment1 = this.props.fragment1;
             option.fragment2 = this.props.fragment2;
+        } else if (this.props.itype === CreateWalletType.Image || this.props.itype === CreateWalletType.ImageImport) {
+            option.valut = await this.props.imgArgon2HashPromise();
         }
         console.time('pi_create createWallet all need');
         const secrectHash = await createWallet(this.props.itype, option);

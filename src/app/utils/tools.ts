@@ -14,6 +14,7 @@ import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin, uploadFileUrl
 import { CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
 import { SettingLanguage } from '../view/base/app';
+import { getSourceLoaded } from '../view/base/main';
 import { logoutAccount } from '../viewLogic/login';
 import { piLoadDir, piRequire } from './commonjsTools';
 import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
@@ -492,7 +493,7 @@ export const calCurrencyLogoUrl = (currencyName:string) => {
  */
 export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
     getStoreData('flags').then(flags => {
-        if (flags.level_3_page_loaded) {
+        if (getSourceLoaded()) {
             popNew(name,props,ok,cancel);
         } else {
             const loading = popNew('app-components1-loading-loading1');
@@ -502,7 +503,6 @@ export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callb
                 'app/viewLogic/',
                 'app/components/',
                 'app/res/',
-                'app/api/',
                 'app/view/',
                 'chat/client/app/view/',
                 'chat/client/app/widget/',

@@ -296,13 +296,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     } catch (res) {
         resp = res;
         if (res.type === 1014 && res.why !== deviceDetail.uuid) {  // 避免自己踢自己下线
-            const flags = getStore('flags');
-            console.log('flags =====',flags);
-            if (flags.level_3_page_loaded) {  // 钱包创建成功直接提示,此时资源已经加载完成
-                setStore('flags/kickOffline',{ secretHash,phone,code,num });
-            } else {  // 刷新页面后，此时资源没有加载完成,延迟到资源加载成功弹出提示
-                localStorage.setItem('kickOffline',JSON.stringify(true));
-            }
+            setStore('flags/kickOffline',{ secretHash,phone,code,num });   // 通知踢人下线
         } 
     } 
     console.log('getRandom resp = ',resp);
@@ -451,7 +445,6 @@ export const loginSuccess = (account:Account,secretHash:string) => {
     setStore('wallet',wallet,false);
     setStore('cloud',cloud,false);
     setStore('user',user);
-    setStore('flags',{ level_3_page_loaded:true });
     openConnect(secretHash);
 };
 

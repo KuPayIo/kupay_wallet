@@ -15,7 +15,7 @@ import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecha
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList,getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from './tools';
 // tslint:disable-next-line:max-line-length
-import { ahashToArgon2Hash, backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
+import { ahashToArgon2Hash, backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, exportPrivateKeyByMnemonic, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, genmnemonicSign, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
 
 export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 
@@ -513,6 +513,19 @@ export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string,callb
     });
 };
 
+/**
+ * 签名
+ */
+export const callGenmnemonicSign = (random:string, privateKey:string,callback:Function) => {
+    callback([undefined,genmnemonicSign(random,privateKey)]);
+};
+
+/**
+ * 导出ETH第一个地址私钥
+ */
+export const callExportPrivateKeyByMnemonic = (mnemonic:string,callback:Function) => {
+    callback([undefined,exportPrivateKeyByMnemonic(mnemonic)]);
+};
 /**
  * 随机创建钱包
  */
