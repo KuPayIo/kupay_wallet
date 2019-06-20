@@ -23,7 +23,6 @@ export const piLoadDir = (sourceList:string[]) => {
         html.checkWebpFeature((r) => {
             const flags:any = {};
             flags.webp = flags.webp || r;
-            console.log('flags.webp ====',flags);
             const util = relativeGet('pi/widget/util');
             util.loadDir(sourceList, flags, undefined, undefined,  (fileMap) => {
                 const tab = util.loadCssRes(fileMap);
