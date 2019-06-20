@@ -6,11 +6,10 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
-import { callDcUpdateAddrInfo, callFetchBalanceValueOfCoin, callFetchBtcFees, callFetchGasPrices, callFetchMinerFeeList,callGetCurrentAddrInfo, callTransfer,callUpdateLocalTx } from '../../../middleLayer/wrap';
+import { callDcUpdateAddrInfo, callFetchBalanceValueOfCoin, callFetchBtcFees, callFetchGasPrices, callFetchMinerFeeList,callGetCurrentAddrInfo, callTransfer,callUpdateLocalTx, registerStore } from '../../../middleLayer/wrap';
 import { ERC20Tokens } from '../../../publicLib/config';
 import { MinerFeeLevel, TxHistory, TxPayload } from '../../../publicLib/interface';
 import { formatBalance } from '../../../publicLib/tools';
-import { register } from '../../../store/memstore';
 import { doErrorShow } from '../../../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
 import {  getCurrencyUnitSymbol, getStaticLanguage, judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
@@ -207,7 +206,7 @@ export class Transfer extends Widget {
 }
 
 // gasPrice变化
-register('third/gasPrice',() => {
+registerStore('third/gasPrice',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();
@@ -215,7 +214,7 @@ register('third/gasPrice',() => {
 });
 
 // btcMinerFee变化
-register('third/btcMinerFee',() => {
+registerStore('third/btcMinerFee',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();

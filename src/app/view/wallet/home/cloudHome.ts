@@ -4,11 +4,10 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
-import { callFetchCloudTotalAssets, callFetchCloudWalletAssetList,callGetProductList, callGetServerCloudBalance,getStoreData } from '../../../middleLayer/wrap';
+import { callFetchCloudTotalAssets, callFetchCloudWalletAssetList,callGetProductList, callGetServerCloudBalance,getStoreData, registerStore } from '../../../middleLayer/wrap';
 import { CloudCurrencyType, Product } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { formatBalanceValue } from '../../../publicLib/tools';
-import { register } from '../../../store/memstore';
 import { getCurrencyUnitSymbol, popNew3 } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -94,7 +93,7 @@ export class CloudHome extends Widget {
 }
 
 // =======================本地
-register('user',() => {
+registerStore('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -103,7 +102,7 @@ register('user',() => {
 });
 
 // 云端余额变化
-register('cloud/cloudWallets',() => {
+registerStore('cloud/cloudWallets',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -111,7 +110,7 @@ register('cloud/cloudWallets',() => {
 });
 
 // 货币涨跌幅度变化
-register('currency2USDTMap',() => {
+registerStore('currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -119,7 +118,7 @@ register('currency2USDTMap',() => {
 });
 
 // 理财产品变化
-register('activity/financialManagement/products', async (productList) => {
+registerStore('activity/financialManagement/products', async (productList) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateProductList(productList);
@@ -128,14 +127,14 @@ register('activity/financialManagement/products', async (productList) => {
 });
 
 // 白银价格变化
-register('third/silver', () => {
+registerStore('third/silver', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
     }
     
 });
-register('setting/language', () => {
+registerStore('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -143,7 +142,7 @@ register('setting/language', () => {
     }
 });
 
-register('setting/changeColor', () => {
+registerStore('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -152,7 +151,7 @@ register('setting/changeColor', () => {
 });
 
 // 货币单位变化
-register('setting/currencyUnit',() => {
+registerStore('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();

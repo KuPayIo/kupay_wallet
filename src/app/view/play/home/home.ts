@@ -11,8 +11,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,getStoreData } from '../../../middleLayer/wrap';
-import { register } from '../../../store/memstore';
+import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,getStoreData, registerStore } from '../../../middleLayer/wrap';
 import { getUserInfo, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
 
@@ -219,7 +218,7 @@ export class PlayHome extends Widget {
 }
 let hasEnterGame = false;
 // ========================================
-register('user/info',() => {
+registerStore('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         getUserInfo().then(userInfo => {
@@ -231,7 +230,7 @@ register('user/info',() => {
     }
 });
 
-register('user/isLogin', (isLogin:boolean) => {
+registerStore('user/isLogin', (isLogin:boolean) => {
     setTimeout(() => {
         const w:any = forelet.getWidget(WIDGET_NAME);
         w && w.defaultEnterGame();

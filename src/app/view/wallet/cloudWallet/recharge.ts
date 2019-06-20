@@ -5,11 +5,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import {  callFetchBtcFees, callFetchGasPrices,callFetchMinerFeeList, callGetCurrentAddrInfo } from '../../../middleLayer/wrap';
+import {  callFetchBtcFees, callFetchGasPrices,callFetchMinerFeeList, callGetCurrentAddrInfo, registerStore } from '../../../middleLayer/wrap';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { formatBalance } from '../../../publicLib/tools';
-import { register } from '../../../store/memstore';
 import { popNewMessage, popPswBox } from '../../../utils/tools';
 import { recharge, resendRecharge } from '../../../viewLogic/localWallet';
 
@@ -155,7 +154,7 @@ export class Recharge extends Widget {
 }
 
 // gasPrice变化
-register('third/gasPrice',() => {
+registerStore('third/gasPrice',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();
@@ -163,7 +162,7 @@ register('third/gasPrice',() => {
 });
 
 // btcMinerFee变化
-register('third/btcMinerFee',() => {
+registerStore('third/btcMinerFee',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();

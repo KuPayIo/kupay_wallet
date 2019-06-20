@@ -5,10 +5,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetPurchaseRecord,callVerifyIdentidy } from '../../../middleLayer/wrap';
+import { callGetPurchaseRecord,callVerifyIdentidy, registerStore } from '../../../middleLayer/wrap';
 import { buyBack } from '../../../net/pull';
 import { PurchaseHistory } from '../../../publicLib/interface';
-import { register } from '../../../store/memstore';
 import { popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 interface Props {
     product:PurchaseHistory;
@@ -82,7 +81,7 @@ export class HoldedFmDetail extends Widget {
     }
 }
 
-register('activity/financialManagement/purchaseHistories',(purchaseRecord) => {
+registerStore('activity/financialManagement/purchaseHistories',(purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         const data = {

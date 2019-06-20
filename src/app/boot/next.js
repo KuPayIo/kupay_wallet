@@ -321,7 +321,6 @@ winit.initNext = function () {
 	// 加载剩下的资源
 	var loadLeftSource = function () {
 		var level2SourceList = [
-			"app/core/",
 			"app/logic/",
 			"app/components/",
 			"app/api/",

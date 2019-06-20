@@ -5,9 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/wrap';
+import { getStoreData, registerStore } from '../../../middleLayer/wrap';
 import { uploadFile } from '../../../net/pull';
-import { register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
 import { getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { exportMnemonic } from '../../../viewLogic/localWallet';
@@ -188,21 +187,21 @@ export class AccountHome extends Widget {
     }
 }
 
-register('user/info', () => {
+registerStore('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
 
-register('wallet', () => {
+registerStore('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
 
-register('setting/language', (r) => {
+registerStore('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.language = w.config.value[r];

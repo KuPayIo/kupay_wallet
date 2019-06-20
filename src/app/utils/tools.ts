@@ -497,10 +497,8 @@ export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callb
         } else {
             const loading = popNew('app-components1-loading-loading1');
             const level3SourceList = [
-                'app/core/',
                 'app/middleLayer/',
                 'app/publicLib/',
-                'app/remote/',
                 'app/viewLogic/',
                 'app/components/',
                 'app/res/',

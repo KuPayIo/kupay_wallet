@@ -7,11 +7,10 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
-import { callQuerySendRedEnvelopeRecord,getStoreData } from '../../../middleLayer/wrap';
+import { callQuerySendRedEnvelopeRecord,getStoreData, registerStore } from '../../../middleLayer/wrap';
 import { getInviteCode } from '../../../net/pull';
 import { PAGELIMIT } from '../../../publicLib/config';
 import { LuckyMoneyType } from '../../../publicLib/interface';
-import { register } from '../../../store/memstore';
 import { getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出
@@ -191,7 +190,7 @@ export class RedEnvHistory extends Widget {
     }
 }
 // =====================================本地
-register('activity/luckyMoney/sends', () => {
+registerStore('activity/luckyMoney/sends', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();

@@ -6,9 +6,8 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callLockScreenHash, callLockScreenVerify, callVerifyIdentidy,getStoreData, setStoreData } from '../../middleLayer/wrap';
+import { callLockScreenHash, callLockScreenVerify, callVerifyIdentidy,getStoreData, registerStore, setStoreData } from '../../middleLayer/wrap';
 import { LockScreen } from '../../publicLib/interface';
-import { register  } from '../../store/memstore';
 import { popNewLoading, popNewMessage } from '../../utils/tools';
 import { logoutAccount } from '../../viewLogic/login';
 // ================================ 导出
@@ -161,7 +160,8 @@ export class LockScreenPage extends Widget {
         }
     }
 }
-register('flags/level_3_page_loaded',(loaded:boolean) => {
+
+registerStore('flags/level_3_page_loaded',(loaded:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.judgeLoading();

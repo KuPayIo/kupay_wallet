@@ -3,9 +3,8 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetPurchaseRecord,getStoreData } from '../../../middleLayer/wrap';
+import { callGetPurchaseRecord,getStoreData, registerStore } from '../../../middleLayer/wrap';
 import { PurchaseHistory } from '../../../publicLib/interface';
-import { register } from '../../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -41,7 +40,7 @@ export class HoldedFM extends Widget {
 }
 
 // =====================================本地
-register('activity/financialManagement/purchaseHistories', (purchaseRecord) => {
+registerStore('activity/financialManagement/purchaseHistories', (purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updatePurchaseRecord(purchaseRecord);

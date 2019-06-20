@@ -6,11 +6,10 @@ import { setStore } from '../../../../chat/client/app/data/store';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetAccountDetail,callGetCloudBalances } from '../../../middleLayer/wrap';
+import { callGetAccountDetail,callGetCloudBalances, registerStore } from '../../../middleLayer/wrap';
 import { SCPrecision } from '../../../publicLib/config';
 import { CloudCurrencyType, TaskSid } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
-import { register } from '../../../store/memstore';
 import { rechargeGiftMultiple, SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
 
@@ -157,7 +156,7 @@ export class RechargeSC extends Widget {
 }
 
 // 余额变化
-register('cloud/cloudWallets', () => {
+registerStore('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         callGetCloudBalances().then(cloudBalances => {

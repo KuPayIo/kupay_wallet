@@ -7,11 +7,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetCloudBalances, callGetDividend, callGetDividHistory,callGetMining, getStoreData } from '../../../middleLayer/wrap';
+import { callGetCloudBalances, callGetDividend, callGetDividHistory,callGetMining, getStoreData, registerStore } from '../../../middleLayer/wrap';
 import { PAGELIMIT } from '../../../publicLib/config';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
-import { register } from '../../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -208,13 +207,13 @@ export class Dividend extends Widget {
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-register('activity/dividend/total', () => {
+registerStore('activity/dividend/total', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-register('activity/dividend/history', () => {
+registerStore('activity/dividend/history', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();

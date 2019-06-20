@@ -66,6 +66,13 @@ export const setStoreData = (path: string, data: any, notified = true) => {
 };
 
 /**
+ * 注册store
+ */
+export const registerStore = (keyName: string, cb: Function) => {
+    return vmRpcCall('registerStore',[keyName,cb]);
+};
+
+/**
  * 获取所有的账户列表
  */
 export const callGetAllAccount = () => {

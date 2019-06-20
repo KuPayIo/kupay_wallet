@@ -3,9 +3,8 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callFetchLocalTotalAssets, callFetchWalletAssetList,getStoreData } from '../../../middleLayer/wrap';
+import { callFetchLocalTotalAssets, callFetchWalletAssetList,getStoreData, registerStore } from '../../../middleLayer/wrap';
 import { formatBalanceValue } from '../../../publicLib/tools';
-import { register } from '../../../store/memstore';
 import { getCurrencyUnitSymbol, popNew3 } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -68,7 +67,7 @@ export class WalletHome extends Widget {
 }
 
 // ==================本地
-register('user',() => {
+registerStore('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -77,7 +76,7 @@ register('user',() => {
 });
 
 // 钱包记录变化
-register('wallet',() => {
+registerStore('wallet',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -86,7 +85,7 @@ register('wallet',() => {
 });
 
 // 钱包记录变化
-register('wallet/currencyRecords',() => {
+registerStore('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -94,7 +93,7 @@ register('wallet/currencyRecords',() => {
 });
 
 // 货币涨跌幅度变化
-register('third/currency2USDTMap',() => {
+registerStore('third/currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -102,20 +101,20 @@ register('third/currency2USDTMap',() => {
 });
 
 // 汇率变化
-register('third/rate',() => {
+registerStore('third/rate',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
     }
 });
-register('setting/language', () => {
+registerStore('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
         w.paint();
     }
 });
-register('setting/changeColor', () => {
+registerStore('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -124,7 +123,7 @@ register('setting/changeColor', () => {
 });
 
 // 货币单位变化
-register('setting/currencyUnit',() => {
+registerStore('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();

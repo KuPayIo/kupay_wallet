@@ -5,9 +5,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetPurchaseRecord,getStoreData } from '../../../middleLayer/wrap';
+import { callGetPurchaseRecord,getStoreData, registerStore } from '../../../middleLayer/wrap';
 import { Product, PurchaseHistory } from '../../../publicLib/interface';
-import { register } from '../../../store/memstore';
 import { calPercent, popNewMessage } from '../../../utils/tools';
 
 // ====================================================导出
@@ -101,7 +100,7 @@ export class ProductDetail extends Widget {
 }
 
 // =====================================本地
-register('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
+registerStore('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updatePurchaseRecord(purchaseRecord);

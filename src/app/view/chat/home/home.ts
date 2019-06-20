@@ -6,7 +6,7 @@ import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { register } from '../../../store/memstore';
+import { registerStore } from '../../../middleLayer/wrap';
 import { getUserInfo } from '../../../utils/tools';
 
 // ================================ 导出
@@ -52,7 +52,7 @@ export class ChatHome extends Widget {
         popNew('app-view-wallet-create-home');
     }
 }
-register('user/info',() => {
+registerStore('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         getUserInfo().then(userInfo => {

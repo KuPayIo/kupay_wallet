@@ -6,10 +6,9 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
-import { callFetchBalanceValueOfCoin, callFetchCoinGain,callGetAccountDetail, callGetCloudBalances, callGetRechargeLogs,callGetWithdrawLogs, getStoreData } from '../../../middleLayer/wrap';
+import { callFetchBalanceValueOfCoin, callFetchCoinGain,callGetAccountDetail, callGetCloudBalances, callGetRechargeLogs,callGetWithdrawLogs, getStoreData, registerStore } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { formatBalance, formatBalanceValue } from '../../../publicLib/tools';
-import { register } from '../../../store/memstore';
 import { getCurrencyUnitSymbol } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -130,7 +129,7 @@ export class CloudWalletHome extends Widget {
 // ===========================
 
 // 余额变化
-register('cloud/cloudWallets', () => {
+registerStore('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -138,7 +137,7 @@ register('cloud/cloudWallets', () => {
 });
 
 // 汇率变化
-register('third/USD2CNYRate', () => {
+registerStore('third/USD2CNYRate', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -146,7 +145,7 @@ register('third/USD2CNYRate', () => {
 });
 
 // 涨跌幅变化
-register('third/currency2USDTMap', () => {
+registerStore('third/currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -154,7 +153,7 @@ register('third/currency2USDTMap', () => {
 });
 
 // 货币单位变化
-register('setting/currencyUnit',() => {
+registerStore('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();

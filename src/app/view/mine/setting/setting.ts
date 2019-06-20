@@ -6,8 +6,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callBackupMnemonic, getStoreData,setStoreData } from '../../../middleLayer/wrap';
-import { register } from '../../../store/memstore';
+import { callBackupMnemonic, getStoreData,registerStore, setStoreData } from '../../../middleLayer/wrap';
 import { popPswBox, rippleShow } from '../../../utils/tools';
 import { logoutAccount } from '../../../viewLogic/login';
 // ================================================导出
@@ -182,39 +181,39 @@ export class Setting extends Widget {
 }
 
 // ================================================本地，立即执行
-register('setting/language', (r) => {
+registerStore('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.language = w.config.value[r];
         w.init();
     }
 });
-register('setting/currencyUnit', () => {
+registerStore('setting/currencyUnit', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-register('setting/changeColor', () => {
+registerStore('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-register('setting/lockScreen', () => {
+registerStore('setting/lockScreen', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-register('wallet', () => {
+registerStore('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
 
-register('user',() => {
+registerStore('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();

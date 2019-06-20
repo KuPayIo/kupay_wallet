@@ -5,10 +5,9 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetWithdrawLogs,getStoreData } from '../../../middleLayer/wrap';
+import { callGetWithdrawLogs,getStoreData, registerStore } from '../../../middleLayer/wrap';
 import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
-import { register } from '../../../store/memstore';
 import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -106,7 +105,7 @@ export class WithdrawRecord extends Widget {
 
 // ====================================
 
-register('cloud/cloudWallets', () => {
+registerStore('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();
@@ -114,7 +113,7 @@ register('cloud/cloudWallets', () => {
 });
 
 // 本地交易变化,更新状态
-register('wallet/currencyRecords',() => {
+registerStore('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

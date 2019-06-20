@@ -4,9 +4,8 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getProductList } from '../../../net/pull';
+import { callGetProductList, registerStore } from '../../../middleLayer/wrap';
 import { Product } from '../../../publicLib/interface';
-import { register } from '../../../store/memstore';
 
 interface Props {
     isActive:boolean;
@@ -27,7 +26,7 @@ export class RecommendFM extends Widget {
             productList:[]
         };
         if (this.props.isActive) {
-            getProductList();
+            callGetProductList();
         }
     }
 
@@ -43,7 +42,7 @@ export class RecommendFM extends Widget {
 }
 
 // 理财产品变化
-register('activity/financialManagement/products',(productList) => {
+registerStore('activity/financialManagement/products',(productList) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateProductList(productList);

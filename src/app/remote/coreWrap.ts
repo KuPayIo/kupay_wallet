@@ -4,7 +4,7 @@
 import { getEthApiBaseUrl } from '../core/config';
 import { isValidMnemonic } from '../core/genmnemonic';
 import { AddrInfo, CloudCurrencyType, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
-import { deleteAccount, getAllAccount, getCloudBalances, getStore, setStore } from '../store/memstore';
+import { deleteAccount, getAllAccount, getCloudBalances, getStore, register, setStore } from '../store/memstore';
 import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, dcUpdateBalance } from './dataCenter';
 // tslint:disable-next-line:max-line-length
 import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, logoutAccountDel, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from './login';
@@ -44,6 +44,12 @@ export const setStoreData = (path: string, data: any, notified = true,callback:F
     callback([undefined,setStore(path,data,notified)]);
 };
 
+/**
+ * 注册store
+ */
+export const registerStore = (keyName: string, cb: Function,callback:Function) => {
+    callback([undefined,register(keyName,cb)]);
+};
 /**
  * 获取所有的账户列表
  */
