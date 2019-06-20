@@ -2,38 +2,41 @@
  * 中间件
  */
 import { WebViewManager } from '../../pi/browser/webview';
-import { LANGUAGE } from '../core/btc/wallet';
-import { getEthApiBaseUrl } from '../core/config';
-import { isValidMnemonic } from '../core/genmnemonic';
 import { AddrInfo, CloudCurrencyType, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
-import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, dcUpdateBalance } from '../remote/dataCenter';
-// tslint:disable-next-line:max-line-length
-import { getRandom, loginSuccess, logoutAccount, logoutAccountDel, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from '../remote/login';
-// tslint:disable-next-line:max-line-length
-import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getMineDetail, getMining, getProductList, getPurchaseRecord, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from '../remote/pull';
-// tslint:disable-next-line:max-line-length
-import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from '../remote/pullWallet';
-// tslint:disable-next-line:max-line-length
-import { ahashToArgon2Hash, backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from '../remote/wallet';
 
 const vmName = 'JSVM';   // 虚拟机rpc通信名称
 
+export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
+
 /**
  * vm rpc 调用
+ * rpc调用有两种模式 callback放在rpc函数调用最后面实现对同步函数的rpc调用  放置rpcData 下params参数最后面实现对异步函数的rpc调用
  * @param data 参数 
  */
 const vmRpcCall = (moduleName:string,methodName:string,params: any[]):Promise<any> => {
-    return new Promise((resolve) => {
-        WebViewManager.rpc(vmName,{ moduleName,methodName,params },(res) => {
+    return new Promise((resolve,reject) => {
+        // 在params后面加入callback函数  实现对异步函数的rpc调用
+        params.push(([error,res]) => { 
+            if (error) reject(error);
             resolve(res);
         });
+        WebViewManager.rpc(vmName,{ moduleName,methodName,params });
     });
 };
+
+// ================================模块名定义=====================================================
 
 const MEMSTOREMODULENAME = 'app/store/memstore';   // memstore moduleName
 const TOOLSMODULENAME = 'app/remote/tools';        // tools moduleName
 const LOGINMODULENAME = 'app/remote/login';        // login moduleName
 const PULLMODULENAME = 'app/remote/pull';          // pull moduleName
+const PULLWALLETMODULENAME = 'app/remote/pullWallet';  // pullWallet moduleName
+const WALLETMODULENAME = 'app/remote/wallet';          // wallet moduleName
+const DATACENTERMODULENAME = 'app/remote/dataCenter';   // dataCenter moduleName
+const GENMNEMONICMODULENAME = 'app/core/genmnemonic';   // genmnemonic moduleName
+const CORECONFIGMODULENAME = 'app/core/config';         // core/config moduleName
+
+// ================================模块名定义=====================================================
 
 // ===========================================memstroe相关===================================================================
 
@@ -158,10 +161,7 @@ export const callUpdateLocalTx = (tx: TxHistory) => {
  * 开启ws连接
  */
 export const openWSConnect = (secrectHash:string = '') => {
-    return new Promise(resolve => {
-        openConnect(secrectHash);
-        resolve();
-    });
+    return vmRpcCall(LOGINMODULENAME,'openConnect',[secrectHash]);
 };
 
 /**
@@ -169,7 +169,7 @@ export const openWSConnect = (secrectHash:string = '') => {
  * @param msg 参数
  */
 export const callRequestAsync = (msg: any) => {
-    return requestAsync(msg);
+    return vmRpcCall(LOGINMODULENAME,'requestAsync',[msg]);
 };
 
 /**
@@ -183,7 +183,7 @@ export const callRequestAsync = (msg: any) => {
  * manage_money@sell   出售理财
  */
 export const callRequestAsyncNeedLogin = (msg: any,secretHash:string) => {
-    return requestAsyncNeedLogin(msg,secretHash);
+    return vmRpcCall(LOGINMODULENAME,'requestAsyncNeedLogin',[msg,secretHash]);
 };
 
 /**
@@ -191,11 +191,7 @@ export const callRequestAsyncNeedLogin = (msg: any,secretHash:string) => {
  * flag:0 普通用户注册，1注册即为真实用户
  */
 export const callGetRandom = (secretHash:string,cmd?:number,phone?:number,code?:number,num?:string) => {
-    return new Promise((resolve) => {
-        getRandom(secretHash,cmd,phone,code,num).then((res) => {
-            resolve(res);
-        });
-    });
+    return vmRpcCall(LOGINMODULENAME,'getRandom',[secretHash,cmd,phone,code,num]);
 };
 /**
  * 创建钱包后默认登录
@@ -206,63 +202,51 @@ export const callDefaultLogin = (hash:string,conRandom:string) => {
 
 // 获取云端余额
 export const callGetServerCloudBalance = () => {
-    return getServerCloudBalance();
+    return vmRpcCall(PULLMODULENAME,'getServerCloudBalance',[]);
 };
 
 // 获取真实用户
 export const callGetRealUser = () => {
-    return getRealUser();
+    return vmRpcCall(PULLMODULENAME,'getRealUser',[]);
 };
 
 // 手动重连
 export const callWalletManualReconnect = () => {
-    return new Promise(resolve => {
-        walletManualReconnect();
-        resolve();
-    });
+    return vmRpcCall(LOGINMODULENAME,'walletManualReconnect',[]);
 };
 
 /**
  * 注销账户保留数据
  */
 export const callLogoutAccount = () => {
-    return new Promise(resolve => {
-        logoutAccount();
-        resolve();
-    });
+    return vmRpcCall(LOGINMODULENAME,'logoutAccount',[]);
 };
 
 /**
  * 注销账户并删除数据
  */
 export const callLogoutAccountDel = () => {
-    return new Promise((resolve) => {
-        logoutAccountDel();
-        resolve();
-    });
+    return vmRpcCall(LOGINMODULENAME,'logoutAccountDel',[]);
 };
 /**
  * 登录某个账号成功
  */
 export const callLoginSuccess = (account:any,secretHash:string) => {
-    return new Promise(resolve => {
-        loginSuccess(account,secretHash);
-        resolve();
-    });
+    return vmRpcCall(LOGINMODULENAME,'loginSuccess',[account,secretHash]);
 };
 
 /**
  * 获取gasPrice
  */
 export const callFetchBtcFees = () => {
-    return fetchBtcFees();
+    return vmRpcCall(PULLMODULENAME,'fetchBtcFees',[]);
 };
 
 /**
  * 获取gasPrice
  */
 export const callFetchGasPrices = () => {
-    return fetchGasPrices();
+    return vmRpcCall(PULLMODULENAME,'fetchGasPrices',[]);
 };
 
 /**
@@ -277,7 +261,7 @@ export const callGetOpenId = (appId:string) => {
  * 获取全部用户嗨豆排名列表
  */
 export const callGetHighTop = (num: number) => {
-    return getHighTop(num);
+    return vmRpcCall(PULLMODULENAME,'getHighTop',[num]);
 };
 
 /**
@@ -285,91 +269,91 @@ export const callGetHighTop = (num: number) => {
  * filter（0表示不过滤，1表示过滤）
  */
 export const callGetAccountDetail = (coin: string,filter:number,start = '') => {
-    return getAccountDetail(coin,filter,start);
+    return vmRpcCall(PULLMODULENAME,'getAccountDetail',[coin,filter,start]);
 };
 
 /**
  * 充值历史记录
  */
 export const callGetRechargeLogs = (coin: string,start?) => {
-    return getRechargeLogs(coin,start);
+    return vmRpcCall(PULLMODULENAME,'getRechargeLogs',[coin,start]);
 };
 
 /**
  * 提现历史记录
  */
 export const callGetWithdrawLogs = (coin: string,start?) => {
-    return getWithdrawLogs(coin,start);
+    return vmRpcCall(PULLMODULENAME,'getWithdrawLogs',[coin,start]);
 };
 
 /**
  * 购买理财
  */
 export const callBuyProduct = (pid:any,count:any,secretHash:string) => {
-    return buyProduct(pid,count,secretHash);
+    return vmRpcCall(PULLMODULENAME,'buyProduct',[pid,count,secretHash]);
 };
 
 /**
  * 获取理财列表
  */
 export const callGetProductList = () => {
-    return getProductList();
+    return vmRpcCall(PULLMODULENAME,'getProductList',[]);
 };
 
 /**
  * 理财购买记录
  */
 export const callGetPurchaseRecord = (start = '') => {
-    return getPurchaseRecord(start);
+    return vmRpcCall(PULLMODULENAME,'getPurchaseRecord',[start]);
 };
 
 /**
  * 查询发送红包记录
  */
 export const callQuerySendRedEnvelopeRecord = (start?: string) => {
-    return querySendRedEnvelopeRecord(start);
+    return vmRpcCall(PULLMODULENAME,'querySendRedEnvelopeRecord',[start]);
 };
 
 /**
  * 查询某个红包兑换详情
  */
 export const callQueryDetailLog = (uid:number,rid: string,accId?:string) => {
-    return queryDetailLog(uid,rid,accId);
+    return vmRpcCall(PULLMODULENAME,'queryDetailLog',[uid,rid,accId]);
 };
 
 /**
  * 获取分红汇总信息
  */
 export const callGetDividend = () => {
-    return getDividend();
+    return vmRpcCall(PULLMODULENAME,'getDividend',[]);
 };
 
 /**
  * 获取分红历史记录
  */
 export const callGetDividHistory = (start = '') => {
-    return getDividHistory(start);
+    return vmRpcCall(PULLMODULENAME,'getDividHistory',[start]);
 };
 
 /**
  * 获取挖矿汇总信息
  */
 export const callGetMining = () => {
-    return getMining();
+    return vmRpcCall(PULLMODULENAME,'getMining',[]);
 };
 
 /**
  * 矿山增加记录
  */
 export const callGetMineDetail = (start = '') => {
-    return getMineDetail(start);
+    return vmRpcCall(PULLMODULENAME,'getMineDetail',[start]);
 };
 
 /**
  * 查询红包兑换记录
  */
 export const callQueryConvertLog = (start?:string) => {
-    return queryConvertLog(start);
+    return vmRpcCall(PULLMODULENAME,'queryConvertLog',[start]);
 };
 
 // ===========================================net相关===================================================================
@@ -380,124 +364,91 @@ export const callQueryConvertLog = (start?:string) => {
  * 获取eth api url
  */
 export const callGetEthApiBaseUrl = () => {
-    return new Promise((resolve) => {
-        resolve(getEthApiBaseUrl());
-    });
+    return vmRpcCall(CORECONFIGMODULENAME,'getEthApiBaseUrl',[]);
 };
 
 /**
  * dataCenter更新余额
  */
 export const callDcUpdateBalance = (addr: string, currencyName: string) => {
-    return new Promise((resolve) => {
-        dcUpdateBalance(addr, currencyName);
-        resolve();
-    });
+    return vmRpcCall(DATACENTERMODULENAME,'dcUpdateBalance',[addr,currencyName]);
 };
 
 /**
  * dataCenter刷新本地钱包
  */
 export const callDcRefreshAllTx = () => {
-    return new Promise((resolve) => {
-        dcRefreshAllTx();
-        resolve();
-    });
+    return vmRpcCall(DATACENTERMODULENAME,'dcRefreshAllTx',[]);
 };
 
 /**
  * dataCenter初始化ERC20代币GasLimit
  */
 export const callDcInitErc20GasLimit = () => {
-    return new Promise((resolve) => {
-        dcInitErc20GasLimit();
-        resolve();
-    });
+    return vmRpcCall(DATACENTERMODULENAME,'dcInitErc20GasLimit',[]);
 };
 
 /**
  * dataCenter更新地址相关 交易记录及余额定时更新
  */
 export const callDcUpdateAddrInfo = (addr: string, currencyName: string) => {
-    return new Promise((resolve) => {
-        dcUpdateAddrInfo(addr,currencyName);
-        resolve();
-    });
+    return vmRpcCall(DATACENTERMODULENAME,'dcUpdateAddrInfo',[addr,currencyName]);
 };
 
 /**
  * dataCenter通过hash清楚定时器
  */
 export const callDcClearTxTimer = (hash: string) => {
-    return new Promise((resolve) => {
-        dcClearTxTimer(hash);
-        resolve();
-    });
+    return vmRpcCall(DATACENTERMODULENAME,'dcClearTxTimer',[hash]);
 };
 /**
  * 验证当前账户身份
  * @param passwd 密码
  */
 export const callVerifyIdentidy = (passwd:string) => {
-    return new Promise((resolve) => {
-        VerifyIdentidy(passwd).then(hash => {
-            resolve(hash);
-        });
-    });
+    return vmRpcCall(WALLETMODULENAME,'VerifyIdentidy',[passwd]);
 };
 
 /**
  * 验证某个账户身份
  */
 export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string) => {
-    return new Promise((resolve) => {
-        VerifyIdentidy1(passwd,vault,salt).then(hash => {
-            resolve(hash);
-        });
-    });
+    return vmRpcCall(WALLETMODULENAME,'VerifyIdentidy1',[passwd,vault,salt]);
 };
 
 /**
  * 随机创建钱包
  */
 export const callCreateWalletRandom = (option: CreateWalletOption,tourist?:boolean) => {
-    return createWalletRandom(option,tourist);
+    return vmRpcCall(WALLETMODULENAME,'createWalletRandom',[option,tourist]);
 };
 
 /**
  * 通过助记词导入钱包
  */
 export const callImportWalletByMnemonic = (option: CreateWalletOption) => {
-    return importWalletByMnemonic(option);
+    return vmRpcCall(WALLETMODULENAME,'importWalletByMnemonic',[option]);
 };
 
 /**
  * 图片创建钱包
  */
 export const callCreateWalletByImage = (option: CreateWalletOption) => {
-    return createWalletByImage(option);
+    return vmRpcCall(WALLETMODULENAME,'createWalletByImage',[option]);
 };
 
 /**
  * 冗余助记词导入
  */
 export const callImportWalletByFragment = (option: CreateWalletOption) => {
-    return importWalletByFragment(option);
+    return vmRpcCall(WALLETMODULENAME,'importWalletByFragment',[option]);
 };
 
 /**
  * 创建新地址
  */
 export const callCreateNewAddr = (passwd: string, currencyName: string) => {
-    return new Promise((resolve,reject) => {
-        createNewAddr(passwd,currencyName).then(successed => {
-            if (successed) {
-                resolve();
-            } else {
-                reject();
-            }
-        });
-    });
+    return vmRpcCall(WALLETMODULENAME,'createNewAddr',[passwd,currencyName]);
 };
 
 /**
@@ -505,154 +456,133 @@ export const callCreateNewAddr = (passwd: string, currencyName: string) => {
  * @param passwd 密码 
  */
 export const callBackupMnemonic = (passwd:string,needFragments:boolean = true) => {
-    return backupMnemonic(passwd,needFragments);
+    return vmRpcCall(WALLETMODULENAME,'backupMnemonic',[passwd,needFragments]);
 };
 
 /**
  * 修改密码
  */
 export const callPasswordChange = (secretHash: string, newPsw: string) => {
-    return passwordChange(secretHash,newPsw);
+    return vmRpcCall(WALLETMODULENAME,'passwordChange',[secretHash,newPsw]);
 };
 
 /**
  * 获取矿工费
  */
 export const callFetchMinerFeeList = (currencyName:string) => {
-    return new Promise(resolve => {
-        resolve(fetchMinerFeeList(currencyName));
-    });
+    return vmRpcCall(WALLETMODULENAME,'fetchMinerFeeList',[currencyName]);
 };
 
 // 获取gasPrice
 export const callFetchGasPrice = (minerFeeLevel: MinerFeeLevel) => {
-    return new Promise(resolve => {
-        resolve(fetchGasPrice(minerFeeLevel));
-    });
+    return vmRpcCall(WALLETMODULENAME,'fetchGasPrice',[minerFeeLevel]);
 };
 
 /**
  * 获取某个地址的交易记录
  */
 export const callFetchTransactionList = (addr:string,currencyName:string) => {
-    return new Promise(resolve => {
-        resolve(fetchTransactionList(addr,currencyName));
-    });
+    return vmRpcCall(WALLETMODULENAME,'fetchTransactionList',[addr,currencyName]);
 };
 
 // 根据hash获取助记词
 export const callGetMnemonicByHash = (hash:string) => {
-    return new Promise(resolve => {
-        resolve(getMnemonicByHash(hash));
-    });
+    return vmRpcCall(WALLETMODULENAME,'getMnemonicByHash',[hash]);
 };
 
 /**
  * 增加或者删除展示的币种
  */
 export const callUpdateShowCurrencys = (currencyName:string,added:boolean) => {
-    return new Promise(resolve => {
-        updateShowCurrencys(currencyName,added);
-        resolve();
-    });
+    return vmRpcCall(WALLETMODULENAME,'updateShowCurrencys',[currencyName,added]);
 };
 
 /**
  * 普通转账
  */
 export const callTransfer = (psw:string,txPayload:TxPayload) => {
-    return transfer(psw,txPayload);
+    return vmRpcCall(PULLWALLETMODULENAME,'transfer',[psw,txPayload]);
 };
 
 /**
  * 判断助记词是否合法
  */
 export const callisValidMnemonic = (language: LANGUAGE, mnemonic: string) => {
-    return new Promise(resolve => {
-        resolve(isValidMnemonic(language, mnemonic));
-    });
+    return vmRpcCall(GENMNEMONICMODULENAME,'isValidMnemonic',[language, mnemonic]);
 };
 
 // 导出以太坊私钥
 export const callExportETHPrivateKey = (mnemonic:string,addrs: AddrInfo[]) => {
-    return new Promise(resolve => {
-        resolve(exportETHPrivateKey(mnemonic, addrs));
-    });
+    return vmRpcCall(WALLETMODULENAME,'exportETHPrivateKey',[mnemonic, addrs]);
 };
 
  // 导出BTC私钥
 export const callExportBTCPrivateKey = (mnemonic:string,addrs: AddrInfo[]) => {
-    return new Promise(resolve => {
-        resolve(exportBTCPrivateKey(mnemonic, addrs));
-    });
+    return vmRpcCall(WALLETMODULENAME,'exportBTCPrivateKey',[mnemonic, addrs]);
 };
 
 // 导出ERC20私钥
 export const callExportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],currencyName:string) => {
-    return new Promise(resolve => {
-        resolve(exportERC20TokenPrivateKey(mnemonic, addrs,currencyName));
-    });
+    return vmRpcCall(WALLETMODULENAME,'exportERC20TokenPrivateKey',[mnemonic, addrs,currencyName]);
 };
 
 /**
  * btc充值
  */
 export const callBtcRecharge = (psw:string,txRecord:TxHistory) => {
-    return btcRecharge(psw,txRecord);
+    return vmRpcCall(PULLWALLETMODULENAME,'btcRecharge',[psw,txRecord]);
 };
 
 /**
  * eth充值
  */
 export const callEthRecharge = (psw:string,txRecord:TxHistory) => {
-    return ethRecharge(psw,txRecord);
+    return vmRpcCall(PULLWALLETMODULENAME,'ethRecharge',[psw,txRecord]);
 };
 
 /**
  * btc重发充值
  */
 export const callResendBtcRecharge = (psw:string,txRecord:TxHistory) => {
-    return resendBtcRecharge(psw,txRecord);
+    return vmRpcCall(PULLWALLETMODULENAME,'resendBtcRecharge',[psw,txRecord]);
 };
 
 // eth提现
 export const callEthWithdraw = (secretHash:string,toAddr:string,amount:number | string) => {
-    return ethWithdraw(secretHash,toAddr,amount);
+    return vmRpcCall(PULLWALLETMODULENAME,'ethWithdraw',[secretHash,toAddr,amount]);
 };
 
 // btc提现
 export const callBtcWithdraw = (secretHash:string,toAddr:string,amount:number | string) => {
-    return btcWithdraw(secretHash,toAddr,amount);
+    return vmRpcCall(PULLWALLETMODULENAME,'btcWithdraw',[secretHash,toAddr,amount]);
 };
 
 /**
  * 获取钱包地址的位置
  */
 export const callGetWltAddrIndex = (addr: string, currencyName: string) => {
-    return new Promise(resolve => {
-        resolve(getWltAddrIndex(addr,currencyName));
-    });
+    return vmRpcCall(WALLETMODULENAME,'getWltAddrIndex',[addr,currencyName]);
 };
 
 /**
  * 处理ETH转账
  */
 export const callDoEthTransfer = (psw:string,addrIndex:number,txRecord:TxHistory) => {
-    return doEthTransfer(psw,addrIndex,txRecord);
+    return vmRpcCall(PULLWALLETMODULENAME,'doEthTransfer',[psw,addrIndex,txRecord]);
 };
 
 /**
  * btc重发
  */
 export const callResendBtcTransfer = (psw:string,addrIndex:number,txRecord:TxHistory) => {
-    return resendBtcTransfer(psw,addrIndex,txRecord);
+    return vmRpcCall(PULLWALLETMODULENAME,'resendBtcTransfer',[psw,addrIndex,txRecord]);
 };
 
 /**
  * 处理eth代币转账
  */
 export const callDoERC20TokenTransfer = (psw:string,addrIndex:number, txRecord:TxHistory) => {
-    return doERC20TokenTransfer(psw,addrIndex,txRecord);
+    return vmRpcCall(PULLWALLETMODULENAME,'doERC20TokenTransfer',[psw,addrIndex,txRecord]);
 };
 
 /**
@@ -661,21 +591,17 @@ export const callDoERC20TokenTransfer = (psw:string,addrIndex:number, txRecord:T
  * @param ahash ahash
  */
 export const callAhashToArgon2Hash = (ahash: string, imagePsw: string) => {
-    return ahashToArgon2Hash(ahash,imagePsw);
+    return vmRpcCall(WALLETMODULENAME,'ahashToArgon2Hash',[ahash,imagePsw]);
 };
 
 // 锁屏密码hash算法
 export const callLockScreenHash = (psw:string) => {
-    return new Promise(resolve => {
-        resolve(lockScreenHash(psw));
-    });
+    return vmRpcCall(WALLETMODULENAME,'lockScreenHash',[psw]);
 };
 
 // 锁屏密码验证
 export const callLockScreenVerify = (psw:string) => {
-    return new Promise(resolve => {
-        resolve(lockScreenVerify(psw));
-    });
+    return vmRpcCall(WALLETMODULENAME,'lockScreenVerify',[psw]);
 };
 
 // ===========================================wallet相关===================================================================
