@@ -18,7 +18,7 @@ const inApp = navigator.userAgent.indexOf('YINENG') >= 0;     // 是否是移动
  * @param data 参数 
  */
 const vmRpcCall = (methodName:string,params: any[]):Promise<any> => {
-    return Promise.reject();
+    // return Promise.reject();
     return loadMod().then(() => {
         return new Promise((resolve,reject) => {
             // 在params后面加入callback函数  实现对异步函数的rpc调用

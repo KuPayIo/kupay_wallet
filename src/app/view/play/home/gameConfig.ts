@@ -1,5 +1,4 @@
 import { shareDownload } from '../../../config';
-import { getLocalStorage } from '../../../store/filestore';
 
 /**
  * 第三方游戏相关配置
@@ -58,7 +57,8 @@ export const getGameItem = (webviewName:string) => {
     const index = gameList.findIndex((item) => {
         return item.webviewName === webviewName;
     });
-    const gameItem =  getLocalStorage('officialService').gameList[index]; 
+    
+    const gameItem =  JSON.parse(localStorage.getItem('officialService')).gameList[index]; 
     console.log('获取游戏配置信息', gameList[index], gameItem);
 
     return {
