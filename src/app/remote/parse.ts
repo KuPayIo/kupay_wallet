@@ -12,32 +12,33 @@ import { getStore } from '../store/memstore';
 /**
  * 解析数据
  */
-// ===================================================== 导入
+// ===================================================== 导入  
+
 // ===================================================== 导出
 /**
  * 解析云端账号余额
  */
 export const parseCloudBalance = (balanceInfo): Map<CloudCurrencyType, number> => {
     const m = new Map<CloudCurrencyType, number>();
-    for (let i = 0; i < balanceInfo.value.length; i++) {
+    for (let i = 0; i < balanceInfo.value.length; i++) {   
         const each = balanceInfo.value[i];
-        m.set(each[0], smallUnit2LargeUnit(CloudCurrencyType[each[0]], each[1]));
-    }
-    
+        m.set(each[0], smallUnit2LargeUnit(CloudCurrencyType[each[0]], each[1])); 
+    } 
+     
     return m;
 };
 
 /**
  * 解析云端账号详情
  */
-export const parseCloudAccountDetail = (coinType: string, infos) => {
-    if (!infos) return [];
-    const list = [];
+export const parseCloudAccountDetail = (coinType: string, infos) => { 
+    if (!infos) return []; 
+    const list = []; 
     infos.forEach(v => {
         const itype = v[0];
         const amount = smallUnit2LargeUnit(coinType, v[1]);
         const detailTypes = getStaticLanguage().cloudAccountDetail.types;
-        let behavior = '';
+        let behavior = ''; 
         let behaviorIcon = '';
         switch (itype) {
             case TaskSid.Mine:

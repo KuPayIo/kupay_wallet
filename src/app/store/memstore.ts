@@ -7,10 +7,9 @@ import { appLanguageList, LocalLanguageMgr } from '../../pi/browser/localLanguag
 import { HandlerMap } from '../../pi/util/event';
 import { setLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { defaultSetting } from '../config';
+import { defaultSetting, topHeight } from '../publicLib/config';
 // tslint:disable-next-line:max-line-length
 import { AddrInfo, BtcMinerFee, ChangellyPayinAddr, ChangellyTempTxs, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Setting, Silver, Store, TxHistory, UserInfo, Wallet } from '../publicLib/interface';
-import { topHeight } from '../utils/constants';
 import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
 
 // ============================================ 导出

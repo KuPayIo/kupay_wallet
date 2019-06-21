@@ -4,11 +4,15 @@ import { getModulConfig } from './modulConfig';
 /**
  * 配置
  */
-declare var pi_update: any;
+
+// 是否是移动端
+export const inIOSApp = navigator.userAgent.indexOf('YINENG_ANDROID') >= 0;
+export const inAndroidApp = navigator.userAgent.indexOf('YINENG_IOS') >= 0;
+
 // tar zxvf xxx.tar.gz
 // 资源服务器ip
 // export const sourceIp = 'app.herominer.net' || '127.0.0.1';
-export const sourceIp = pi_update.severIp || '127.0.0.1';
+export const sourceIp = location.host || '127.0.0.1';
 
 // 资源服务器port 有些手机浏览器显示端口号无法识别  全部使用默认端口
 // export const sourcePort = pi_update.severPort || '80';
@@ -890,3 +894,15 @@ export const Config = {
 
     }
 };
+
+/**
+ * 初始化设置
+ */
+export const defaultSetting = {
+    DEFAULT_LANGUAGE:'zh_Hans',   // 默认语言 zh_Hans(中文简体),zh_Hant(中文繁体)
+    DEFAULT_CURRENCY:'CNY',       // 默认货币 CNY,USD
+    DEFAULT_CHANGECOLOR:'redUp'   // 默认涨跌颜色 redUp(红涨),greenUp(绿涨)
+};
+
+// 默认顶部留出40px高度
+export const topHeight = 40;

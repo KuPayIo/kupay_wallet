@@ -1,7 +1,7 @@
 import { DeviceIdProvider } from '../../pi/browser/device';
 import { cryptoRandomInt } from '../../pi/util/math';
 // tslint:disable-next-line:max-line-length
-import { Config, currencyConfirmBlockNumber, defalutShowCurrencys, ERC20Tokens, MainChainCoin, USD2CNYRateDefault } from '../publicLib/config';
+import { Config, currencyConfirmBlockNumber, defalutShowCurrencys, ERC20Tokens, inAndroidApp, inIOSApp, MainChainCoin, USD2CNYRateDefault } from '../publicLib/config';
 import { CloudCurrencyType, Currency2USDT, TxHistory } from '../publicLib/interface';
 import { fetchCloudGain, formatBalance, formatBalanceValue } from '../publicLib/tools';
 import { getCloudBalances, getStore, setStore } from '../store/memstore';
@@ -119,12 +119,11 @@ export const getOperatorName = () => {
     });
 };
 
-declare var pi_update;
 /**
  * 获取设备所有详情
  */
 export const getDeviceAllDetail = ():Promise<any> => {
-    if (!pi_update.inAndroidApp && !pi_update.inIOSApp) {
+    if (!inAndroidApp && !inIOSApp) {
         return new Promise((resolve) => {
             const uuid = getStore('setting/deviceId') || cryptoRandomInt().toString();
             setStore('setting/deviceId',uuid);

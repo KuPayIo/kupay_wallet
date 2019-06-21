@@ -31,9 +31,6 @@ export const etherscanUrl = 'https://ropsten.etherscan.io/tx/';
 // 打开第三方查询网址btc
 export const blockchainUrl = 'https://testnet.blockchain.info/tx/';
 
-// 默认顶部留出40px高度
-export const topHeight = 40;
-
 // 游客登录默认密码
 export const defaultPassword = '123456789';
 

@@ -6,15 +6,13 @@ import { closeCon, open, reopen, request, setBottomLayerReloginMsg, setReloginCa
 import { cryptoRandomInt } from '../../pi/util/math';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
-import { wsUrl } from '../publicLib/config';
+import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
 import { Account, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';
 import { getDeviceAllDetail } from './tools';
 import { decrypt, encrypt, getMnemonicByHash } from './wallet';
-
-declare var pi_update;
 
  // 设置重登录回调
 setReloginCallback((res) => {
@@ -159,10 +157,12 @@ export const autoLogin = async (conRandom:string) => {
         token,
         random:conRandom
     };
-    if (pi_update.inAndroidApp || pi_update.inIOSApp) {
+    if (inAndroidApp || inIOSApp) {
         param.operator = deviceDetail.operator;
         param.network = deviceDetail.netWorkStatus;
-        param.app_version = pi_update.updateJson.version;
+        // TODO
+        // param.app_version = pi_update.updateJson.version;
+        param.app_version = '1.0.0';
     }
     const msg = { 
         type: 'wallet/user@auto_login', 
@@ -195,10 +195,12 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
     // const sign = genmnemonicMod.sign;
     const signStr = sign(conRandom, wlt.exportPrivateKey());
     const param:any = { sign: signStr };
-    if (pi_update.inAndroidApp || pi_update.inIOSApp) {
+    if (inAndroidApp || inIOSApp) {
         param.operator = deviceDetail.operator;
         param.network = deviceDetail.netWorkStatus;
-        param.app_version = pi_update.updateJson.version;
+        // TODO
+        // param.app_version = pi_update.updateJson.version;
+        param.app_version = '1.0.0';
     }
     const msgLogin = { 
         type: 'login', 
@@ -248,11 +250,11 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         device_id:deviceDetail.uuid,
         flag:1
     };
-    if (pi_update.inAndroidApp) {
+    if (inAndroidApp) {
         param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
         param.os = `android ${deviceDetail.version}`;
         param.total_memory = deviceDetail.total;
-    } else if (pi_update.inIOSApp) {
+    } else if (inIOSApp) {
         param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
         param.os = `ios ${deviceDetail.version}`;
         param.total_memory = deviceDetail.total;
