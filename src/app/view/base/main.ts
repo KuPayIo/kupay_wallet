@@ -19,8 +19,8 @@ export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查
     checkUpdate();
-    // 打开首页面
     popNew('app-view-base-app');
+    // 打开首页面
     getStoreData('user/id').then(id => {
         if (!id) {
             callGetAllAccount().then(accounts => {

@@ -35,6 +35,8 @@ console.log('erlangLogicPort=',erlangLogicPort);
 // 上传的文件url前缀
 export const uploadFileUrlPrefix = `http://${sourceIp}/service/get_file?sid=`;
 
+// 向资源服务器请求第3方数据url prefix
+export const thirdUrlPre = `http://${sourceIp}/proxy`;
 /**
  * 预估出来的erc20 gasLimit倍数
  */

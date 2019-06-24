@@ -17,7 +17,6 @@ import { setSourceLoadedCallbackList } from './main';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
-declare var pi_modules: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 

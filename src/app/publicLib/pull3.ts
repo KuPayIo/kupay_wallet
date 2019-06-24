@@ -1,5 +1,4 @@
-import { thirdUrlPre } from '../config';
-import { sourceIp } from './config';
+import { sourceIp, thirdUrlPre } from './config';
 import { xorDecode1, xorEncode } from './tools';
 
 // ==========================三方接口=======================================
