@@ -48,16 +48,58 @@ export const deleteFile = (key: string,okCB?,errCB?) => {
     if (!initSuccess) return;
     mod.delete(impl,key,okCB,errCB);
 };
+
+// localStorageImpl indexdb实现
+const localStorageImpl = mod.create('localStorage', 'localStorageStore');
+let localStorageSuccess = false;
+
+/**
+ * localStorage indexDb初始化
+ */
+export const initLocalStorageFileStore = () => {
+    return new Promise((resolve, reject) => {
+        mod.init(localStorageImpl, () => {
+            localStorageSuccess = true;
+            resolve();
+        }, () => {
+            reject();
+        });
+    });
+};
+
 /**
  * 往localStorage写数据
  */
 export const setLocalStorage = (key: string, data: any) => {
-    localStorage.setItem(key, JSON.stringify(data));
+    // localStorage.setItem(key, JSON.stringify(data));
+    return new Promise((resolve,reject) => {
+        if (!localStorageSuccess) reject('indexdb not init');
+        mod.write(localStorageImpl,key,data,resolve,reject);
+    });
+    
 };
 
 /**
  * 从localStorage读数据
  */
-export const getLocalStorage = (key: string, defaultValue = undefined) => {
-    return JSON.parse(localStorage.getItem(key)) || defaultValue;
+export const getLocalStorage = (key: string, defaultValue = undefined):Promise<any> => {
+    // return JSON.parse(localStorage.getItem(key)) || defaultValue;
+    return new Promise((resolve,reject) => {
+        if (!localStorageSuccess) reject('indexdb not init');
+        mod.read(localStorageImpl,key,(res) => {
+            resolve(res || defaultValue);
+        },reject);
+    });
+    
+};
+
+/**
+ * 从indexDb删除数据
+ */
+export const removeLocalStorage = (key: string) => {
+    return new Promise((resolve,reject) => {
+        if (!localStorageSuccess) reject('indexdb not init');
+        mod.delete(localStorageImpl,key,resolve,reject);
+    });
+   
 };

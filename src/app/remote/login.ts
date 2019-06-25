@@ -8,7 +8,7 @@ import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
-import { Account, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
+import { Account, getStore, initCloudWallets, initStore,LocalCloudWallet, register, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';
 import { getDeviceAllDetail } from './tools';
@@ -238,7 +238,7 @@ export const getOpenId = (appId:string) => {
  * flag:0 普通用户注册，1注册即为真实用户
  */
 export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code?:number,num?:string) => {
-    console.time('loginMod getRandom');
+    console.time('loginMod getRandom');  
     const wallet = getStore('wallet');
     if (!wallet) return;
     console.time('loginMod deviceId');
@@ -480,3 +480,7 @@ const registerStore = () => {
 };
 
 registerStore();
+
+initStore().then(() => {
+    openConnect();
+});

@@ -12,7 +12,8 @@ export const inAndroidApp = navigator.userAgent.indexOf('YINENG_IOS') >= 0;
 // tar zxvf xxx.tar.gz
 // 资源服务器ip
 // export const sourceIp = 'app.herominer.net' || '127.0.0.1';
-export const sourceIp = location.host || '127.0.0.1';
+// export const sourceIp = location.host || '192.168.31.10';
+export const sourceIp =  '192.168.31.10';
 
 // 资源服务器port 有些手机浏览器显示端口号无法识别  全部使用默认端口
 // export const sourcePort = pi_update.severPort || '80';

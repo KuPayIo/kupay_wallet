@@ -54,7 +54,11 @@ export const registerStore = (keyName: string, cb: Function,callback:Function) =
  * 获取所有的账户列表
  */
 export const callGetAllAccount = (callback:Function) => {
-    callback([undefined,getAllAccount()]);
+    getAllAccount().then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([err]);
+    });
 };
 
 /**
@@ -68,7 +72,11 @@ export const callGetCloudBalances = (callback:Function) => {
  * 删除账户
  */
 export const callDeleteAccount = (id: string,callback:Function) => {
-    callback([undefined,deleteAccount(id)]);
+    deleteAccount(id).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([err]);
+    });
 };
 
 // ===========================================memstroe相关===================================================================

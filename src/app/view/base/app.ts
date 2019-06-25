@@ -7,7 +7,7 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { registerStore } from '../../middleLayer/wrap';
+import { getStoreData, registerStore } from '../../middleLayer/wrap';
 import { changellyGetCurrencies } from '../../net/changellyPull';
 import { getModulConfig } from '../../publicLib/modulConfig';
 import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
@@ -79,6 +79,11 @@ export class App extends Widget {
         this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
+        getStoreData('user/id').then((id) => {
+            console.log('获取 用户id ====',id);
+        }).catch((err) => {
+            console.log('获取 用户id失败 ====',err);
+        });
     }
 
     public switchToEarn() {

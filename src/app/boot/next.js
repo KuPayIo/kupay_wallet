@@ -245,8 +245,6 @@ winit.initNext = function () {
 			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
 			
-			// erlang服务器连接登录
-			pi_modules.commonjs.exports.relativeGet("app/viewLogic/login").exports.loginInit();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
