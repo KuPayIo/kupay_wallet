@@ -576,8 +576,9 @@ export interface TxPayload {
  * 推送消息模块
  */ 
 export enum PostModule {
-    SERVER = 0,   // 服务端推送
-    THIRD = 1     // 第三方游戏推送
+    LOADED = 0,    // 资源加载
+    SERVER = 1,   // 服务端推送
+    THIRD = 2     // 第三方游戏推送
 }  
 
 /**

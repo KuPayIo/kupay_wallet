@@ -79,11 +79,7 @@ export class App extends Widget {
         this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
-        getStoreData('user/id').then((id) => {
-            console.log('获取 用户id ====',id);
-        }).catch((err) => {
-            console.log('获取 用户id失败 ====',err);
-        });
+        changellyGetCurrencies();
     }
 
     public switchToEarn() {

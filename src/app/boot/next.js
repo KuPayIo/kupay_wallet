@@ -217,6 +217,9 @@ winit.initNext = function () {
 				loadWalletFirstPageSource();  //钱包
 				loadWalletLoginSource();  // 登录相关
 				loadImages(); // 预加载图片
+				if(!pi_update.inApp){
+					vmLoaded();
+				}
 				
 			});
 		}, function (result) {
@@ -224,10 +227,19 @@ winit.initNext = function () {
 		}, modProcess.handler);
 	}
 	
+	var vmLoaded = ()=>{
+		util.loadDir([ "app/remote/","app/core/","app/publicLib/","pi/browser/webview"], flags, fm, undefined, function (fileMap) {
+			var postLoadedMessage = pi_modules.commonjs.exports.relativeGet("app/remote/postWalletMessage").exports.postLoadedMessage;
+			console.log("postMessage start-----------------------");
+			postLoadedMessage();
+		}, function (r) {
+			console.log("加载目录失败, " + r.url + ", " + r.error + ":" + r.reason);
+		}, function(){});
+	}
 	// 加载钱包项目登录相关资源
 	var loadWalletLoginSource = function(){
 		var sourceList = [
-			"app/viewLogic/login.js",
+			"app/viewLogic/",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",
 			"earn/xlsx/awardCfg.c.js",
@@ -301,15 +313,18 @@ winit.initNext = function () {
 				var tab = util.loadCssRes(fileMap);
 				tab.timeout = 90000;
 				tab.release();
-				// 加载根组件
-				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
-				root.cfg.full = false; //PC模式
-				var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
-				index.run(function () {
-					// 关闭读取界面
-					document.body.removeChild(document.getElementById('rcmj_loading_log'));
-				});
 				loadLeftSource();
+				var vmLoaded = pi_modules.commonjs.exports.relativeGet("app/viewLogic/vmLoaded").exports;
+				vmLoaded.addVmLoadedListener(function(){
+					// 加载根组件
+					var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+					root.cfg.full = false; //PC模式
+					var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+					index.run(function () {
+						// 关闭读取界面
+						document.body.removeChild(document.getElementById('rcmj_loading_log'));
+					});
+				});
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
 			}, dirProcess.handler);

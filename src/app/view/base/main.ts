@@ -18,7 +18,7 @@ import { getScreenModify } from '../../viewLogic/native';
 export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查
-    checkUpdate();
+    // checkUpdate();
     popNew('app-view-base-app');
     // 打开首页面
     getStoreData('user/id').then(id => {
@@ -29,6 +29,9 @@ export const run = (cb): void =>  {
                 } else {
                     popNew('app-view-base-entrance');
                 }
+            }).catch(err => {
+                console.log('callGetAllAccount err=',err);
+                popNew('app-view-base-entrance');
             });
         }
     });
