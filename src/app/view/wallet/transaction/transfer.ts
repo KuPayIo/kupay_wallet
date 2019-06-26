@@ -6,13 +6,14 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
-import { callDcUpdateAddrInfo, callFetchBalanceValueOfCoin, callFetchBtcFees, callFetchGasPrices, callFetchMinerFeeList,callGetCurrentAddrInfo, callTransfer,callUpdateLocalTx, registerStore } from '../../../middleLayer/wrap';
+import { callDcUpdateAddrInfo, callFetchBalanceValueOfCoin, callFetchBtcFees, callFetchGasPrices, callFetchMinerFeeList,callGetCurrentAddrInfo, callTransfer,callUpdateLocalTx } from '../../../middleLayer/wrap';
 import { ERC20Tokens } from '../../../publicLib/config';
 import { MinerFeeLevel, TxHistory, TxPayload } from '../../../publicLib/interface';
 import { formatBalance } from '../../../publicLib/tools';
 import { doErrorShow } from '../../../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
 import {  getCurrencyUnitSymbol, getStaticLanguage, judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 import { resendNormalTransfer } from '../../../viewLogic/localWallet';
 import { doScanQrCode } from '../../../viewLogic/native';
 // ============================导出
@@ -206,7 +207,7 @@ export class Transfer extends Widget {
 }
 
 // gasPrice变化
-registerStore('third/gasPrice',() => {
+registerStoreData('third/gasPrice',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();
@@ -214,7 +215,7 @@ registerStore('third/gasPrice',() => {
 });
 
 // btcMinerFee变化
-registerStore('third/btcMinerFee',() => {
+registerStoreData('third/btcMinerFee',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();

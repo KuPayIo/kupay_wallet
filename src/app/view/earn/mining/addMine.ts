@@ -4,8 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetMineDetail,getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { callGetMineDetail,getStoreData } from '../../../middleLayer/wrap';
 import { getModulConfig } from '../../../publicLib/modulConfig';
+import { registerStoreData } from '../../../viewLogic/common';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -103,7 +104,7 @@ export class Dividend extends Widget {
     }
 }
 
-registerStore('activity/mining/addMine', () => {
+registerStoreData('activity/mining/addMine', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

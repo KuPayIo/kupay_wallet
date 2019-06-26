@@ -6,8 +6,8 @@ import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { registerStore } from '../../../middleLayer/wrap';
 import { getUserInfo } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -52,7 +52,7 @@ export class ChatHome extends Widget {
         popNew('app-view-wallet-create-home');
     }
 }
-registerStore('user/info',() => {
+registerStoreData('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         getUserInfo().then(userInfo => {

@@ -5,10 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
-import { callCurrencyExchangeAvailable, callDcUpdateAddrInfo, callFetchBalanceValueOfCoin,callFetchTransactionList, callGetCurrentAddrInfo,getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { callCurrencyExchangeAvailable, callDcUpdateAddrInfo, callFetchBalanceValueOfCoin,callFetchTransactionList, callGetCurrentAddrInfo,getStoreData } from '../../../middleLayer/wrap';
 import { CurrencyRecord, TxHistory, TxType } from '../../../publicLib/interface';
 import { formatBalance, formatBalanceValue, timestampFormat } from '../../../publicLib/tools';
 import { calCurrencyLogoUrl, getCurrencyUnitSymbol, parseAccount, parseStatusShow, parseTxTypeShow } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -202,7 +203,7 @@ export class TransactionHome extends Widget {
 // ==========================本地
 
 // 当前钱包变化
-registerStore('wallet/currencyRecords',(currencyRecords: CurrencyRecord[]) => {
+registerStoreData('wallet/currencyRecords',(currencyRecords: CurrencyRecord[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateCurrencyRecords(currencyRecords);
@@ -210,7 +211,7 @@ registerStore('wallet/currencyRecords',(currencyRecords: CurrencyRecord[]) => {
 });
 
 // 汇率变化
-registerStore('third/rate', () => {
+registerStoreData('third/rate', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRate();
@@ -218,7 +219,7 @@ registerStore('third/rate', () => {
 });
 
 // 涨跌幅变化
-registerStore('third/currency2USDTMap', () => {
+registerStoreData('third/currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRate();
@@ -226,7 +227,7 @@ registerStore('third/currency2USDTMap', () => {
 });
 
 // 货币单位变化
-registerStore('setting/currencyUnit',() => {
+registerStoreData('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();

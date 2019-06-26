@@ -1,10 +1,11 @@
 import { popNew } from '../../pi/ui/root';
 // tslint:disable-next-line:max-line-length
-import { callDefaultLogin, callGetAllAccount, callGetOpenId, callGetRandom, callLogoutAccount, callLogoutAccountDel,callVerifyIdentidy, getStoreData, openWSConnect,registerStore, setStoreData } from '../middleLayer/wrap';
+import { callDefaultLogin, callGetAllAccount, callGetOpenId, callGetRandom, callLogoutAccount, callLogoutAccountDel,callVerifyIdentidy, getStoreData, openWSConnect, setStoreData } from '../middleLayer/wrap';
 import { CMD } from '../publicLib/config';
 import { defaultPassword } from '../utils/constants';
 import { closeAllPage, delPopPhoneTips, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 import { getSourceLoaded } from '../view/base/main';
+import { registerStoreData } from './common';
 
 /**
  * 密码弹框重新登录
@@ -137,22 +138,22 @@ const logoutWalletSuccess =  () => {
 };
 
 // 登录成功 执行成功操作
-registerStore('flags/doLoginSuccess',(doLoginSuccess:boolean) => {
+registerStoreData('flags/doLoginSuccess',(doLoginSuccess:boolean) => {
     loginWalletSuccess();
 });
 
 // 登录失败 执行失败操作
-registerStore('flags/doLoginFailed',(doLogoutSuccess:boolean) => {
+registerStoreData('flags/doLoginFailed',(doLogoutSuccess:boolean) => {
     loginWalletFailedPop();
 });
 
 // 登出成功 执行成功操作
-registerStore('flags/doLogoutSuccess',(doLogoutSuccess:boolean) => {
+registerStoreData('flags/doLogoutSuccess',(doLogoutSuccess:boolean) => {
     logoutWalletSuccess();
 });
 
 // 账号已经登录  踢人下线
-registerStore('flags/kickOffline',(res:any) => {
+registerStoreData('flags/kickOffline',(res:any) => {
     if (getSourceLoaded()) {
         kickOffline(res.secretHash,res.phone,res.code,res.num);
     } else {

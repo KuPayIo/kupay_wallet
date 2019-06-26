@@ -7,12 +7,13 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
-import { callGetCloudBalances, callGetRealUser,callGetServerCloudBalance,callVerifyIdentidy, registerStore, setStoreData } from '../../../middleLayer/wrap';
+import { callGetCloudBalances, callGetRealUser,callGetServerCloudBalance,callVerifyIdentidy, setStoreData } from '../../../middleLayer/wrap';
 import { sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { currencyType } from '../../../publicLib/tools';
 import { popNewLoading, popNewMessage } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -305,14 +306,14 @@ export class WriteRedEnv extends Widget {
 
 }
 // =====================================本地
-registerStore('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
     }
 });
 
-registerStore('user/info/isRealUser', (isRealUser:boolean) => {
+registerStoreData('user/info/isRealUser', (isRealUser:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRealUser(isRealUser);

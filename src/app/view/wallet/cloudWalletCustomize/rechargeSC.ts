@@ -6,12 +6,13 @@ import { setStore } from '../../../../chat/client/app/data/store';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetAccountDetail,callGetCloudBalances, registerStore } from '../../../middleLayer/wrap';
+import { callGetAccountDetail,callGetCloudBalances } from '../../../middleLayer/wrap';
 import { SCPrecision } from '../../../publicLib/config';
 import { CloudCurrencyType, TaskSid } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { rechargeGiftMultiple, SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
+import { registerStoreData } from '../../../viewLogic/common';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -156,7 +157,7 @@ export class RechargeSC extends Widget {
 }
 
 // 余额变化
-registerStore('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         callGetCloudBalances().then(cloudBalances => {

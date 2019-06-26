@@ -8,9 +8,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callBackupMnemonic,getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { callBackupMnemonic,getStoreData } from '../../../middleLayer/wrap';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { copyToClipboard, getUserInfo, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 import { doScanQrCode } from '../../../viewLogic/native';
 
 // ================================ 导出
@@ -240,7 +241,7 @@ export class Home extends Widget {
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-registerStore('user',() => {
+registerStoreData('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -248,26 +249,26 @@ registerStore('user',() => {
     }
 });
 
-registerStore('wallet', () => {
+registerStoreData('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-registerStore('user/info', () => {
+registerStoreData('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-registerStore('setting/language', (r) => {
+registerStoreData('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.language = w.config.value[r];
         w.paint();
     }
 });
-registerStore('user/offline',(r) => {
+registerStoreData('user/offline',(r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.props.offline = r;

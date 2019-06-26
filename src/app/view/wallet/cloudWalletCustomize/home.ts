@@ -4,11 +4,12 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callFetchBalanceValueOfCoin,callGetAccountDetail, callGetCloudBalances,getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { callFetchBalanceValueOfCoin,callGetAccountDetail, callGetCloudBalances,getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { fetchCloudGain, formatBalance, formatBalanceValue } from '../../../publicLib/tools';
 import { getCurrencyUnitSymbol } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -110,7 +111,7 @@ export class CloudWalletHome extends Widget {
 // ===========================
 
 // 余额变化
-registerStore('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -118,7 +119,7 @@ registerStore('cloud/cloudWallets', () => {
 });
 
 // 汇率变化
-registerStore('third/USD2CNYRate', () => {
+registerStoreData('third/USD2CNYRate', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -126,7 +127,7 @@ registerStore('third/USD2CNYRate', () => {
 });
 
 // 金价变化
-registerStore('third/silver', () => {
+registerStoreData('third/silver', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -134,7 +135,7 @@ registerStore('third/silver', () => {
 });
 
 // 货币单位变化
-registerStore('setting/currencyUnit',() => {
+registerStoreData('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();

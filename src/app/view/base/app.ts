@@ -7,10 +7,10 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getStoreData, registerStore } from '../../middleLayer/wrap';
 import { changellyGetCurrencies } from '../../net/changellyPull';
 import { getModulConfig } from '../../publicLib/modulConfig';
 import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
+import { registerStoreData } from '../../viewLogic/common';
 import { kickOffline } from '../../viewLogic/login';
 import { setSourceLoadedCallbackList } from './main';
 
@@ -79,7 +79,7 @@ export class App extends Widget {
         this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
-        changellyGetCurrencies();
+        // changellyGetCurrencies();
     }
 
     public switchToEarn() {
@@ -127,13 +127,13 @@ setSourceLoadedCallbackList(() => {
 export const SettingLanguage = 'language';
 
 // 语言配置
-registerStore('setting/language',(r) => {
+registerStoreData('setting/language',(r) => {
     localStorage.setItem(SettingLanguage,r);
     setLang(r);
 });
 
 // 创建钱包成功
-registerStore('flags/createWallet',(createWallet:boolean) => {
+registerStoreData('flags/createWallet',(createWallet:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.switchToPlay();
 });

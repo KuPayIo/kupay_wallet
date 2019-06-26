@@ -5,9 +5,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetPurchaseRecord,getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { callGetPurchaseRecord,getStoreData } from '../../../middleLayer/wrap';
 import { Product, PurchaseHistory } from '../../../publicLib/interface';
 import { calPercent, popNewMessage } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -100,7 +101,7 @@ export class ProductDetail extends Widget {
 }
 
 // =====================================本地
-registerStore('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
+registerStoreData('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updatePurchaseRecord(purchaseRecord);

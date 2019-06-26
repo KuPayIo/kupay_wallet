@@ -5,14 +5,15 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { getStoreData } from '../../../middleLayer/wrap';
 import { uploadFile } from '../../../net/pull';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
 import { getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 import { exportMnemonic } from '../../../viewLogic/localWallet';
 import { selectImage } from '../../../viewLogic/native';
 // ================================ 导出
-// tslint:disable-next-line:no-reserved-keywords
+// tslint:disable-next-line:no-reserved-keywords 
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
@@ -187,21 +188,21 @@ export class AccountHome extends Widget {
     }
 }
 
-registerStore('user/info', () => {
+registerStoreData('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
 
-registerStore('wallet', () => {
+registerStoreData('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
 
-registerStore('setting/language', (r) => {
+registerStoreData('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.language = w.config.value[r];

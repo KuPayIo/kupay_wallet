@@ -6,9 +6,10 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 // tslint:disable-next-line:max-line-length
-import { callDcUpdateBalance,callFetchCloudTotalAssets,callFetchLocalTotalAssets, callGetServerCloudBalance,getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { callDcUpdateBalance,callFetchCloudTotalAssets,callFetchLocalTotalAssets, callGetServerCloudBalance,getStoreData } from '../../../middleLayer/wrap';
 import { formatBalanceValue } from '../../../publicLib/tools';
 import { getCurrencyUnitSymbol, getUserInfo } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 // ============================导出
 
 // tslint:disable-next-line:no-reserved-keywords
@@ -137,7 +138,7 @@ export class Home extends Widget {
 }
 
 // ==========================本地
-registerStore('user',() => {
+registerStoreData('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.dataInit();
@@ -145,7 +146,7 @@ registerStore('user',() => {
     }
 });
 
-registerStore('user/info',() => {
+registerStoreData('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.userInfoChange();
@@ -153,14 +154,14 @@ registerStore('user/info',() => {
 });
 
 // 云端余额变化
-registerStore('cloud/cloudWallet',() => {
+registerStoreData('cloud/cloudWallet',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
     }
 });
 
-registerStore('setting/language', () => {
+registerStoreData('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.pageInit();
@@ -168,14 +169,14 @@ registerStore('setting/language', () => {
 });
 
 // 货币涨跌幅度变化
-registerStore('third/currency2USDTMap',() => {
+registerStoreData('third/currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
     }
 });
 // 货币单位变化
-registerStore('setting/currencyUnit',() => {
+registerStoreData('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();

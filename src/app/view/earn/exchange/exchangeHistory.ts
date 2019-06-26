@@ -6,11 +6,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callQueryConvertLog, getStoreData,registerStore, setStoreData } from '../../../middleLayer/wrap';
+import { callQueryConvertLog, getStoreData, setStoreData } from '../../../middleLayer/wrap';
 import { getData, getOneUserInfo } from '../../../net/pull';
 import { PAGELIMIT } from '../../../publicLib/config';
 import { parseRtype, timestampFormat } from '../../../publicLib/tools';
 import { getUserInfo } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 import { SettingLanguage } from '../../base/app';
 
 // ================================ 导出
@@ -210,7 +211,7 @@ export class ExchangeHistory extends Widget {
     }
 }
 // =====================================本地
-registerStore('activity/luckyMoney/exchange', () => {
+registerStoreData('activity/luckyMoney/exchange', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();

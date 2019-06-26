@@ -6,8 +6,9 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callBackupMnemonic, getStoreData,registerStore, setStoreData } from '../../../middleLayer/wrap';
+import { callBackupMnemonic, getStoreData, setStoreData } from '../../../middleLayer/wrap';
 import { popPswBox, rippleShow } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 import { logoutAccount } from '../../../viewLogic/login';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -181,39 +182,39 @@ export class Setting extends Widget {
 }
 
 // ================================================本地，立即执行
-registerStore('setting/language', (r) => {
+registerStoreData('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.language = w.config.value[r];
         w.init();
     }
 });
-registerStore('setting/currencyUnit', () => {
+registerStoreData('setting/currencyUnit', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-registerStore('setting/changeColor', () => {
+registerStoreData('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-registerStore('setting/lockScreen', () => {
+registerStoreData('setting/lockScreen', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-registerStore('wallet', () => {
+registerStoreData('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
 
-registerStore('user',() => {
+registerStoreData('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();

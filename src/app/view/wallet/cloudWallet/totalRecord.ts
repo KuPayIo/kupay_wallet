@@ -6,10 +6,11 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetAccountDetail, callGetRechargeLogs, callGetWithdrawLogs,getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { callGetAccountDetail, callGetRechargeLogs, callGetWithdrawLogs,getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
 import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -180,7 +181,7 @@ export class TotalRecord extends Widget {
 }
 
 // 云端记录变化
-registerStore('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();
@@ -188,7 +189,7 @@ registerStore('cloud/cloudWallets', () => {
 });
 
 // 本地交易变化,更新状态
-registerStore('wallet/currencyRecords',() => {
+registerStoreData('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

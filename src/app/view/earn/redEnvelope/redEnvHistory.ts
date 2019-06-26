@@ -7,11 +7,12 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
-import { callQuerySendRedEnvelopeRecord,getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { callQuerySendRedEnvelopeRecord,getStoreData } from '../../../middleLayer/wrap';
 import { getInviteCode } from '../../../net/pull';
 import { PAGELIMIT } from '../../../publicLib/config';
 import { LuckyMoneyType } from '../../../publicLib/interface';
 import { getUserInfo } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -190,7 +191,7 @@ export class RedEnvHistory extends Widget {
     }
 }
 // =====================================本地
-registerStore('activity/luckyMoney/sends', () => {
+registerStoreData('activity/luckyMoney/sends', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();

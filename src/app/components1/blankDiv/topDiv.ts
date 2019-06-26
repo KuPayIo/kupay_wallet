@@ -3,7 +3,8 @@
  */
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getStoreData, registerStore } from '../../middleLayer/wrap';
+import { getStoreData } from '../../middleLayer/wrap';
+import { registerStoreData } from '../../viewLogic/common';
 
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -22,7 +23,7 @@ export class TopDiv extends Widget {
     }
 }
 
-registerStore('setting/topHeight',(topHeight:number) => {
+registerStoreData('setting/topHeight',(topHeight:number) => {
     const w = forelet.getWidget(WIDGET_NAME);
     forelet.paint(topHeight);
     if (w) {

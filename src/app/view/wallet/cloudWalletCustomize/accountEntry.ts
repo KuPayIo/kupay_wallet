@@ -5,10 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetAccountDetail,getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { timestampFormat } from '../../../publicLib/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -99,7 +100,7 @@ export class AccountEntry extends Widget {
     }
 }
 
-registerStore('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();

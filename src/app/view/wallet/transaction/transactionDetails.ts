@@ -6,11 +6,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { getStoreData } from '../../../middleLayer/wrap';
 import { CurrencyRecord, TxType } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
 import { blockchainUrl, etherscanUrl } from '../../../utils/constants';
 import { canResend, copyToClipboard, fetchLocalTxByHash1, parseAccount, parseStatusShow, popNewMessage } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 import { makeScreenShot, openNewActivity } from '../../../viewLogic/native';
 
 // ============================导出
@@ -113,7 +114,7 @@ export class TransactionDetails extends Widget {
 }
 
 // 交易记录变化
-registerStore('wallet/currencyRecords',() => {
+registerStoreData('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

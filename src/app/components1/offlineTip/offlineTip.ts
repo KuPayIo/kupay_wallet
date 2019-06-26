@@ -7,7 +7,8 @@ import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore, register as earnRegister } from '../../../earn/client/app/store/memstore';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callWalletManualReconnect,getStoreData, registerStore } from '../../middleLayer/wrap';
+import { callWalletManualReconnect,getStoreData } from '../../middleLayer/wrap';
+import { registerStoreData } from '../../viewLogic/common';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -23,7 +24,7 @@ export class OfflineTip extends Widget {
     public create() {
         super.create();
          // 钱包login
-        registerStore('user/isLogin', (isLogin:boolean) => {
+        registerStoreData('user/isLogin', (isLogin:boolean) => {
             this.updateDate(OfflienType.WALLET,isLogin);
         });
 

@@ -6,10 +6,11 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
-import { callFetchBalanceValueOfCoin, callFetchCoinGain,callGetAccountDetail, callGetCloudBalances, callGetRechargeLogs,callGetWithdrawLogs, getStoreData, registerStore } from '../../../middleLayer/wrap';
+import { callFetchBalanceValueOfCoin, callFetchCoinGain,callGetAccountDetail, callGetCloudBalances, callGetRechargeLogs,callGetWithdrawLogs, getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { formatBalance, formatBalanceValue } from '../../../publicLib/tools';
 import { getCurrencyUnitSymbol } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -129,7 +130,7 @@ export class CloudWalletHome extends Widget {
 // ===========================
 
 // 余额变化
-registerStore('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -137,7 +138,7 @@ registerStore('cloud/cloudWallets', () => {
 });
 
 // 汇率变化
-registerStore('third/USD2CNYRate', () => {
+registerStoreData('third/USD2CNYRate', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -145,7 +146,7 @@ registerStore('third/USD2CNYRate', () => {
 });
 
 // 涨跌幅变化
-registerStore('third/currency2USDTMap', () => {
+registerStoreData('third/currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -153,7 +154,7 @@ registerStore('third/currency2USDTMap', () => {
 });
 
 // 货币单位变化
-registerStore('setting/currencyUnit',() => {
+registerStoreData('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();
