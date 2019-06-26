@@ -15,7 +15,4 @@ WebViewManager.addPostMessageListener((fromWebView:string, message:string) => {
     if (msg.moduleName === PostModule.LOADED) {
         emitVmLoaded(msg.args);
     }
-    setInterval(() => {
-        console.log('postMessage ===',msg,fromWebView);
-    },3000);
 });

@@ -5,11 +5,12 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { withdrawMinerFee } from '../../../config';
-import { callGetAddrsInfoByCurrencyName, callGetCloudBalances,callGetCurrentAddrInfo, getStoreData } from '../../../middleLayer/wrap';
+import { callGetAddrsInfoByCurrencyName,callGetCurrentAddrInfo, getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { withdrawLimit } from '../../../utils/constants';
 import { parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
+import { getCloudBalances } from '../../../viewLogic/common';
 import { withdraw } from '../../../viewLogic/localWallet';
 interface Props {
     currencyName:string;
@@ -34,7 +35,7 @@ export class Withdraw extends Widget {
             withdrawAddr:'',
             withdrawAddrInfo:[]
         };
-        Promise.all([callGetCloudBalances(),callGetCurrentAddrInfo(currencyName)]).then(([cloudBalances,addrInfo]) => {
+        Promise.all([getCloudBalances(),callGetCurrentAddrInfo(currencyName)]).then(([cloudBalances,addrInfo]) => {
             const balance = cloudBalances.get(CloudCurrencyType[currencyName]);
             this.props.balance = balance;
             this.props.withdrawAddr = addrInfo.addr;

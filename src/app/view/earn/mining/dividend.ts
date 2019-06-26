@@ -7,11 +7,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetCloudBalances, callGetDividend, callGetDividHistory,callGetMining, getStoreData } from '../../../middleLayer/wrap';
+import { callGetDividend, callGetDividHistory,callGetMining, getStoreData } from '../../../middleLayer/wrap';
 import { PAGELIMIT } from '../../../publicLib/config';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
-import { registerStoreData } from '../../../viewLogic/common';
+import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -76,7 +76,7 @@ export class Dividend extends Widget {
      * 获取更新数据
      */
     public initData() {
-        Promise.all([callGetCloudBalances(),getStoreData('activity/dividend')]).then(([cloudBalances,dividend]) => {
+        Promise.all([getCloudBalances(),getStoreData('activity/dividend')]).then(([cloudBalances,dividend]) => {
             this.props.ktBalance = cloudBalances.get(CloudCurrencyType.KT);
             const data = dividend.total;
             if (data) {

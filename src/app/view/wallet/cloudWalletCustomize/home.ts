@@ -4,12 +4,12 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callFetchBalanceValueOfCoin,callGetAccountDetail, callGetCloudBalances,getStoreData } from '../../../middleLayer/wrap';
+import { callFetchBalanceValueOfCoin,callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { fetchCloudGain, formatBalance, formatBalanceValue } from '../../../publicLib/tools';
 import { getCurrencyUnitSymbol } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
+import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -50,7 +50,7 @@ export class CloudWalletHome extends Widget {
             redUp: true
         };
 
-        Promise.all([callGetCloudBalances(),callFetchBalanceValueOfCoin(currencyName,1),
+        Promise.all([getCloudBalances(),callFetchBalanceValueOfCoin(currencyName,1),
             getCurrencyUnitSymbol(),getStoreData('setting/changeColor','redUp')]).then(([cloudBalances,rate,currencyUnitSymbol,color]) => {
                 const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
                 const balanceValue = formatBalanceValue(balance * rate);
@@ -65,7 +65,7 @@ export class CloudWalletHome extends Widget {
 
     public updateBalance() {
         const currencyName = this.props.currencyName;
-        Promise.all([callGetCloudBalances(),callFetchBalanceValueOfCoin(currencyName,1)]).then(([cloudBalances,rate]) => {
+        Promise.all([getCloudBalances(),callFetchBalanceValueOfCoin(currencyName,1)]).then(([cloudBalances,rate]) => {
             const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
             const balanceValue = formatBalanceValue(balance * rate);
             this.props.balance = balance;

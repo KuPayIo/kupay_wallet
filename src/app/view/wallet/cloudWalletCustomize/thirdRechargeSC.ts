@@ -4,12 +4,13 @@
 
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetAccountDetail, callGetCloudBalances,getStoreData } from '../../../middleLayer/wrap';
+import { callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
 import { SCPrecision } from '../../../publicLib/config';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
+import { getCloudBalances } from '../../../viewLogic/common';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -33,7 +34,7 @@ export class ThirdRechargeSC  extends Widget {
 
         };
         super.setProps(this.props);
-        callGetCloudBalances().then(cloudBalances => {
+        getCloudBalances().then(cloudBalances => {
             const scBalance = cloudBalances.get(CloudCurrencyType.SC);
             this.props.scBalance = scBalance;
             const needPay = (props.order.total_fee - scBalance * SCPrecision) / SCPrecision;

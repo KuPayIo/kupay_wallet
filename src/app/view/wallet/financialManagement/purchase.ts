@@ -4,12 +4,13 @@
 // ===============================================导入
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { callFetchGasPrice, callGetCloudBalances,callGetCurrentAddrInfo } from '../../../middleLayer/wrap';
+import { callFetchGasPrice,callGetCurrentAddrInfo } from '../../../middleLayer/wrap';
 import { defaultGasLimit } from '../../../publicLib/config';
 import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../publicLib/interface';
 import { formatBalance } from '../../../publicLib/tools';
 import { wei2Eth } from '../../../publicLib/unitTools';
 import { popNewMessage, popPswBox } from '../../../utils/tools';
+import { getCloudBalances } from '../../../viewLogic/common';
 import { purchaseProduct, recharge } from '../../../viewLogic/localWallet';
 import { forelet,WIDGET_NAME } from './productDetail';
 // ==================================================导出
@@ -36,7 +37,7 @@ export class ProductDetail extends Widget {
             cloudBalance:0,
             localBalance:0
         }; 
-        Promise.all([callGetCurrentAddrInfo('ETH'),callGetCloudBalances()]).then(([addrInfo,cloudBalances]) => {
+        Promise.all([callGetCurrentAddrInfo('ETH'),getCloudBalances()]).then(([addrInfo,cloudBalances]) => {
             this.props.cloudBalance = cloudBalances.get(CloudCurrencyType.ETH);
             this.props.localBalance = addrInfo.balance;
             this.paint();

@@ -10,7 +10,7 @@ import { callGetRechargeLogs,getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
 import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
+import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -38,8 +38,8 @@ export class RechargeRecord extends Widget {
             canLoadMore:false,
             isRefreshing:false
         };
-        getStoreData('cloud/cloudWallets').then(cloudWallets => {
-            const rechargeLogs = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
+        getCloudWallets().then(cloudWallets => {
+            const rechargeLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).rechargeLogs;
             this.props.nextStart = rechargeLogs.start;
             this.props.canLoadMore = rechargeLogs.canLoadMore;
             this.parseRecordList(rechargeLogs.list);
@@ -49,8 +49,8 @@ export class RechargeRecord extends Widget {
     }
     public updateRecordList() {
         if (!this.props) return;
-        getStoreData('cloud/cloudWallets').then(cloudWallets => {
-            const rechargeLogs = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
+        getCloudWallets().then(cloudWallets => {
+            const rechargeLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).rechargeLogs;
             this.props.nextStart = rechargeLogs.start;
             this.props.canLoadMore = rechargeLogs.canLoadMore;
             this.parseRecordList(rechargeLogs.list);

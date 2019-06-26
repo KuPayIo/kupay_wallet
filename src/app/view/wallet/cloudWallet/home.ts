@@ -6,11 +6,11 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
-import { callFetchBalanceValueOfCoin, callFetchCoinGain,callGetAccountDetail, callGetCloudBalances, callGetRechargeLogs,callGetWithdrawLogs, getStoreData } from '../../../middleLayer/wrap';
+import { callFetchBalanceValueOfCoin, callFetchCoinGain,callGetAccountDetail, callGetRechargeLogs,callGetWithdrawLogs, getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { formatBalance, formatBalanceValue } from '../../../publicLib/tools';
 import { getCurrencyUnitSymbol } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
+import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -55,7 +55,7 @@ export class CloudWalletHome extends Widget {
             currencyUnitSymbol:'',
             redUp: true
         };
-        Promise.all([callGetCloudBalances(),callFetchCoinGain(currencyName),
+        Promise.all([getCloudBalances(),callFetchCoinGain(currencyName),
             callFetchBalanceValueOfCoin(currencyName,1),
             getCurrencyUnitSymbol(),
             getStoreData('setting/changeColor','redUp')]).then(([cloudBalances,gain,rate,currencyUnitSymbol,color]) => {
@@ -73,7 +73,7 @@ export class CloudWalletHome extends Widget {
 
     public updateBalance() {
         const currencyName = this.props.currencyName;
-        Promise.all([callGetCloudBalances(),callFetchCoinGain(currencyName),
+        Promise.all([getCloudBalances(),callFetchCoinGain(currencyName),
             callFetchBalanceValueOfCoin(currencyName,1)]).then(([cloudBalances,gain,rate]) => {
                 const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
                 const balanceValue = formatBalanceValue(balance * rate);

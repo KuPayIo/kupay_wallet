@@ -10,7 +10,7 @@ import { callGetAccountDetail, callGetRechargeLogs, callGetWithdrawLogs,getStore
 import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
 import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
+import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -53,19 +53,19 @@ export class TotalRecord extends Widget {
      */
     public updateRecordList() {
         if (!this.props.currencyName) return;
-        getStoreData('cloud/cloudWallets').then(cloudWallets => {
-            const data1 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
+        getCloudWallets().then(cloudWallets => {
+            const data1 = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).rechargeLogs;
             this.props.rechargeNext = data1.start;
             this.parseRechargeList(data1.list);
     
-            const data2 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
+            const data2 = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).otherLogs;
             this.props.otherNext = data2.start;
             this.props.otherList = this.parseOtherList(data2.list);
-            const data3 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
+            const data3 = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).withdrawLogs;
             this.props.withdrawNext = data3.start;
             this.parseWithdrawList(data3.list);
     
-            this.props.canLoadMore = data1.canLoadMore | data2.canLoadMore | data3.canLoadMore;
+            this.props.canLoadMore = data1.canLoadMore || data2.canLoadMore || data3.canLoadMore;
             this.props.isRefreshing = false;
             this.paint();
         });

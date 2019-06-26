@@ -7,13 +7,13 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
-import { callGetCloudBalances, callGetRealUser,callGetServerCloudBalance,callVerifyIdentidy, setStoreData } from '../../../middleLayer/wrap';
+import { callGetRealUser,callGetServerCloudBalance,callVerifyIdentidy, setStoreData } from '../../../middleLayer/wrap';
 import { sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { currencyType } from '../../../publicLib/tools';
 import { popNewLoading, popNewMessage } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
+import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -91,7 +91,7 @@ export class WriteRedEnv extends Widget {
      * 更新余额
      */
     public updateBalance() {
-        callGetCloudBalances().then(data => {
+        getCloudBalances().then(data => {
             const list = this.props.list;
             for (const i in list) {
                 list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;

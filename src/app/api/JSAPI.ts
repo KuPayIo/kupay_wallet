@@ -4,7 +4,7 @@
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 // tslint:disable-next-line:max-line-length
-import { callExportPrivateKeyByMnemonic, callGenmnemonicSign,callGetCloudBalances, callGetMnemonicByHash, callGetOpenId, callRequestAsync, callVerifyIdentidy } from '../middleLayer/wrap';
+import { callExportPrivateKeyByMnemonic, callGenmnemonicSign, callGetMnemonicByHash, callGetOpenId, callRequestAsync, callVerifyIdentidy } from '../middleLayer/wrap';
 import { getOneUserInfo } from '../net/pull';
 import { SCPrecision } from '../publicLib/config';
 import { CloudCurrencyType } from '../publicLib/interface';
@@ -143,7 +143,7 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
     try {
         // tslint:disable-next-line:variable-name
         const fee_total = order.total_fee;
-        const [setNoPassword,cloudBalances] = await Promise.all([queryNoPWD(order.appid,fee_total),callGetCloudBalances()]);
+        const [setNoPassword,cloudBalances] = await Promise.all([queryNoPWD(order.appid,fee_total),getCloudBalances()]);
         const scBalance = cloudBalances.get(CloudCurrencyType.SC);
         console.log('thirdPay balance =========',scBalance * SCPrecision);
         console.log('thirdPay fee_total =========',fee_total);

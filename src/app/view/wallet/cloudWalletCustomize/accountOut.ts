@@ -9,7 +9,7 @@ import { callGetWithdrawLogs,getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { currencyType, timestampFormat } from '../../../publicLib/tools';
-import { registerStoreData } from '../../../viewLogic/common';
+import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -33,8 +33,8 @@ export class AccountOut extends Widget {
             canLoadMore:false,
             isRefreshing:false
         };
-        getStoreData('cloud/cloudWallets').then(cloudWallets => {
-            const allLogs = cloudWallets.get(CloudCurrencyType[this.props.currencyName]);
+        getCloudWallets().then(cloudWallets => {
+            const allLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]);
             this.props.recordList = this.parseRecordList(allLogs.withdrawLogs.list);
             this.props.nextStart = allLogs.otherLogs.start;
             this.props.canLoadMore = allLogs.otherLogs.canLoadMore;
@@ -44,8 +44,8 @@ export class AccountOut extends Widget {
 
     public updateRecordList() {
         if (!this.props.currencyName) return;
-        getStoreData('cloud/cloudWallets').then(cloudWallets => {
-            const allLogs = cloudWallets.get(CloudCurrencyType[this.props.currencyName]);
+        getCloudWallets().then(cloudWallets => {
+            const allLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]);
             this.props.recordList = this.parseRecordList(allLogs.withdrawLogs.list);
             this.props.nextStart = allLogs.otherLogs.start;
             this.props.canLoadMore = allLogs.otherLogs.canLoadMore;

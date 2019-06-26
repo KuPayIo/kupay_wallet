@@ -9,7 +9,7 @@ import { callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
 import { currencyType, timestampFormat } from '../../../publicLib/tools';
 import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
+import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -44,8 +44,8 @@ export class TotalRecord extends Widget {
      */
     public updateRecordList() {
         if (!this.props.currencyName) return;
-        getStoreData('cloud/cloudWallets').then(cloudWallets => {
-            const data = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
+        getCloudWallets().then(cloudWallets => {
+            const data = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).otherLogs;
             this.props.otherNext = data.start; 
             this.props.recordList = this.parseList(data.list);
             this.props.recordList.sort((v1,v2) => {
