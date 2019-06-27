@@ -5,7 +5,7 @@ import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getOneUserInfo } from '../../../net/pull';
+import { callGetOneUserInfo } from '../../../middleLayer/wrap';
 import { SCPrecision } from '../../../publicLib/config';
 import { TaskSid } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
@@ -94,7 +94,7 @@ export class TransactionDetails extends Widget {
 
     // 云端支付
     public async setData1(res:any) {
-        const mchInfo = await getOneUserInfo([Number(res.mch_id)]);
+        const mchInfo = await callGetOneUserInfo([Number(res.mch_id)]);
         console.log(`商户信息 ========== mch_id = ${res.mch_id}  mchInfo = ${mchInfo}`);
         this.props.state = PayState[1];
         this.props.amount = res.total_fee / SCPrecision;

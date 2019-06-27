@@ -29,6 +29,7 @@ export const closePopFloatBox = () => {
     popFloatBoxClose && popFloatBoxClose.callback(popFloatBoxClose.widget);
     popFloatBoxClose = undefined ;
 };
+
  /**
   * 关闭打开的webview
   */

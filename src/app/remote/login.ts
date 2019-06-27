@@ -170,10 +170,8 @@ export const autoLogin = async (conRandom:string) => {
     };
     console.log('autoLogin = ',msg);
     requestAsync(msg).then(res => {
-        console.timeEnd('loginMod autoLogin');
         setStore('user/isLogin', true);
         setStore('flags/doLoginSuccess',true);
-        console.timeEnd('loginMod start');
         console.log('自动登录成功-----------',res);
     }).catch((res) => {
         setStore('user/isLogin', false);
@@ -238,12 +236,9 @@ export const getOpenId = (appId:string) => {
  * flag:0 普通用户注册，1注册即为真实用户
  */
 export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code?:number,num?:string) => {
-    console.time('loginMod getRandom');  
     const wallet = getStore('wallet');
     if (!wallet) return;
-    console.time('loginMod deviceId');
     const deviceDetail = await getDeviceAllDetail();
-    console.timeEnd('loginMod deviceId');
     const param:any = {
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
@@ -276,12 +271,12 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         type: 'get_random', 
         param
     };
-    console.log('getRandom = ',msg);
+    
     let resp;
     try {
+        console.log('getRandom startTime= ',new Date().getTime());
         resp = await requestAsync(msg);
         setBottomLayerReloginMsg(resp.user,resp.userType,resp.password);
-        console.timeEnd('loginMod getRandom');
         const conRandom = resp.rand;
         if (secretHash) {
             defaultLogin(secretHash,conRandom);
@@ -296,12 +291,13 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         console.log('uid =',resp.uid);
         setStore('user/conRandom', conRandom);
     } catch (res) {
+        console.log('getRandom endTime= ',new Date().getTime());
         resp = res;
         if (res.type === 1014 && res.why !== deviceDetail.uuid) {  // 避免自己踢自己下线
             setStore('flags/kickOffline',{ secretHash,phone,code,num });   // 通知踢人下线
         } 
     } 
-    console.log('getRandom resp = ',resp);
+    console.log('getRandom resp = ',JSON.stringify(resp));
 
     return resp && (resp.type || resp.result);
 };

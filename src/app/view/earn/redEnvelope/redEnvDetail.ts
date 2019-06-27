@@ -7,8 +7,8 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
-import { callQueryDetailLog,getStoreData } from '../../../middleLayer/wrap';
-import { getInviteCode, getOneUserInfo } from '../../../net/pull';
+import { callGetOneUserInfo,callQueryDetailLog, getStoreData } from '../../../middleLayer/wrap';
+import { getInviteCode } from '../../../net/pull';
 import { uploadFileUrlPrefix } from '../../../publicLib/config';
 import { LuckyMoneyType } from '../../../publicLib/interface';
 import { getUserInfo } from '../../../utils/tools';
@@ -68,7 +68,7 @@ export class RedEnvDetail extends Widget {
 
         const redBagList = value[0];
         for (const i in redBagList) {
-            const user = await getOneUserInfo([redBagList[i].cuid]);
+            const user = await callGetOneUserInfo([redBagList[i].cuid]);
             this.props.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
             // tslint:disable-next-line:max-line-length
             this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../res/image/default_avater_big.png'; 

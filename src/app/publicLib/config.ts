@@ -6,8 +6,8 @@ import { getModulConfig } from './modulConfig';
  */
 
 // 是否是移动端
-export const inIOSApp = navigator.userAgent.indexOf('YINENG_ANDROID') >= 0;
-export const inAndroidApp = navigator.userAgent.indexOf('YINENG_IOS') >= 0;
+export const inAndroidApp = navigator.userAgent.indexOf('YINENG_ANDROID') >= 0;
+export const inIOSApp = navigator.userAgent.indexOf('YINENG_IOS') >= 0;
 
 // tar zxvf xxx.tar.gz
 // 资源服务器ip
@@ -76,7 +76,7 @@ export enum DevMode {
     Rinkeby = 'rinkeby'   // rinkeby测试环境
 }
 // tslint:disable-next-line:variable-name
-export const dev_mode:DevMode = DevMode.Ropsten;
+export const dev_mode:any = DevMode.Ropsten;
 
 // btc网络
 export const btcNetwork = dev_mode === DevMode.Prod ? 'mainnet' : 'testnet';

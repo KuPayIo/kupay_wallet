@@ -9,14 +9,13 @@ import { Callback } from '../../pi/util/util';
 import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
-import { getStoreData, registerStore, setStoreData } from '../middleLayer/wrap';
+import { getStoreData, setStoreData } from '../middleLayer/wrap';
 import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../publicLib/config';
 import { CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
 import { SettingLanguage } from '../view/base/app';
 import { getSourceLoaded } from '../view/base/main';
 import { logoutAccount } from '../viewLogic/login';
-import { addVmLoadedListener } from '../viewLogic/vmLoaded';
 import { piLoadDir, piRequire } from './commonjsTools';
 import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
 /**

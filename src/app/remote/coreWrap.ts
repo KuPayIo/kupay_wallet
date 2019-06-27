@@ -9,7 +9,7 @@ import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, 
 // tslint:disable-next-line:max-line-length
 import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, logoutAccountDel, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from './login';
 // tslint:disable-next-line:max-line-length
-import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getMineDetail, getMining, getProductList, getPurchaseRecord, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
+import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getMineDetail, getMining, getOneUserInfo, getProductList, getPurchaseRecord, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
 // tslint:disable-next-line:max-line-length
 import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from './pullWallet';
 // tslint:disable-next-line:max-line-length
@@ -453,6 +453,16 @@ export const callQueryConvertLog = (start:string = '',callback:Function) => {
     });
 };
 
+/**
+ * 获取单个用户信息
+ */
+export const callGetOneUserInfo = (uids: number[], isOpenid: number = 0,callback:Function) => {
+    getOneUserInfo(uids,isOpenid).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([err]);
+    });
+};
 // ===========================================net相关===================================================================
 
 // ===========================================wallet相关===================================================================

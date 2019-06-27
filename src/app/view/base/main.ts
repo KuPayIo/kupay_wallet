@@ -40,7 +40,6 @@ export const run = (cb): void =>  {
     popNewPage();
     // 预先从底层获取一些数据
     preFetchFromNative();
-    console.timeEnd('home enter');
     // app event 注册
     addAppEvent();
     // 解决进入时闪一下问题

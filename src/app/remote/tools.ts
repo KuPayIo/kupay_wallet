@@ -430,7 +430,7 @@ export const fetchCloudTotalAssets = () => {
     const cloudBalances = getCloudBalances();
     let totalAssets = 0;
     for (const [k, v] of cloudBalances) {
-        totalAssets += fetchBalanceValueOfCoin(CloudCurrencyType[k], v);
+        totalAssets += fetchBalanceValueOfCoin(CloudCurrencyType[<any>k], v);
     }
 
     return totalAssets;

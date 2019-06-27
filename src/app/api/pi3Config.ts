@@ -13,8 +13,7 @@ export const getPi3Config = () => {
     return {
         buttonMods:ButtonMods,   // 所有按钮模式
         buttonMod:ButtonMods.FLOATBUTTON2,   // 当前按钮模式
-        thirdBase:'app/api/thirdBase',
-        jsApi:'app/api/JSAPI',
+        jsApi:'app/remote/JSAPI',
         imgUrlPre:'http://192.168.31.10/wallet/app/res/image/third/'
     };
 };

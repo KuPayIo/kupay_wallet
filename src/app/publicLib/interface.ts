@@ -582,9 +582,33 @@ export enum PostModule {
 }  
 
 /**
+ * 服务器推送
+ */
+export interface ServerPushArgs {
+    key:string;            // 服务器推送key
+    result:any;           // 服务器推送内容
+}
+
+/**
+ * 三方命令
+ */
+export enum ThirdCmd {
+    CLOSE = 0,        // 关闭
+    MIN,              // 最小化
+    INVITE,             // 邀请好友
+    RECHARGE,         // 充值
+    GAMESERVICE,       // 游戏客服
+    OFFICIALGROUPCHAT   // 官方群聊
+}
+/**
+ * postMessage args类型
+ */
+export type PostMessageArgs = boolean | ServerPushArgs | ThirdCmd;
+
+/**
  * vm 往 webview 推送消息类型
  */
 export interface PostMessage {
     moduleName:PostModule;   // 模块名
-    args:any;                // 参数
+    args:PostMessageArgs;                // 参数
 }

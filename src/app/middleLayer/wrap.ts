@@ -375,6 +375,12 @@ export const callQueryConvertLog = (start?:string) => {
     return vmRpcCall('callQueryConvertLog',[start]);
 };
 
+/**
+ * 获取单个用户信息
+ */
+export const callGetOneUserInfo = (uids: number[], isOpenid: number = 0) => {
+    return vmRpcCall('callGetOneUserInfo',[uids,isOpenid]);
+};
 // ===========================================net相关===================================================================
 
 // ===========================================wallet相关===================================================================

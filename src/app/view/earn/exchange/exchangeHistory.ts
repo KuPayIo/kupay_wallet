@@ -6,8 +6,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callQueryConvertLog, getStoreData, setStoreData } from '../../../middleLayer/wrap';
-import { getData, getOneUserInfo } from '../../../net/pull';
+import { callGetOneUserInfo, callQueryConvertLog, getStoreData, setStoreData } from '../../../middleLayer/wrap';
+import { getData } from '../../../net/pull';
 import { PAGELIMIT } from '../../../publicLib/config';
 import { parseRtype, timestampFormat } from '../../../publicLib/tools';
 import { getUserInfo } from '../../../utils/tools';
@@ -98,7 +98,7 @@ export class ExchangeHistory extends Widget {
      */
     public async initRedEnv() {
         for (const i in this.props.recordList) {
-            const data = await getOneUserInfo([this.props.recordList[i].suid]);
+            const data = await callGetOneUserInfo([this.props.recordList[i].suid]);
             this.props.recordList[i].userName = data ? data.nickName :this.language.defaultName;
         }
         

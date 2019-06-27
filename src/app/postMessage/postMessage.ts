@@ -1,5 +1,7 @@
 import { WebViewManager } from '../../pi/browser/webview';
-import { PostMessage, PostModule } from '../publicLib/interface';
+import { PostMessage, PostModule, ServerPushArgs, ThirdCmd } from '../publicLib/interface';
+import { emitServerPush } from './serverPush';
+import { emitThirdPush } from './thirdPush';
 import { emitVmLoaded } from './vmLoaded';
 
 /**
@@ -14,5 +16,9 @@ WebViewManager.addPostMessageListener((fromWebView:string, message:string) => {
     console.log('postMessage ===',msg);
     if (msg.moduleName === PostModule.LOADED) {
         emitVmLoaded(msg.args);
+    } else if (msg.moduleName === PostModule.SERVER) {
+        emitServerPush(<ServerPushArgs>msg.args);
+    } else if (msg.moduleName === PostModule.THIRD) {
+        emitThirdPush(<ThirdCmd>msg.args);
     }
 });

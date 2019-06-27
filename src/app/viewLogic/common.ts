@@ -1,6 +1,6 @@
 import { callGetCloudBalances, getStoreData, registerStore } from '../middleLayer/wrap';
+import { addVmLoadedListener } from '../postMessage/vmLoaded';
 import { CloudCurrencyType, CloudWallet } from '../publicLib/interface';
-import { addVmLoadedListener } from './vmLoaded';
 
 /**
  * 注册store监听  在vm加载完成之后执行

@@ -36,7 +36,7 @@ window.pi_RPC_Method = (function () {
         var data = RPC_CALL_START + JSON.stringify(sign);
 
         nativeCall("WebViewManager", "postWebViewMessage", 0, [
-            "default",
+            "JSVM",
             data
         ]);
     };
@@ -166,7 +166,7 @@ window.pi_RPC_Method = (function () {
         clickedClose:true,
         clickCb:function(){
             console.log("click 邀请好友");
-            pi_RPC_Method(pi_config.thirdBase, "inviteFriends", pi_config.webviewName, function (error, result) {
+            pi_RPC_Method(pi_config.jsApi, "inviteFriends", pi_config.webviewName, function (error, result) {
                 console.log('inviteFriends call success');
             });
         }
@@ -178,7 +178,7 @@ window.pi_RPC_Method = (function () {
         clickedClose:true,
         clickCb:function(){
             console.log("click 游戏客服");
-            pi_RPC_Method(pi_config.thirdBase, "gotoGameService", pi_config.webviewName, function (error, result) {
+            pi_RPC_Method(pi_config.jsApi, "gotoGameService", pi_config.webviewName, function (error, result) {
                 console.log('gotoGameService call success');
             });
         }
@@ -190,7 +190,7 @@ window.pi_RPC_Method = (function () {
         clickedClose:true,
         clickCb:function(){
             console.log("click 官方群聊");
-            pi_RPC_Method(pi_config.thirdBase, "gotoOfficialGroupChat", pi_config.webviewName, function (error, result) {
+            pi_RPC_Method(pi_config.jsApi, "gotoOfficialGroupChat", pi_config.webviewName, function (error, result) {
                 console.log('gotoOfficialGroupChat call success');
             });
         }
@@ -202,7 +202,7 @@ window.pi_RPC_Method = (function () {
         clickedClose:true,
         clickCb:function(){
             console.log("click 去充值");
-            pi_RPC_Method(pi_config.thirdBase, "gotoRecharge", pi_config.webviewName, function (error, result) {
+            pi_RPC_Method(pi_config.jsApi, "gotoRecharge", pi_config.webviewName, function (error, result) {
                 console.log('inviteFriends call success');
             });
         }
@@ -227,7 +227,7 @@ window.pi_RPC_Method = (function () {
         clickedClose:true,
         clickCb:function(){
             console.log("click 最小化");
-            pi_RPC_Method(pi_config.thirdBase, "minWebview", {webviewName:pi_config.webviewName,popFloatBox:true}, function (error, result) {
+            pi_RPC_Method(pi_config.jsApi, "minWebview", {webviewName:pi_config.webviewName,popFloatBox:true}, function (error, result) {
                 console.log('minWebview call success');
             });
         }
@@ -239,7 +239,7 @@ window.pi_RPC_Method = (function () {
         clickedClose:true,
         clickCb:function(){
             console.log("click 退出游戏");
-            pi_RPC_Method(pi_config.thirdBase, "closeWebview", pi_config.webviewName, function (error, result) {
+            pi_RPC_Method(pi_config.jsApi, "closeWebview", pi_config.webviewName, function (error, result) {
                 console.log('closeWebview call success');
             });
         }

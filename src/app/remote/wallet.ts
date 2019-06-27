@@ -162,9 +162,7 @@ export const createWalletRandom = async (option: CreateWalletOption,tourist?:boo
  */
 export const createWalletByImage = async (option: CreateWalletOption) => {
     const secrectHash = await calcHashValue(option.psw,getStore('user/salt'));
-    console.time('pi_create GlobalWallet generate need');
     const gwlt = GlobalWallet.generate(secrectHash, option.valut);
-    console.timeEnd('pi_create GlobalWallet generate need');
     // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,

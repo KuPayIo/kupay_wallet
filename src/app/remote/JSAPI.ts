@@ -2,15 +2,12 @@
  * 授权、支付等API
  */
 import { WebViewManager } from '../../pi/browser/webview';
-import { popNew } from '../../pi/ui/root';
-// tslint:disable-next-line:max-line-length
-import { callExportPrivateKeyByMnemonic, callGenmnemonicSign, callGetMnemonicByHash, callGetOpenId, callRequestAsync, callVerifyIdentidy } from '../middleLayer/wrap';
-import { getOneUserInfo } from '../net/pull';
 import { SCPrecision } from '../publicLib/config';
-import { CloudCurrencyType } from '../publicLib/interface';
-import { getUserInfo } from '../utils/tools';
-import { getGameItem } from '../view/play/home/gameConfig';
-import { minWebview1 } from './thirdBase';
+import { CloudCurrencyType, ThirdCmd } from '../publicLib/interface';
+import { getOpenId, requestAsync } from './login';
+import { postThirdPushMessage } from './postWalletMessage';
+import { getOneUserInfo } from './pull';
+import { exportPrivateKeyByMnemonic, genmnemonicSign, getMnemonicByHash, VerifyIdentidy } from './wallet';
 
 export enum resCode {
     SUCCESS = undefined,   // 成功
@@ -31,15 +28,15 @@ export enum SetNoPassword {
  */
 export const authorize = (payload, callback) => {
     console.log('authorize called',payload);
-    Promise.all([callGetOpenId(payload.appId),getUserInfo()]).then(([resData,userInfo]) => {
+    getOpenId(payload.appId).then((resData) => {
         const ret:any = {};
         ret.openId = resData.openid;
-        if (payload.avatar) {
-            ret.avatar = userInfo.avatar;
-        }
-        if (payload.nickName) {
-            ret.nickName = userInfo.nickName;
-        }
+        // if (payload.avatar) {
+        //     ret.avatar = userInfo.avatar;
+        // }
+        // if (payload.nickName) {
+        //     ret.nickName = userInfo.nickName;
+        // }
         callback(undefined,ret);
     }).catch(err => {
         callback(err);
@@ -65,7 +62,7 @@ export const querySetNoPassword = (appid, callback) => {
  * 设置免密支付
  */
 export const setFreeSecrectPay = (payload,callback) => {
-    callVerifyIdentidy(payload.password).then(secretHash => {
+    VerifyIdentidy(payload.password).then(secretHash => {
         if (!secretHash) {  //  密码错误
             callback(resCode.PASSWORD_ERROR, false);
     
@@ -98,7 +95,7 @@ export const thirdPay = (payload,callback) => {
  */
 export const thirdPayDirect = (payload,callback) => {
     console.log('thirdPayDirect payload=====',payload);
-    callVerifyIdentidy(payload.password).then(secretHash => {
+    VerifyIdentidy(payload.password).then(secretHash => {
         if (!secretHash) {
             callback(undefined,{ result:PayCode.ERRORPSW });
             
@@ -192,17 +189,6 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
 };
 
 /**
- * 跳转充值页面
- */
-const gotoRecharge = (order:ThirdOrder,beneficiary:string = '好嗨游戏',okCB:Function) => {
-    return new Promise(resolve => {
-        popNew('app-view-wallet-cloudWalletCustomize-thirdRechargeSC',{ order,beneficiary,okCB },(rechargeSuccess:boolean) => {
-            resolve(rechargeSuccess);
-        });
-    });
-};
-
-/**
  * 启动支付接口(验证订单，展示订单信息) 预支付
  * @param order 订单信息,后台返回的订单json
  */
@@ -210,7 +196,7 @@ const openPayment = (order: any) => {
     const orderStr = JSON.stringify(order);
     const msg = { type: 'wallet/order@order_start', param: { json: orderStr } };
 
-    return callRequestAsync(msg);
+    return requestAsync(msg);
 };
 
 /**
@@ -243,7 +229,7 @@ const orderPay = async (order: any,secretHash?:string) => {
     
     console.log('walletPay param-------------',msg);
     
-    return callRequestAsync(msg);
+    return requestAsync(msg);
 };
 
 /**
@@ -276,7 +262,7 @@ const queryNoPWD = async (appid:string,total_fee?:number) => {
 
     let setNoPassword;
     try {
-        await callRequestAsync(msg);
+        await requestAsync(msg);
         setNoPassword = SetNoPassword.SETED;
     } catch (err) {
         if (err.result === 2119) {  // 用户未开启免密支付
@@ -312,7 +298,7 @@ const setNoPWD = async (appid:string,noPSW:number,secretHash:string) => {
         }
     };
 
-    return callRequestAsync(msg);
+    return requestAsync(msg);
 };
 
 /**
@@ -327,7 +313,7 @@ export const closePayment = async (transactionId:string,okCb?:Function,failCb?:F
     }
     const msg = { type: 'wallet/order@close_order', param: { transaction_id:transactionId } };
     try {
-        const resData:any = await callRequestAsync(msg);
+        const resData:any = await requestAsync(msg);
         if (resData.result !== 1) {
             failCb && failCb(new Error('closePayment is failed'));
         } else {
@@ -343,10 +329,10 @@ export const closePayment = async (transactionId:string,okCb?:Function,failCb?:F
  * @param json 签名json
  */
 const getSign = async (json:any,secretHash:string) => {
-    const mnemonic = await callGetMnemonicByHash(secretHash);
-    const privateKey = await callExportPrivateKeyByMnemonic(mnemonic);
+    const mnemonic = await getMnemonicByHash(secretHash);
+    const privateKey = await exportPrivateKeyByMnemonic(mnemonic);
 
-    return callGenmnemonicSign(jsonUriSort(json), privateKey);
+    return genmnemonicSign(jsonUriSort(json), privateKey);
 };
 
 /**
@@ -366,4 +352,60 @@ const jsonUriSort = (json) => {
     }
 
     return msg;
+};
+
+ /**
+  * 关闭打开的webview
+  */
+export const closeWebview = (webviewName: string) => {
+    console.log('wallet closeWebview called');
+    WebViewManager.close(webviewName);
+};
+
+/**
+ * 最小化webview
+ */
+export const minWebview = (webviewName: string) => {
+    console.log('wallet minWebview called');
+    WebViewManager.minWebView(webviewName);
+};
+
+/**
+ * 邀请好友
+ */
+export const inviteFriends = (webviewName: string) => {
+    console.log('wallet inviteFriends called');
+    // minWebview(webviewName);
+    // TODO 此处判断default webview是否活跃
+    postThirdPushMessage(ThirdCmd.INVITE);
+};
+
+/**
+ * 去充值
+ */
+export const gotoRecharge = (webviewName: string) => {
+    console.log('wallet gotoRecharge called');
+    // minWebview(webviewName);
+    // TODO 此处判断default webview是否活跃
+    postThirdPushMessage(ThirdCmd.RECHARGE);
+};
+
+/**
+ * 游戏客服
+ */
+export const gotoGameService = (webviewName: string) => {
+    console.log('wallet gotoGameService called');
+    // (webviewName);
+    // TODO 此处判断default webview是否活跃
+    postThirdPushMessage(ThirdCmd.GAMESERVICE);
+};
+
+/**
+ * 官方群聊
+ */
+export const gotoOfficialGroupChat = (webviewName: string) => {
+    console.log('wallet gotoOfficialGroupChat called');
+    // minWebview(webviewName);
+    // TODO 此处判断default webview是否活跃
+    postThirdPushMessage(ThirdCmd.OFFICIALGROUPCHAT);
 };

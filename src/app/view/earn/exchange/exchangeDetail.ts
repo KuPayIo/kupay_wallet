@@ -5,8 +5,7 @@ import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callQueryDetailLog } from '../../../middleLayer/wrap';
-import { getOneUserInfo } from '../../../net/pull';
+import { callGetOneUserInfo, callQueryDetailLog } from '../../../middleLayer/wrap';
 import { uploadFileUrlPrefix } from '../../../publicLib/config';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { currencyType } from '../../../publicLib/tools';
@@ -72,7 +71,7 @@ export class ExchangeDetail extends Widget {
         this.props.totalAmount = value[4];
 
         if (this.props.suid) {
-            const user = await getOneUserInfo([this.props.suid]);
+            const user = await callGetOneUserInfo([this.props.suid]);
             console.log('exchange detail user',user);
             if (!user) return;
             this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
@@ -85,7 +84,7 @@ export class ExchangeDetail extends Widget {
         }
         
         for (let i = 0;i < redBagList.length;i++) {
-            const person = await getOneUserInfo([redBagList[i].cuid]);
+            const person = await callGetOneUserInfo([redBagList[i].cuid]);
             if (!person) break;
             this.props.redBagList[i].userName = person.nickName ? person.nickName :this.language.defaultUserName;
             // tslint:disable-next-line:max-line-length

@@ -287,7 +287,8 @@ winit.initNext = function () {
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
-			"earn/client/app/res/css/"
+			"earn/client/app/res/css/",
+			"app/postMessage/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			// debugger
@@ -314,7 +315,7 @@ winit.initNext = function () {
 				tab.timeout = 90000;
 				tab.release();
 				loadLeftSource();
-				var vmLoaded = pi_modules.commonjs.exports.relativeGet("app/viewLogic/vmLoaded").exports;
+				var vmLoaded = pi_modules.commonjs.exports.relativeGet("app/postMessage/vmLoaded").exports;
 				vmLoaded.addVmLoadedListener(function(){
 					// 加载根组件
 					var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;

@@ -761,3 +761,23 @@ export const getMining = () => {
         return mining;
     });
 };
+
+/**
+ * 获取单个用户信息
+ */
+export const getOneUserInfo = (uids: number[], isOpenid?: number) => {
+    let msg = {};
+    if (isOpenid) {
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]`, isOpenid } };
+    } else {
+        msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
+    }
+
+    return requestAsync(msg).then(res => {
+        if (res.value[0]) {
+
+            return JSON.parse(unicodeArray2Str(res.value[0]));
+        }
+    });
+   
+};
