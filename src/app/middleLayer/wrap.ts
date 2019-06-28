@@ -88,6 +88,13 @@ export const callGetCloudBalances = () => {
 };
 
 /**
+ * 获取云端钱包
+ */
+export const callGetCloudWallets = () => {
+    return vmRpcCall('callGetCloudWallets',[]);
+};
+
+/**
  * 删除账户
  */
 export const callDeleteAccount = (id: string) => {

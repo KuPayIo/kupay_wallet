@@ -1,5 +1,5 @@
 import { WebViewManager } from '../../pi/browser/webview';
-import { PostMessage, PostModule, ThirdCmd } from '../publicLib/interface';
+import { LoadedStage, PostMessage, PostModule, ThirdCmd } from '../publicLib/interface';
 
 /**
  * 主动向钱包推消息
@@ -9,12 +9,26 @@ const walleWebViewtName = 'default'; // 钱包webView name
 /**
  * 推送vm 资源加载相关消息
  */
-export const postLoadedMessage = () => {
+export const postLoadedMessage = (stage:LoadedStage) => {
     const message:PostMessage = {
         moduleName:PostModule.LOADED,   // 模块名
-        args:true      // 参数
+        args:stage      // 参数
     };
     WebViewManager.postMessage(walleWebViewtName,JSON.stringify(message));
+};
+
+/**
+ * 推送store准备好
+ */
+export const postStoreLoadedMessage = () => {
+    postLoadedMessage(LoadedStage.STORELOADED);
+};
+
+/**
+ * 推送所有资源已准备好
+ */
+export const postAllLoadedMessage = () => {
+    postLoadedMessage(LoadedStage.ALLLOADED);
 };
 
 /**

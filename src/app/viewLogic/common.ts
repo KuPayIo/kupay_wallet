@@ -1,12 +1,12 @@
-import { callGetCloudBalances, getStoreData, registerStore } from '../middleLayer/wrap';
-import { addVmLoadedListener } from '../postMessage/vmLoaded';
+import { callGetCloudBalances, callGetCloudWallets, registerStore } from '../middleLayer/wrap';
+import { addStoreLoadedListener } from '../postMessage/vmLoaded';
 import { CloudCurrencyType, CloudWallet } from '../publicLib/interface';
 
 /**
  * 注册store监听  在vm加载完成之后执行
  */
 export const registerStoreData = (keyName: string, cb: Function) => {
-    addVmLoadedListener(() => {
+    addStoreLoadedListener(() => {
         registerStore(keyName,cb);
     });
 };
@@ -15,7 +15,7 @@ export const registerStoreData = (keyName: string, cb: Function) => {
  * 获取cloudWallets  
  */
 export const getCloudWallets = () => {
-    return getStoreData('cloud/cloudWallets').then(cloudWallets => {
+    return callGetCloudWallets().then(cloudWallets => {
         return new Map<CloudCurrencyType, CloudWallet>(cloudWallets);
     });
 };

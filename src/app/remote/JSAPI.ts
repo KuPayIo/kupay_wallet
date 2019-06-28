@@ -4,6 +4,7 @@
 import { WebViewManager } from '../../pi/browser/webview';
 import { SCPrecision } from '../publicLib/config';
 import { CloudCurrencyType, ThirdCmd } from '../publicLib/interface';
+import { getCloudBalances } from '../store/memstore';
 import { getOpenId, requestAsync } from './login';
 import { postThirdPushMessage } from './postWalletMessage';
 import { getOneUserInfo } from './pull';
@@ -365,7 +366,15 @@ export const closeWebview = (webviewName: string) => {
 /**
  * 最小化webview
  */
-export const minWebview = (webviewName: string) => {
+export const minWebview = (payload:{webviewName: string;popFloatBox:boolean}) => {
+    console.log('wallet minWebview called');
+    minWebview1(payload.webviewName);
+};
+
+/**
+ * 最小化webview
+ */
+export const minWebview1 = (webviewName: string) => {
     console.log('wallet minWebview called');
     WebViewManager.minWebView(webviewName);
 };
@@ -375,7 +384,7 @@ export const minWebview = (webviewName: string) => {
  */
 export const inviteFriends = (webviewName: string) => {
     console.log('wallet inviteFriends called');
-    // minWebview(webviewName);
+    minWebview1(webviewName);
     // TODO 此处判断default webview是否活跃
     postThirdPushMessage(ThirdCmd.INVITE);
 };
@@ -385,7 +394,7 @@ export const inviteFriends = (webviewName: string) => {
  */
 export const gotoRecharge = (webviewName: string) => {
     console.log('wallet gotoRecharge called');
-    // minWebview(webviewName);
+    minWebview1(webviewName);
     // TODO 此处判断default webview是否活跃
     postThirdPushMessage(ThirdCmd.RECHARGE);
 };
@@ -395,7 +404,7 @@ export const gotoRecharge = (webviewName: string) => {
  */
 export const gotoGameService = (webviewName: string) => {
     console.log('wallet gotoGameService called');
-    // (webviewName);
+    minWebview1(webviewName);
     // TODO 此处判断default webview是否活跃
     postThirdPushMessage(ThirdCmd.GAMESERVICE);
 };
@@ -405,7 +414,7 @@ export const gotoGameService = (webviewName: string) => {
  */
 export const gotoOfficialGroupChat = (webviewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
-    // minWebview(webviewName);
+    minWebview1(webviewName);
     // TODO 此处判断default webview是否活跃
     postThirdPushMessage(ThirdCmd.OFFICIALGROUPCHAT);
 };

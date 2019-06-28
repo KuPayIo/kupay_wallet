@@ -4,7 +4,7 @@
 import { getEthApiBaseUrl } from '../core/config';
 import { isValidMnemonic } from '../core/genmnemonic';
 import { AddrInfo, CloudCurrencyType, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
-import { deleteAccount, getAllAccount, getCloudBalances, getStore, register, setStore } from '../store/memstore';
+import { deleteAccount, getAllAccount, getCloudBalances1, getStore, register, setStore } from '../store/memstore';
 import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, dcUpdateBalance } from './dataCenter';
 // tslint:disable-next-line:max-line-length
 import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, logoutAccountDel, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from './login';
@@ -49,6 +49,7 @@ export const setStoreData = (path: string, data: any, notified = true,callback:F
  */
 export const registerStore = (keyName: string, cb: Function,callback:Function) => {
     callback([undefined,register(keyName,cb)]);
+    // register(keyName,cb);
 };
 /**
  * 获取所有的账户列表
@@ -65,7 +66,14 @@ export const callGetAllAccount = (callback:Function) => {
  * 获取云端余额
  */
 export const callGetCloudBalances = (callback:Function) => {
-    callback([undefined,getCloudBalances()]);
+    callback([undefined,getCloudBalances1()]);
+};
+
+/**
+ * 获取云端钱包
+ */
+export const callGetCloudWallets = (callback:Function) => {
+    callback([undefined,[...getStore('cloud/cloudWallets')]]);
 };
 
 /**

@@ -44,7 +44,7 @@ const isObject = (value: any) => {
 export const deepCopy = (v: any): any => {
     if (!v || v instanceof Promise || !isObject(v)) return v;
     if (v instanceof Map) {
-        return new Map(JSON.parse(JSON.stringify(v)));
+        return new Map([...v]);
     }
 
     const newobj = v.constructor === Array ? [] : {};
@@ -134,6 +134,14 @@ export const getCloudBalances = () => {
     }
 
     return cloudBalances;
+};
+
+/**
+ * vm 中JSON.stringify 对map 使用返回"{}"
+ * rpc调用的时候会使用JSON.stringify 需要转一下
+ */
+export const getCloudBalances1 = () => {
+    return [...getCloudBalances()];
 };
 
 /**
@@ -536,7 +544,7 @@ const accountChange = () => {
         const newAccount: Account = {
             user: localUser,
             wallet: localWallet,
-            cloud: { cloudWallets: localCloudWallets }
+            cloud: { cloudWallets: <any>[...localCloudWallets] }
         };
     
         localAccounts.currenctId = storeUser.id;

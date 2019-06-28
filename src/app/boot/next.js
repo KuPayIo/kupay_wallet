@@ -228,10 +228,18 @@ winit.initNext = function () {
 	}
 	
 	var vmLoaded = ()=>{
-		util.loadDir([ "app/remote/","app/core/","app/publicLib/","pi/browser/webview"], flags, fm, undefined, function (fileMap) {
-			var postLoadedMessage = pi_modules.commonjs.exports.relativeGet("app/remote/postWalletMessage").exports.postLoadedMessage;
-			console.log("postMessage start-----------------------");
-			postLoadedMessage();
+		util.loadDir([ "app/store/","app/remote/postWalletMessage.js"], flags, fm, undefined, function (fileMap) {
+			var postStoreLoadedMessage = pi_modules.commonjs.exports.relativeGet("app/remote/postWalletMessage").exports.postStoreLoadedMessage;
+			console.log("postStoreLoadedMessage start-----------------------");
+			postStoreLoadedMessage();
+			// 加载剩下资源
+			util.loadDir([ "app/remote/","app/core/","app/publicLib/"], flags, fm, undefined, function (fileMap) {
+				var postAllLoadedMessage = pi_modules.commonjs.exports.relativeGet("app/remote/postWalletMessage").exports.postAllLoadedMessage;
+				console.log("postAllLoadedMessage start-----------------------");
+				postAllLoadedMessage();
+			}, function (r) {
+				console.log("加载目录失败, " + r.url + ", " + r.error + ":" + r.reason);
+			}, function(){});
 		}, function (r) {
 			console.log("加载目录失败, " + r.url + ", " + r.error + ":" + r.reason);
 		}, function(){});
@@ -248,7 +256,7 @@ winit.initNext = function () {
 			"earn/xlsx/item.s.js"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
-			console.log(11111,Date.now()-self.startTime)
+			console.log("钱包项目登录加载完成")
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();

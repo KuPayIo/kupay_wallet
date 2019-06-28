@@ -10,7 +10,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { changellyGetCurrencies } from '../../net/changellyPull';
 import { getModulConfig } from '../../publicLib/modulConfig';
 import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
-import { registerStoreData } from '../../viewLogic/common';
+import { getCloudBalances, getCloudWallets, registerStoreData } from '../../viewLogic/common';
 import { kickOffline } from '../../viewLogic/login';
 import { setSourceLoadedCallbackList } from './main';
 
@@ -80,6 +80,8 @@ export class App extends Widget {
         this.old[identfy] = true;
         this.paint();
         // changellyGetCurrencies();
+        getCloudBalances();
+        getCloudWallets();
     }
 
     public switchToEarn() {

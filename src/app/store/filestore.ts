@@ -30,7 +30,7 @@ export const initFileStore = () => {
  */
 export const writeFile = (key: string,data:any,okCB?,errCB?) => {
     if (!initSuccess) return;
-    mod.write(impl,key,data,okCB,errCB);
+    mod.write(impl,key,JSON.stringify(data),okCB,errCB);
 };
 
 /**
@@ -38,7 +38,7 @@ export const writeFile = (key: string,data:any,okCB?,errCB?) => {
  */
 export const getFile = (key: string,okCB,errCB?) => {
     if (!initSuccess) return;
-    mod.read(impl,key,okCB,errCB);
+    mod.read(impl,key,(res) => {okCB(JSON.parse(res));},errCB);
 };
 
 /**
@@ -74,7 +74,17 @@ export const setLocalStorage = (key: string, data: any) => {
     // localStorage.setItem(key, JSON.stringify(data));
     return new Promise((resolve,reject) => {
         if (!localStorageSuccess) reject('indexdb not init');
-        mod.write(localStorageImpl,key,data,resolve,reject);
+        const data1 = JSON.stringify(data);
+        mod.write(localStorageImpl,key,data1,() => {
+            // console.log('写入数据库成功',key);
+            // console.log('写入成功数据',data1);
+            resolve();
+        },(err) => {
+            // console.log('写入数据库失败',key);
+            // console.log('写入失败数据',JSON.stringify(data));
+            // console.log('写入失败原因',JSON.stringify(err));
+            reject();
+        });
     });
     
 };
@@ -87,8 +97,20 @@ export const getLocalStorage = (key: string, defaultValue = undefined):Promise<a
     return new Promise((resolve,reject) => {
         if (!localStorageSuccess) reject('indexdb not init');
         mod.read(localStorageImpl,key,(res) => {
-            resolve(res || defaultValue);
-        },reject);
+            if (!res) {
+                resolve(defaultValue);
+                
+                return;
+            }
+            const result = JSON.parse(res);
+            // console.log('读取数据成功',key);
+            // console.log('读取成功数据',res);
+            resolve(result);
+        },(err) => {
+            // console.log('读取数据失败',key);
+            // console.log('读取失败原因',JSON.stringify(err));
+            resolve(defaultValue);
+        });
     });
     
 };

@@ -582,6 +582,15 @@ export enum PostModule {
 }  
 
 /**
+ * 加载阶段
+ */
+export enum LoadedStage {
+    START = 0,                 // 开始加载
+    STORELOADED = 1,           // store模块加载完毕
+    ALLLOADED = 2              // 所有资源加载完毕
+}
+
+/**
  * 服务器推送
  */
 export interface ServerPushArgs {
@@ -603,7 +612,7 @@ export enum ThirdCmd {
 /**
  * postMessage args类型
  */
-export type PostMessageArgs = boolean | ServerPushArgs | ThirdCmd;
+export type PostMessageArgs = LoadedStage | ServerPushArgs | ThirdCmd;
 
 /**
  * vm 往 webview 推送消息类型

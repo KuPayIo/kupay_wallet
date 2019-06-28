@@ -1,6 +1,7 @@
 /.vscode
 /src/.vscode
 /src/.sync
+/src/boot/
 /scripts/.error
 /scripts/*.*depend
 /scripts/*.sh
