@@ -190,7 +190,7 @@ winit.initNext = function () {
 
 	// app下载入口函数
 	var appLoadEntrance = function(){
-		pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang"], {}, function (mods, tmpfm) {
+		pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang","pi/browser/webview"], {}, function (mods, tmpfm) {
 			html = mods[0],
 			util = mods[1],
 			lang = mods[2];
@@ -247,6 +247,7 @@ winit.initNext = function () {
 	// 加载钱包项目登录相关资源
 	var loadWalletLoginSource = function(){
 		var sourceList = [
+			"app/postMessage/",
 			"app/viewLogic/",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",
@@ -295,8 +296,7 @@ winit.initNext = function () {
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
-			"earn/client/app/res/css/",
-			"app/postMessage/"
+			"earn/client/app/res/css/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			// debugger
