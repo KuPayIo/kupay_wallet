@@ -3,57 +3,22 @@
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { CMD } from '../publicLib/config';
-import { CloudCurrencyType } from '../publicLib/interface';
-import { getStore, register, setStore } from '../store/memstore';
+import { CloudCurrencyType, ServerPushArgs, ServerPushKey } from '../publicLib/interface';
+import { getStore, setStore } from '../store/memstore';
 import { logoutAccount, logoutAccountDel } from './login';
+import { postServerPushMessage } from './postWalletMessage';
 import { getServerCloudBalance } from './pull';
 
 // ===================================================== 导入
 
 // ===================================================== 导出
-
-let forceOffline:Function = () => {
-    console.log('强制被踢下线');
-};
-
-// 设置强制被踢下线提示弹框
-export const setForceOffline = (callback:Function) => {
-    forceOffline = callback;
-};
-
-let payOk:Function = () => {
-    console.log('充值成功');
-};
-
-// 设置充值成功提示
-export const setPayOk = (callback:Function) => {
-    payOk = callback;
-};
-
-let setPswPop:Function = () => {
-    console.log('余额变化  要求设置密码');
-};
-
-// 设置密码弹框
-export const setSetPswPop = (callback:Function) => {
-    setPswPop = callback;
-};
-
-let bindPhonePop:Function = () => {
-    console.log('余额变化 绑定手机弹框');
-};
-
-// 设置绑定手机弹框
-export const setBindPhonePop = (callback:Function) => {
-    bindPhonePop = callback;
-};
 /**
  * 主动推送初始化
  */ 
 // tslint:disable-next-line:max-func-body-length
 export const initPush = () => {
     // 监听指令事件
-    setPushListener('cmd',(res) => {
+    setMsgHandler(ServerPushKey.CMD,(res) => {
         console.log('强制下线==========================',res);
         setBottomLayerReloginMsg('','','');
         const cmd = res.cmd;
@@ -62,23 +27,31 @@ export const initPush = () => {
         } else if (cmd === CMD.FORCELOGOUTDEL) {
             logoutAccountDel();
         }
-       
-        return forceOffline;
+        const args:ServerPushArgs = {
+            key:ServerPushKey.CMD,
+            result:res
+        };
+        postServerPushMessage(args);
     });
 
     // 监听充值成功事件
-    setPushListener('event_pay_ok',(res) => {
+    setMsgHandler(ServerPushKey.EVENTPAYOK,(res) => {
         // const value = res.value.toJSNumber ? res.value.toJSNumber() : res.value;
         getServerCloudBalance().then(res => {
             console.log('服务器推送成功 云端余额更新==========================',res);
         });
         console.log('服务器推送成功==========================',res);
 
-        return payOk;
+        const args:ServerPushArgs = {
+            key:ServerPushKey.EVENTPAYOK,
+            result:res
+        };
+        postServerPushMessage(args);
+
     });
 
     // 监听邀请好友成功事件
-    setPushListener('event_invite_success',(res) => {
+    setMsgHandler(ServerPushKey.EVENTINVITESUCCESS,(res) => {
         console.log('event_invite_success服务器推送邀请好友成功=====================',res);
         const invite = getStore('inviteUsers').invite_success || [];
         
@@ -90,7 +63,7 @@ export const initPush = () => {
     });
 
     // 监听兑换邀请码成功事件
-    setPushListener('event_convert_invite',(res) => {
+    setMsgHandler(ServerPushKey.EVENTCONVERTINVITE,(res) => {
         console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
         let invite = [];
         if (res.accId) {
@@ -100,13 +73,13 @@ export const initPush = () => {
     });
 
     // 监听邀请好友并成为真实用户事件
-    setPushListener('event_invite_real',(res) => {
+    setMsgHandler(ServerPushKey.EVENTINVITEREAL,(res) => {
         console.log('event_invite_real服务器推送邀请好友并成为真实用户===============',res);
         setStore('flags/invite_realUser',res.num);
     });
 
     // 监听余额变化事件
-    setMsgHandler('alter_balance_ok',(res) => {
+    setMsgHandler(ServerPushKey.ALTERBALANCEOK,(res) => {
         console.log('alter_balance_ok服务器推送成功===========调用排名===============',res);
         getServerCloudBalance();
         if (res.cointype === CloudCurrencyType.KT) {
@@ -117,21 +90,29 @@ export const initPush = () => {
             //     gameSetStore('mine',mine);  
             // });
         }
-        
         const wallet = getStore('wallet');
         const userInfo = getStore('user/info');
+        let popType = -1;           // 弹框类型 -1 无弹框 0 密码弹框   1 绑定手机弹框
         if (!wallet.setPsw) {
             const setPsw = getStore('flags').setPsw;
             if (setPsw) return;
             setStore('flags/setPsw',true);  // 防止多次弹窗
-            setPswPop();
+            popType = 0;
         } else if (!userInfo.phoneNumber) {
             const bindPhone = getStore('flags').bindPhone;
             if (bindPhone) return;
             setStore('flags/bindPhone',true);  // 防止多次弹窗
-            bindPhonePop();
+            popType = 1;
         }
-        
+
+        const args:ServerPushArgs = {
+            key:ServerPushKey.EVENTPAYOK,
+            result:{
+                ...res,
+                popType
+            }
+        };
+        postServerPushMessage(args);
     });
 
     // setMsgHandler('event_kt_alert',(res) => {
@@ -139,33 +120,5 @@ export const initPush = () => {
     // });
 };
 
+initPush();
 // ===================================================== 本地
-// 推送回调列表
-let pushCallBackList = [];
-
-/**
- * 设置推送监听,对setMsgHandler的封装
- *
- */
-const setPushListener = (key:string,callback:Function) => {
-    setMsgHandler(key,(res) => {
-        const popTips = callback(res);
-        const flags = getStore('flags');  
-        const loaded = flags.level_3_page_loaded; // 资源已经加载完成
-        if (loaded) {
-            popTips && popTips(res);
-        } else {
-            pushCallBackList.push(() => {
-                popTips && popTips(res);
-            });
-        }
-    });
-};
-
-register('flags/level_3_page_loaded',(loaded: boolean) => {
-    // 将缓冲池中的回调函数都执行
-    for (const cb of pushCallBackList) {
-        cb();
-    }
-    pushCallBackList = [];
-});

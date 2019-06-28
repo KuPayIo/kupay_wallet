@@ -1,5 +1,5 @@
 import { WebViewManager } from '../../pi/browser/webview';
-import { LoadedStage, PostMessage, PostModule, ThirdCmd } from '../publicLib/interface';
+import { LoadedStage, PostMessage, PostModule, ServerPushArgs, ThirdCmd } from '../publicLib/interface';
 
 /**
  * 主动向钱包推消息
@@ -38,6 +38,17 @@ export const postThirdPushMessage = (cmd:ThirdCmd) => {
     const message:PostMessage = {
         moduleName:PostModule.THIRD,   // 模块名
         args:cmd      // 参数
+    };
+    WebViewManager.postMessage(walleWebViewtName,JSON.stringify(message));
+};
+
+/**
+ * 推送服务器推送 相关
+ */
+export const postServerPushMessage = (args:ServerPushArgs) => {
+    const message:PostMessage = {
+        moduleName:PostModule.THIRD,   // 模块名
+        args      // 参数
     };
     WebViewManager.postMessage(walleWebViewtName,JSON.stringify(message));
 };

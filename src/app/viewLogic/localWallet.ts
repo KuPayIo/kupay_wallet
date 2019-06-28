@@ -215,6 +215,15 @@ export const bindPhonePop = () => {
     },3000);
 };
 
+// 余额变化  密码弹框或手机弹框
+export const balanceChange = (args:any) => {
+    if (args.popType === 0) {
+        setPswPop();
+    } else if (args.popType === 1) {
+        bindPhonePop();
+    }
+};
+
 /**
  * 充值
  */

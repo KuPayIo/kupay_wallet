@@ -590,11 +590,19 @@ export enum LoadedStage {
     ALLLOADED = 2              // 所有资源加载完毕
 }
 
+export enum ServerPushKey {
+    CMD = 'cmd',                // 踢人下线
+    EVENTPAYOK = 'event_pay_ok',         // 充值成功
+    EVENTINVITESUCCESS = 'event_invite_success',   // 邀请好友成功
+    EVENTCONVERTINVITE = 'event_convert_invite',   // 兑换邀请码成功
+    EVENTINVITEREAL = 'event_invite_real',          // 邀请好友并成为真实用户事件
+    ALTERBALANCEOK = 'alter_balance_ok'            // 余额变化事件
+}
 /**
  * 服务器推送
  */
 export interface ServerPushArgs {
-    key:string;            // 服务器推送key
+    key:ServerPushKey;            // 服务器推送key
     result:any;           // 服务器推送内容
 }
 
