@@ -95,18 +95,22 @@ export const initPush = () => {
         let popType = -1;           // 弹框类型 -1 无弹框 0 密码弹框   1 绑定手机弹框
         if (!wallet.setPsw) {
             const setPsw = getStore('flags').setPsw;
-            if (setPsw) return;
-            setStore('flags/setPsw',true);  // 防止多次弹窗
-            popType = 0;
+            if (!setPsw) {
+                setStore('flags/setPsw',true);  // 防止多次弹窗
+                popType = 0;
+            }
+            
         } else if (!userInfo.phoneNumber) {
             const bindPhone = getStore('flags').bindPhone;
-            if (bindPhone) return;
-            setStore('flags/bindPhone',true);  // 防止多次弹窗
-            popType = 1;
+            if (!bindPhone) {
+                setStore('flags/bindPhone',true);  // 防止多次弹窗
+                popType = 1;
+            }
+            
         }
 
         const args:ServerPushArgs = {
-            key:ServerPushKey.EVENTPAYOK,
+            key:ServerPushKey.ALTERBALANCEOK,
             result:{
                 ...res,
                 popType

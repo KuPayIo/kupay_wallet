@@ -4,7 +4,7 @@
 import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 // tslint:disable-next-line:max-line-length
-import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callBuyProduct, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDcClearTxTimer, callDcInitErc20GasLimit, callDcRefreshAllTx, callDcUpdateAddrInfo, callDeletLocalTx, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetAllAccount, callGetPurchaseRecord, callGetRechargeLogs, callGetServerCloudBalance, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callResendBtcRecharge, callResendBtcTransfer ,callUpdateLocalTx,callVerifyIdentidy } from '../middleLayer/wrap';
+import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callBuyProduct, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDcClearTxTimer, callDcInitErc20GasLimit, callDcRefreshAllTx, callDcUpdateAddrInfo, callDeletLocalTx, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetAllAccount, callGetPurchaseRecord, callGetRechargeLogs, callGetServerCloudBalance, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callResendBtcRecharge, callResendBtcTransfer ,callUpdateLocalTx,callVerifyIdentidy, setStoreData } from '../middleLayer/wrap';
 import { Config, ERC20Tokens } from '../publicLib/config';
 import { CreateWalletOption, TxHistory } from '../publicLib/interface';
 import { doErrorShow } from '../utils/toolMessages';
@@ -202,7 +202,7 @@ export const setPswPop = () => {
         popModalBoxs('app-components-modalBox-modalBox',modalBox[getLang()],() => {  
             popNew('app-view-mine-setting-settingPsw',{});
         },undefined,true);
-        
+        setStoreData('flags/setPsw',false);
     },3000);
 };
 
@@ -211,7 +211,8 @@ export const bindPhonePop = () => {
     setTimeout(() => {
         popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
             popNew('app-view-mine-setting-phone',{ jump:true });
-        },undefined,true);      
+        },undefined,true);    
+        setStoreData('flags/bindPhone',false);  
     },3000);
 };
 

@@ -47,7 +47,7 @@ export const postThirdPushMessage = (cmd:ThirdCmd) => {
  */
 export const postServerPushMessage = (args:ServerPushArgs) => {
     const message:PostMessage = {
-        moduleName:PostModule.THIRD,   // 模块名
+        moduleName:PostModule.SERVER,   // 模块名
         args      // 参数
     };
     WebViewManager.postMessage(walleWebViewtName,JSON.stringify(message));
