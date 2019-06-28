@@ -362,7 +362,7 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			var emitSourceLoaded = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports.emitSourceLoaded;
+			var emitSourceLoaded = pi_modules.commonjs.exports.relativeGet("app/postMessage/localLoaded").exports.emitSourceLoaded;
 			emitSourceLoaded();
 			console.timeEnd('all resource loaded');
 			loadLeftImages();

@@ -8,11 +8,11 @@ import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { changellyGetCurrencies } from '../../net/changellyPull';
+import { setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { getModulConfig } from '../../publicLib/modulConfig';
 import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
 import { getCloudBalances, getCloudWallets, registerStoreData } from '../../viewLogic/common';
 import { kickOffline } from '../../viewLogic/login';
-import { setSourceLoadedCallbackList } from './main';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

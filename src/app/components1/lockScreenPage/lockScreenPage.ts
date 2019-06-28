@@ -7,9 +7,9 @@ import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { callLockScreenHash, callLockScreenVerify, callVerifyIdentidy,getStoreData, setStoreData } from '../../middleLayer/wrap';
+import { getSourceLoaded, setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { LockScreen } from '../../publicLib/interface';
 import { popNewLoading, popNewMessage } from '../../utils/tools';
-import { getSourceLoaded, setSourceLoadedCallbackList } from '../../view/base/main';
 import { logoutAccount } from '../../viewLogic/login';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

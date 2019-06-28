@@ -1,4 +1,5 @@
-import { callGetCloudBalances, callGetCloudWallets, registerStore } from '../middleLayer/wrap';
+import { callGetCloudBalances, callGetCloudWallets } from '../middleLayer/wrap';
+import { addStoreListener } from '../postMessage/listenerStore';
 import { addStoreLoadedListener } from '../postMessage/vmLoaded';
 import { CloudCurrencyType, CloudWallet } from '../publicLib/interface';
 
@@ -7,7 +8,7 @@ import { CloudCurrencyType, CloudWallet } from '../publicLib/interface';
  */
 export const registerStoreData = (keyName: string, cb: Function) => {
     addStoreLoadedListener(() => {
-        registerStore(keyName,cb);
+        addStoreListener(keyName,cb);
     });
 };
 

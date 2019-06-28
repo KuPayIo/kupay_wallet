@@ -45,13 +45,6 @@ export const setStoreData = (path: string, data: any, notified = true,callback:F
 };
 
 /**
- * 注册store
- */
-export const registerStore = (keyName: string, cb: Function,callback:Function) => {
-    callback([undefined,register(keyName,cb)]);
-    // register(keyName,cb);
-};
-/**
  * 获取所有的账户列表
  */
 export const callGetAllAccount = (callback:Function) => {

@@ -5,8 +5,8 @@ import { WebViewManager } from '../../pi/browser/webview';
 import { AddrInfo, CloudCurrencyType, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
 import { piLoadDir } from '../utils/commonjsTools';
 
-const vmName = 'JSVM';   // 虚拟机rpc通信名称
-const COREWRAPMODULENAME = 'app/remote/coreWrap';   // coreWrap moduleName
+export const vmName = 'JSVM';   // 虚拟机rpc通信名称
+export const COREWRAPMODULENAME = 'app/remote/coreWrap';   // coreWrap moduleName
 
 export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 
@@ -64,13 +64,6 @@ export const getStoreData = (key:string, defaultValue = undefined) => {
  */
 export const setStoreData = (path: string, data: any, notified = true) => {
     return vmRpcCall('setStoreData',[path,data,notified]);
-};
-
-/**
- * 注册store
- */
-export const registerStore = (keyName: string, cb: Function) => {
-    return vmRpcCall('registerStore',[keyName,cb]);
 };
 
 /**
