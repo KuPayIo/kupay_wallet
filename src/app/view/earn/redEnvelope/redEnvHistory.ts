@@ -7,8 +7,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
-import { callQuerySendRedEnvelopeRecord,getStoreData } from '../../../middleLayer/wrap';
-import { getInviteCode } from '../../../net/pull';
+import { callGetInviteCode,callQuerySendRedEnvelopeRecord, getStoreData } from '../../../middleLayer/wrap';
 import { PAGELIMIT } from '../../../publicLib/config';
 import { LuckyMoneyType } from '../../../publicLib/interface';
 import { getUserInfo } from '../../../utils/tools';
@@ -175,7 +174,7 @@ export class RedEnvHistory extends Widget {
             url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${item.rid}&lm=${(<any>window).encodeURIComponent(item.message)}&lan=${lan}`;
             title = this.language.redEnvType[1]; 
         } else if (item.rid === '-1') {
-            const inviteCodeInfo = await getInviteCode();
+            const inviteCodeInfo = await callGetInviteCode();
             if (inviteCodeInfo.result !== 1) return;
                 
             url = `${sharePerUrl}?cid=${inviteCodeInfo.cid}&type=${LuckyMoneyType.Invite}&lan=${lan}`;

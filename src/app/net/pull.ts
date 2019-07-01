@@ -21,14 +21,6 @@ export const getBalance = async (currencyType: CloudCurrencyType) => {
 };
 
 // ==========================================红包start
-/**
- * 获取邀请码码
- */
-export const getInviteCode = async () => {
-    const msg = { type: 'wallet/cloud@get_invite_code', param: {} };
-
-    return callRequestAsync(msg);
-};
 
 /**
  * 兑换邀请码

@@ -1,6 +1,7 @@
 /**
  * 授权、支付等API
  */
+import { goshare, ImageNameType } from '../../pi/browser/vm';
 import { WebViewManager } from '../../pi/browser/webview';
 import { SCPrecision } from '../publicLib/config';
 import { CloudCurrencyType, ThirdCmd } from '../publicLib/interface';
@@ -382,11 +383,16 @@ export const minWebview1 = (webviewName: string) => {
 /**
  * 邀请好友
  */
-export const inviteFriends = (webviewName: string) => {
-    console.log('wallet inviteFriends called');
-    minWebview1(webviewName);
+export const inviteFriends = (payload:{webviewName: string;nickName:string;inviteCode:string;apkDownloadUrl:string}) => {
+    console.log('wallet inviteFriends called',JSON.stringify(payload));
+    minWebview1(payload.webviewName);
     // TODO 此处判断default webview是否活跃
-    postThirdPushMessage(ThirdCmd.INVITE);
+    // postThirdPushMessage(ThirdCmd.INVITE);
+    goshare(ImageNameType.Wallet,payload.nickName,payload.inviteCode,payload.apkDownloadUrl,() => {
+        console.log('分享成功');
+    },() => {
+        console.log('分享失败');
+    });
 };
 
 /**

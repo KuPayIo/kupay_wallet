@@ -4,12 +4,12 @@
 import { getEthApiBaseUrl } from '../core/config';
 import { isValidMnemonic } from '../core/genmnemonic';
 import { AddrInfo, CloudCurrencyType, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
-import { deleteAccount, getAllAccount, getCloudBalances1, getStore, register, setStore } from '../store/memstore';
+import { deleteAccount, getAllAccount, getCloudBalances1, getStore, setStore } from '../store/memstore';
 import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, dcUpdateBalance } from './dataCenter';
 // tslint:disable-next-line:max-line-length
 import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, logoutAccountDel, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from './login';
 // tslint:disable-next-line:max-line-length
-import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getMineDetail, getMining, getOneUserInfo, getProductList, getPurchaseRecord, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
+import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getInviteCode, getMineDetail, getMining, getOneUserInfo, getProductList, getPurchaseRecord, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
 // tslint:disable-next-line:max-line-length
 import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from './pullWallet';
 // tslint:disable-next-line:max-line-length
@@ -459,6 +459,17 @@ export const callQueryConvertLog = (start:string = '',callback:Function) => {
  */
 export const callGetOneUserInfo = (uids: number[], isOpenid: number = 0,callback:Function) => {
     getOneUserInfo(uids,isOpenid).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([err]);
+    });
+};
+
+/**
+ * 获取邀请码
+ */
+export const callGetInviteCode = (callback:Function) => {
+    getInviteCode().then(res => {
         callback([undefined,res]);
     }).catch(err => {
         callback([err]);

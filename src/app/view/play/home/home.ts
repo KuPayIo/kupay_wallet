@@ -11,7 +11,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,getStoreData } from '../../../middleLayer/wrap';
+import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,callGetInviteCode, getStoreData } from '../../../middleLayer/wrap';
 import { getUserInfo, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
 import { activityList, gameList } from './gameConfig';
@@ -29,14 +29,11 @@ export class PlayHome extends Widget {
     
     constructor() {
         super();
-        console.time('loginMod thirdApiPromise');
-        console.time('loginMod thirdApiDependPromise');
         this.thirdApiPromise = new Promise((resolve) => {
             const path = 'app/api/thirdApi.js.txt';
             loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
-                console.timeEnd('loginMod thirdApiPromise');
                 resolve(content);
             }, () => {
                 //
@@ -50,7 +47,6 @@ export class PlayHome extends Widget {
             loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
-                console.timeEnd('loginMod thirdApiDependPromise');
                 resolve(content);
             }, () => {
                 //
@@ -74,10 +70,14 @@ export class PlayHome extends Widget {
         getUserInfo().then(userInfo => {
             if (userInfo) {
                 this.props.avatar = userInfo.avatar;
+                this.props.nickName = userInfo.nickName;
                 this.paint();
             }
         });
-
+        callGetInviteCode().then(inviteCodeInfo => {
+            this.props.inviteCode = inviteCodeInfo.cid;
+            this.paint();
+        });
     }
 
     public attach() {
@@ -170,7 +170,12 @@ export class PlayHome extends Widget {
             pi3Config.appid = gameList[num].appid;
             pi3Config.gameName = gameTitle;
             pi3Config.webviewName = webviewName;
-            
+            pi3Config.apkDownloadUrl = gameList[num].apkDownloadUrl;
+            pi3Config.userInfo = {
+                nickName:this.props.nickName,
+                inviteCode:this.props.inviteCode
+            };
+
             const pi3ConfigStr = `
                 window.pi_config = ${JSON.stringify(pi3Config)};
             `;

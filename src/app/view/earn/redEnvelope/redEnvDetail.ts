@@ -7,8 +7,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
-import { callGetOneUserInfo,callQueryDetailLog, getStoreData } from '../../../middleLayer/wrap';
-import { getInviteCode } from '../../../net/pull';
+import { callGetInviteCode,callGetOneUserInfo, callQueryDetailLog, getStoreData } from '../../../middleLayer/wrap';
 import { uploadFileUrlPrefix } from '../../../publicLib/config';
 import { LuckyMoneyType } from '../../../publicLib/interface';
 import { getUserInfo } from '../../../utils/tools';
@@ -120,7 +119,7 @@ export class RedEnvDetail extends Widget {
             url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
             title = this.language.redEnvType[1]; 
         } else if (this.props.rid === '-1') {
-            const inviteCodeInfo = await getInviteCode();
+            const inviteCodeInfo = await callGetInviteCode();
             if (inviteCodeInfo.result !== 1) return;
                 
             url = `${sharePerUrl}?cid=${inviteCodeInfo.cid}&type=${LuckyMoneyType.Invite}&lan=${lan}`;

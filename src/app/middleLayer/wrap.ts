@@ -381,6 +381,13 @@ export const callQueryConvertLog = (start?:string) => {
 export const callGetOneUserInfo = (uids: number[], isOpenid: number = 0) => {
     return vmRpcCall('callGetOneUserInfo',[uids,isOpenid]);
 };
+
+/**
+ * 获取邀请码
+ */
+export const callGetInviteCode = () => {
+    return vmRpcCall('callGetInviteCode',[]);
+};
 // ===========================================net相关===================================================================
 
 // ===========================================wallet相关===================================================================

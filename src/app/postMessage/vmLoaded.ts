@@ -35,6 +35,6 @@ export const addVmLoadedListener = (cb:Function) => {
  * @param cb 回调
  */
 export const addStoreLoadedListener = (cb:Function) => {
-    if (vmLoadedStage === LoadedStage.STORELOADED) cb && cb();
+    if (vmLoadedStage >= LoadedStage.STORELOADED) cb && cb();
     storeLoadedCbs.push(cb);
 };

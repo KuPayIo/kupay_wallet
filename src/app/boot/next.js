@@ -379,7 +379,6 @@ winit.initNext = function () {
 						var tab = util.loadCssRes(fileMap);
 						tab.timeout = 90000;
 						tab.release();
-						loadLeftSource();
 						var vmLoaded = pi_modules.commonjs.exports.relativeGet("app/postMessage/vmLoaded").exports;
 						vmLoaded.addVmLoadedListener(function(){
 							// 加载根组件
@@ -391,6 +390,7 @@ winit.initNext = function () {
 								document.body.removeChild(document.getElementById('rcmj_loading_log'));
 							});
 						});
+						loadLeftSource();
 					}, function (r) {
 						alert("加载目录失败, " + r.error + ":" + r.reason);
 					}, dirProcess.handler);
@@ -416,7 +416,6 @@ winit.initNext = function () {
 	// 加载剩下的资源
 	var loadLeftSource = function () {
 		var level2SourceList = [
-			"app/logic/",
 			"app/components/",
 			"app/view/",
 			"chat/client/app/view/",

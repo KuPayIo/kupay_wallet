@@ -166,7 +166,13 @@ window.pi_RPC_Method = (function () {
         clickedClose:true,
         clickCb:function(){
             console.log("click 邀请好友");
-            pi_RPC_Method(pi_config.jsApi, "inviteFriends", pi_config.webviewName, function (error, result) {
+            var payload = {
+                webviewName:pi_config.webviewName,
+                nickName:pi_config.userInfo.nickName,
+                inviteCode:pi_config.userInfo.inviteCode,
+                apkDownloadUrl:pi_config.apkDownloadUrl
+            };
+            pi_RPC_Method(pi_config.jsApi, "inviteFriends", payload, function (error, result) {
                 console.log('inviteFriends call success');
             });
         }

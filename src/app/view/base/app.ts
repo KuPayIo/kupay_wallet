@@ -69,7 +69,7 @@ export class App extends Widget {
             return getModulConfig(item.modulName);
         });
         // 币币兑换可用货币获取
-        changellyGetCurrencies();
+        // changellyGetCurrencies();
     }
 
     public tabBarChangeListener(event: any, index: number) {

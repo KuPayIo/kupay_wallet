@@ -217,7 +217,6 @@ registerStoreData('third/rate', () => {
         w.updateRate();
     }
 });
-
 // 涨跌幅变化
 registerStoreData('third/currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);

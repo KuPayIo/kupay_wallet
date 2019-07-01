@@ -781,3 +781,12 @@ export const getOneUserInfo = (uids: number[], isOpenid?: number) => {
     });
    
 };
+
+/**
+ * 获取邀请码
+ */
+export const getInviteCode = () => {
+    const msg = { type: 'wallet/cloud@get_invite_code', param: {} };
+
+    return requestAsync(msg);
+};
