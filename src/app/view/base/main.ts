@@ -22,6 +22,7 @@ export const run = (cb): void =>  {
     popNew('app-view-base-app');
     // 打开首页面
     getStoreData('user/id').then(id => {
+        console.log('获取id ====',id);
         if (!id) {
             callGetAllAccount().then(accounts => {
                 if (accounts.length > 0) {

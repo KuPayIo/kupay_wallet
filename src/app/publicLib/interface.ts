@@ -586,7 +586,7 @@ export enum PostModule {
  */
 export enum LoadedStage {
     START = 0,                 // 开始加载
-    STORELOADED = 1,           // store模块加载完毕
+    STORELOADED = 1,           // store模块加载完毕并且数据初始化成功
     ALLLOADED = 2              // 所有资源加载完毕
 }
 

@@ -1,7 +1,7 @@
 import { LoadedStage } from '../publicLib/interface';
 
 /**
- * vm 资源加载完成
+ * vm 资源加载阶段  底层会保证webview到达相同阶段才会推送消息
  */
 const storeLoadedCbs = [];           // store加载完成回调
 const vmLoadedCbs = [];              // 所有资源加载完成回调

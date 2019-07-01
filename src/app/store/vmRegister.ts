@@ -7,9 +7,35 @@ const methodName = 'notifyListener';
 /**
  * 注册store
  */
-export const vmRegisterStore = (key:string) => {
-    console.log('注册vmRegisterStore ===',key);
-    register(key,(data:any) => {
-        WebViewManager.rpc(walletName,{ moduleName:LISTENERSTORENAME,methodName,params:[key,JSON.stringify(data)] });
-    });
+export const vmRegisterStore = (keysStr:string) => {
+    console.log('注册vmRegisterStore ===',keysStr);
+    const keys = keysStr.split(',');
+    for (const key of keys) {         // 一次性注册keys
+        register(key,(data:any) => {
+            WebViewManager.rpc(walletName,{ moduleName:LISTENERSTORENAME,methodName,params:[key,JSON.stringify(data)] });
+        });
+    }
+};
+
+let firstRegisterSuccess = false;
+const firstRegisterCbs = [];
+/**
+ * 第一次注册监听  (在第一次注册成功后才取登录  保证webview端能监听到登录相关信息)
+ */
+export const addFirstRegisterListener = (cb:Function) => {
+    if (!firstRegisterSuccess) {
+        firstRegisterCbs.push(cb);
+    } else {
+        cb();
+    }
+};
+
+/**
+ * 第一次注册成功
+ */
+export const emitFirstRegister = () => {
+    firstRegisterSuccess = true;
+    for (const cb of firstRegisterCbs) {
+        cb && cb();
+    }
 };
