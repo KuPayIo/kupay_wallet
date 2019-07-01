@@ -6,9 +6,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getModulConfig } from '../../../modulConfig';
 import { getRealUser, getServerCloudBalance, sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
+import { currencyType, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { VerifyIdentidy } from '../../../utils/walletTools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -29,6 +31,7 @@ interface Props {
     forceHide:boolean;
     ktBalance:number;    // KT余额
     inFlag?:string;  // 从哪里进入 chat
+    ktShow:string;  // KT名称
 }
 
 export class WriteRedEnv extends Widget {
@@ -36,6 +39,7 @@ export class WriteRedEnv extends Widget {
     public language:any;
 
     public props:Props = {
+        ktShow:getModulConfig('KT_SHOW'),
         list: [],
         selected: 0,
         showPin: false,
@@ -63,10 +67,12 @@ export class WriteRedEnv extends Widget {
 
     public setProps(props:any) {
         super.setProps(this.props);
+        console.log(props);
         this.props = {
             ...this.props,
-            ktBalance:props.ktBalance,
-            inFlag:props.inFlag
+            ...props,
+            ktShow:getModulConfig('KT_SHOW'),
+            totalNum: props.inFlag === 'chat_user' ? 1 :0 // 单聊发送的红包只能固定为一个
         };
     }
 
@@ -82,9 +88,9 @@ export class WriteRedEnv extends Widget {
      */
     public updateBalance() {
         const list = [
-            { img: '../../res/image/currency/KT.png', name: 'KT', num: 500 },
-            { img: '../../res/image/currency/BTC.png', name: 'BTC', num: 0.01 },
-            { img: '../../res/image/currency/ETH.png', name: 'ETH', num: 0.5 }
+            { img: '../../res/image1/currency/KT.png', name: 'KT', num: 500 },
+            { img: '../../res/image1/currency/BTC.png', name: 'BTC', num: 0.01 },
+            { img: '../../res/image1/currency/ETH.png', name: 'ETH', num: 0.5 }
         ];
         const data = getCloudBalances();
         for (const i in list) {
@@ -158,12 +164,14 @@ export class WriteRedEnv extends Widget {
      * 切换货币
      */
     public changeCoin(e: any) {
-        this.props.selected = e.selected;
-        this.props.oneAmount = 0;
-        this.props.totalNum = 0;
-        this.props.totalAmount = 0;
-        this.props.message = '';
-        this.paint();
+        if (this.props.selected !== e.selected) {
+            this.props.selected = e.selected;
+            this.props.oneAmount = 0;
+            this.props.totalNum = this.props.inFlag === 'chat_user' ? 1 :0; 
+            this.props.totalAmount = 0;
+            this.props.message = '';
+            this.paint();
+        }
     }
 
     /**
@@ -171,24 +179,24 @@ export class WriteRedEnv extends Widget {
      */
     public async send() {
         const curCoin = this.props.list[this.props.selected];
-        
+     
         if (Number(this.props.totalNum) === 0) {
-            popNew('app-components1-message-message', { content: this.language.tips[2] });
+            popNewMessage(this.language.tips[2]);
 
             return;
         }
         if (Number(this.props.oneAmount) === 0 && Number(this.props.totalAmount) === 0) {
-            popNew('app-components-message-message', { content: this.language.tips[1] });
+            popNewMessage(this.language.tips[1]);
 
             return;
         }
         if (this.props.totalAmount > curCoin.num) {
-            popNew('app-components1-message-message', { content: this.language.tips[3] });
+            popNewMessage(this.language.tips[3]);
 
             return;
         }
         if (this.props.message.length > 20) {
-            popNew('app-components1-message-message', { content: this.language.tips[4] });
+            popNewMessage(this.language.tips[4]);
 
             return;
         }
@@ -196,38 +204,43 @@ export class WriteRedEnv extends Widget {
             this.props.message = this.language.messTitle[1];
         }
         if (!this.props.realUser) {
-            popNew('app-components1-message-message', { content: this.language.tips[5] });
+            popNewMessage(this.language.tips[5]);
 
             return;
         }
         if (this.props.selected === 0) {
             if (Number(this.props.totalAmount) < this.props.totalNum) {
-                popNew('app-components-message-message', { content: this.language.tips[7] });
+                const ktTips = {
+                    zh_Hans:`单个红包${this.props.ktShow}数量是大于1的整数`,
+                    zh_Hant:`單個紅包${this.props.ktShow}數量是大於1的整數`,
+                    en:''
+                };
+                popNewMessage(ktTips[getLang()]);
 
                 return;
             }
         }
 
         this.inputBlur();
-        
+        const ctypeShow = currencyType(curCoin.name);
         // tslint:disable-next-line:max-line-length
-        const mess1 = `${this.language.phrase[0]}${this.props.totalAmount}${curCoin.name} / ${this.props.totalNum} ${this.language.phrase[1]}`;
+        const mess1 = `${this.language.phrase[0]}${this.props.totalAmount}${ctypeShow} / ${this.props.totalNum} ${this.language.phrase[1]}`;
         // tslint:disable-next-line:max-line-length
         const mess2 = this.language.phrase[2] + (this.props.showPin ? this.language.redEnvType[1] : this.language.redEnvType[0]);
-        popNew('app-components1-modalBoxInput-modalBoxInput', {
-            title: curCoin.name + this.language.phrase[3],
+        popNew('app-components-modalBoxInput-modalBoxInput', {
+            title: ctypeShow + this.language.phrase[3],
             content: [mess1, mess2],
             placeholder: this.language.phrase[4],
             itype: 'password'
         },
             async (r) => {
-                const close = popNew('app-components1-loading-loading', { text: this.language.loading });
+                const close = popNewLoading(this.language.loading);
                 const secretHash = await VerifyIdentidy(r);
                 close.callback(close.widget);
                 if (secretHash) {
                     this.sendRedEnv(secretHash);
                 } else {
-                    popNew('app-components1-message-message', { content: this.language.tips[6] });
+                    popNewMessage(this.language.tips[6]);
                 }
             }
         );
@@ -256,22 +269,21 @@ export class WriteRedEnv extends Widget {
             setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
             this.paint(true);
         });
-        if(this.props.inFlag==='chat'){
-            console.log('发红包成功了')
+        if (this.props.inFlag === 'chat_user' || this.props.inFlag === 'chat_group') {
+            console.log('发红包成功了');
             this.ok({
                 message: lm,
-                rid  // 红包的ID
+                rid: rtype + rid  // 红包的ID
             });
-        }else{
+        } else {
             popNew('app-view-earn-redEnvelope-sendRedEnv', {
                 message: lm,
                 rid,
                 rtype: rtype,
-                cname: curCoin.name,
+                cname: curCoin.name
             });
         }
         
-
         // if (!this.props.showPin) {
         //     // tslint:disable-next-line:max-line-length
         //     console.log('url', `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${rid}&lm=${(<any>window).encodeURIComponent(lm)}`);

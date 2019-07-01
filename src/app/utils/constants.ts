@@ -13,6 +13,9 @@ export const defaultEthToken = [];
 // 默认显示货币列表
 export const defalutShowCurrencys = ['ETH', 'BTC','TRX','BNB','WTC','VEN'];
 
+// 首页默认显示的货币
+export const preShowCurrencys = [...defalutShowCurrencys,'SC','KT'];
+
 // 默认不可更改显示货币列表
 export const notSwtichShowCurrencys = ['ETH', 'BTC'];
 
@@ -25,11 +28,6 @@ export const lang = 'english';
 // eth代币transfer交易编码前缀
 export const ethTokenTransferCode = '0xa9059cbb';
 
-// shapeshift autologin token
-export const shapeshiftAutoToken = 'CZfRLxjor2E49vTfTZDjaeeR78nMMi1rKypV9GRBsmt2';
-
-// 如果shapeshift交易记录返回[],请求的最多次数,超过默认没有交易记录
-export const shapeshiftTransactionRequestNumber = 5;
 // 发红包所支持的货币
 export const redEnvelopeSupportCurrency = ['KT', 'ETH'];
 
@@ -144,3 +142,21 @@ export const erc20GasLimitRate = 2;
 
 // 默认顶部留出40px高度
 export const topHeight = 40;
+
+// 游客登录默认密码
+export const defaultPassword = '123456789';
+
+// 充值赠送KT倍数
+export const rechargeGiftMultiple = 10;
+
+// SC单价
+export const SCUnitprice =  1;
+
+// SC精度
+export const SCPrecision = 100;
+
+// 微信支付显示
+export const wxPayShow = 'HighApp';
+
+// 美元默认汇率
+export const USD2CNYRateDefault = 6;

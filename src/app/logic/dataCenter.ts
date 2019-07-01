@@ -6,8 +6,8 @@ import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
-import { getGoldPrice } from '../net/pull';
-import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
+import { getSilverPrice } from '../net/pull';
+import { changellyGetCurrencies, fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
 import { BigNumber } from '../res/js/bignumber';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
 import { getStore,setStore } from '../store/memstore';
@@ -19,11 +19,10 @@ import { fetchLocalTxByHash,fetchTransactionList,getMnemonicByHash } from '../ut
  * 创建事件处理器表
  * @example
  */
-export class DataCenter {
+class DataCenter {
     public timerRef: number = 0;
     public timerRef1: number = 0;
     public updateList: any[] = [];
-
     public currencyExchangeTimer: number;
   // 交易定时器列表
     private txTimerList:any[] = [];
@@ -35,8 +34,8 @@ export class DataCenter {
    * 初始化
    */
     public init() {
-        // 获取shapeshift支持货币
-        // getShapeShiftCoins();
+        // 币币兑换可用货币获取
+        changellyGetCurrencies();
         // 更新黄金价格
         this.updateGoldPrice();
         // 更新人民币美元汇率
@@ -489,7 +488,6 @@ export class DataCenter {
         };
         updateLocalTx(record);
     }
-
     /**
      * 解析erc20 input
      */
@@ -508,6 +506,8 @@ export class DataCenter {
      * 过滤eth交易记录，过滤掉token的交易记录
      */
     private filterEthTrans(trans: any[]) {
+        if (!trans)return [];
+  
         return trans.filter(item => {
             if (item.to.length === 0) return false;
             if (item.input.indexOf(ethTokenTransferCode) === 0) return false;
@@ -908,7 +908,7 @@ export class DataCenter {
         nextPoint.setMinutes(0);
         nextPoint.setSeconds(0);
         const delay = nextPoint.getTime() - new Date().getTime();
-        getGoldPrice();
+        getSilverPrice();
         setTimeout(() => {
             this.updateGoldPrice();
         },delay);

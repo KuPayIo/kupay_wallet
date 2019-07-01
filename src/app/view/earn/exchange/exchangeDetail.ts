@@ -7,6 +7,8 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { uploadFileUrlPrefix } from '../../../config';
 import { getOneUserInfo, queryDetailLog } from '../../../net/pull';
+import { CloudCurrencyType } from '../../../store/interface';
+import { currencyType } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -32,7 +34,7 @@ export class ExchangeDetail extends Widget {
             scroll:false,
             showPin:this.props.rtype === 1,  // 0 等额红包  1 拼手气红包
             userName:'',
-            userHead:'../res/image/default_avater_big.png',
+            userHead:'',
             curNum:0,
             totalNum:0,
             totalAmount:0,
@@ -60,7 +62,7 @@ export class ExchangeDetail extends Widget {
     }
 
     public async initData() {
-        const value = await queryDetailLog(this.props.suid,this.props.rid);
+        const value = await queryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);
         if (!value) return;
         this.props.redBagList = value[0];        
         this.props.message = value[1];
@@ -68,17 +70,25 @@ export class ExchangeDetail extends Widget {
         this.props.totalNum = value[3];
         this.props.totalAmount = value[4];
 
-        const user = await getOneUserInfo([this.props.suid]);
-        if (!user) return;
-        this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
-        this.props.userHead = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../res/image/default_avater_big.png';
+        if (this.props.suid) {
+            const user = await getOneUserInfo([this.props.suid]);
+            console.log('exchange detail user',user);
+            if (!user) return;
+            this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
+            this.props.userHead = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../../res/image/default_avater_big.png';
+        }
 
         const redBagList = value[0];
+        if (!this.props.ctypeShow) {
+            this.props.ctypeShow = currencyType(CloudCurrencyType[redBagList[0].ctype]);
+        }
+        
         for (let i = 0;i < redBagList.length;i++) {
-            const user = await getOneUserInfo([redBagList[i].cuid]);
-            this.props.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
+            const person = await getOneUserInfo([redBagList[i].cuid]);
+            if (!person) break;
+            this.props.redBagList[i].userName = person.nickName ? person.nickName :this.language.defaultUserName;
             // tslint:disable-next-line:max-line-length
-            this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'res/image/default_avater_big.png';
+            this.props.redBagList[i].avatar = person.avatar ? `${uploadFileUrlPrefix}${person.avatar}` :'../../res/image/default_avater_big.png';
             if (this.props.rtype === 1 && redBagList.length === this.props.totalNum && this.props.greatAmount < redBagList[i].amount) {
                 this.props.greatAmount = redBagList.amount;
                 this.props.greatUser = i;

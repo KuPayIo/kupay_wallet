@@ -2,12 +2,12 @@
  * 云端绑定手机
  */
 // =================================================导入
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getMineDetail, regPhone } from '../../../net/pull';
+import { regPhone, unbindPhone } from '../../../net/pull';
 import { getStore, setStore } from '../../../store/memstore';
+import { delPopPhoneTips, getUserInfo, popNewMessage } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -16,21 +16,28 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class BindPhone extends Widget {
     public ok: () => void;
-    public language:any;
-    constructor() {
-        super();
-    }
     public create() {
-        super.create();
-        this.language = this.config.value[getLang()];
         this.props = {
-            phone:'',
+            areaCode:'',
+            phone:getUserInfo().phoneNumber,
             code:[],
             isSuccess:true
         };
+        super.create();
     }
 
+    public setProps(props:any,oldProps:any) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+    }
     public backPrePage() {
+        this.ok && this.ok();
+    }
+    public jumpClick() {
+        setStore('flags/bindPhone',false);
         this.ok && this.ok();
     }
     
@@ -39,22 +46,43 @@ export class BindPhone extends Widget {
      */
     public async doSure() {
         if (!this.props.phone) {
-            popNew('app-components1-message-message', { content: this.language.tips });
+            const tips = { zh_Hans:'请先获取验证码',zh_Hant:'請先獲取驗證碼',en:'' };
+            popNewMessage(tips[getLang()]);
             this.props.code = [];
             this.setCode();
 
             return;
         }
-        const data = await regPhone(this.props.phone, this.props.code.join(''));
-        if (data && data.result === 1) {
-            const userinfo = getStore('user/info');
-            userinfo.phoneNumber = this.props.phone;
-            setStore('user/info',userinfo);
-            getMineDetail();
-            this.ok();
+        
+        if (!this.props.unbind) {
+            const data = await regPhone(this.props.phone, this.props.areaCode,this.props.code.join(''));
+            if (data && data.result === 1) {
+                const userinfo = getStore('user/info');
+                userinfo.phoneNumber = this.props.phone;
+                userinfo.areaCode = this.props.areaCode;
+                setStore('user/info',userinfo);
+                delPopPhoneTips();
+                this.ok && this.ok();
+                setStore('flags/bindPhone',false);
+                popNewMessage('绑定成功');
+            } else {
+                this.props.code = [];
+                this.setCode();
+            }
         } else {
-            this.props.code = [];
-            this.setCode();
+            // 解绑
+            const data = await unbindPhone(this.props.phone, this.props.code.join(''),this.props.areaCode);
+            if (data && data.result === 1) {
+                this.ok && this.ok();
+                const userinfo = getStore('user/info');
+                userinfo.phoneNumber = '';
+                userinfo.areaCode = '';
+                setStore('user/info',userinfo);
+                popNewMessage('解绑成功');
+            } else {
+                this.props.code = [];
+                this.setCode();
+            }
         }
         this.paint();
     }
@@ -64,6 +92,7 @@ export class BindPhone extends Widget {
      */
     public phoneChange(e: any) {
         this.props.phone = e.value;  
+        this.props.areaCode = e.areaCode;
     }
 
     /**

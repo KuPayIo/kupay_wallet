@@ -25,6 +25,7 @@ export class CloudWalletHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
+        this.paint();
     }
     public init() {
         this.language = this.config.value[getLang()];
@@ -34,6 +35,7 @@ export class CloudWalletHome extends Widget {
         const color = getStore('setting/changeColor','redUp');
         this.props = {
             ...this.props,
+            topBarTitle:this.props.currencyName,
             tabs:[{
                 tab:this.language.total,
                 components:'app-view-wallet-cloudWallet-totalRecord'
@@ -74,23 +76,12 @@ export class CloudWalletHome extends Widget {
      * 充值
      */
     public rechargeClick() {
-        if (this.props.currencyName === 'KT') {
-            popNew('app-view-wallet-cloudWallet-rechargeKT');
-        } else if (this.props.currencyName === 'ST') {
-            popNew('app-view-wallet-cloudWalletGT-rechargeGT');
-        } else {
-            popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
-        }
+        popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
     }
     /**
      * 提币
      */
     public withdrawClick() {
-        if (this.props.currencyName === 'KT' || this.props.currencyName === 'ST') {
-            popNewMessage(this.language.tips);
-
-            return;
-        }
         popNew('app-view-wallet-cloudWallet-withdraw',{ currencyName:this.props.currencyName });
     }
 

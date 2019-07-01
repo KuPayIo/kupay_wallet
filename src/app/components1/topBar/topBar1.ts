@@ -3,17 +3,17 @@
  */
 // ================================ 导入
 import { Json } from '../../../pi/lang/type';
-import { popNew } from '../../../pi/ui/root';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
-import { hasWallet } from '../../utils/tools';
+import { popNew3, rippleShow } from '../../utils/tools';
 
 interface Props {
     avatar:string;
-    scrollHeight?:number;
-    refreshImg?:string;
-    refresh?:boolean;
-    text?:string;
+    scrollHeight:number;
+    refreshImg:string;
+    refresh:boolean;
+    text:string;
+    nextImg:string;
 }
 
 // ================================ 导出
@@ -38,13 +38,23 @@ export class TopBar1 extends Widget {
         }, 1000);
     }
     
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
+    }
+    
     /**
      * 打开我的设置
      */
     public showMine() {
-        // popNew('app-view-mine-home-home');
-        if (!hasWallet()) return;
-        popNew('app-view-mine-account-home');
+        popNew3('app-view-mine-home-home');
+    }
+
+    /**
+     * 点击右侧按钮
+     */
+    public goNext(e:any) {
+        notify(e.node,'ev-next-click',null);
     }
 
 }

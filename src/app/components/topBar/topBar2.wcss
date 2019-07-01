@@ -1,0 +1,37 @@
+.ga-top-banner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #222;
+    box-sizing: border-box;
+    height: 88px;
+}
+.left-container{
+    display: flex;
+    align-items: center;
+    font-size: 36px;
+    line-height: 88px;
+}
+.ga-back{
+    width: 48px;
+    height: 48px;
+    margin: 0 15px;
+    border: 15px solid transparent;
+    line-height: 88px;
+}
+.refreshBtn{
+    width: 48px;
+    height: 48px;
+    margin-right: 15px;
+    margin-left: -15px;
+    border: 15px solid transparent;
+    line-height: 88px;
+}
+.ga-next{
+    width: 48px;
+    height: 48px;
+    margin: 0 15px;
+    border: 15px solid transparent;
+    line-height: 88px;
+}

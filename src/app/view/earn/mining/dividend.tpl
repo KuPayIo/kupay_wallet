@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goDetail" ev-refresh-click="refreshPage">
     {{: topBarTitle = {"zh_Hans":"领分红","zh_Hant":"領分紅","en":""} }}	
-    <app-components1-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}},nextImg:{{it.scrollHeight>0?"../../res/image/41_gray.png":"../../res/image/41_white.png"}} }</app-components1-topBar-topBar2>
+    <app-components-topBar-topBar2>{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}},nextImg:{{it.scrollHeight>0?"../../res/image/41_blue.png":"../../res/image/41_white.png"}} }</app-components-topBar-topBar2>
     <div style="text-align: center;position: absolute;width: 100%;top: 150px;z-index: 0;">
         <img src="../../../res/image/dividend_background.png" style="width: 570px;" />
     </div>
@@ -9,13 +9,13 @@
 
             <div w-class="groupcard">
                 <div w-class="dividend-title">
-                    <pi-ui-lang>{zh_Hans:"累计分红(ETH)",zh_Hant:"累計分紅(ETH)",en:""}</pi-ui-lang>
+                    <pi-ui-lang>{zh_Hans:"累计分红({{it.KTShow}})",zh_Hant:"累計分紅({{it.KTShow}})",en:""}</pi-ui-lang>
                 </div>
                 <div w-class="dividend-money">{{it.totalDivid}}</div>
                 <div w-class="dividLine"></div>
                 <div w-class="dividend-sum">
                     <span style="display: inline-block;vertical-align: middle;">
-                        <pi-ui-lang>{zh_Hans:"持有",zh_Hant:"持有",en:""}</pi-ui-lang>&nbsp;{{it.ktBalance}}&nbsp;KT
+                        <pi-ui-lang>{zh_Hans:"持有",zh_Hant:"持有",en:""}</pi-ui-lang>&nbsp;{{it.ktBalance}}&nbsp;{{it.KTShow}}
                     </span>
                 </div>
             </div>

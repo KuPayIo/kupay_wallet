@@ -45,4 +45,5 @@ export class Cipher {
     public sha256(data: string) {
         return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(data));
     }
+
 }

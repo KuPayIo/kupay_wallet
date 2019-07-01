@@ -2,7 +2,9 @@
  * Exchange
  */
 // ============================== 导入
-import { popNew } from '../../../../pi/ui/root';
+
+import { convertAwards } from '../../../../earn/client/app/net/rpc';
+import { popModalBoxs, popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
@@ -12,6 +14,7 @@ import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryR
 import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { setStore } from '../../../store/memstore';
 import { showError } from '../../../utils/toolMessages';
+import {  popNewLoading, popNewMessage } from '../../../utils/tools';
 import { eth2Wei,smallUnit2LargeUnit } from '../../../utils/unitTools';
 
 // ================================ 导出
@@ -46,28 +49,28 @@ export class Exchange extends Widget {
         this.inputBlur();
         const code = this.props.cid.trim();
         if (code.length <= 0) {
-            popNew('app-components1-message-message', { itype: 'error', content: this.language.errorList[0], center: true });
+            popNewMessage(this.language.errorList[0]);
 
             return;
         }
-        const close = popNew('app-components1-loading-loading', { text: this.language.loading });        
+        const close = popNewLoading(this.language.loading);
         const res: any = await this.convertRedEnvelope(code);
+
         close.callback(close.widget);
         if (!res.value) return;
         setStore('activity/luckyMoney/exchange',undefined);
         getServerCloudBalance();
         const r: any = await this.queryDesc(code);
-
+        const ktShow = getModulConfig('KT_SHOW');
         const redEnvelope = {
             message: r.value,
-            ctypeShow: CloudCurrencyType[res.value[0]],
+            ctypeShow: res.value[0] === CloudCurrencyType.KT ? ktShow : CloudCurrencyType[res.value[0]],
             amount: smallUnit2LargeUnit(CloudCurrencyType[res.value[0]], res.value[1]),
             rtype: code.slice(0, 2),
             rid:res.rid,
             suid:res.src_id,
             code
         };
-        
         popNew('app-view-earn-exchange-openRedEnv', redEnvelope);
         setTimeout(() => {
             this.props.cid = '';
@@ -105,8 +108,25 @@ export class Exchange extends Widget {
             }
             value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
             setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
+            convertAwards(validCode).then((res:any) => {  // 兑换邀请码获得奖励
+                if (res && res.award.length > 0) {
+                    const awa = res.award[0];
+                    popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                        title: '邀请奖励',
+                        awardType: awa.awardType,
+                        awardNum: awa.count
+                    });
+                    this.props.cid = '';
+                    this.paint(true);
+
+                } else {
+                    popNewMessage('获取奖励失败');
+                }
+            });
+           
         } else {
-            popNew('app-components1-message-message', { content: this.language.errorList[1] });
+            alert(1);
+            popNewMessage(this.language.errorList[1]);
 
             return null;
         }

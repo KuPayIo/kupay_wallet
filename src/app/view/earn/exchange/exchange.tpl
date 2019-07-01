@@ -1,6 +1,6 @@
 <div class="new-page" ev-back-click="backPrePage" ev-next-click="goHistory">
     {{: topBarTitle = {"zh_Hans":"兑换中心","zh_Hant":"兌換中心","en":""} }}	
-    <app-components1-topBar-topBar>{"title":{{topBarTitle}},nextImg:"../../res/image/detailBlueIcon.png"}</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{{topBarTitle}},nextImg:"../../res/image/detailBlueIcon.png"}</app-components-topBar-topBar>
     <div w-class="inputBox" ev-input-change="inputChange">
         {{: inputPlaceholder = {"zh_Hans":"输入兑换码或邀请码","zh_Hant":"輸入兌換碼或邀請碼","en":""} }}
         <app-components1-input-input>{placeHolder:{{inputPlaceholder}},style:"border-radius:12px;text-align:center;color:#318DE6;font-size:36px;",input:{{it.cid}},notUnderLine:true }</app-components1-input-input>

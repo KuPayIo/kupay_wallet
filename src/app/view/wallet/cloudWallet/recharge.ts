@@ -5,12 +5,14 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { getModulConfig } from '../../../modulConfig';
 import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
 import { recharge, resendRecharge } from '../../../net/pullWallet';
 import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
 import { register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchMinerFeeList, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
+import { fetchMinerFeeList } from '../../../utils/walletTools';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -41,8 +43,15 @@ export class Recharge extends Widget {
         const tx = this.props.tx;
         console.log(tx);
         const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
+        let topBarTitle = '';
+        if (this.props.currencyName === 'KT') {
+            topBarTitle = getModulConfig('KT_SHOW');
+        } else {
+            topBarTitle = this.props.currencyName;
+        }
         this.props = {
             ...this.props,
+            topBarTitle,
             fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
             amount:tx ? tx.pay : 0,
             balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),

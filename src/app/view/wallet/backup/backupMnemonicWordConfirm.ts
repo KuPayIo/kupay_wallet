@@ -3,7 +3,7 @@
  */
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { deleteMnemonic } from '../../../logic/localWallet';
+import { deleteMnemonic, helpWord } from '../../../logic/localWallet';
 import { popNewMessage, shuffle } from '../../../utils/tools';
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
 
 export class BackupMnemonicWordConfirm extends Widget {
     public ok: () => void;
+    public cancel: () => void;
     public language:any;
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
@@ -31,7 +32,7 @@ export class BackupMnemonicWordConfirm extends Widget {
     }
     
     public backPrePage() {
-        this.ok && this.ok();
+        this.cancel && this.cancel();
     }
 
     // 对助记词乱序和标识处理
@@ -62,6 +63,7 @@ export class BackupMnemonicWordConfirm extends Widget {
             popNewMessage(this.language.tips[1]);
         } else {
             deleteMnemonic();
+            helpWord();
             popNewMessage(this.language.tips[2]);
             this.ok && this.ok();
         }

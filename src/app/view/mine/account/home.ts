@@ -7,10 +7,10 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { selectImage } from '../../../logic/native';
 import { uploadFile } from '../../../net/pull';
-import { getStore, register, setStore } from '../../../store/memstore';
-import { walletNameAvailable } from '../../../utils/account';
-import { getUserInfo, imgResize, popNewMessage, popPswBox } from '../../../utils/tools';
-import { backupMnemonic, getMnemonic } from '../../../utils/walletTools';
+import { getStore, register } from '../../../store/memstore';
+import { changeWalletName, walletNameAvailable } from '../../../utils/account';
+import { getMnemonic, getUserInfo, imgResize, popNewLoading, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { backupMnemonic } from '../../../utils/walletTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -31,6 +31,7 @@ export class AccountHome extends Widget {
         const backup = wallet.isBackup;
 
         this.props = {
+            isTourist:!wallet.setPsw,
             avatar: '',
             nickName: '',
             phone: '',
@@ -57,6 +58,11 @@ export class AccountHome extends Widget {
         this.ok && this.ok();
     }
 
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
+    }
+
     /**
      * 修改名字输入框取消聚焦
      */
@@ -70,9 +76,7 @@ export class AccountHome extends Widget {
         }
         if (v !== this.props.nickName) {
             this.props.nickName = v;
-            const userInfo = getStore('user/info');
-            userInfo.nickName = v;
-            setStore('user/info', userInfo);
+            changeWalletName(v);
         }
         this.paint();
     }
@@ -98,7 +102,7 @@ export class AccountHome extends Widget {
     public async exportPrivateKeyClick() {
         const psw = await popPswBox();
         if (!psw) return;
-        const close = popNew('app-components1-loading-loading', { text: this.language.loading });
+        const close = popNewLoading(this.language.loading);
         try {
             const mnemonic = await getMnemonic(psw);
             if (mnemonic) {
@@ -122,6 +126,7 @@ export class AccountHome extends Widget {
             this.props.avatar = url;
             this.paint();
             imagePicker.getContent({
+                quality:70,
                 success(buffer:ArrayBuffer) {
                     imgResize(buffer,(res) => {
                         uploadFile(res.base64);
@@ -135,14 +140,24 @@ export class AccountHome extends Widget {
      * 绑定手机号
      */
     public changePhone() {
-        popNew('app-view-mine-setting-phone');
+        if (!this.props.phone) {  // 绑定
+            popNew('app-view-mine-setting-phone');
+        } else { // 重新绑定
+            popNew('app-view-mine-setting-unbindPhone');
+        }
+        
     }
 
     /**
      * 修改密码
      */
     public changePsw() {
-        popNew('app-view-mine-setting-changePsw');
+        if (this.props.isTourist) {
+            popNew('app-view-mine-setting-settingPsw',{});
+        } else {
+            popNew('app-view-mine-setting-changePsw');
+        }
+        
     }
 
     /**
@@ -158,9 +173,7 @@ export class AccountHome extends Widget {
             } else {
                 if (v !== this.props.nickName) {
                     this.props.nickName = v;
-                    const userInfo = getStore('user/info');
-                    userInfo.nickName = v;
-                    setStore('user/info', userInfo);
+                    changeWalletName(v);
                     popNewMessage(this.language.tips[2]);
                     this.props.canEditName = false;
                 } else {

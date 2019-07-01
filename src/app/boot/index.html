@@ -73,7 +73,7 @@
       }
       .pi-update-box {
         background-color: #fff;
-        background-image: url(../res/image1/update_bg.png);
+        background-image: url(../res/image/update_bg.png);
         background-repeat: no-repeat;
         background-size: 100% 235px;
         width: 630px;
@@ -117,6 +117,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+		display: none;
       }
       .pi-update-cancel-btn {
         width: 220px;
@@ -146,11 +147,12 @@
         align-items: center;
       }
       .pi-update-progress-container {
+		  font-size: 32px;
+		  text-align: center;
 		position: absolute;
 		top: 40px;
 		left: 30px;
 		right: 30px;
-        display: none;
       }
       .pi-update-progress-bg {
         position: relative;
@@ -310,10 +312,10 @@
 			align-items: center;
 			position: absolute;
 			z-index: 9998;
-			background-image: url(../res/image/bg_open.png);
+			background-image: url(../res/image1/fairyChivalry.jpg);
 			background-position: center;
 			background-repeat: no-repeat;
-			background-size: 127px 188px;
+			background-size: cover;
 		}
 
 		.aside {
@@ -398,17 +400,34 @@
 			align-items: center;
 		}
 	</style>
-
-
+	<!-- <script src="http://soeasysdk.com/soeasysr/zm_engine_v2.js"></script> -->
 	<script type="text/javascript">
+		// alert("index.html");
+		self.startTime = Date.now();
 		console.time('home enter');
 		console.time('all resource loaded');
 		var LOG_TIME = Date.now()
 		var PRE_TIME = LOG_TIME;
 		var TIME_STR = ""
-
 		var winit = {};
+		navigator.userAgent = "test";
 		(function () {
+			/**
+			 * 判断是否在app内: 协议是file，而且在ios和android的webview运行
+			 */
+			var inApp = false;
+			var inIOSApp = false;
+			var inAndroidApp = false;
+			
+			if (location.protocol === "file:") {
+				if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+					winit.inAndroidApp = inAndroidApp = true;
+				} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+					winit.inIOSApp = inIOSApp = true;
+				}
+				winit.inApp = inApp = winit.inAndroidApp || winit.inIOSApp;
+			}
+
 			winit.win = {};
 			var k;
 			for (k in window) {
@@ -421,42 +440,46 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-
-			winit.debug = false;
+			winit.debug = true;
 			// main = location.port ? main + ":" + location.port : main;
-
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
-			var needCDN = true;
-
+			var needCDN = true; 
+			 
 			// todo 发版本时需动态设置服务器ip及端口
-
 			if(!winit.isLoc){ // 浏览器版本自动识别
 				winit.severIp = main;
 				winit.severPort = location.port ? location.port : "80";		
 			}else{// 本地包需要配置服务器ip和port
-				winit.severIp = "47.244.29.209";
+				// 外网 39.98.200.23   high.herominer.net 
+				winit.severIp = "192.168.31.226";
 				winit.severPort = "80";		
 			}
 
+			// if(!winit.isLoc){ // 浏览器版本自动识别
+			// 	winit.severIp = main;
+			// 	winit.severPort = location.port ? location.port : "443";		
+			// }else{// 本地包需要配置服务器ip和port
+			// 	// 外网 39.98.200.23   high.herominer.net 
+			// 	winit.severIp = "39.98.200.23";
+			// 	winit.severPort = "443";		
+			// }
+
 			// app更新配置的URL地址
-			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/ios/appversion";
+			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
+			// winit.appURL = "https://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
 			// console.log("winit.appURL = ",winit.appURL);
 
-
 			var defaultDomains;
-			var remoteDomains = [
-				"http://" + winit.severIp + ":" + winit.severPort,
-				// location.protocol + "//" + (remote ? needCDN ? "" + remote : "" + remote : "") + main, 
-				// location.protocol + "//" + remote + main
-			];
-
-			if (location.protocol === "file:") {
+			var remoteDomains = ["http://" + winit.severIp + ":" + winit.severPort];
+			// var remoteDomains = ["https://" + winit.severIp + ":" + winit.severPort];
+			if (inApp) {
 				winit.httpDomains = remoteDomains;
-				if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+
+				if (inAndroidApp) {
 					defaultDomains = winit.domains = ["file:///android_asset"];
 				}
-				if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+				if (inIOSApp) {
 					var index = location.href.indexOf("/assets/");
 					if (index < 0) throw new Error("iOS bundle has not find assets")
 					index += "/assets".length;
@@ -468,14 +491,29 @@
 
 			var jsInterceptID = 0;
 			var jsInterceptMap = {};
+			var jsInterceptUpdate = 100;
+			var jsInterceptUpdateMap = {};
 
-			window.handle_jsintercept_callback = function (listenerID, isSuccess, result) {
+
+			window.handle_jsintercept_callback = function (listenerID, isSuccess, r1, r2, r3, r4, r5) {
 				if (listenerID in jsInterceptMap) {
 					var callback = jsInterceptMap[listenerID];
 					delete jsInterceptMap[listenerID];
-					callback && callback(isSuccess, result);
+					callback && callback(isSuccess, r1, r2, r3, r4, r5);
 				}
 			}
+
+			window.handle_jsintercept_update = function (cbID, total, progress) {
+				if (cbID in jsInterceptUpdateMap) {
+					var update = jsInterceptUpdateMap[cbID];
+					update && update(total, progress);
+					//相等的时候自动移除对象
+					if (total === progress) {
+						delete jsInterceptUpdateMap[jsInterceptUpdate]
+					}
+				}
+			}
+
 
 			var u8ArrayToStr = function (arr) {
 				const decoder = new TextDecoder('utf-8');
@@ -492,17 +530,29 @@
 			}
 
 			winit.JSIntercept = {
+				isNative: inApp,
 
-				isNative: navigator.userAgent.indexOf('YINENG') >= 0,
+				// 告诉底层已经完成数据库更新，可以更新底层版本了
+				updateFinish: function (cb) {
+					jsInterceptMap[++jsInterceptID] = cb;
+					
+					if (inAndroidApp) {
+						window.JSIntercept.updateFinish(jsInterceptID);
+					} else if (inIOSApp) {
+						window.webkit.messageHandlers.JSIntercept.postMessage(["updateFinish", jsInterceptID]);
+					} else {
+						setTimeout(cb, 0);
+					}
+				},
 
 				// 取App底层版本号
 				getAppVersion: function (cb) {
 
 					jsInterceptMap[++jsInterceptID] = cb;
 
-					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+					if (inAndroidApp) {
 						window.JSIntercept.getAppVersion(jsInterceptID);
-					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+					} else if (inIOSApp) {
 						window.webkit.messageHandlers.JSIntercept.postMessage(["getAppVersion", jsInterceptID]);
 					} else {
 						setTimeout(cb, 0);
@@ -512,14 +562,15 @@
 				// 更新App
 				// iOS：url用来跳转到下载页面
 				// Android：url用于底层更新apk文件
-				updateApp: function (url, cb) {
+				updateApp: function (url, cb, progress) {
 					jsInterceptMap[++jsInterceptID] = cb;
+					jsInterceptUpdateMap[jsInterceptUpdate] = progress;
 
-					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
-						window.JSIntercept.updateApp(url, jsInterceptID);
-					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+					if (inAndroidApp) {
+						window.JSIntercept.updateApp(jsInterceptUpdate, url, jsInterceptID);
+					} else if (inIOSApp) {
 						// TODO: 弹出safari浏览器，跳转到url，并退出程序
-						window.webkit.messageHandlers.JSIntercept.postMessage(["updateApp",url,jsInterceptID]);
+						window.webkit.messageHandlers.JSIntercept.postMessage(["updateApp", jsInterceptUpdate, url, jsInterceptID]);
 					} else {
 						setTimeout(cb, 0);
 					}
@@ -532,9 +583,9 @@
 				getMobileBootFiles: function (cb) {
 					jsInterceptMap[++jsInterceptID] = cb;
 
-					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+					if (inAndroidApp) {
 						window.JSIntercept.getBootFiles(jsInterceptID);
-					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+					} else if (inIOSApp) {
 						window.webkit.messageHandlers.JSIntercept.postMessage(["getBootFiles", jsInterceptID]);
 					} else {
 						setTimeout(cb, 0);
@@ -548,19 +599,22 @@
 				saveFile: function (path, content, cb) {
 					jsInterceptMap[++jsInterceptID] = cb;
 
-					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+					if (inAndroidApp) {
 						window.JSIntercept.saveFile(path, content, jsInterceptID);
-					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+					} else if (inIOSApp) {
 						window.webkit.messageHandlers.JSIntercept.postMessage(["saveFile", path, content, jsInterceptID]);
 					} else {
 						setTimeout(cb, 0);
 					}
 				},
 
+				/**
+				 * 刷新页面
+				 */ 
 				restartApp: function () {
-					if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) {
+					if (inAndroidApp) {
 						window.JSIntercept.restartApp();
-					} else if (navigator.userAgent.indexOf('YINENG_IOS') >= 0) {
+					} else if (inIOSApp) {
 						window.webkit.messageHandlers.JSIntercept.postMessage(["restartApp"]);
 					}
 				}
@@ -581,7 +635,7 @@
 					n.onload = n.onerror = undefined;
 					head.removeChild(n);
 					if (Array.isArray(roots)) {
-					winit.loadJS(roots, url, charset, callback, errText, i === undefined ? 0 : i + 1);
+						winit.loadJS(roots, url, charset, callback, errText, i === undefined ? 0 : i + 1);
 					} else {
 						return callback && callback(url, errText);
 					}
@@ -602,10 +656,13 @@
 				n.src = Array.isArray(roots) ? roots[i || 0] + url : roots;
 				head.appendChild(n);
 			};
+
 			winit.initFail = function (url, err) {
 				err ? alert(err + ", " + url) : "";
 			};
+
 			winit.init = function () {};
+
 			winit.flags = {};
 
 			mobileBootFiles = {};
@@ -647,11 +704,11 @@
 			winit.startImpl = function () {
 				if (winit.debug) {
 					winit.loadJS(winit.getLoadDomain("hotfix.js"),
-						"/ios/app/boot/hotfix.js", "utf8", winit.initFail, "load hotupdate error");
+						"/wallet/app/boot/hotfix.js", "utf8", winit.initFail, "load hotupdate error");
 				}
 
 				winit.loadJS(winit.getLoadDomain("index.js"),
-					"/ios/app/boot/index.js?" + Math.random(), "utf8", winit.initFail, "load index error");
+					"/wallet/app/boot/index.js?" + Math.random(), "utf8", winit.initFail, "load index error");
 			}
 
 			if (document.hidden === true)
@@ -668,6 +725,110 @@
 				}, 1);
 			else
 				winit.start();
+
+			
+
+
+
+			// ======================================支付============================================================
+			var sdk = [["http://soeasysdk.com"], "/soeasysr/zm_engine_v2.js"];
+			// sdk 加载完毕回调
+			window.zmInitSucc = function () {
+				alert('sdk loaded');
+				//获取 传入的 参数 必传 game_id
+				var body = location.search.replace(/\?/, "");
+				var arr = body.split(/=|&/);
+				var i;
+				for (i = arr.length - 2; i >= 0; i -= 2) {
+					obj[arr[i]] = arr[i + 1];
+				}
+				//TODO 必须在这里或者该方法调用之后进行 sdk调用
+				ZmSdk.getInstance().init(function (data) {
+					//初始化成功之后调用其他 sdk能力 如 获取用户信息、支付、角色上报、设置分享信息、分享等等...
+					//示例
+					if (data.retcode === "0") {
+						var userinfo = ZmSdk.getInstance().getUserInfo();
+						//绑定渠道角色信息上传接口
+						winit.ptUpload = function (roleInfoJSON) {
+							roleInfo = roleInfoJSON;
+							// {"datatype":"必填1.选择服务器2.创建角色3.进入游戏4.等级提升5.退出游戏","serverid":"服务器id","servername":"服务器名称","roleid":"角色id","rolename":"游戏角色昵称","rolelevel":"角色等级","fightvalue":"战力",(以上字段为必填字段)"moneynum":"游戏币","partyname":"工会","rolecreatetime":"角色创建时间","rolelevelmtime":"角色升级时间","gender":"角色性别,可传'男'、'女'","professionid":"职业id","profession":"职业名称”,"vip":“vip等级”,"partyid":"所在帮派id","partyname":"所在帮派名称","partyroleid":"帮派称号id","partyrolename":"帮派称号名称","friendlist":[{"roleid":"关系角色id","intimacy":"亲密度","nexusid":"关系id,可填数字1:夫妻2:结拜3:情侣4:师徒5:仇人6:其它"},...]}
+							ZmSdk.getInstance().reportRoleStatus(roleInfo);
+						}
+						winit.piPay = function (param) {
+							function fromCharCode(arr) {
+								if (isArray(arr)) {
+									var str = "";
+									for (var k = 0, len = arr.length; k < len; k++) {
+										str += String.fromCharCode(arr[k]);
+									}
+									return str;
+								} else return arr;
+							}
+
+							function isArray(o) {
+								return Object.prototype.toString.call(o) == '[object Array]';
+							}
+
+							var orderInfo = new Object();
+							orderInfo.check = param.check;
+							orderInfo.feeid = param.feeid;
+							orderInfo.fee = param.fee;
+							orderInfo.feename = fromCharCode(param.feename);
+							orderInfo.extradata = param.extradata;
+							orderInfo.serverid = param.serverid;
+							orderInfo.rolename = param.roleName;
+							orderInfo.roleid = param.roleid;
+							orderInfo.servername = fromCharCode(param.servername);
+
+							ZmSdk.getInstance().pay(orderInfo, function (data) {
+								if (data.retcode == 0)
+									console.log("充值成功");
+							});
+						}
+						var localDomain = location.protocol + "//" + document.domain;
+						if (userinfo.userdata) {
+							requestSend(localDomain + "/pt/get_ptid?uid=" + userinfo.userdata.uid + userinfo.common.sdkindx + "&channer=" + channel + "&game=" + obj.game_id, function (res) {
+								if (res.ok.ptid) {
+									obj.ptid = res.ok.ptid;
+									obj.uid = res.ok.ptid;
+									obj.sign = res.ok.sign;
+									gcStorage.ptFrom = JSON.stringify(obj);
+									if(document.hidden === true)
+											setTimeout(function(){
+												var div = document.createElement('div');
+												div.onclick = function() {
+													div.remove();
+													winit.start();
+												};
+												div.setAttribute("style", "position:absolute;width: 100%;height: 100%;");
+												div.innerHTML ='<div style="position:absolute;width: 100%;top:50%;text-align:center;color:white;">页面暂停，按下可继续</div>';
+												document.body.appendChild(div);
+											}, 1);
+										else{
+											winit.start();
+										} 
+								}
+							});
+						}
+
+						if (ZmSdk.getInstance().isSupportMethod("spChangeAccount")) {
+							ZmSdk.getInstance().spChangeAccount();
+							roleInfo.datatype = 5;
+							var upRoleInfo = {};
+							for (var i = 0; i < roleDataList.length; i++) {
+								upRoleInfo[roleDataList[i][0]] = roleInfo[roleDataList[i][1]];
+							}
+							ZmSdk.getInstance().reportRoleStatus(upRoleInfo);
+							location.reload();
+						}
+
+					} else if (data.retcode === "1") {
+						//初始化失败处理
+					}
+				})
+			}
+			// winit.loadJS(["http://soeasysdk.com"], "/soeasysr/zm_engine_v2.js","utf8", winit.initFail,"load zm_engine_v2 error");
+
 		})();
 	</script>
 </head>
@@ -683,47 +844,47 @@
 			</div>
 		</div>
 	</div>
-	
-	<div class="swiper-container" id="swiper-container" style="display:none;">
+</body>
+<!-- <script type="text/javascript">
+if(!localStorage.firstInApp){
+	var innerHtml = `
+	<div class="swiper-container" id="swiper-container">
 		<div class="swiper-wrapper">
 			<div class="swiper-slide slide">
-				<img src="../res/image1/guide1.jpg"/>
+				<img src="../res/image/guide1.jpg"/>
 			</div>
 			<div class="swiper-slide slide">
-				<img src="../res/image1/guide2.jpg"/>
+				<img src="../res/image/guide2.jpg"/>
 			</div>
 			<div class="swiper-slide slide">
-				<img src="../res/image1/guide3.jpg"/>
+				<img src="../res/image/guide3.jpg"/>
 			</div>
 			<div class="swiper-slide slide">
-				<img src="../res/image1/guide4.jpg"/>
+				<img src="../res/image/guide4.jpg"/>
 				<div style="transform:  scale(0.5);position: absolute;width: 100%;bottom: 0px;" ><div class="btn-start">立即体验</div></div>
 			</div>
 		</div>
 		<div class="swiper-pagination"></div>
 	</div>
-</body>
-<script src="./swiper.min.js"></script>
-<script type="text/javascript">
-// setTimeout(() => {
-// 	var mySwiper = new Swiper('.swiper-container', {
-//       pagination: {
-// 		el: '.swiper-pagination',
-// 		dynamicBullets: true
-//       },
-//     });
-// 	if(!localStorage.firstInApp){
-// 		document.querySelector('#swiper-container').setAttribute('style','z-index:9999;')
-		
-// 	}else{
-// 		document.body.removeChild(document.querySelector('#swiper-container'));
-// 	}
-// }, 1000);
-
-// var btnStart = document.querySelector('.btn-start');
-// btnStart.onclick = function(){
-// 	document.body.removeChild(document.querySelector('#swiper-container'));
-// }
-</script>
+	`;
+	document.querySelector("body").innerHTML = document.querySelector("body").innerHTML + innerHtml;
+	winit.loadJS(winit.getLoadDomain("swiper.min.js"),
+					"/wallet/app/boot/swiper.min.js", "utf8", function(url,err){
+						var mySwiper = new Swiper('.swiper-container', {
+							pagination: {
+								el: '.swiper-pagination',
+								dynamicBullets: true
+							},
+						});
+						document.querySelector('#swiper-container').setAttribute('style','z-index:9999;');
+						var btnStart = document.querySelector('.btn-start');
+						btnStart.onclick = function(){
+							document.body.removeChild(document.querySelector('#swiper-container'));
+							localStorage.setItem('firstInApp','true');
+						}
+					}, "load index error");
+	
+}
+</script> -->
 
 </html>

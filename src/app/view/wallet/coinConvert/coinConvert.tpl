@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goHistory">
     {{: topBarTitle = {"zh_Hans":"币币兑换","zh_Hant":"幣幣兌換","en":""} }}
-    <app-components1-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/detailBlueIcon.png"}</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/detailBlueIcon.png"}</app-components-topBar-topBar>
     <div w-class="content">
         {{: tips = [
         {"zh_Hans":"可用","zh_Hant":"可用","en":""},
@@ -12,7 +12,7 @@
 
         <div w-class="balance"><pi-ui-lang>{{tips[0]}}</pi-ui-lang>&nbsp;{{it.outBalance}}&nbsp;{{it.outCurrency}}</div>
         <div w-class="coin">
-            <img src="../../../res/image/currency/{{it.outCurrency}}.png" w-class="coinImg"/>
+            <img src="{{it.outCurrencyLogo}}" w-class="coinImg"/>
             <span w-class="coinName">{{it.outCurrency}}</span>
         </div>
         {{: inputPlace = [
@@ -24,7 +24,7 @@
         </div>
 
         <div w-class="coin" on-tap="inCurrencySelectClick">
-            <img src="../../../res/image/currency/{{it.inCurrency}}.png" w-class="coinImg"/>
+            <img src="{{it.inCurrencyLogo}}" w-class="coinImg"/>
             <span w-class="coinName">{{it.inCurrency}}</span>
             <img src="../../../res/image/right_arrow_blue.png" style="width: 40px;height: 40px;"/>
         </div>

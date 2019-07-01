@@ -13,7 +13,7 @@ import { EthWallet } from '../../../core/eth/wallet';
 import { AddrInfo } from '../../../store/interface';
 import { getStore } from '../../../store/memstore';
 import { lang } from '../../../utils/constants';
-import { getAddrInfoByAddr } from '../../../utils/tools';
+import { calCurrencyLogoUrl, getAddrInfoByAddr } from '../../../utils/tools';
 
 // ================================================导出
 interface Props {
@@ -53,7 +53,7 @@ export class ExportPrivateKey extends Widget {
             };
             const currencyName = currencyRecords[i].currencyName;
             obj.title = currencyName;
-            obj.icon = `../../res/image/currency/${currencyName}.png`;
+            obj.icon = calCurrencyLogoUrl(currencyName);
             const addrs = currencyRecords[i].addrs;
 
             switch (currencyName) {

@@ -3,6 +3,7 @@
  */
 import { ERC20Tokens } from '../config';
 import { BigNumber } from '../res/js/bignumber';
+import { SCPrecision } from './constants';
 import { formatBalance } from './tools';
 
 /**
@@ -20,8 +21,12 @@ export const smallUnit2LargeUnit = (currencyName: string, amount: string | numbe
         // tslint:disable-next-line:radix
         ret = sat2Btc(parseInt(amount.toString()));
     } else if (currencyName === 'ST') {
-        ret = (parseInt(amount.toString(),16) / 1000000);
-    } else { // erc20
+        // tslint:disable-next-line:radix
+        ret = st2ST(parseInt(amount.toString()));
+    } else if (currencyName === 'SC') {
+        // tslint:disable-next-line:radix
+        ret = parseInt(amount.toString()) / SCPrecision;
+    }  else { // erc20
         // tslint:disable-next-line:radix
         ret = ethTokenDivideDecimals(parseInt(amount.toString()),currencyName);
     }
@@ -90,7 +95,7 @@ export const btc2Sat = (num: number | string) => {
 export const kpt2kt = (num: number | string) => {
     num = Number(num);
 
-    return Math.round(num / Math.pow(10, 9));
+    return num / Math.pow(10, 9);
 };
 
 /**
@@ -99,7 +104,25 @@ export const kpt2kt = (num: number | string) => {
 export const kt2kpt = (num: number | string) => {
     num = Number(num);
 
-    return Math.floor(num * Math.pow(10, 9));
+    return num * Math.pow(10, 9);
+};
+
+/**
+ * st转ST
+ */
+export const st2ST = (num:number | string) => {
+    num = Number(num);
+
+    return num / Math.pow(10, 6);
+};
+
+/**
+ * ST转st
+ */
+export const ST2st = (num:number | string) => {
+    num = Number(num);
+
+    return num * Math.pow(10, 6);
 };
 
 /**

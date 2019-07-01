@@ -1,7 +1,7 @@
 /**
  * sendRedEnv
  */
-import { ShareToPlatforms } from '../../../../pi/browser/shareToPlatforms';
+import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
@@ -31,21 +31,22 @@ export class SendRedEnv extends Widget {
         let url = '';
         let title = '';
         const lan = getStore('setting/language','zh_Hans');
-        
+        const accId = getStore('user/info/acc_id');
+        const uid = getStore('user/conUid');
         if (this.props.rtype === '00') {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
+            url = `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${this.props.rid}&uid=${uid}&accId=${accId}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
             title = this.language.redEnvType[0]; 
         } else if (this.props.rtype === '01') {
             // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
+            url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${this.props.rid}&uid=${uid}&accId=${accId}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
             title = this.language.redEnvType[1]; 
         } else {
             url = `${sharePerUrl}?cid=${this.props.rid}&type=${LuckyMoneyType.Invite}&lan=${lan}`;
             title = this.language.redEnvType[2];
         }
         popNew('app-components-share-share', { 
-            shareType: ShareToPlatforms.TYPE_LINK,
+            shareType: ShareType.TYPE_LINK,
             url,
             title,
             content:this.props.message

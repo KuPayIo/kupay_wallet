@@ -5,11 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { LuckyMoneyType, CloudCurrencyType } from '../../../store/interface';
+import { convertRedBag, getServerCloudBalance, takeRedBag } from '../../../net/pull';
+import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
 import { setStore } from '../../../store/memstore';
-import { getServerCloudBalance, convertRedBag, getData, inputInviteCdKey, setData } from '../../../net/pull';
-import { smallUnit2LargeUnit, eth2Wei } from '../../../utils/unitTools';
-import { showError } from '../../../utils/toolMessages';
+import { currencyType, popNewMessage } from '../../../utils/tools';
+import { smallUnit2LargeUnit } from '../../../utils/unitTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -24,8 +24,10 @@ interface Props {
     inFlag?:string; // 从哪里进入 chat
 }
 export class OpenRedEnvelope extends Widget {
-    public ok:() => void;
+    public ok:(fg:string) => void;
     public language:any;
+    public props:any;
+
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
@@ -50,78 +52,76 @@ export class OpenRedEnvelope extends Widget {
      */
     public openRedEnv() {
         this.props.openClick = true;
-        
         this.paint();
+        
         setTimeout(async () => {
-            if(this.props.inFlag === 'chat'){
-                await this.convertClick();
+            let convertFg = true; // 兑换成功标记
+            if (this.props.inFlag === 'chat') {
+                convertFg = await this.convertClick();
+            } 
+            if (convertFg) {  
+                popNew('app-view-earn-exchange-exchangeDetail',this.props);
+                popNewMessage(this.language.successMess);
+                this.backPrePage(JSON.stringify(this.props)); // 兑换成功
             }
-            popNew('app-view-earn-exchange-exchangeDetail',this.props);
-            
-            popNew('app-components1-message-message',{ content:this.language.successMess });
-            this.backPrePage();
         },800);
        
     }
 
     /**
-     * 点击兑换按钮
+     * 实际兑换红包
      */
     public async convertClick() {
-        const code = this.props.cid.trim();
-        if (code.length <= 0) {
-            popNew('app-components1-message-message', { itype: 'error', content: this.language.errorList[0], center: true });
+        const rid = this.props.rid;
+        
+        const res: any = await takeRedBag(rid.slice(2));
+        console.log('========================convert',res);
+        if (res.result === 702) {  // 红包已被领完 查看其他人领取记录
+            this.props = {
+                ...this.props,
+                rtype: rid.slice(0,2),
+                amount: 0,
+                rid: rid.slice(2)
+            };
+            popNew('app-view-earn-exchange-exchangeDetail',this.props);
+            this.backPrePage(JSON.stringify(this.props)); // 查看兑换记录
 
-            return;
+            return false;
+
+        } else if (res.result !== 1) {  // 其他错误 直接退出
+            this.props.openClick = false;
+            this.paint();
+
+            return false;
         }
-        const close = popNew('app-components1-loading-loading', { text: this.language.loading });        
-        const res: any = await this.convertRedEnvelope(code);
-        close.callback(close.widget);
-        if (!res.value) return;
+        console.log('!!!!!!!!!!!!!!!!!!!takeredbag',res);
+        const cid = res.value[3];  // 兑换码
+        
+        const ans = await convertRedBag(cid);
+        if (!ans) {
+            this.props.openClick = false;
+            this.paint();
+
+            return false;
+        }
+        console.log('!!!!!!!!!!!!!!!!!!!convertredbag',ans);
+        const v = ans.value;
+        this.props = {
+            ...this.props,
+            rtype: rid.slice(0,2),
+            ctypeShow: currencyType(CloudCurrencyType[v[0]]),
+            amount: smallUnit2LargeUnit(CloudCurrencyType[v[0]],v[1]),
+            rid: rid.slice(2),
+            suid: ans.src_id
+        };
         setStore('activity/luckyMoney/exchange',undefined);
         getServerCloudBalance();
 
-        this.props.ctypeShow = CloudCurrencyType[res.value[0]];
-        this.props.amount = smallUnit2LargeUnit(CloudCurrencyType[res.value[0]], res.value[1]);
-        this.props.rtype = code.slice(0, 2);
-        this.props.suid = res.src_id;
-        
+        return true;
     }
 
-    /**
-     * 实际兑换
-     */
-    public async convertRedEnvelope(code: string) {
-        const perCode = code.slice(0, 2);
-        const validCode = code.slice(2);
-        let value = [];
-        if (perCode === LuckyMoneyType.Normal || perCode === LuckyMoneyType.Random) {
-            value = await convertRedBag(validCode);  // 兑换普通红包，拼手气红包
-        } else if (perCode === LuckyMoneyType.Invite) {
-            const data = await getData('convertRedEnvelope');
-            if (data.value) {
-                showError(-99);
-
-                return;
-            }
-            value = await inputInviteCdKey(validCode);  // 兑换邀请红包
-            if (!value) {
-                
-                return;
-            }
-            value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
-            setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
-        } else {
-            popNew('app-components1-message-message', { content: this.language.errorList[1] });
-
-            return null;
-        }
-
-        return value;
-    }
-
-    public backPrePage() {
-        this.ok && this.ok();
+    public backPrePage(fg:string) {
+        this.ok && this.ok(fg);
     }
 
 }

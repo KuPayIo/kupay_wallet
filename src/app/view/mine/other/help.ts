@@ -3,7 +3,7 @@
  */
 // =============================================导入
 import { Widget } from '../../../../pi/widget/widget';
-import { getStaticLanguage } from '../../../utils/tools';
+import { getHelpAnswer } from './helpText';
 // ================================================导出
 export class FAQ extends Widget {
     public ok: () => void;
@@ -11,7 +11,7 @@ export class FAQ extends Widget {
     public create() {
         super.create();
         this.props = {        
-            htmlStrList:getStaticLanguage().helpAnswer
+            htmlStrList:getHelpAnswer()
         };
     }
 

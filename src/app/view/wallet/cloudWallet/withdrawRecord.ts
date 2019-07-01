@@ -3,6 +3,7 @@
  */
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
@@ -20,7 +21,6 @@ interface Props {
 }
 export class WithdrawRecord extends Widget {
     public props:any;
-    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
@@ -29,7 +29,6 @@ export class WithdrawRecord extends Widget {
         }
     }
     public init() {
-        this.language = this.config.value[getLang()];
         const withdrawLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
         this.props = {
             ...this.props,
@@ -53,11 +52,12 @@ export class WithdrawRecord extends Widget {
 
     // tslint:disable-next-line:typedef
     public parseRecordList(list) {
+        const withdraw = { zh_Hans:'提币',zh_Hant:'提幣',en:'' };
         list.forEach((item) => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.language.withdraw;
+            item.behavior = withdraw[getLang()];
             item.amountShow = `-${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_withdraw_icon.png`;
@@ -79,9 +79,9 @@ export class WithdrawRecord extends Widget {
         getWithdrawLogs(this.props.currencyName,this.props.nextStart);
     }
     public getMoreList() {
-        const h1 = document.getElementById('withdraw-scroller-container').offsetHeight; 
-        const h2 = document.getElementById('withdraw-content-container').offsetHeight; 
-        const scrollTop = document.getElementById('withdraw-scroller-container').scrollTop; 
+        const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
+        const h2 = getRealNode((<any>this.tree).children[0].children[0]).offsetHeight; 
+        const scrollTop = getRealNode((<any>this.tree).children[0]).scrollTop; 
         if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
             this.props.isRefreshing = true;
             this.paint();

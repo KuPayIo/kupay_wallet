@@ -1,0 +1,123 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+    background-color:rgba(242,242,242,1);
+}
+.body{
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+    border-radius: 12px;
+}
+.body-top{
+    width:100%;
+    font-size:28px;
+    font-family:"PingFangSC-Medium";
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    line-height:40px;
+}
+.box1{
+    padding: 15px 30px 20px;
+    background:#ffffff;
+}
+.box2{
+    margin-top: 10px;
+    padding: 15px 30px 40px;
+    background:#ffffff;
+}
+.order-item{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+.body-center{
+    flex: 1 0 0;
+    width:100%;
+    border-radius: 12px;
+    margin-top: 10px;
+    background-color: #fff;
+    padding: 40px 30px;
+}
+.pay-title{
+    font-size:28px;
+    font-family:PingFangSC-Medium;
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    line-height:40px;
+}
+.select-title{
+    height:50px;
+    padding-left:30px;
+    font-size:32px;
+    font-family:PingFangSC-Regular;
+    font-weight:400;
+    color:rgba(136,136,136,1);
+    line-height:50px;
+}
+.select-body{
+    width:100%;
+    margin-top:30px;
+}
+.select-item{
+    width:100%;
+    padding:20px 0px;
+    display:flex;
+    justify-content:space-between;
+}
+.select-detail{
+    display:flex;
+    align-items:center;
+    height:60px;
+}
+.pay-name{
+    height:45px;
+    font-size:32px;
+    margin-left:30px;
+    font-family:PingFangSC-Medium;
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    line-height:45px;
+}
+.select-round{
+    height:60px;
+    width:60px;
+    padding:10px;
+}
+.select-img{
+    width:38px;
+    height:38px;
+    border:2px solid #C9C9C9;
+    border-radius:50%;
+}
+
+
+
+.body-bottom{
+    width:100%;
+    height:100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items:center;
+    margin-top: 60px;
+}
+
+.btn-tip{
+    height:28px;
+    margin-bottom:30px;
+    font-size:28px;
+    font-family:SourceHanSansCN-Regular;
+    font-weight:400;
+    color:rgba(245,162,100,1);
+}
+
+
+.gift{
+    font-size:28px;
+    font-family:"SourceHanSansCN-Regular";
+    font-weight:400;
+    color:rgba(245,162,100,1);
+    line-height:42px;
+    margin: 20px 0 50px 30px;
+}

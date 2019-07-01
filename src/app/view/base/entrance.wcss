@@ -1,0 +1,37 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.logo{
+    margin-top: 375px;
+}
+.slogan{
+    font-size:64px;
+    font-family:"DFWaWaW5";
+    color:rgba(17,17,17,1);
+    line-height:64px;
+    margin-top: 60px;
+}
+.phone-login{
+    width: 250px;
+    margin-top: 45px;
+}
+.tourist-login{
+    width: 250px;
+    margin-top: 40px;
+}
+.box{
+    position: absolute;
+    bottom: 80px;
+    display: flex;
+    font-size:24px;
+    font-family:"PingFangSC-Regular";
+    font-weight:400;
+    color:rgba(136,136,136,1);
+    line-height:33px;
+    margin-top: 120px;
+}
+.box-item{
+    border-bottom: 1px solid rgba(136,136,136,1);
+}

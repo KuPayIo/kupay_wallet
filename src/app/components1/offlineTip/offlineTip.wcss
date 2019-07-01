@@ -1,0 +1,10 @@
+.netClose{
+    font-size:28px;
+    color:rgba(34,34,34,1);
+    line-height:48px;
+    display: flex;
+    align-items: center;
+    padding: 20px 30px;
+    background: #E9F9FF;
+    height: 88px;
+}

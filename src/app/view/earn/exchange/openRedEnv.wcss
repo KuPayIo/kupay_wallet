@@ -42,8 +42,9 @@
 }
 .clear{
     position: absolute;
-    right: 30px;
-    top: 30px;
+    right: 0;
+    top: 0;
     width: 40px;
     height: 40px;
+    border: 30px solid transparent;
 }

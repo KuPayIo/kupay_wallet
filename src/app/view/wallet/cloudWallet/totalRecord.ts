@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
@@ -22,13 +23,11 @@ interface Props {
 
 export class TotalRecord extends Widget {
     public props:any;
-    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
     public init() {
-        this.language = this.config.value[getLang()];
         this.props = {
             ...this.props,
             recordList:[], // 全部记录
@@ -62,7 +61,6 @@ export class TotalRecord extends Widget {
         const data2 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
         this.props.otherNext = data2.start;
         this.props.otherList = this.parseOtherList(data2.list);
-        
         const data3 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
         this.props.withdrawNext = data3.start;
         this.props.withdrawList = this.parseWithdrawList(data3.list);
@@ -91,11 +89,12 @@ export class TotalRecord extends Widget {
      * 解析提币记录
      */
     public parseWithdrawList(list:any[]) {
+        const withdraw = { zh_Hans:'提币',zh_Hant:'提幣',en:'' };
         list.forEach((item) => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.language.withdraw;
+            item.behavior = withdraw[getLang()];
             item.amountShow = `-${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_withdraw_icon.png`;
@@ -107,11 +106,12 @@ export class TotalRecord extends Widget {
      * 解析充值记录
      */
     public parseRechargeList(list:any[]) {
+        const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
         list.forEach((item) => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.language.recharge;
+            item.behavior = recharge[getLang()];
             item.amountShow = `+${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_charge_icon.png`;
@@ -142,9 +142,9 @@ export class TotalRecord extends Widget {
      * 加载更多数据
      */
     public getMoreList() {
-        const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
-        const h2 = document.getElementById('recharge-content-container').offsetHeight; 
-        const scrollTop = document.getElementById('recharge-scroller-container').scrollTop; 
+        const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
+        const h2 = getRealNode((<any>this.tree).children[0].children[0]).offsetHeight; 
+        const scrollTop = getRealNode((<any>this.tree).children[0]).scrollTop; 
         if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
             this.props.isRefreshing = true;
             this.paint();

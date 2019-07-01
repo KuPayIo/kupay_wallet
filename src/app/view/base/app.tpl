@@ -1,6 +1,5 @@
 <div style="width:100%;height:100%;display: flex;">
-
-<div w-class="tabs">
+<div w-class="tabs" >
 {{if it.type === 0}}
     {{for i, v of it.tabBarList}}
         {{if i == it.isActive}}
@@ -18,12 +17,9 @@
     </div>
     {{end}}
 {{end}}
-{{if it.loading}}
-<div w-class="loading-container"><app-components1-loading-loading1>{}</app-components1-loading-loading1></div>
-{{end}}
 </div>
 
-<div w-class="ga-bottom-tab-bar-container" class="{{it.tabBarAnimateClasss}}" style="display:none;">
+<div w-class="ga-bottom-tab-bar-container" class="{{it.tabBarAnimateClasss}}" >
     <div style=" display: flex;height: 110px;width: 100%;">
         {{for index,item of it.tabBarList}}
         <div w-class="ga-tab-bar-item {{it.isActive == item.modulName ? 'ga-tab-bar-item-active' : ''}}" on-down="tabBarChangeListener(e,{{index}})">

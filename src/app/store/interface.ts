@@ -1,3 +1,4 @@
+import { TaskSid } from './parse';
 
 /**
  * 内存中的数据结构
@@ -14,32 +15,9 @@ export interface Store {
 
     setting: Setting;     // 设置
 
-    third: Third;        // 第三方通信数据，如：shapeshift...
+    third: Third;        // 第三方通信数据，如：changelly...
     flags: object;       // 全局的标识
-}
-
-/**
- * 后端定义的任务id
- */
-export enum TaskSid {
-    Mine = '101',                 // 新挖矿
-    Recharge = 301,            // 充值
-    Withdraw = 302,            // 提现
-    CreateWallet = 1001,       // 创建钱包
-    FirstChargeEth = 1002,     // 以太坊首次转入
-    BindPhone = 1003,          // 注册手机
-    ChargeEth = 1004,          // 存币
-    InviteFriends = 1005,      // 邀请真实好友
-    BuyFinancial = 1007,       // 购买理财产品
-    Transfer = 1008,           // 交易奖励
-    Dividend = 1009,           // 分红
-    Mining = 1010,             // 挖矿
-    Chat = 1011,               // 聊天
-    FinancialManagement = 330, // 理财
-    LuckyMoney = 340,           // 红包
-    LuckyMoneyRetreat = 341,     // 回退红包
-    Wxpay = 370,                // 微信支付
-    Alipay = 371                // 支付宝支付
+    inviteUsers:object;  // 邀请好友
 }
 
 /**
@@ -49,7 +27,8 @@ export enum CloudCurrencyType {
     KT = 100,  // KT
     ETH,       // ETH 
     BTC,       // BTC
-    ST         // ST
+    ST,         // ST
+    SC         // SC 银两
 }
 
 /**
@@ -86,14 +65,15 @@ export enum TxType {
  */
 export interface User {
 
-    id: string;            // 该账号的id
+    id: string;            // 该账号的id,实际上是第一个以太坊地址
 
     offline: boolean;       // 连接状态
-    isLogin: boolean;      // 登录状态
+    isLogin: boolean;      // 钱包登录状态
+    allIsLogin:boolean;     // 所有服务登录状态  (钱包  活动  聊天)
 
     token: string;         // 自动登录token
     conRandom: string;     // 连接随机数
-    conUid: string;         // 服务器连接uid
+    conUid: string;        // 服务器连接uid
     publicKey: string;     // 用户公钥, 第一个以太坊地址的公钥
 
     salt: string;          // 加密 盐值
@@ -116,13 +96,11 @@ export interface Third {
     btcMinerFee: BtcMinerFee;          // btc minerfee 分档次
     gasLimitMap: Map<string, number>;  // 各种货币转账需要的gasLimit
 
-    // shapeshift
-    shapeShiftCoins: ShapeShiftCoin[];            // shapeShift 支持的币种
-    shapeShiftMarketInfo: MarketInfo;             // shapeshift 汇率相关
-    shapeShiftTxsMap: Map<string, ShapeShiftTxs>; // shapeshift 交易记录Map
+    // changelly
+    changellyCurrencies: string[];            // changelly 支持的币种
 
     rate: number;                                 // 货币的美元汇率
-    goldPrice:Gold;                             // 黄金价格
+    silver:Silver;                                // 白银价格
     currency2USDTMap: Map<string, Currency2USDT>;  // k线  --> 计算涨跌幅
 }
 
@@ -140,6 +118,21 @@ export interface Setting {
     bottomHeight:number;          // 设备底部应空出来的高度
 }
 
+/**
+ *  changelly 交易记录的changelly方收币地址
+ */
+export interface ChangellyPayinAddr {
+    currencyName:string;   // 出币
+    payinAddress:string;   // changelly收币地址
+}
+
+/**
+ * changelly 临时交易记录
+ */
+export interface ChangellyTempTxs {
+    hash:string;   // 交易hash
+    id:string;    // 交易id
+}
 /**
  * 红包模块
  */
@@ -224,7 +217,9 @@ export interface UserInfo {
     nickName: string;      // 昵称
     avatar: string;        // 头像
     phoneNumber: string;   // 手机号
+    areaCode:string;     // 手机区号
     isRealUser: boolean;    // 是否是真实用户
+    acc_id:string;  // 账户ID 钱包，聊天，活动统一账号
 }
 
 /**
@@ -232,10 +227,15 @@ export interface UserInfo {
  */
 export interface Wallet {
     vault: string;                      // 钱包核心
+    setPsw:boolean;                     // 是否已经设置过密码
+    backupTip:boolean;                  // 备份助记词是否已经提示
     isBackup: boolean;                  // 备份助记词与否
+    sharePart:boolean;                  // 是否有通过分享片段备份
+    helpWord:boolean;                   // 是否通过助计词备份
     showCurrencys: string[];            // 显示的货币列表
     currencyRecords: CurrencyRecord[];  // 支持的所有货币记录
-
+    changellyPayinAddress:ChangellyPayinAddr[];           // changelly 交易记录的changelly方收币地址
+    changellyTempTxs:ChangellyTempTxs[];   // changelly 临时交易记录
 }
 
 /**
@@ -438,54 +438,7 @@ export interface LuckyMoneyDetail {
     time: number;            // 时间
     timeShow: string;
 }
-/**
- * shapeShift支持的货币类型
- */
-export interface ShapeShiftCoin {
-    // tslint:disable-next-line:no-reserved-keywords
-    symbol: string;          // 货币类型
-    status: string;          // 状态
-    name: string;            // 货币全称
-    minerFee: number;        // 矿工费
-    image: string;           // 图片url
-    imageSmall: string;      // 小图url
-}
-/**
- * shapeShift汇率相关
- */
-export interface MarketInfo {
-    rate: number;            // 兑换汇率
-    pair: string;            // 交易对 eg:BTC_ETH
-    minimum: number;         // 最小发出数量
-    maxLimit: number;        // 最大发出数量
-    minerFee: number;        // 矿工费
-    limit: number;           // 限制数量
-}
-/**
- * shapeshift兑换记录详情
- */
-export interface ShapeShiftTx {
-    hasConfirmations: string;          // 是否确认
-    inputAddress: string;              // Address that the input coin was paid to for this shift
-    inputAmount: number;               // Amount of input coin that was paid in on this shift
-    inputCurrency: string;             // Currency type of the input coin
-    inputTXID: string;                 // Transaction ID of the input coin going into shapeshift
-    outputAddress: string;             // Address that the output coin was sent to for this shift
-    outputAmount: number;              // Amount of output coin that was paid out on this shift
-    outputCurrency: string;            // Currency type of the output coin
-    outputTXID: string;                // Transaction ID of the output coin going out to user
-    shiftRate: string;                 // The effective rate the user got on this shift.
-    status: string;                    // status of the shift
-    timestamp: number;                 // timestamp
-}
 
-/**
- * shapeshift兑换记录
- */
-export interface ShapeShiftTxs {
-    addr: string;                // 这个地址的交易记录
-    list: ShapeShiftTx[];        // 交易记录列表
-}
 /**
  * 充值提现记录
  */
@@ -564,9 +517,9 @@ export interface LockScreen {
 }
 
 /**
- * GT价格、涨跌
+ * ST价格、涨跌
  */
-export interface Gold {
+export interface Silver {
     price:number;          // 价格
     change:number;         // 涨跌
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="IGNORE.manifest">
+<html>
 
 <head>
     <meta charset="utf-8" />
@@ -7,95 +7,77 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <title>KuPlay</title>
+    <title>好嗨</title>
     <meta name="viewport" content="width=device-width,initial-scale=0.5,maximum-scale=0.5,user-scalable=0">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script>
+        var jsScript = document.createElement("script");
+        jsScript.src = "main.js?" + Math.random();
+        jsScript.async 
+        document.querySelector("head").appendChild(jsScript); 
+    </script>
 </head>
 
 <body>
-    <!-- <div ev-back-click="backPrePage" class="detail-new-page">
-        <div class="detail-main">
-            <div class="detail-scroll-container">
-                <div class="detail-top">
-                    <div class="detail-head">
-                        <div class="detail-head-inner"></div>
-                    </div>
-                    <div class="detail-leave-message" id="message">恭喜发财 万事如意</div>
-                    <div class="detail-amount"><span id="amount">1</span><span class="detail-currency-name" id="currencyName">KT</span></div>
-                    <div class="detail-input-father">
-                        <div class="input-father" id="code">000000</div>
-                        <div class="detail-copy-btn" onclick="copyBtnClick()" id="copyBtn">复制红包码</div>
-                    </div>
-                    <div class="detail-receive" onclick="receiveClick()" id="receiveBtn">立即领取红包金额</div>
-                </div>
 
-                <div class="detail-bottom" id="detailBottom">
-                    <div class="detail-title" id="detailTitle">已领取1/2，共10 KT</div>
-                    <div class="detail-list" id="detailList">
-                       已领取红包用户列表
-                    </div>
-                </div>
-
-                <div class="detail-rule">
-                    <div class="detail-rule-title" id="ruleTitle">红包领取规则</div>
-                    <div class="detail-rule-list" id="ruleList">
-                        红包领取规则介绍
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
     <div class="detail-new-page">
         <div class="detail-top">
             <div class="detail-head">
                 <div class="detail-head-inner"></div>
             </div>
-            <div class="detail-amount"><span id="amount">1</span><span class="detail-currency-name" id="currencyName">KT</span></div>
-            <div class="detail-leave-message" id="message">恭喜发财 万事如意</div>
+            <div class="detail-amount"><span id="amount">1</span><span class="detail-currency-name" id="currencyName"></span></div>
+            <div class="detail-leave-message" id="message"></div>
             <div class="detail-input-father">
-                <div class="input-father" id="code">000000</div>
+                <div class="input-father" id="code"></div>
                 <div class="detail-copy-btn" onclick="copyBtnClick()" id="copyBtn">复制</div>
             </div>
             <div class="detail-receive" onclick="receiveClick()" id="receiveBtn">立即领取</div>
         </div>
 
         <div class="detail-bottom" id="detailBottom">
-            <div class="detail-title" id="detailTitle">已领取1/2，共10 KT</div>
+            <div class="detail-title" id="detailTitle"></div>
             <div class="detail-list" id="detailList">
                已领取红包用户列表
             </div>
         </div>
 
-        <div class="detail-rule">
-            <div class="detail-rule-title" id="ruleTitle">红包领取规则</div>
-            <div class="detail-rule-list" id="ruleList">
-                红包领取规则介绍
-            </div>
-        </div>
     </div>
 </body>
-<script src="main20181112.js"></script>
 <script src="bignumber.js"></script>
 <script>
-    const props = JSON.parse(window.localStorage.takeRedBag);
-    const lan = getLanguage();
-    (function init() {
-        document.getElementById('message').innerText = props.leaveMsg;
+var props = JSON.parse(window.localStorage.takeRedBag);
+var lan;
+function winit(){
+    lan = getLanguage();
+    document.getElementById('message').innerText = props.leaveMsg;
+    document.getElementById('receiveBtn').innerText = lan.receiveBtn;
+    if(props.cid){
         document.getElementById('amount').innerText = props.amount;
-        document.getElementById('currencyName').innerText = CloudCurrencyType[props.ctype];
+        document.getElementById('currencyName').innerText = getCurrencyNameShow(props.ctype);
         document.getElementById('code').innerText = props.cidShow;
         document.getElementById('copyBtn').innerText = lan.copyBtn;
-        document.getElementById('receiveBtn').innerText = lan.receiveBtn;
-        document.getElementById('ruleTitle').innerText = lan.tips[2];
-        document.getElementById("ruleList").innerHTML = "<div class='detail-rule-item'>" + lan.tips[3] + "</div>" +
-            "<div class='detail-rule-item'>" + lan.tips[4] + "</div>" +
-            "<div class='detail-rule-item'>" + lan.tips[5] + "</div>" +
-            "<div class='detail-rule-item'>" + lan.tips[6] + "</div>"
-    })();
+    }else{
+        document.querySelector(".detail-amount").style.visibility = "hidden";
+        const inputFater = document.querySelector(".detail-input-father");
+        inputFater.innerHTML = "已领完";
+        inputFater.style.justifyContent = "center";
+    }
+    const sender = JSON.parse(userDetails(props.uid).value[0]);
+    console.log("sender",sender);
+    if(sender.avatar){
+        document.querySelector(".detail-head-inner").style.backgroundImage = `url(${uploadFileUrlPrefix}${sender.avatar})`;
+    }
 
     if (props.rtype !== 99) {
         getDetail();
     }
+}
+    
+
+    function getCurrencyNameShow(ctype){
+        return CloudCurrencyType[ctype] === 'KT' ? '嗨豆' : CloudCurrencyType[ctype];
+    }
+
     /**
      * 复制兑换码
      */
@@ -104,7 +86,7 @@
     }
 
     function getDetail() {
-        const res = querydetail(props.uid, props.rid);
+        const res = querydetail(props.accId, props.rid);
         console.log(res);
 
         if (res.result !== 1) {
@@ -141,7 +123,7 @@
         totalAmount = totalAmount;
 
         document.getElementById('detailBottom').style.display = 'block';
-        document.getElementById('detailTitle').innerText = lan.tips[0] + convertedNumber + '/' + totalNumber + '，' + lan.tips[1] + totalAmount + CloudCurrencyType[props.ctype];
+        document.getElementById('detailTitle').innerText = lan.tips[0] + convertedNumber + '/' + totalNumber + '，' + lan.tips[1] + totalAmount + getCurrencyNameShow(props.ctype);
         // 领取红包，其他用户获得的红包列表
         if (!redBagList) {
             return;
@@ -153,7 +135,7 @@
                 '<div class="detail-item-right">' +
                 '<div class="detail-box1">' +
                 '<div class="detail-name" id="userName">' + redBagList[i].userName + '</div>' +
-                '<div id="userAmount">' + redBagList[i].amount + '&nbsp;' + CloudCurrencyType[redBagList[i].ctype] + '</div>' +
+                '<div id="userAmount">' + redBagList[i].amount + '&nbsp;' + getCurrencyNameShow(redBagList[i].ctype) + '</div>' +
                 '</div>' +
                 '<div class="detail-box2">' +
                 '<div class="detail-time" id="timeShow">' + redBagList[i].timeShow + '</div>' +

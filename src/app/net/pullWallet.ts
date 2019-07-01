@@ -16,9 +16,9 @@ import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../store/interface';
 import { erc20GasLimitRate } from '../utils/constants';
 import { doErrorShow } from '../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, fetchMinerFeeList, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx } from '../utils/tools';
+import { deletLocalTx, fetchBtcMinerFee, fetchGasPrice, getConfirmBlockNumber, getCurrentEthAddr, getEthNonce, getStaticLanguage, setEthNonce, updateLocalTx, popNewMessage, popNewLoading } from '../utils/tools';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../utils/unitTools';
-import { getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
+import { fetchMinerFeeList, getWltAddrIndex, VerifyIdentidy } from '../utils/walletTools';
 // tslint:disable-next-line:max-line-length
 import { btcRechargeToServer, btcWithdrawFromServer, getBankAddr, getBtcBankAddr, getRechargeLogs, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './pull';
 // ===================================================== 导出
@@ -34,7 +34,7 @@ export interface TxPayload {
 export interface TxPayload3 {
     fromAddr:string;        // 转出地址
     toAddr:string;          // 转入地址
-    pay:string;             // 转账金额
+    pay:string | number;             // 转账金额
     currencyName:string;    // 转账货币
     data:string;
 }
@@ -92,7 +92,6 @@ export const rpcProviderSendAsync = (payload, callback) => {
  */
 export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
     try {  
-        console.time('transfer3 need time = ');
         if (psw.length <= 0) return ['have no password'];
         const fromAddr = txPayload.fromAddr;
         const currencyName = txPayload.currencyName;
@@ -120,13 +119,7 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
         const addrIndex = getWltAddrIndex(fromAddr, currencyName);
         let hash;
         if (addrIndex >= 0) {    
-            console.time('transfer3 wltPromise');
-            const wltPromise = GlobalWallet.createWlt(currencyName, psw, addrIndex).then((wlt) => {
-                console.timeEnd('transfer3 wltPromise');
-
-                return wlt;
-            });
-
+            const wltPromise = GlobalWallet.createWlt(currencyName, psw, addrIndex);
             const api = new EthApi();
             const nonce = txRecord.nonce;
             const localNonce = getEthNonce(fromAddr);
@@ -134,24 +127,15 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
 
             // toAddr  0x0e7f42cdf739c06dd3c1c32fab5e50ec9620102a
 
-            console.time('transfer3 gasLimitPromise');
             // tslint:disable-next-line:max-line-length
-            const gasLimitPromise = api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data }).then((gasLimit) => {
-                console.timeEnd('transfer3 gasLimitPromise');
-
-                return gasLimit;
-            });
+            const gasLimitPromise = api.estimateGas({ to: txPayload.toAddr, from:txPayload.fromAddr , value:txPayload.pay, data: txPayload.data });
             
-            console.time('transfer3 chainNoncePromise');
-            const chainNoncePromise = api.getTransactionCount(fromAddr).then((chainNonce) => {
-                console.timeEnd('transfer3 chainNoncePromise');
+            const chainNoncePromise = api.getTransactionCount(fromAddr);
 
-                return chainNonce;
-            });
-
-            console.time('transfer3 all promise need');
             const [wlt,gasLimit,chainNonce] = await Promise.all([wltPromise,gasLimitPromise,chainNoncePromise]);
-            console.timeEnd('transfer3 all promise need');
+            if (!wlt) {
+                return ['password error'];
+            }
 
             // TODO  直接使用预估出来的gasLimit交易有可能失败   零时解决
             const newGasLimit = Math.floor(gasLimit * erc20GasLimitRate);
@@ -168,17 +152,13 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
                 data: txPayload.data
             };         
             const tx = wlt.signRawTransaction(txObj);
-            console.time('transfer3 sendRawTransaction need time =');
             hash = await api.sendRawTransaction(tx);
-            console.timeEnd('transfer3 sendRawTransaction need time =');
         }
         if (hash) {
             txRecord.hash = hash;
             updateLocalTx(txRecord);
             dataCenter.updateAddrInfo(txRecord.addr,txRecord.currencyName);
 
-            console.timeEnd('transfer3 need time = ');
-            
             return [undefined,hash];
         } else {
             return ['send transaction failed'];
@@ -191,7 +171,7 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
 /**
  * 普通转账
  */
-export const transfer = async (psw:string,txPayload:TxPayload,success?:Function,fail?:Function) => {
+export const transfer = async (psw:string,txPayload:TxPayload) => {
     const fromAddr = txPayload.fromAddr;
     const currencyName = txPayload.currencyName;
     const needConfirmedBlockNumber = getConfirmBlockNumber(currencyName, txPayload.pay);
@@ -238,12 +218,15 @@ export const transfer = async (psw:string,txPayload:TxPayload,success?:Function,
                 nonce:ret.nonce,
                 time:new Date().getTime()
             };
-            success(tx);
+            updateLocalTx(tx);
+            dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
+            
+            return [undefined,tx];
         } else {
             throw new Error('send transaction failed');
         }
     } catch (error) {
-        fail(error);
+        return [error,undefined];
     }
 };
 
@@ -527,130 +510,6 @@ export const sendRawTransactionBTC = async (rawHexString) => {
     return hash;
 };
 
-// // ===================================================shapeShift相关start
-
-// // tslint:disable-next-line:max-line-length
-// const shapeShiftClientToken = {
-//     createdAt:'2018-12-11T08:30:52.242Z',
-//     updatedAt:'2018-12-11T08:30:52.242Z',
-//     id:'959a71bc-a5d4-4483-8d10-c1cc7668d72c',
-//     clientId:'bc401c5a-3ff3-4bc7-9ffb-72449dcfae80',
-//     expiresAt:'2019-12-11T08:30:52.242Z',
-//     token:'44Aq9s8cHBrDXUJsiXeU7ER9AtaR6JZ5i3qtz1oY7gYn',
-//     userId:null,
-//     deletedAt:null 
-// };
-
-// /**
-//  * 获取shapeShift所支持的币种
-//  */
-// export const getShapeShiftCoins = () => {
-//     fetch(`${shapeShiftUrlPrex}getcoins`).then(res => res.json()).then(res => {
-//         // console.log(res);
-//         const list = [];
-//         for (const k in res) {
-//             list.push(res[k]);
-//         }
-//         // console.log(list);
-//         setStore('third/shapeShiftCoins', list);
-//     });
-// };
-// /**
-//  * 
-//  * @param pair 交易对
-//  */
-// export const getMarketInfo = (pair:string) => {
-//     fetch(`${shapeShiftUrlPrex}marketinfo/${pair}`).then(res => res.json()).then(res => {
-//         // console.log(res);
-//         setStore('third/shapeShiftMarketInfo', res);
-//     });
-// };
-
-// /**
-//  * 开始进行币币兑换
-//  * @param withdrawalAddress 入账币种的地址
-//  * @param returnAddress 失败后的退款地址
-//  * @param pair 交易对
-//  */
-// export const beginShift = (withdrawalAddress:string,returnAddress:string,pair:string,success?:Function,fail?:Function) => {
-//     const bodyData = {
-//         amount: 1,
-//         withdrawal: '0x5041F19dC1659E33848cc0f77cbF7447de562917',
-//         returnAddress: '1N17uHdvY6fNwtutM1G5EAZFPLC43B59rB',
-//         pair: 'BTC_ETH'
-//     };
-//     fetch(`${shapeShiftUrlPrex}sendamount`,{
-//         method: 'POST', // or 'PUT'
-//         body: JSON.stringify(bodyData), // data can be `string` or {object}!
-//         headers: new Headers({
-//             'Content-Type': 'application/json',
-//             Authorization: `Bearer CZfRLxjor2E49vTfTZDjaeeR78nMMi1rKypV9GRBsmt2`
-//         })
-//     }).then(res => res.json()).then(res => {
-//         console.log(res);
-//         // setStore('third/shapeShiftMarketInfo', res);
-//     });
-// };
-
-// /**
-//  * 获取币币交易记录
-//  * @param addr 要获取交易记录的地址
-//  */
-// export const getTransactionsByAddr = async (addr: string) => {
-//     const addrLowerCase = addr.toLowerCase();
-//     const transactions = (addr: string): Promise<any> => {
-//         return new Promise((resolve, reject) => {
-//             shapeshift.transactions('shapeshiftApiPrivateKey', addr, (err, transactions) => {
-//                 if (err || transactions.length === 0) {
-//                     reject(err || new Error('null array'));
-//                 }
-//                 resolve(transactions);
-//             });
-//         });
-//     };
-//     const getTxByHash = (txs: any[], hash: string) => {
-//         for (let i = 0; i < txs.length; i++) {
-//             // tslint:disable-next-line:possible-timing-attack
-//             if (txs[i].inputTXID === hash) {
-//                 return i;
-//             }
-//         }
-
-//         return -1;
-//     };
-//     const shapeShiftTxsMap = getStore('third/shapeShiftTxsMap');
-//     const shapeShiftTxs =  shapeShiftTxsMap.get(addrLowerCase) || { addr:addrLowerCase,list:[] };
-//     let count = shapeshiftTransactionRequestNumber;
-//     while (count >= 0) {
-//         let txs;
-//         try {
-//             txs = await transactions(addrLowerCase);
-//         } catch (err) {
-//             // console.error(err);
-//         }
-//         if (txs) {
-//             console.log('shapeshifttx',txs);
-//             txs.forEach(tx => {
-//                 const index = getTxByHash(shapeShiftTxs.list || [], tx.inputTXID);
-//                 if (index >= 0) {
-//                     shapeShiftTxs.list[index] = tx;
-//                 } else {
-//                     shapeShiftTxs.list.push(tx);
-//                 }
-//             });
-//             shapeShiftTxsMap.set(addrLowerCase,shapeShiftTxs);
-//             setStore('third/shapeShiftTxsMap',shapeShiftTxsMap);
-
-//             return;
-//         }
-//         count--;
-//         console.log(count);
-//     }
-//     setStore('third/shapeShiftTxsMap',shapeShiftTxsMap);
-// };
-
-// // ===================================================shapeShift相关end
-
 // ===================================================== 本地
 
 // ================================重发
@@ -660,7 +519,7 @@ export const sendRawTransactionBTC = async (rawHexString) => {
  */
 export const resendNormalTransfer = async (psw:string,txRecord:TxHistory) => {
     console.log('----------resendNormalTransfer--------------');
-    const loading = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.againSend });
+    const loading = popNewLoading(getStaticLanguage().transfer.againSend);
     const fromAddr = txRecord.fromAddr;
     const currencyName = txRecord.currencyName;
     let ret: any;
@@ -700,7 +559,7 @@ export const resendNormalTransfer = async (psw:string,txRecord:TxHistory) => {
         updateLocalTx(tx);
         dataCenter.clearTxTimer(oldHash);// 删除定时器
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.againSuccess });
+        popNewMessage(getStaticLanguage().transfer.againSuccess);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
 
@@ -712,7 +571,7 @@ export const resendNormalTransfer = async (psw:string,txRecord:TxHistory) => {
  */
 export const resendRecharge = async (psw:string,txRecord:TxHistory) => {
     console.log('----------resendRecharge--------------');
-    const loading = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.againSend });
+    const loading = popNewLoading(getStaticLanguage().transfer.againSend);
     let tx;
     try {
         
@@ -734,7 +593,7 @@ export const resendRecharge = async (psw:string,txRecord:TxHistory) => {
         dataCenter.clearTxTimer(oldHash);// 删除定时器
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
         getRechargeLogs(tx.currencyName);
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.againSuccess });
+        popNewMessage(getStaticLanguage().transfer.againSuccess);
         popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
     }
 
@@ -745,7 +604,7 @@ export const resendRecharge = async (psw:string,txRecord:TxHistory) => {
 
 export const recharge = async (psw:string,txRecord:TxHistory) => {
     let tx;
-    const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.recharge });
+    const close = popNewLoading(getStaticLanguage().transfer.recharge);
     if (txRecord.currencyName === 'BTC') {
         tx = await btcRecharge(psw,txRecord);
     } else {
@@ -753,7 +612,7 @@ export const recharge = async (psw:string,txRecord:TxHistory) => {
     }
     close.callback(close.widget);
     if (tx) {
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.rechargeSuccess });
+        popNewMessage(getStaticLanguage().transfer.rechargeSuccess);
         updateLocalTx(tx);
         console.log(`recharge tx is `,tx);
         dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
@@ -889,18 +748,18 @@ export const withdraw = async (passwd:string,toAddr:string,currencyName:string,a
 };
 // eth提现
 export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
-    const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.withdraw });
+    const close = popNewLoading(getStaticLanguage().transfer.withdraw);
     const secretHash = await VerifyIdentidy(passwd);
     if (!secretHash) {
         close.callback(close.widget);
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
+        popNewMessage(getStaticLanguage().transfer.wrongPsw);
 
         return;
     }
     const hash = await withdrawFromServer(toAddr,eth2Wei(amount),secretHash);
     close.callback(close.widget);
     if (hash) {
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });
+        popNewMessage(getStaticLanguage().transfer.withdrawSuccess);
         const tx:TxHistory = {
             hash,
             addr:toAddr,
@@ -927,18 +786,18 @@ export const ethWithdraw = async (passwd:string,toAddr:string,amount:number | st
 
 // btc提现
 export const btcWithdraw = async (passwd:string,toAddr:string,amount:number | string) => {
-    const close = popNew('app-components1-loading-loading', { text: getStaticLanguage().transfer.withdraw });
+    const close = popNewLoading(getStaticLanguage().transfer.withdraw);
     const secretHash = await VerifyIdentidy(passwd);
     if (!secretHash) {
         close.callback(close.widget);
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.wrongPsw });
+        popNewMessage(getStaticLanguage().transfer.wrongPsw);
 
         return;
     }
     const hash = await btcWithdrawFromServer(toAddr,btc2Sat(amount).toString(),secretHash);
     close.callback(close.widget);
     if (hash) {
-        popNew('app-components1-message-message',{ content:getStaticLanguage().transfer.withdrawSuccess });
+        popNewMessage(getStaticLanguage().transfer.withdrawSuccess);
         const tx:TxHistory = {
             hash,
             addr:toAddr,

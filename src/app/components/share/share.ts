@@ -1,8 +1,7 @@
 /**
  * fund share Page
  */
-import { ShareToPlatforms } from '../../../pi/browser/shareToPlatforms';
-import { getLang } from '../../../pi/util/lang';
+import { SharePlatform,ShareToPlatforms,ShareType } from '../../../pi/browser/shareToPlatforms';
 import { Widget } from '../../../pi/widget/widget';
 
 interface Props {
@@ -20,11 +19,9 @@ export class BaseShare extends Widget {
     public ok: (success:boolean) => void;
     public cancel: (success:boolean) => void;
 
-    public language:any;
     public setProps(props: Props, oldProps: Props): void {
         super.setProps(props, oldProps);
-        this.language = this.config.value[getLang()];
-        if (this.props.shareType !== ShareToPlatforms.TYPE_TEXT) {
+        if (this.props.shareType !== ShareType.TYPE_TEXT) {
             this.props.isShowQQ = true;
             this.props.showCount = 4;
         } else {
@@ -39,38 +36,38 @@ export class BaseShare extends Widget {
     }
 
     public shareToWechat() {
-        this.baseShare(ShareToPlatforms.PLATFORM_WEBCHAT);
+        this.baseShare(SharePlatform.PLATFORM_WEBCHAT);
     }
 
     public shareToFriends() {
-        this.baseShare(ShareToPlatforms.PLATFORM_MOMENTS);
+        this.baseShare(SharePlatform.PLATFORM_MOMENTS);
     }
 
     public shareToQQ() {
-        this.baseShare(ShareToPlatforms.PLATFORM_QQ);
+        this.baseShare(SharePlatform.PLATFORM_QQ);
     }
 
     public shareToQQSpace() {
-        this.baseShare(ShareToPlatforms.PLATFORM_QZONE);
+        this.baseShare(SharePlatform.PLATFORM_QZONE);
     }
 
     private baseShare(platform: number) {
-        const stp = new ShareToPlatforms();
 
-        stp.init();
-        if (this.props.shareType === ShareToPlatforms.TYPE_LINK) {
-            stp.shareLink({
+        if (this.props.shareType === ShareType.TYPE_LINK) {
+            const walletName = '钱包';
+
+            ShareToPlatforms.shareLink({
                 success: (result) => { console.log('share success callback');this.ok(true); },
                 fail: (result) => { console.log('share fail callback');this.cancel(false); },
-                webName: this.props.webName || this.language.wallet,
+                webName: this.props.webName || walletName,
                 url: this.props.url,
                 title: this.props.title,
                 content: this.props.content,
                 comment: this.props.comment || '',
                 platform: platform
             });
-        } else if (this.props.shareType === ShareToPlatforms.TYPE_SCREEN) {
-            stp.shareScreenShot({
+        } else if (this.props.shareType === ShareType.TYPE_SCREEN) {
+            ShareToPlatforms.shareScreenShot({
                 success: (result) => { console.log('share success callback');this.ok(true); },
                 fail: (result) => { console.log('share fail callback');this.cancel(false); },
                 platform: platform
@@ -78,7 +75,7 @@ export class BaseShare extends Widget {
         } else {
             console.log('share text====',this.props.text);
             console.log('share type====',this.props.shareType);
-            stp.shareCode({
+            ShareToPlatforms.shareCode({
                 success: (result) => { 
                     console.log('share success callback');
                     this.ok(true); 

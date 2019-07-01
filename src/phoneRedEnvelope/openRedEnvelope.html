@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html manifest="IGNORE.manifest">
+<html>
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <title>KuPlay</title>
+    <title>好嗨</title>
     <meta name="viewport" content="width=device-width, initial-scale=0.5,maximum-scale=0.5,user-scalable=0">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script>
+        var jsScript = document.createElement("script");
+        jsScript.src = "main.js?" + Math.random();
+        document.querySelector("head").appendChild(jsScript); 
+    </script>
 </head>
 <body>
     <div class="redEnv-new-page">
@@ -16,56 +21,59 @@
             <div class="redEnv-leave-message" id="message">恭喜发财 万事如意</div>
             <div class="redEnv-tag" id="describe">您收到一个邀请码</div>
             <div class="redEnv-open-div"><img src="image/open.png" class="redEnv-open" onclick="openRedEnvelopeClick()" id="openRedEnv"/></div>
-            <div class="redEnv-look" id="look">看看大家手气></div>
         </div>
     </div>
 </body>
 
-<script src="main20181112.js"></script>
 <script src="bignumber.js"></script>
 <script>
-const search = window.location.search;
-const itype = parseUrlParams(search,'type');
-const lan = getLanguage();
-if(window.localStorage.takeRedBag){
-    let localRid = JSON.parse(window.localStorage.takeRedBag).rid;
-    if(parseUrlParams(search,'rid')==localRid){
-        window.location.href = './redEnvelopeDetail.html';
-    }
-}
 var state = {};
-switch (itype) {
-    case RedEnvelopeType.Normal:
-        state = {
-            type:itype,
-            rid:parseUrlParams(search,'rid'),
-            lm:window.decodeURIComponent(parseUrlParams(search,'lm')),
-            desc:lan.redEnvDesc[0],
-        };
-        break;
-    case RedEnvelopeType.Random:
-        state = {
-            type:itype,
-            rid:parseUrlParams(search,'rid'),
-            lm:window.decodeURIComponent(parseUrlParams(search,'lm')),
-            desc:lan.redEnvDesc[1],
-        };
-        break;
-    case RedEnvelopeType.Invite:
-        state = {
-            type:itype,
-            cid:parseUrlParams(search,'cid'),
-            lm:lan.redEnvMess[1],
-            desc:lan.redEnvDesc[2],
-        };
-        break;
-    default:
-}
-(function init(){
+function winit(){
+    var search = window.location.search;
+    var itype = parseUrlParams(search,'type');
+    var lan = getLanguage();
+    if(window.localStorage.takeRedBag){
+        let localRid = JSON.parse(window.localStorage.takeRedBag).rid;
+        if(parseUrlParams(search,'rid')==localRid){
+            window.location.href = './redEnvelopeDetail.html';
+        }
+    }
+    switch (itype) {
+        case RedEnvelopeType.Normal:
+            state = {
+                type:itype,
+                rid:parseUrlParams(search,'rid'),
+                uid:parseUrlParams(search,'uid'),
+                accId:parseUrlParams(search,'accId'),
+                lm:window.decodeURIComponent(parseUrlParams(search,'lm')),
+                desc:lan.redEnvDesc[0],
+            };
+            break;
+        case RedEnvelopeType.Random:
+            state = {
+                type:itype,
+                rid:parseUrlParams(search,'rid'),
+                uid:parseUrlParams(search,'uid'),
+                accId:parseUrlParams(search,'accId'),
+                lm:window.decodeURIComponent(parseUrlParams(search,'lm')),
+                desc:lan.redEnvDesc[1],
+            };
+            break;
+        case RedEnvelopeType.Invite:
+            state = {
+                type:itype,
+                cid:parseUrlParams(search,'cid'),
+                lm:lan.redEnvMess[1],
+                desc:lan.redEnvDesc[2],
+            };
+            break;
+        default:
+    }
+
     document.getElementById('message').innerText = state.lm;
     document.getElementById('describe').innerText = state.desc;
-    document.getElementById('look').innerText = lan.redEnvLook;
-})();
+}
+
 
  /**
  * 点击开红包
@@ -93,7 +101,7 @@ function openRedEnvelopeClick() {
  */
  function openInviteRedEnvelope() {
     setTimeout(() => {
-        const redEnvelope = {
+        var redEnvelope = {
             rid:'0',
             uid:0,
             rtype:99,
@@ -103,7 +111,7 @@ function openRedEnvelopeClick() {
             amount:0.015,
             leaveMsg:lan.redEnvDesc[2]
         };
-        window.localStorage.takeRedBag=JSON.stringify(redEnvelope);
+        window.localStorage.takeRedBag = JSON.stringify(redEnvelope);
         window.location.href = './redEnvelopeDetail.html';
     },500);
 }
@@ -112,15 +120,16 @@ function openRedEnvelopeClick() {
  * 开普通红包
  */
 function openNormalRedEnvelope() {
-    const res = JSON.parse(takeRedEnvelope(state.rid));
-    
+    var res = JSON.parse(takeRedEnvelope(state.rid));
+    console.log(res);
     setTimeout(async () => {
         switch (res.result) {
             case 1:
-                const v = res.value;
-                const redEnvelope = {
+                var v = res.value;
+                var redEnvelope = {
                     rid:state.rid,
-                    uid:v[0],
+                    accId:state.accId,
+                    uid:state.uid,
                     rtype:v[1],
                     ctype:v[2],
                     cid:v[3],
@@ -135,7 +144,18 @@ function openNormalRedEnvelope() {
                 popMessage(lan.errorList[0]);
                 break;
             case 702:
-                popMessage(lan.errorList[1]);
+                var detailRes = querydetail(state.accId, state.rid);
+                var l = detailRes.value[1];
+                var redEnvelope = {
+                    rid:state.rid,
+                    accId:state.accId,
+                    uid:state.uid,
+                    rtype:l[0][2],
+                    ctype:l[0][3],
+                    leaveMsg:detailRes.value[0]
+                };
+                window.localStorage.takeRedBag = JSON.stringify(redEnvelope);
+                window.location.href = './redEnvelopeDetail.html';
                 break;
             case 703:
                 popMessage(lan.errorList[2]);

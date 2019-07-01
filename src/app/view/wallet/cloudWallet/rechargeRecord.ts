@@ -4,6 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
 import { getRechargeLogs } from '../../../net/pull';
 import { CloudCurrencyType } from '../../../store/interface';
@@ -21,7 +22,6 @@ interface Props {
 }
 export class RechargeRecord extends Widget {
     public props:any;
-    public language:any;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
@@ -30,7 +30,6 @@ export class RechargeRecord extends Widget {
         }
     }
     public init() {
-        this.language = this.config.value[getLang()];
         const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
         this.props = {
             ...this.props,
@@ -53,12 +52,13 @@ export class RechargeRecord extends Widget {
     }
     // tslint:disable-next-line:typedef
     public parseRecordList(list) {
+        const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
         list.forEach((item) => {
             const txDetail = fetchLocalTxByHash1(item.hash);
             const obj = parseStatusShow(txDetail);
             console.log(txDetail);
             item.statusShow = obj.text;
-            item.behavior = this.language.recharge;
+            item.behavior = recharge[getLang()];
             item.amountShow = `+${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = `cloud_charge_icon.png`;
@@ -80,9 +80,9 @@ export class RechargeRecord extends Widget {
         getRechargeLogs(this.props.currencyName,this.props.nextStart);
     }
     public getMoreList() {
-        const h1 = document.getElementById('recharge-scroller-container').offsetHeight; 
-        const h2 = document.getElementById('recharge-content-container').offsetHeight; 
-        const scrollTop = document.getElementById('recharge-scroller-container').scrollTop; 
+        const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
+        const h2 = getRealNode((<any>this.tree).children[0].children[0]).offsetHeight; 
+        const scrollTop = getRealNode((<any>this.tree).children[0]).scrollTop; 
         if (this.props.canLoadMore && !this.props.isRefreshing && (h2 - h1 - scrollTop) < 20) {
             this.props.isRefreshing = true;
             this.paint();

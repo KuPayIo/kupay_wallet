@@ -1,13 +1,12 @@
 /**
  * 一些底层操作
  */
+import { AdPlatform, ADUnion, PlayEvent } from '../../pi/browser/ad_unoin';
 import { ImagePicker } from '../../pi/browser/imagePicker';
-import { QRCode } from '../../pi/browser/qrcode';
-import { ShareToPlatforms } from '../../pi/browser/shareToPlatforms';
-import { DeviceIdProvider, SystemInfoProvider } from '../../pi/browser/systemInfoProvider';
 import { WebViewManager } from '../../pi/browser/webview';
-import { popNew } from '../../pi/ui/root';
 import { setStore } from '../store/memstore';
+import { piRequire } from '../utils/commonjsTools';
+import { popNewLoading } from '../utils/tools';
 
 export const selectImage = (ok?,cancel?) => {
     console.log('选择图片');
@@ -28,7 +27,7 @@ export const selectImage = (ok?,cancel?) => {
     });
     let close;
     setTimeout(() => {
-        close = popNew('app-components1-loading-loading', { text: { zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' } });
+        close = popNewLoading({ zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' });
     },100);
     
     return imagePicker;
@@ -38,22 +37,25 @@ export const selectImage = (ok?,cancel?) => {
  * 二维码扫描
  */
 export const doScanQrCode = (ok?,cancel?) => {
-    const qrcode = new QRCode();
-    qrcode.init();
-    qrcode.scan({
-        success: (res) => {
-            ok && ok(res);
-            console.log('scan-------------',res);
-        },
-        fail: (r) => {
-            cancel && cancel();
-            console.log(`scan fail:${r}`);
-        }
-    });
-    qrcode.close({
-        success: (r) => {
-            console.log(`close result:${r}`);
-        }
+    piRequire(['pi/browser/qrcode']).then(mods => {
+        const QRCode = mods[0].QRCode;
+        const qrcode = new QRCode();
+        qrcode.init();
+        qrcode.scan({
+            success: (res) => {
+                ok && ok(res);
+                console.log('scan-------------',res);
+            },
+            fail: (r) => {
+                cancel && cancel();
+                console.log(`scan fail:${r}`);
+            }
+        });
+        qrcode.close({
+            success: (r) => {
+                console.log(`close result:${r}`);
+            }
+        });
     });
 };
 
@@ -67,53 +69,34 @@ export const openNewActivity = (url:string,title:string= '') => {
 /**
  * 获取设备信息
  */
-export const getDeviceId = (okCB?,errCB?) => {
-    const systemInfo = new DeviceIdProvider();
-    systemInfo.init();
-    systemInfo.getDriverId({
-        success: (result) => {
+export const getDeviceId = (okCB?) => {
+    piRequire(['pi/browser/device']).then(mods => {
+        const DeviceIdProvider = mods[0].DeviceIdProvider;
+        const deviceIdProvider = new DeviceIdProvider();
+        deviceIdProvider.getUUId((result) => {
             console.log(`获取设备的唯一id成功${JSON.stringify(result)}`);
             okCB && okCB(result);
-        }
-        , fail: (result) => {
-            console.log(`获取设备的唯一id失败${JSON.stringify(result)}`);
-            errCB && errCB(result);
-        }
+        });
     });
-};
-
-/**
- * 获取设备信息
- */
-export const getDeviceInfo = (okCB?,errCB?) => {
-    const systemInfo = new SystemInfoProvider();
-    systemInfo.init();
-    systemInfo.getDeviceInfo({
-        success: (result) => {
-            console.log(`获取设备的信息成功${JSON.stringify(result)}`);
-            okCB && okCB(result);
-        }
-        , fail: (result) => {
-            console.log(`获取设备的信息失败${JSON.stringify(result)}`);
-            errCB && errCB(result);
-        }
-    });
+    
 };
 
 /**
  * 截屏
  */
 export const makeScreenShot = (okCB?,errCB?) => {
-    const stp = new ShareToPlatforms();
-    stp.init();
-    stp.makeScreenShot({
-        success: (result) => { 
-            okCB && okCB(result);
-        },
-        fail: (result) => { 
-            errCB && errCB(result);
-        }
+    piRequire(['pi/browser/shareToPlatforms']).then(mods => {
+        const ShareToPlatforms = mods[0].ShareToPlatforms;
+        ShareToPlatforms.makeScreenShot({
+            success: (result) => { 
+                okCB && okCB(result);
+            },
+            fail: (result) => { 
+                errCB && errCB(result);
+            }
+        });
     });
+    
 };
 
 /**
@@ -125,5 +108,46 @@ export const getScreenModify = () => {
         const calLow = low / window.devicePixelRatio * 2;
         setStore('setting/topHeight',calHigh);
         setStore('setting/bottomHeight',calLow);
+    });
+};
+
+/**
+ * 预先下载广告
+ */
+export const preLoadAd = (adType?: AdPlatform,cb?:(str1:string,str2:string) => void) => {
+    adType = adType ? adType : Math.random() > 0.5 ? AdPlatform.GDT : AdPlatform.CSJ;
+    ADUnion.loadRewardVideoAD(adType,(str1,str2) => {
+        cb && cb(str1,str2);
+    });
+};
+/**
+ * 观看广告
+ * adtype:1.广点通  2.字节跳动
+ */
+// tslint:disable-next-line:no-reserved-keywords
+export const watchAd = (adType: AdPlatform,cb?:(isSuccess: number, event: PlayEvent, info: string) => void) => {
+    // tslint:disable-next-line:no-reserved-keywords
+    ADUnion.showRewardVideoAD(adType,(isSuccess,event,info) => {
+        cb && cb(isSuccess,event,info);
+        preLoadAd();
+    });
+};
+
+/**
+ * 选择播放的广告类型
+ */
+export const chooseAdType = (cb:Function) => {
+    const ads = [];
+    ADUnion.getADNumber((gdtAdNumber,csjAdNumber) => {
+        for (let i = 0;i < gdtAdNumber;i ++) {
+            ads.push(AdPlatform.GDT);
+        }
+        for (let i = 0;i < csjAdNumber;i ++) {
+            ads.push(AdPlatform.CSJ);
+        }
+        const len = ads.length;
+        const index = Math.floor(Math.random() * 100) % len;
+        const adType = ads[index] || (Math.random() > 0.5 ? AdPlatform.GDT : AdPlatform.CSJ);
+        cb && cb(adType);
     });
 };

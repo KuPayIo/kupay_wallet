@@ -6,10 +6,9 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getData, getOneUserInfo, queryConvertLog } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { PAGELIMIT } from '../../../utils/constants';
-import { parseRtype, timestampFormat } from '../../../utils/tools';
+import { getUserInfo, parseRtype, timestampFormat } from '../../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -40,9 +39,6 @@ export class ExchangeHistory extends Widget {
         this.language = this.config.value[getLang()];
         this.props = {
             recordList:[
-                // { rid:111,rtype:'00',rtypeShow:'拼手气红包',ctypeShow:'ETH',timeShow:'04-30 14:32:00',amount:1 },       
-                // { rid:111,rtype:'00',rtypeShow:'普通红包',ctypeShow:'KT',timeShow:'04-30 14:32:00',amount:1 },
-                // { rid:111,rtype:'00',rtypeShow:'拼手气红包',ctypeShow:'ETH',timeShow:'04-30 14:32:00',amount:1 }                
             ],
             recordListShow:[],
             convertNumber:0,
@@ -54,6 +50,7 @@ export class ExchangeHistory extends Widget {
             showMoreTips:false, 
             inviteObj:null,
             userList:[],
+            avatar:getUserInfo().avatar,
             scrollHeight:0
         };
         this.initData();
@@ -126,9 +123,8 @@ export class ExchangeHistory extends Widget {
                 rid: '-1',
                 rtype: '99',
                 rtypeShow: parseRtype(99),
-                ctype: CloudCurrencyType.ETH,
-                ctypeShow: 'ETH',
-                amount: 0.15,
+                ctypeShow: '银锄',
+                amount: 1,
                 time: data.value,
                 timeShow: timestampFormat(data.value),
                 userName:this.language.inviteRedEnv

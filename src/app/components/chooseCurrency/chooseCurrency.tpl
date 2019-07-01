@@ -3,7 +3,7 @@
     <div w-class="bottom">
         <div w-class="title">
             <div style="margin-left: 50px;">
-                <pi-ui-lang>{"zh_Hans":"选择代币","zh_Hant":"選擇貨幣","en":""}</pi-ui-lang>
+                <pi-ui-lang>{"zh_Hans":"选择货币","zh_Hant":"選擇貨幣","en":""}</pi-ui-lang>
             </div>
             <img src="../../res/image/30_gray.png" w-class="close" on-tap="close"/>
         </div>

@@ -2,17 +2,18 @@
  * play home 
  */
  // ================================ 导入
+import { WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
+import { getPi3Config } from '../../../api/pi3Config';
+import { closePopFloatBox } from '../../../api/thirdBase';
+import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { register } from '../../../store/memstore';
-import { getCurrentEthAddr, getUserInfo, hasWallet, popNewMessage } from '../../../utils/tools';
-
-import { WebViewManager } from '../../../../pi/browser/webview';
-import { getEthApiBaseUrl } from '../../../core/config';
+import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
+import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,96 +21,82 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
-    
     public ok: () => void;
-    public language:any;
-    public defaultInjectPromise:Promise<string>;
-    public web3Promise: Promise<string>;
+    public configPromise:Promise<string>;
+    public thirdApiDependPromise:Promise<string>;
     public thirdApiPromise:Promise<string>;
     
     constructor() {
         super();
-        this.web3Promise = new Promise((resolve) => {
-            const path = 'app/core/thirdparty/web3_rpc.js.txt';
-            loadDir([path], undefined, undefined, undefined, fileMap => {
-                const arr = new Uint8Array(fileMap[path]);
-                // for (let i = 0; i < arr.length; ++i) {
-                //     content += String.fromCharCode(arr[i]);
-                // }
-                // content = decodeURIComponent(escape(atob(content)));
-                const content = new TextDecoder().decode(arr);
-                resolve(content);
-            }, () => {}, () => {});
-        });
-
         this.thirdApiPromise = new Promise((resolve) => {
             const path = 'app/api/thirdApi.js.txt';
-            loadDir([path], undefined, undefined, undefined, fileMap => {
+            loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
                 resolve(content);
-            }, () => {}, () => {});
+            }, () => {
+                //
+            }, () => {
+                //
+            });
+        });
+
+        this.thirdApiDependPromise = new Promise((resolve) => {
+            const path = 'app/api/thirdApiDepend.js.txt';
+            loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
+                const arr = new Uint8Array(fileMap[path]);
+                const content = new TextDecoder().decode(arr);
+                resolve(content);
+            }, () => {
+                //
+            }, () => {
+                //
+            });
         });
     }
     
     public setProps(props:Json) {
-        super.setProps(props);
-        this.language = this.config.value[getLang()];
+        this.props = {
+            ...props,
+            offlienType:OfflienType.WALLET
+        };
+        super.setProps(this.props);
+        console.log(props);
         const userInfo = getUserInfo();
         if (userInfo) {
-            this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
+            this.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image/default_avater_big.png';
             this.props.refresh = false;
         }
-        // http://fishing.rinkeby.cchaingames.com/
-        // http://47.244.59.13/web-rinkeby/index.html
-        this.props.gameList = [
-            {
-                title:{ zh_Hans:'fomosports',zh_Hant:'fomosports',en:'' },
-                desc:{ zh_Hans:'要买要快，不要只是看',zh_Hant:'要買要快，不要只是看',en:'' },
+        this.props.gameList = gameList;
+        this.props.activityList = activityList;
+        this.props.loaded = false;
 
-                img:['app/res/image1/fomosports.jpg','app/res/image1/fomosports.jpg'],
-                url:'https://test.fomosports.me/'
-            },
-            {
-                title:{ zh_Hans:'Crypto Fishing',zh_Hant:'Crypto Fishing',en:'' },
-                desc:{ zh_Hans:'新一代区块链游戏',zh_Hant:'新一代區塊鏈遊戲',en:'' },
-                img:['app/res/image1/CryptoFishing.jpg','app/res/image1/CryptoFishing.jpg'],
-                url:'http://fishing.rinkeby.cchaingames.com/'
+    }
 
-            },
-            {
-                title:'Decentraland',
-                desc:{ zh_Hans:'Decentraland与Ethaemon合作',zh_Hant:'Decentraland與Ethaemon合作',en:'' },
-                img:['app/res/image1/game4.jpg','app/res/image1/game4.jpg'],
-                url:''
-            }
-        ];
-        this.props.activityList = [
-            {
-                title:{ zh_Hans:'竞猜',zh_Hant:'竞猜',en:'' },
-                desc:{ zh_Hans:'竞猜',zh_Hant:'竞猜',en:'' },
-                img:['app/res/image1/guess.png','app/res/image1/guess.png'],
-                url:'earn-client-app-view-guess-home'
-            },
-            {
-                title:{ zh_Hans:'大转盘',zh_Hant:'大轉盤',en:'' },
-                desc:{ zh_Hans:'看看今天的运气怎么样',zh_Hant:'看看今天的運氣怎麼樣',en:'' },
-                img:['app/res/image1/turntable.png','app/res/image1/turntable.png'],
-                url:'earn-client-app-view-turntable-turntable'
-            },
-            {
-                title:{ zh_Hans:'宝箱贩卖机',zh_Hant:'寶箱販賣機',en:'' },
-                desc:{ zh_Hans:'是哪一个幸运的宝箱被选中呢？',zh_Hant:'是哪一個幸運的寶箱被選中呢？',en:'' },
-                img:['app/res/image1/chest.png','app/res/image1/chest.png'],
-                url:'earn-client-app-view-openBox-openBox'
-            },
-            {
-                title:{ zh_Hans:'兑换商城',zh_Hant:'兌換商城',en:'' },
-                desc:{ zh_Hans:'不定期上新物品',zh_Hant:'不定期上新物品',en:'' },
-                img:['app/res/image1/exchangeMall.png','app/res/image1/exchangeMall.png'],
-                url:'earn-client-app-view-exchange-exchange'
-            }
-        ];
+    public attach() {
+        super.attach();
+        this.defaultEnterGame();
+    }
+    /**
+     * 刷新页面
+     */
+    public loaded() {
+        // toDo 更新数据 完成之后将loaded变成true 刷新页面
+        setTimeout(() => {
+            console.log('加载数据完成');
+            this.props.loaded = true;
+            this.paint();
+
+        },2000);
+
+    }
+    /**
+     * 刷新页面前的准备
+     */
+    public beforeLoad() {
+        console.log('通知刷新状态---');
+        this.props.loaded = false;
+        this.paint();
     }
 
     public backPrePage() {
@@ -125,7 +112,7 @@ export class PlayHome extends Widget {
     }
 
     public showMine() {
-        popNew('app-view-mine-home-home');
+        popNew3('app-view-mine-home-home');
     }
 
     /**
@@ -138,27 +125,49 @@ export class PlayHome extends Widget {
             this.props.refresh = false;
             this.paint();
         }, 1000);
-
     }
 
-    public gameClick(num:number) {
-        if (!hasWallet()) return;
-        if (!this.props.gameList[num].url) {
-            popNewMessage(this.language.tips);
-        } else {
-            const gameTitle = this.props.gameList[num].title.zh_Hans;
-            const gameUrl =   this.props.gameList[num].url;
-            const defaultInjectText = `
-            window.piWeb3EthDefaultAccount = '${getCurrentEthAddr()}';
-            window.piWeb3ProviderNetWork = '${getEthApiBaseUrl()}';
-            window.piGameName = '${gameTitle}';
-            `;
-            this.defaultInjectPromise = Promise.resolve(defaultInjectText);
+    /**
+     * 搜索
+     */
+    public toSearch() {
+        popNew3('app-view-play-searchGame');
+    }
 
-            const allPromise = Promise.all([this.defaultInjectPromise,this.web3Promise]);
-            allPromise.then(([defaultInjectContent,web3Content]) => {
-                const content = defaultInjectContent + web3Content;
-                WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
+    /**
+     * 点击游戏
+     */
+    public gameClick(num:number) {
+        closePopFloatBox();
+        if (!this.state) {
+            popNewMessage('登录中,请稍后再试');
+
+            return;
+        }
+        if (!gameList[num].url) {
+            const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
+            popNewMessage(tips[getLang()]);
+        } else {
+            setPopPhoneTips();
+            hasEnterGame = true;
+            const gameTitle = gameList[num].title.zh_Hans;
+            const gameUrl =   gameList[num].url;
+            const webviewName = gameList[num].webviewName;
+            const pi3Config:any = getPi3Config();
+            pi3Config.appid = gameList[num].appid;
+            pi3Config.gameName = gameTitle;
+            pi3Config.webviewName = webviewName;
+            
+            const pi3ConfigStr = `
+                window.pi_config = ${JSON.stringify(pi3Config)};
+            `;
+            this.configPromise = Promise.resolve(pi3ConfigStr);
+
+            const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
+            allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
+                const content =  configContent + thirdApiDependContent + thirdApiContent;
+
+                WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });
         }
     }
@@ -169,16 +178,33 @@ export class PlayHome extends Widget {
      */
     public activityClick(index:number) {
         if (!hasWallet()) return;
-        popNew(this.props.activityList[index].url);
+        popNew3(this.props.activityList[index].url);
     }
-    public openTestClick() {
-        const gameTitle = '测试';
-        const gameUrl =  'http://192.168.9.15:3001/authorize.html';
-        this.thirdApiPromise.then(content => {
-            WebViewManager.open(gameTitle, `${gameUrl}?${Math.random()}`, gameTitle, content);
-        });
+
+    /**
+     * 默认进入游戏
+     */
+    public defaultEnterGame() {
+        console.log(`this.state = ${this.state},isActive = ${this.props.isActive}`);
+        const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
+        const phoneNumber = getUserInfo().phoneNumber;    
+        console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
+        if (!firstEnterGame || phoneNumber) {
+            if (!this.state  || !this.props.isActive || hasEnterGame) {
+                console.log('defaultEnterGame failed');
+    
+                return;
+            } else {
+                console.log('defaultEnterGame success');
+                this.gameClick(0);
+                localStorage.setItem('firstEnterGame','true');
+            }
+        }
     }
+
 }
+let hasEnterGame = false;
+// ========================================
 register('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
@@ -188,4 +214,12 @@ register('user/info',() => {
         }
         w.paint();
     }
+});
+
+register('user/isLogin', (isLogin:boolean) => {
+    forelet.paint(isLogin);
+    setTimeout(() => {
+        const w:any = forelet.getWidget(WIDGET_NAME);
+        w && w.defaultEnterGame();
+    },0);
 });

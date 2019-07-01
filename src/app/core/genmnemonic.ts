@@ -123,18 +123,6 @@ export const sign = (random, privateKey) => {
     sig.updateString(random);
 
     return sig.sign();
-
-    // const secKey = sjcl.bn.fromBits(sjcl.codec.hex.toBits(privateKey));
-    // // FIXME: magicl number 6
-    // const ec = new sjcl.ecc.ecdsa.generateKeys(sjcl.ecc.curves.k256, 6, secKey);
-    // const randomHash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(random));
-    // const sign = ec.sec.sign(randomHash);
-
-    // // console.log(sjcl.ecc.curves.k256);
-    // //  new sjcl.ecc.curve(sjcl.bn.prime.p256k, random, 0, 7, privateKey);
-
-    // return sjcl.codec.hex.fromBits(sign);
-    // // return u8ArrayToHexstr(new Uint8Array(new Uint32Array(sign).buffer));
 };
 
 /**
@@ -211,4 +199,4 @@ export const isValidMnemonic = (language: LANGUAGE, mnemonic: string) => {
     }
 
     return true;
-}
+};

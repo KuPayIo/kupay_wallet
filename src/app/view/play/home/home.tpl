@@ -1,21 +1,9 @@
-<div class="new-page" w-class="new-page" >
-    <div w-class="topBack" ev-refresh-click="refreshPage">
-        <img src="../../../res/image1/topbar_backimg.png" w-class="backImg"/>
-        <app-components1-topBar-topBar1>{avatar:{{it.avatar}} }</app-components1-topBar-topBar1>
+<div class="new-page" w-class="new-page" ev-next-click="toSearch">
+   <div w-class="topBack">
+        <app-components1-topBar-topBar1>{avatar:{{it.avatar}},nextImg:"../../res/image1/searchGame.png" }</app-components1-topBar-topBar1>
     </div>
+    <app-components1-offlineTip-offlineTip>{ offlienType:{{it.offlienType}} }</app-components1-offlineTip-offlineTip>
     <div w-class="body">
-        <widget w-tag="app-components1-card-card" on-tap="gameClick(0)">{title:{{it.gameList[0].title}},img:{{it.gameList[0].img}},desc:{{it.gameList[0].desc}} }</widget>
-        <div w-class="hot-games">
-            <div w-class="hot-game-title"><pi-ui-lang>{"zh_Hans":"热门App","zh_Hant":"熱門App","en":""}</pi-ui-lang></div>
-            {{for ind,item of it.gameList}}
-                {{if ind !== 0}}
-                <widget w-tag="app-components1-card-card" on-tap="gameClick({{ind}})">{title:{{item.title}},img:{{item.img}},desc:{{item.desc}} }</widget>
-                {{end}}
-            {{end}}
-            {{for ind,item of it.activityList}}
-                <widget w-tag="app-components1-card-card" on-tap="activityClick({{ind}})">{title:{{item.title}},img:{{item.img}},desc:{{item.desc}} }</widget>
-            {{end}}
-            
-        </div>
+        <div  w-class="game-item" style="background-image: url({{it.gameList[0].img[0]}});" on-tap="gameClick(0)"></div>
     </div>
 </div>
