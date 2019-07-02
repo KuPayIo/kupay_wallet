@@ -69,6 +69,7 @@ export class RechargeSC extends Widget {
             { sellNum: 2998, sellId: 'high_xzxd_2998',sellPrize:2998 },
             { sellNum: 6498, sellId: 'high_xzxd_6498',sellPrize:6498 }
         ];
+        
         const payList = pi_update.inIOSApp ? iosPayList : androidPayList;
         const selectPayItemIndex = 0;
         const SCNum = payList[selectPayItemIndex].sellNum;
@@ -77,19 +78,22 @@ export class RechargeSC extends Widget {
             ktShow:getModulConfig('KT_SHOW'),
             scShow:getModulConfig('SC_SHOW'),
             scBalance:0,
-            payType: PayType.WX,
+            payType: pi_update.inIOSApp ? PayType.IOS : PayType.WX,
             payList,
             giveKT,
             selectPayItemIndex,
             SCNum,
-            PayType
+            PayType,
+            inIOSApp:pi_update.inIOSApp
         };
 
         getCloudBalances().then(cloudBalances => {
             this.props.scBalance = cloudBalances.get(CloudCurrencyType.SC);
             this.paint();
         });
-        this.initGoods();
+        if (pi_update.inIOSApp) {
+            this.initGoods();
+        }
     }
 
     /**
@@ -100,8 +104,11 @@ export class RechargeSC extends Widget {
         console.log('===========================apple',res);
         this.props.payList = [];
         for (const v of res.value) {
-            this.props.payList.push({ sellId:v[0], sellNum:v[1] / SCPrecision,sellPrize:v[0] });
+            this.props.payList.push({ sellId:v[0], sellNum:v[1] / SCPrecision,sellPrize:v[1] / SCPrecision });
         }
+        this.props.payList = this.props.payList.sort((item1,item2) => {
+            return item1.sellNum - item2.sellNum;
+        });
         this.paint();
     }
 
