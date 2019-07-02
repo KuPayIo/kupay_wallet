@@ -364,7 +364,6 @@ export const logoutAccountDel = () => {
     setStore('user',user);
     setStore('activity',activity);
     setStore('setting/lockScreen',lockScreen);
-    setStore('flags/saveAccount', false);  
     setStore('flags/doLogoutSuccess',true);  // 登出钱包
     setBottomLayerReloginMsg('','','');
     closeCon();
@@ -378,6 +377,7 @@ export const logoutAccountDel = () => {
  */
 export const logoutAccount = () => {
     const wallet = getStore('wallet');
+    setStore('flags/saveAccount', false , false); // 重置saveAccount
     if (wallet.setPsw) {
         setStore('flags/saveAccount', true);
     }

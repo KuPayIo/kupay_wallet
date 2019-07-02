@@ -149,7 +149,7 @@ export class PhoneImport extends Widget {
             this.props.code.pop();
             const ind = this.props.code.length;
             if (ind >= 0) {
-            // tslint:disable-next-line:prefer-template
+                // tslint:disable-next-line:prefer-template
                 document.getElementById('codeInput' + ind).focus();
             }
             this.setCode();
@@ -160,7 +160,7 @@ export class PhoneImport extends Widget {
             // tslint:disable-next-line:prefer-template
             document.getElementById('codeInput' + (ind - 1)).blur();
             if (ind < 4) {
-            // tslint:disable-next-line:prefer-template
+                // tslint:disable-next-line:prefer-template
                 document.getElementById('codeInput' + ind).focus();
             }
         }

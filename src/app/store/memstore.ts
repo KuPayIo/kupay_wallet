@@ -467,7 +467,8 @@ const initInviteUsers = () => {
  */
 const accountChange = () => {
     const storeUser = getStore('user');
-    getLocalStorage('accounts', {
+    
+    return getLocalStorage('accounts', {
         currenctId: '',
         accounts: {}
     }).then(localAccounts => {

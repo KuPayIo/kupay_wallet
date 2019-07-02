@@ -139,7 +139,7 @@ export class CreateWallet extends Widget {
         }
 
         setStoreData('flags/createWallet',true);
-        popNewMessage('创建成功');
+        popNewMessage('登录成功');
         openWSConnect(secrectHash);
 
         if (this.props.chooseImage) {

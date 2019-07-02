@@ -15,7 +15,7 @@ import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecha
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList,getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from './tools';
 // tslint:disable-next-line:max-line-length
-import { ahashToArgon2Hash, backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, exportPrivateKeyByMnemonic, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, genmnemonicSign, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, preCalAhashToArgon2Hash, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
+import { backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, exportPrivateKeyByMnemonic, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, genmnemonicSign, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, preCalAhashToArgon2Hash, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
 
 export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 
