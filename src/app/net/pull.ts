@@ -3,6 +3,7 @@
  */
 import { uploadFileUrl } from '../config';
 import { callRequestAsync, callRequestAsyncNeedLogin,getStoreData, setStoreData } from '../middleLayer/wrap';
+import { erlangLogicPayPort, sourceIp } from '../publicLib/config';
 import { CloudCurrencyType } from '../publicLib/interface';
 import { getModulConfig } from '../publicLib/modulConfig';
 import { unicodeArray2Str } from '../publicLib/tools';
@@ -384,4 +385,33 @@ export const getInviteUserAccIds = () => {
     };
 
     return callRequestAsync(msg);
+};
+
+/**
+ * 获取iOS支付的商品信息
+ */
+export const getAppleGoods = () => {
+    const msg = {
+        type: 'get_apple_goods',
+        param: {}
+    };
+
+    return callRequestAsync(msg);
+};
+
+/**
+ * 验证iOS是否支付成功
+ */
+export const confirmApplePay = (oid:string,receipt:string) => {
+    const url = `http://${sourceIp}:${erlangLogicPayPort}/pay/apple_verify`;
+    
+    return fetch(url, {
+        body: `orderId=${oid}&receipt=${JSON.stringify(encodeURIComponent(receipt))}`, 
+        headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json'
+        },
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors' // no-cors, cors, *same-origin
+    }).then(res => res.json());
 };

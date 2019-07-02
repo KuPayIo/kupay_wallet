@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { callAhashToArgon2Hash,setStoreData } from '../../../middleLayer/wrap';
+import { callPreCalAhashToArgon2Hash } from '../../../middleLayer/wrap';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { popNewMessage } from '../../../utils/tools';
 import { CreateWalletType } from '../../../viewLogic/localWallet';
@@ -58,15 +58,13 @@ export class CreateWalletByImage extends Widget {
         }
         const imagePsw = this.props.imagePsw;
         if (this.props.imagePswAvailable) {
-            const imgArgon2HashPromise = new Promise((resolve) => {
-                this.props.imagePicker.getAHash({
-                    success(ahash:string) {
-                        console.log('image ahash = ',ahash);
-                        resolve(callAhashToArgon2Hash(ahash,imagePsw));
-                    }
-                });
+            this.props.imagePicker.getAHash({
+                success(ahash:string) {
+                    console.log('image ahash = ',ahash);
+                    callPreCalAhashToArgon2Hash(ahash,imagePsw);
+                }
             });
-            popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image,imgArgon2HashPromise });
+            popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image });
             this.ok && this.ok();
         } else {
             popNewMessage('照片名字格式错误');

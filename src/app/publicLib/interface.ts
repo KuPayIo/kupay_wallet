@@ -25,6 +25,7 @@ export enum TaskSid {
     LuckyMoneyRetreat = 341,     // 回退红包
     Wxpay = 370,                // 微信支付
     Alipay = 371,               // 支付宝支付
+    Apple_pay = 372,            // iOS支付
     Consume = 360,               // 消费
     Receipt = 361               // 收款
 }

@@ -630,12 +630,12 @@ export const callDoERC20TokenTransfer = (psw:string,addrIndex:number, txRecord:T
 };
 
 /**
- * ahash to argonhash
+ * 图片创建或者导入的时候提前计算hash
  * @param imagePsw 图片密码
  * @param ahash ahash
  */
-export const callAhashToArgon2Hash = (ahash: string, imagePsw: string) => {
-    return vmRpcCall('callAhashToArgon2Hash',[ahash,imagePsw]);
+export const callPreCalAhashToArgon2Hash = (ahash: string, imagePsw: string) => {
+    return vmRpcCall('callPreCalAhashToArgon2Hash',[ahash,imagePsw]);
 };
 
 // 锁屏密码hash算法

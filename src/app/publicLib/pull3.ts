@@ -66,7 +66,7 @@ export const fetchCurrency2USDTRate = (currencyName:string) => {
  * 获取官方客服等配置信息
  */
 export const getOfficial = () => {
-    const url = `http://${sourceIp}/wallet/appversion/official_service.json?${Math.random()}`;
+    const url = `http://${sourceIp}/appversion/official_service.json?${Math.random()}`;
 
     return fetch(url).then(res => res.json()).catch();
 };

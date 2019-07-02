@@ -25,6 +25,9 @@ export const erlangLogicIp = sourceIp;
 // erlang逻辑服务器port
 export const erlangLogicPort = '2081';
 
+// erlang逻辑服务器支付回调port
+export const erlangLogicPayPort = 8099;
+
  // websock连接url
 export const wsUrl = `ws://${erlangLogicIp}:${erlangLogicPort}`;
 

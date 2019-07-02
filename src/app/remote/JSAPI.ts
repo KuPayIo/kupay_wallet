@@ -142,8 +142,8 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
     try {
         // tslint:disable-next-line:variable-name
         const fee_total = order.total_fee;
-        const [setNoPassword,cloudBalances] = await Promise.all([queryNoPWD(order.appid,fee_total),getCloudBalances()]);
-        const scBalance = cloudBalances.get(CloudCurrencyType.SC);
+        const setNoPassword = await queryNoPWD(order.appid,fee_total);
+        const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
         console.log('thirdPay balance =========',scBalance * SCPrecision);
         console.log('thirdPay fee_total =========',fee_total);
         console.log('thirdPay setNoPassword =========',setNoPassword);
@@ -164,9 +164,12 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
             minWebview1(webviewName);
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
             console.log(`商户信息 ========== mch_id = ${order.mch_id}  mchInfo = ${mchInfo}`);
-            const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName,() => {
-                WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
-            });
+            // const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName,() => {
+            //     WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
+            // });
+
+            // TODO 打开页面去充值
+            const rechargeSuccess = true;  // 充值成功  此处应是回调函数
             if (rechargeSuccess) {  // 充值成功   直接购买
                 if (setNoPassword === SetNoPassword.SETED) {// 余额足够并且免密开启   直接购买
                     console.log('walletPay start------',order);

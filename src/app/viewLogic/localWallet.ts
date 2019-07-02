@@ -28,28 +28,33 @@ export enum CreateWalletType {
  */
 export const createWallet = async (itype: CreateWalletType, option: CreateWalletOption) => {
     let secrectHash;
-    if (itype === CreateWalletType.Random) {
-        const close = popNewLoading({ zh_Hans:'创建中...',zh_Hant:'創建中...',en:'' });
-        secrectHash = await callCreateWalletRandom(option);
-        close.callback(close.widget);
-    } else if (itype === CreateWalletType.Image) {
-        const close = popNewLoading({ zh_Hans:'创建中...',zh_Hant:'創建中...',en:'' });
-        secrectHash = await callCreateWalletByImage(option);
-        close.callback(close.widget);
-    } else if (itype === CreateWalletType.StrandarImport) {
-        const close = popNewLoading({ zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' });
-        secrectHash = await callImportWalletByMnemonic(option);
-        close.callback(close.widget);
-    } else if (itype === CreateWalletType.ImageImport) {
-        const close = popNewLoading({ zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' });
-        secrectHash = await callCreateWalletByImage(option);
-        close.callback(close.widget);
-    } else if (itype === CreateWalletType.FragmentImport) {
-        const close = popNewLoading({ zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' });
-        secrectHash = await callImportWalletByFragment(option);
-        close.callback(close.widget);
+    try {
+        if (itype === CreateWalletType.Random) {
+            const close = popNewLoading({ zh_Hans:'创建中...',zh_Hant:'創建中...',en:'' });
+            secrectHash = await callCreateWalletRandom(option);
+            close.callback(close.widget);
+        } else if (itype === CreateWalletType.Image) {
+            const close = popNewLoading({ zh_Hans:'创建中...',zh_Hant:'創建中...',en:'' });
+            secrectHash = await callCreateWalletByImage(option);
+            close.callback(close.widget);
+        } else if (itype === CreateWalletType.StrandarImport) {
+            const close = popNewLoading({ zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' });
+            secrectHash = await callImportWalletByMnemonic(option);
+            close.callback(close.widget);
+        } else if (itype === CreateWalletType.ImageImport) {
+            const close = popNewLoading({ zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' });
+            secrectHash = await callCreateWalletByImage(option);
+            close.callback(close.widget);
+        } else if (itype === CreateWalletType.FragmentImport) {
+            const close = popNewLoading({ zh_Hans:'导入中...',zh_Hant:'導入中...',en:'' });
+            secrectHash = await callImportWalletByFragment(option);
+            close.callback(close.widget);
+        }
+    } catch (err) {
+        popNewMessage('出错啦');
+        console.log('创建钱包出错',err);
     }
-
+    
     // 刷新本地钱包
     callDcRefreshAllTx();
     callDcInitErc20GasLimit();

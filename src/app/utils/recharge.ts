@@ -3,6 +3,7 @@
  */
 
 import { getStore as earnGetStore, setStore  as earnSetStore } from '../../earn/client/app/store/memstore';
+import { IAPManager } from '../../pi/browser/iap_manager';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { callRequestAsync } from '../middleLayer/wrap';
@@ -23,7 +24,8 @@ export interface OrderDetail {
  */
 export enum PayType {
     WX = 'wxpay',
-    Alipay = 'alipay'
+    Alipay = 'alipay',
+    IOS = 'apple_pay'
 }
 /**
  * 确认订单支付接口
@@ -31,7 +33,7 @@ export enum PayType {
  * @param okCb 成功回调
  * @param failCb 失败回调
  */
-export const confirmPay = async (orderDetail: OrderDetail) => {
+export const confirmPay = async (orderDetail: OrderDetail,appleGood?:string) => {
     const msg = { type: 'order_pay', param: orderDetail };
     const loading = popNewLoading({ zh_Hans: '充值中...', zh_Hant: '充值中...', en: '' });
     try {
@@ -58,6 +60,16 @@ export const confirmPay = async (orderDetail: OrderDetail) => {
         } else if (orderDetail.payType === PayType.WX) { // 微信H5支付
             jumpData.mweb_url = JSON.parse(resData.JsData).mweb_url;
             retOrder = await jumpWxpay(jumpData);
+        } else if (orderDetail.payType === PayType.IOS) {  // ios支付
+            console.log('打开苹果支付======',appleGood,orderDetail);
+            IAPManager.IAPurchase({
+                sm: appleGood,
+                sd: resData.oid,
+                success(str: String) {
+                    console.log('打开苹果支付成功========', str);
+                }
+            });
+            
         }
         
         return retOrder;

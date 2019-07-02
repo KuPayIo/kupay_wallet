@@ -15,7 +15,7 @@ import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecha
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList,getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from './tools';
 // tslint:disable-next-line:max-line-length
-import { ahashToArgon2Hash, backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, exportPrivateKeyByMnemonic, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, genmnemonicSign, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
+import { ahashToArgon2Hash, backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, exportPrivateKeyByMnemonic, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, genmnemonicSign, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, preCalAhashToArgon2Hash, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
 
 export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 
@@ -790,16 +790,12 @@ export const callDoERC20TokenTransfer = (psw:string,addrIndex:number, txRecord:T
 };
 
 /**
- * ahash to argonhash
+ * 图片创建或者导入的时候提前计算hash
  * @param imagePsw 图片密码
  * @param ahash ahash
  */
-export const callAhashToArgon2Hash = (ahash: string, imagePsw: string,callback:Function) => {
-    ahashToArgon2Hash(ahash,imagePsw).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
+export const callPreCalAhashToArgon2Hash = (ahash: string, imagePsw: string,callback:Function) => {
+    callback([undefined,preCalAhashToArgon2Hash(ahash,imagePsw)]);
 };
 
 // 锁屏密码hash算法

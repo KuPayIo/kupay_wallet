@@ -1,6 +1,5 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { arrayBufferToBase64, base64ToArrayBuffer } from '../../pi/util/base64';
-import { drawImg } from '../../pi/util/canvas';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
@@ -13,7 +12,6 @@ import { AddrInfo, CreateWalletOption, MinerFeeLevel, Wallet } from '../publicLi
 import { getAddrInfoByAddr, getXOR, hexstrToU8Array, u8ArrayToHexstr } from '../publicLib/tools';
 import { sat2Btc, wei2Eth } from '../publicLib/unitTools';
 import { getStore, setStore } from '../store/memstore';
-import { ahash } from './ahash';
 import { dataCenter } from './dataCenter';
 import { restoreSecret, shareSecret } from './secretsBase';
 import { getCurrentAddrInfo } from './tools';
@@ -53,26 +51,6 @@ export const calcHashValue = (pwd, salt?) => {
     argonHash.init();
 
     return argonHash.calcHashValuePromise({ pwd, salt });
-};
-
-/**
- * 获取图片ahash
- * @param imageBase64 base64
- */
-export const getImageAhash = (imageBase64: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-            const ab = drawImg(img);
-            const r = ahash(new Uint8Array(ab), img.width, img.height, 4);
-            resolve(r);
-        };
-        img.onerror = e => {
-            reject(e);
-        };
-        img.crossOrigin = 'Anonymous';
-        img.src = imageBase64;
-    });
 };
 
 /**
@@ -161,8 +139,10 @@ export const createWalletRandom = async (option: CreateWalletOption,tourist?:boo
  * @param option 参数
  */
 export const createWalletByImage = async (option: CreateWalletOption) => {
-    const secrectHash = await calcHashValue(option.psw,getStore('user/salt'));
-    const gwlt = GlobalWallet.generate(secrectHash, option.valut);
+    const secrectHashPromise = calcHashValue(option.psw,getStore('user/salt'));
+    const imgArgon2HashPromise = getStore('flags').imgArgon2HashPromise;
+    const [secrectHash,vault] = await Promise.all([secrectHashPromise,imgArgon2HashPromise]);
+    const gwlt = GlobalWallet.generate(secrectHash,vault);
     // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
@@ -254,12 +234,10 @@ export const ahashToArgon2Hash = async (ahash: string, imagePsw: string) => {
 };
 
 /**
- * 计算图片Argon2 Hash
+ * 图片创建或者导入的时候提前计算hash
  */
-export const calcImgArgon2Hash = async (imageBase64: string,imagePsw: string) => {
-    const ahash = await getImageAhash(imageBase64);
-
-    return ahashToArgon2Hash(ahash, imagePsw);
+export const preCalAhashToArgon2Hash = (ahash: string, imagePsw: string) => {
+    setStore('flags/imgArgon2HashPromise',ahashToArgon2Hash(ahash,imagePsw));
 };
 
 /**
