@@ -970,6 +970,8 @@ const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amou
  */
 export const dataCenter: DataCenter = new DataCenter();
 
+dataCenter.init();
+
 /**
  * 更新余额
  */

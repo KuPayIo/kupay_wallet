@@ -240,3 +240,33 @@ export const xorEncode = (str:string, key:string) => {
 
     return res;
 };
+
+declare var pi_modules;
+/**
+ * 封装ajax成fetch模式
+ * @param url  请求url
+ * @param header 请求头
+ */
+export const piFetch = (url:string,header?:any) => {
+    return new Promise((resolve,reject) => {
+        const timeout = 10 * 1000;
+        if (header && header.method === 'POST') {   // post
+            pi_modules.ajax.exports.post(url,undefined,undefined,pi_modules.ajax.exports.RESP_TYPE_TEXT,timeout,(res) => {
+                console.log('piFetch success===',res);
+                resolve(JSON.parse(res));
+            },(err) => {
+                console.log('piFetch err===',err);
+                reject(JSON.parse(err));
+            });
+        } else {    // get
+            pi_modules.ajax.exports.get(url,undefined,undefined,pi_modules.ajax.exports.RESP_TYPE_TEXT,timeout,(res) => {
+                console.log('piFetch success===',res);
+                resolve(JSON.parse(res));
+            },(err) => {
+                console.log('piFetch err===',err);
+                reject(JSON.parse(err));
+            });
+        }
+        
+    });
+};

@@ -2,6 +2,7 @@
  * ETH api
  */
 import { DevMode } from '../../publicLib/config';
+import { piFetch } from '../../publicLib/tools';
 import { config } from '../config';
 import { Web3 } from '../thirdparty/web3.min';
 
@@ -184,7 +185,7 @@ export class Api {
     public async getAllTransactionsOf(address: string): Promise<any> {
         try {
             const url = ETHSCAN_ROPSTEN_API_URL + address;
-            const response = await fetch(url);
+            const response = await piFetch(url);
 
             return await response.json();
         } catch (e) {

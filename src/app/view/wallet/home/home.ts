@@ -38,8 +38,6 @@ export class Home extends Widget {
             totalAsset:'',
             currencyUnitSymbol:''
         };
-        this.paint();
-        // console.log('updateTest');
     }
 
     public dataInit() {
@@ -93,7 +91,6 @@ export class Home extends Widget {
             // 加载数据完成
             this.props.loaded = true;
             this.paint();
-
         },2000);
 
     }
@@ -165,6 +162,7 @@ registerStoreData('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.pageInit();
+        w.paint();
     }
 });
 
