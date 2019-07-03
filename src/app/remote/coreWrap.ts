@@ -12,6 +12,7 @@ import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, logout
 import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getInviteCode, getMineDetail, getMining, getOneUserInfo, getProductList, getPurchaseRecord, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
 // tslint:disable-next-line:max-line-length
 import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from './pullWallet';
+import { goRecharge } from './recharge';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList,getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from './tools';
 // tslint:disable-next-line:max-line-length
@@ -809,3 +810,18 @@ export const callLockScreenVerify = (psw:string,callback:Function) => {
 };
 
 // ===========================================wallet相关===================================================================
+
+// ==================================recharge相关=========================================
+
+/**
+ * 去充值页面
+ */
+export const callGoRecharge = (balance:number,callback:Function) => {
+    goRecharge(balance).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([handleError(err)]);
+    });
+};
+
+// ==================================recharge相关=========================================

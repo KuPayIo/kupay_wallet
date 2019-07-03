@@ -8,7 +8,7 @@ import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
-import { Account, getStore, initCloudWallets, initStore,LocalCloudWallet, register, setStore } from '../store/memstore';
+import { Account, getStore, initCloudWallets,LocalCloudWallet, register, setStore } from '../store/memstore';
 import { addFirstRegisterListener } from '../store/vmRegister';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';

@@ -247,11 +247,12 @@ declare var pi_modules;
  * @param url  请求url
  * @param header 请求头
  */
-export const piFetch = (url:string,header?:any) => {
+export const piFetch = (url:string,param?:any):Promise<any> => {
+    return Promise.reject();
     return new Promise((resolve,reject) => {
         const timeout = 10 * 1000;
-        if (header && header.method === 'POST') {   // post
-            pi_modules.ajax.exports.post(url,undefined,undefined,pi_modules.ajax.exports.RESP_TYPE_TEXT,timeout,(res) => {
+        if (param && param.method === 'POST') {   // post
+            pi_modules.ajax.exports.post(url,param.headers,param.body,pi_modules.ajax.exports.RESP_TYPE_TEXT,timeout,(res) => {
                 console.log('piFetch success===',res);
                 resolve(JSON.parse(res));
             },(err) => {
