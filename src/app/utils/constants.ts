@@ -36,9 +36,3 @@ export const defaultPassword = '123456789';
 
 // 充值赠送KT倍数
 export const rechargeGiftMultiple = 10;
-
-// SC单价
-export const SCUnitprice =  1;
-
-// 微信支付显示
-export const wxPayShow = 'HighApp';

@@ -2,7 +2,7 @@
 /***
  * 共用 tools
  */
-import { Config } from './config';
+import { Config, inJSVM } from './config';
 import { CurrencyRecord } from './interface';
 import { getModulConfig } from './modulConfig';
 
@@ -248,24 +248,49 @@ declare var pi_modules;
  * @param header 请求头
  */
 export const piFetch = (url:string,param?:any):Promise<any> => {
-    return Promise.reject();
+    // return Promise.reject();
+    if (!inJSVM) return fetch(url,param).then(res => res.json());
+
     return new Promise((resolve,reject) => {
-        const timeout = 10 * 1000;
         if (param && param.method === 'POST') {   // post
-            pi_modules.ajax.exports.post(url,param.headers,param.body,pi_modules.ajax.exports.RESP_TYPE_TEXT,timeout,(res) => {
+            // tslint:disable-next-line:max-line-length
+            // module.post = function (url /*:string*/, headers /*:join*/, reqData /*:string|ArrayBuffer|FormData*/, reqType, contentType /*:string*/, respType /*:string*/, callback /*:function*/, errorCallback /*:function*/, processCallback /*:function*/) {
+            //     headers = headers || {};
+            //     headers["Content-Type"] = contentType;
+            //     return module.request('POST', url, headers, reqData, respType, timeout, callback, errorCallback, processCallback);
+            // }
+            // tslint:disable-next-line:max-line-length
+            pi_modules.ajax.exports.post(url,param.headers,param.body,'string',param.headers['Content-Type'] || 'application/json',pi_modules.ajax.exports.RESP_TYPE_TEXT,(res) => {
                 console.log('piFetch success===',res);
-                resolve(JSON.parse(res));
+                try {
+                    resolve(JSON.parse(res));
+                } catch (err) {
+                    resolve(res);
+                }
+                
             },(err) => {
                 console.log('piFetch err===',err);
-                reject(JSON.parse(err));
+                try {
+                    reject(JSON.parse(err));
+                } catch (err) {
+                    reject(err);
+                }
             });
         } else {    // get
-            pi_modules.ajax.exports.get(url,undefined,undefined,pi_modules.ajax.exports.RESP_TYPE_TEXT,timeout,(res) => {
+            pi_modules.ajax.exports.get(url,undefined,param.body,'string',pi_modules.ajax.exports.RESP_TYPE_TEXT,(res) => {
                 console.log('piFetch success===',res);
-                resolve(JSON.parse(res));
+                try {
+                    resolve(JSON.parse(res));
+                } catch (err) {
+                    resolve(res);
+                }
             },(err) => {
                 console.log('piFetch err===',err);
-                reject(JSON.parse(err));
+                try {
+                    reject(JSON.parse(err));
+                } catch (err) {
+                    reject(err);
+                }
             });
         }
         

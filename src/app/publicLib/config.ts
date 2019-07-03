@@ -8,6 +8,7 @@ import { getModulConfig } from './modulConfig';
 // 是否是移动端
 export const inAndroidApp = navigator.userAgent.indexOf('YINENG_ANDROID') >= 0;
 export const inIOSApp = navigator.userAgent.indexOf('YINENG_IOS') >= 0;
+export const inJSVM = navigator.userAgent.indexOf('JSVM') > 0 ? true : false;
 
 // tar zxvf xxx.tar.gz
 // 资源服务器ip
@@ -48,6 +49,12 @@ export const erc20GasLimitRate = 2;
 
 // eth代币transfer交易编码前缀
 export const ethTokenTransferCode = '0xa9059cbb';
+
+// 微信支付显示
+export const wxPayShow = 'HighApp';
+
+// SC单价
+export const SCUnitprice =  1;
 
 // 语言
 export const lang = 'english';

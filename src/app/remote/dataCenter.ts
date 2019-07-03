@@ -36,7 +36,7 @@ class DataCenter {
    */
     public init() {
         // 更新黄金价格
-        this.updateGoldPrice();
+        // this.updateGoldPrice();
         // 更新人民币美元汇率
         // this.updateUSDRate();
         // 更新货币对比USDT的比率
