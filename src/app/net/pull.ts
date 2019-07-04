@@ -343,21 +343,20 @@ export const uploadFile = async (base64) => {
         mode: 'cors' // no-cors, cors, *same-origin
         // redirect: 'follow', // manual, *follow, error
         // referrer: 'no-referrer' // *client, no-referrer
-    }).then(response => response.json())
-        .then(res => {
-            console.log('uploadFile success ',res);
-            popNewMessage('图片上传成功');
-            if (res.result === 1) {
-                const sid = res.sid;
-                getStoreData('user/info').then(userInfo => {
-                    userInfo.avatar = sid;
-                    setStoreData('user/info',userInfo);
-                });
-            }
-        }).catch(err => {
-            console.log('uploadFile fail ',err);
-            popNewMessage('图片上传失败');
-        });
+    }).then(res => {
+        console.log('uploadFile success ',res);
+        popNewMessage('图片上传成功');
+        if (res.result === 1) {
+            const sid = res.sid;
+            getStoreData('user/info').then(userInfo => {
+                userInfo.avatar = sid;
+                setStoreData('user/info',userInfo);
+            });
+        }
+    }).catch(err => {
+        console.log('uploadFile fail ',err);
+        popNewMessage('图片上传失败');
+    });
 };
 
 /**

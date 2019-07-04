@@ -254,14 +254,8 @@ export const piFetch = (url:string,param?:any):Promise<any> => {
     return new Promise((resolve,reject) => {
         if (param && param.method === 'POST') {   // post
             // tslint:disable-next-line:max-line-length
-            // module.post = function (url /*:string*/, headers /*:join*/, reqData /*:string|ArrayBuffer|FormData*/, reqType, contentType /*:string*/, respType /*:string*/, callback /*:function*/, errorCallback /*:function*/, processCallback /*:function*/) {
-            //     headers = headers || {};
-            //     headers["Content-Type"] = contentType;
-            //     return module.request('POST', url, headers, reqData, respType, timeout, callback, errorCallback, processCallback);
-            // }
-            // tslint:disable-next-line:max-line-length
             pi_modules.ajax.exports.post(url,param.headers,param.body,'string',param.headers['Content-Type'] || 'application/json',pi_modules.ajax.exports.RESP_TYPE_TEXT,(res) => {
-                console.log('piFetch success===',res);
+                console.log(`piFetch POST ${url} success===`,res);
                 try {
                     resolve(JSON.parse(res));
                 } catch (err) {
@@ -269,7 +263,7 @@ export const piFetch = (url:string,param?:any):Promise<any> => {
                 }
                 
             },(err) => {
-                console.log('piFetch err===',err);
+                console.log(`piFetch POST ${url} err===`,err);
                 try {
                     reject(JSON.parse(err));
                 } catch (err) {
@@ -277,15 +271,15 @@ export const piFetch = (url:string,param?:any):Promise<any> => {
                 }
             });
         } else {    // get
-            pi_modules.ajax.exports.get(url,undefined,param.body,'string',pi_modules.ajax.exports.RESP_TYPE_TEXT,(res) => {
-                console.log('piFetch success===',res);
+            pi_modules.ajax.exports.get(url,undefined,param && param.body,'string',pi_modules.ajax.exports.RESP_TYPE_TEXT,(res) => {
+                console.log(`piFetch GET ${url} success===`,res);
                 try {
                     resolve(JSON.parse(res));
                 } catch (err) {
                     resolve(res);
                 }
             },(err) => {
-                console.log('piFetch err===',err);
+                console.log(`piFetch GET ${url} err===`,err);
                 try {
                     reject(JSON.parse(err));
                 } catch (err) {

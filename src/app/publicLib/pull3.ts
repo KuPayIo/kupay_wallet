@@ -1,5 +1,5 @@
 import { sourceIp, thirdUrlPre } from './config';
-import { xorDecode1, xorEncode } from './tools';
+import { piFetch, xorDecode1, xorEncode } from './tools';
 
 // ==========================三方接口=======================================
 /**
@@ -10,7 +10,7 @@ export const getThirdFromServer = async (url:string,timestamp:number) => {
     const xorEncodeUrl = xorEncode(url,key);
     const realUrl = `${thirdUrlPre}?key=${key}&url=${xorEncodeUrl}&timestamp=${timestamp}&$forceServer=1`;
 
-    return fetch(realUrl).then(res => res.json()).catch();
+    return piFetch(realUrl).catch();
 
 };
 
@@ -68,5 +68,5 @@ export const fetchCurrency2USDTRate = (currencyName:string) => {
 export const getOfficial = () => {
     const url = `http://${sourceIp}/appversion/official_service.json?${Math.random()}`;
 
-    return fetch(url).then(res => res.json()).catch();
+    return piFetch(url).catch();
 };

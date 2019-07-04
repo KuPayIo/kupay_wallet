@@ -1,4 +1,5 @@
 import { setStoreData } from '../middleLayer/wrap';
+import { piFetch } from '../publicLib/tools';
 import { changellySign } from './pull';
 
 // ============================= changelly =========================================
@@ -12,7 +13,7 @@ const changellyFetchPost = (data) => {
         const apiKey = res.key;
         const sign = res.sign;
 
-        return fetch(changellyApiUrl, {
+        return piFetch(changellyApiUrl, {
             body: JSON.stringify(data), 
             cache: 'no-cache',
             headers: {
@@ -24,7 +25,7 @@ const changellyFetchPost = (data) => {
             mode: 'cors', // no-cors, cors, *same-origin
             redirect: 'follow', // manual, *follow, error
             referrer: 'no-referrer' // *client, no-referrer
-        }).then(response => response.json()); // parses response to JSON
+        }); // parses response to JSON
     });
 };
 

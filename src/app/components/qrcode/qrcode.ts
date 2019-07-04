@@ -11,16 +11,26 @@ interface Props {
 
 export class Qrcode extends Widget {
     public props: Props;
+    public qr:any;
     constructor() {
         super();
     }
+    public setProps(props:Props,oldProps:Props) {
+        super.setProps(props,oldProps);
+        if (this.qr) {
+            this.qr = new QRious({
+                element: document.getElementById('qrcode-img'),
+                value: this.props.value,
+                size:this.props.size
+            });
+        }
+    }
 
     public attach() {
-        const qr = new QRious({
+        this.qr = new QRious({
             element: document.getElementById('qrcode-img'),
             value: this.props.value,
             size:this.props.size
         });
-
     }
 }
