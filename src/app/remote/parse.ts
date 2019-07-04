@@ -77,6 +77,10 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
                 behavior = coinType === 'KT' ? detailTypes[12] : detailTypes[9];
                 behaviorIcon = 'alipay_rechange.png';
                 break;
+            case TaskSid.Apple_pay:
+                behavior = coinType === 'KT' ? detailTypes[12] : detailTypes[13];
+                behaviorIcon = 'alipay_rechange.png';
+                break;
             case TaskSid.Consume:
                 behavior = detailTypes[10];
                 behaviorIcon = 'transfer_icon.png';

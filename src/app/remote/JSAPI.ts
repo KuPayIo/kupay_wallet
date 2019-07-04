@@ -9,6 +9,7 @@ import { getCloudBalances } from '../store/memstore';
 import { getOpenId, requestAsync } from './login';
 import { postThirdPushMessage } from './postWalletMessage';
 import { getOneUserInfo } from './pull';
+import { goRecharge } from './recharge';
 import { exportPrivateKeyByMnemonic, genmnemonicSign, getMnemonicByHash, VerifyIdentidy } from './wallet';
 
 export enum resCode {
@@ -403,9 +404,10 @@ export const inviteFriends = (payload:{webviewName: string;nickName:string;invit
  */
 export const gotoRecharge = (webviewName: string) => {
     console.log('wallet gotoRecharge called');
-    minWebview1(webviewName);
-    // TODO 此处判断default webview是否活跃
-    postThirdPushMessage(ThirdCmd.RECHARGE);
+    // minWebview1(webviewName);
+    // TODO 如果需要最小化 充值成功后重新打开  需要把所需参数回传
+    const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
+    goRecharge(scBalance);
 };
 
 /**

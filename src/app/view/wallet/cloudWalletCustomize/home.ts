@@ -8,7 +8,7 @@ import { callFetchBalanceValueOfCoin,callGetAccountDetail,getStoreData } from '.
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { fetchCloudGain, formatBalance, formatBalanceValue } from '../../../publicLib/tools';
-import { getCurrencyUnitSymbol } from '../../../utils/tools';
+import { getCurrencyUnitSymbol, goRecharge } from '../../../utils/tools';
 import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -85,7 +85,7 @@ export class CloudWalletHome extends Widget {
      * 充值
      */
     public rechargeClick() {
-        popNew('app-view-wallet-cloudWalletCustomize-rechargeSC');
+        goRecharge();
     }
 
     /**

@@ -1,37 +1,12 @@
-import { goiOSPay, gopay, payPlatform } from '../../pi/browser/vm';
+import { closePayView, goiOSPay, gopay, payPlatform } from '../../pi/browser/vm';
 import { erlangLogicPayPort, SCUnitprice, sourceIp, wxPayShow } from '../publicLib/config';
-import { CloudCurrencyType } from '../publicLib/interface';
+import { CloudCurrencyType, TaskSid } from '../publicLib/interface';
 import { piFetch } from '../publicLib/tools';
 import { requestAsync } from './login';
 
 /**
  * 充值模块
  */
-
-/**
- * 去充值页面
- */
-export const goRecharge = (balance:number) => {
-    return new Promise((resolve,reject) => {
-        gopay(balance,(conpay:number, sMD:any, platform: payPlatform) => {
-            console.log('充值数量',conpay);
-            console.log('充值参数',sMD);
-            console.log('充值方式',platform);
-            const orderDetail:OrderDetail = {
-                total: conpay * SCUnitprice, // 总价
-                body: wxPayShow, // 信息
-                num:conpay, // 充值SC数量
-                payType: platform, // 支付方式
-                cointype: CloudCurrencyType.SC, // 充值类型
-                note: ''          // 备注
-            };
-            confirmPay(orderDetail,sMD);
-            resolve({ conpay,sMD,platform });
-        },() => {
-            reject();  
-        });
-    });
-};
 
 export interface OrderDetail {
     total: number; // 总价
@@ -43,55 +18,85 @@ export interface OrderDetail {
 }
 
 /**
+ * 去充值页面
+ */
+export const goRecharge = async (balance:number) => {
+    try {
+        const { conpay, sMD, platform } = await openRechargePage(balance);
+        console.log('充值数量',conpay);
+        console.log('充值参数',sMD);
+        console.log('充值方式',platform);
+        const orderDetail:OrderDetail = {
+            total: conpay * SCUnitprice, // 总价
+            body: wxPayShow, // 信息
+            num:conpay, // 充值SC数量
+            payType: platform, // 支付方式
+            cointype: CloudCurrencyType.SC, // 充值类型
+            note: ''          // 备注
+        };
+        
+        const resData = await confirmPay(orderDetail);
+        if (orderDetail.payType === payPlatform.apple_pay) {  // ios支付
+            console.log('打开苹果支付======',orderDetail);
+            const { sID,trans } = await iOSPay(resData.oid,sMD);
+            const res = await confirmApplePay(sID,trans);
+            if (res.result === 'SUCCESS') {
+                const ret = {
+                    oid:resData.oid,
+                    itype:TaskSid.Apple_pay
+                };
+    
+                return [undefined,ret];
+            } else {
+                return [res];
+            }
+        }
+    } catch (err) {
+        return [err];
+    } finally {
+        closePayView();
+    }
+    
+};
+
+/**
+ * 打开充值页面
+ */
+const openRechargePage = (balance:number):Promise<any> => {
+    return new Promise((resolve,reject) => {
+        gopay(balance,(conpay:number, sMD:any, platform: payPlatform) => {
+            resolve({ conpay,sMD,platform });    // 点击充值按钮的时候触发
+        },(err:any) => {
+            reject(err || new Error('gopay failed'));  
+        });
+    });
+};
+
+/**
  * 确认订单支付接口
  * @param orderDetail 订单详情
  * @param okCb 成功回调
  * @param failCb 失败回调
  */
-export const confirmPay = async (orderDetail: OrderDetail,sMD:any) => {
+const confirmPay = (orderDetail: OrderDetail) => {
     const msg = { type: 'order_pay', param: orderDetail };
-    try {
-        const resData: any = await requestAsync(msg);
-        console.log('pay 下单结果===============',resData);
-        // const jumpData = {
-        //     oid: resData.oid,
-        //     mweb_url: ''
-        // };
-        // let retOrder;
-        if (orderDetail.payType === payPlatform.aliPay) {// 支付宝H5支付
-            // const aliRes = await fetch('https://openapi.alipay.com/gateway.do', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-            //     },
-            //     body: URLencode(resData.JsData)// 这里是请求对象
-            // });
-            // jumpData.mweb_url = aliRes.url;
-            // retOrder = await jumpAlipay(jumpData);
-        } else if (orderDetail.payType === payPlatform.wxpay) { // 微信H5支付
-            // jumpData.mweb_url = JSON.parse(resData.JsData).mweb_url;
-            // retOrder = await jumpWxpay(jumpData);
-        } else if (orderDetail.payType === payPlatform.apple_pay) {  // ios支付
-            console.log('打开苹果支付======',orderDetail);
-            iOSPay(resData.oid,sMD);
-        }
-        
-        // return retOrder;
-    } catch (err) {
-        console.log('下单失败',err);
-    }
+
+    return requestAsync(msg);
 };
 
-const iOSPay = (oid:string,sMD:any) => {
+/**
+ * ios支付
+ * @param oid 订单id 
+ * @param sMD iOS支付时所需参数
+ */
+const iOSPay = (oid:string,sMD:any):Promise<any> => {
     return new Promise((resolve,reject) => {
         goiOSPay(oid,sMD,(sID:string,trans:string) => {
             console.log('支付成功',sID);
-            // console.log('支付成功凭证',trans);
-            confirmApplePay(sID,trans);
-            resolve();
-        },() => {
+            resolve({ sID,trans });
+        },(err) => {
             console.log('支付失败');
-            reject();
+            reject(err || new Error('ios pay failed'));
         });
     });
 };
@@ -99,7 +104,7 @@ const iOSPay = (oid:string,sMD:any) => {
 /**
  * 验证iOS是否支付成功
  */
-export const confirmApplePay = (oid:string,receipt:string) => {
+const confirmApplePay = (oid:string,receipt:string) => {
     const url = `http://${sourceIp}:${erlangLogicPayPort}/pay/apple_verify`;
     
     return piFetch(url, {

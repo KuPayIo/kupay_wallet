@@ -2,6 +2,7 @@
  * common tools
  */
 import { getStore as chatGetStore } from '../../chat/client/app/data/store';
+import { setStore as earnSetStore } from '../../earn/client/app/store/memstore';
 import { appLanguageList } from '../../pi/browser/localLanguage';
 import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
@@ -9,12 +10,13 @@ import { Callback } from '../../pi/util/util';
 import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
-import { getStoreData, setStoreData } from '../middleLayer/wrap';
+import { callGetAccountDetail, callGoRecharge, getStoreData, setStoreData } from '../middleLayer/wrap';
 import { getSourceLoaded } from '../postMessage/localLoaded';
 import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../publicLib/config';
-import { CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
+import { CloudCurrencyType, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
 import { SettingLanguage } from '../view/base/app';
+import { getCloudBalances } from '../viewLogic/common';
 import { logoutAccount } from '../viewLogic/login';
 import { piLoadDir, piRequire } from './commonjsTools';
 import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
@@ -727,4 +729,24 @@ export const getCurrentAddrInfo1 = (currencyName:string,currencyRecords:Currency
     }
     
     return ;
+};
+
+/**
+ * 去充值
+ */
+export const goRecharge = () => {
+    getCloudBalances().then(cloudBalances => {
+        const scBalance = cloudBalances.get(CloudCurrencyType.SC);
+        callGoRecharge(scBalance).then(([err,res]) => {
+            if (err) {
+                popNewMessage('支付失败');
+                console.log('支付失败 err',err);
+
+                return;
+            }
+            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: res.oid,itype:res.itype,ctype:1 });
+            earnSetStore('flags/firstRecharge',true); // 首次充值
+            callGetAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+        });
+    });
 };
