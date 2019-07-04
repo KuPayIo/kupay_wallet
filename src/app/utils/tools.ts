@@ -1278,9 +1278,10 @@ export const checkPopPhoneTips = () => {
     }
     if (localStorage.getItem('popPhoneTips') && getStore('user/id')) {
         
-        popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
-            popNew('app-view-mine-setting-phone',{ jump:true });
-        },undefined,true);      
+        // TODO暂时关闭
+        // popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
+        //     popNew('app-view-mine-setting-phone',{ jump:true });
+        // },undefined,true);      
     }
 };
 

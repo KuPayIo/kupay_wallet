@@ -31,7 +31,7 @@ export class App extends Widget {
         this.old[isActive] = true;
         this.props = {
             type: 2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
-            isActive:'APP_PLAY',
+            isActive:'APP_CHAT',
             old: this.old,
             tabBarList: [
                 {
@@ -45,7 +45,7 @@ export class App extends Widget {
                     text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
-                    components: 'chat-client-app-view-chat-contact'
+                    components: 'chat-client-app-view-home-contact'
                 },{
                     modulName: 'APP_EARN',
                     text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
