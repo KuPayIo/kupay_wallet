@@ -52,11 +52,11 @@ export class TransactionHome extends Widget {
         };
     }
     public setProps(props:Props,oldProps:Props) {
-        const currencyName = this.props.currencyName;
+        const currencyName = props.currencyName;
         this.props = {
             ...this.props,
-            currencyLogo:calCurrencyLogoUrl(currencyName),
-            ...props
+            ...props,
+            currencyLogo:calCurrencyLogoUrl(currencyName)
         };
         super.setProps(this.props,oldProps);
         this.init();

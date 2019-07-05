@@ -174,8 +174,9 @@ export class Transfer extends Widget {
             const loading = popNewLoading(getStaticLanguage().transfer.loading);
             callTransfer(passwd,txPayload).then(([err,tx]) => {
                 if (!err) {
-                    callUpdateLocalTx(tx);
-                    callDcUpdateAddrInfo(tx.addr,tx.currencyName);
+                    callUpdateLocalTx(tx).then(() => {
+                        callDcUpdateAddrInfo(tx.addr,tx.currencyName);
+                    });
                     popNewMessage(getStaticLanguage().transfer.transSuccess);
                     popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
                     this.ok && this.ok();

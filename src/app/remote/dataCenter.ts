@@ -306,8 +306,9 @@ class DataCenter {
         try {
             const api = new EthApi();
             const r: any = await api.getAllTransactionsOf(addr);
-            // console.log(r);
+            // 此处只使用hash是为了兼容我们自己搭建的节点接口 
             const ethTrans = this.filterEthTrans(r.result);
+            // 此处使用本地交易记录hash是因为发送的时候会生成一个本地记录  此时接口返回有可能还没有这个交易hash
             const localTxList = fetchTransactionList(addr, 'ETH');
             const allTxHash = [];
             localTxList.forEach(item => {
@@ -407,7 +408,7 @@ class DataCenter {
     /**
      * 获取eth交易详情
      */
-    private async getEthTransactionByHash(hash: string, addr: string) {
+    private async getEthTransactionByHash(hash: string, addr: string,blockHeight:number) {
         if (!hash) return;
         const api = new EthApi();
         const res1: any = await api.getTransactionReceipt(hash);
@@ -416,7 +417,7 @@ class DataCenter {
         const res2: any = await api.getTransaction(hash);
         const blockHash = res1.blockHash;
         const res3: any = await api.getBlock(blockHash);
-        const blockHeight = Number(await api.getBlockNumber());
+        
         const confirmedBlockNumber = blockHeight - res1.blockNumber + 1;
         const pay = wei2Eth(res2.value);
         const needConfirmedBlockNumber = getConfirmBlockNumber('ETH', pay);
@@ -448,7 +449,7 @@ class DataCenter {
     /**
      * 获取erc20交易详情
      */
-    private async getERC20TransactionByHash(currencyName: string,hash: string,addr: string) {
+    private async getERC20TransactionByHash(currencyName: string,hash: string,addr: string,blockHeight:number) {
         if (!hash) return;
         const api = new EthApi();
         const res1: any = await api.getTransactionReceipt(hash);
@@ -456,7 +457,6 @@ class DataCenter {
         const res2: any = await api.getTransaction(hash);
         const blockHash = res1.blockHash;
         const res3: any = await api.getBlock(blockHash);
-        const blockHeight = Number(await api.getBlockNumber());
         const confirmedBlockNumber = blockHeight - res1.blockNumber + 1;
         const obj = this.parseErc20Input(res2.input);
         if (!obj) return;
@@ -790,11 +790,15 @@ class DataCenter {
      */
     private async updateTxStatus(hash: string,currencyName: string,addr: string) {
         if (currencyName === 'ETH') {
-            this.getEthTransactionByHash(hash, addr);
+            const api = new EthApi();
+            const blockHeight = Number(await api.getBlockNumber());
+            this.getEthTransactionByHash(hash, addr,blockHeight);
         } else if (currencyName === 'BTC') {
             this.getBTCTransactionByHash(hash, addr);
         } else {
-            this.getERC20TransactionByHash(currencyName, hash, addr);
+            const api = new EthApi();
+            const blockHeight = Number(await api.getBlockNumber());
+            this.getERC20TransactionByHash(currencyName, hash, addr,blockHeight);
         }
     }
 

@@ -25,8 +25,12 @@ export const initStore = () => {
         initThird();            // 三方数据初始化
         initInviteUsers();      // 邀请好友数据初始化
         
-        return initAccount();          // 账户初始化
-    });             // indexDb数据初始化
+        return initAccount().then(() => { // 账户初始化
+            initFileStore().then(() => {  // indexDb数据初始化
+                initTxHistory();         // 历史记录初始化
+            });
+        });          
+    });            
 };
 
 /**
@@ -205,10 +209,6 @@ export const deleteAccount = (id: string) => {
  * indexDB数据初始化
  */
 const initFile = () => {
-    initFileStore().then(() => {
-        initTxHistory();         // 历史记录初始化
-    });
-    
     return initLocalStorageFileStore();
 
 };
