@@ -12,6 +12,7 @@ import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,callGetInviteCode, getStoreData } from '../../../middleLayer/wrap';
+import { LuckyMoneyType } from '../../../publicLib/interface';
 import { getUserInfo, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
 import { activityList, gameList } from './gameConfig';
@@ -75,7 +76,7 @@ export class PlayHome extends Widget {
             }
         });
         callGetInviteCode().then(inviteCodeInfo => {
-            this.props.inviteCode = inviteCodeInfo.cid;
+            this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
             this.paint();
         });
     }

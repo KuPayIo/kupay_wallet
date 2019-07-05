@@ -1,5 +1,5 @@
 import { HandlerMap } from '../../pi/util/event';
-import { ThirdCmd } from '../publicLib/interface';
+import { ThirdCmd, ThirdPushArgs } from '../publicLib/interface';
 
 /**
  * 三方推送
@@ -22,6 +22,6 @@ export const addThirdPushListener = (key:any,cb:Function) => {
  * 触发server push事件
  * @param args 参数
  */
-export const emitThirdPush = (cmd:ThirdCmd) => {
-    handlerMap.notify(<any>cmd,undefined);
+export const emitThirdPush = (args:ThirdPushArgs) => {
+    handlerMap.notify(<any>args.cmd,args.payload);
 };

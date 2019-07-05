@@ -413,7 +413,7 @@ export const gotoGameService = (webviewName: string) => {
     console.log('wallet gotoGameService called');
     minWebview1(webviewName);
     // TODO 此处判断default webview是否活跃
-    postThirdPushMessage(ThirdCmd.GAMESERVICE);
+    postThirdPushMessage(ThirdCmd.GAMESERVICE,webviewName);
 };
 
 /**
@@ -423,5 +423,5 @@ export const gotoOfficialGroupChat = (webviewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
     minWebview1(webviewName);
     // TODO 此处判断default webview是否活跃
-    postThirdPushMessage(ThirdCmd.OFFICIALGROUPCHAT);
+    postThirdPushMessage(ThirdCmd.OFFICIALGROUPCHAT,webviewName);
 };

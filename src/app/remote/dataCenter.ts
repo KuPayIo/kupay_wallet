@@ -13,6 +13,7 @@ import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../publicLib/pull3';
 import { formatBalance } from '../publicLib/tools';
 import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../publicLib/unitTools';
 import { getStore,setStore } from '../store/memstore';
+import { addSourceLoadedListener } from './postWalletMessage';
 import { getSilverPrice } from './pull';
 import { getAddrsAll, getConfirmBlockNumber, getCurrentAddrInfo, parseTransferExtraInfo, updateLocalTx } from './tools';
 import { fetchLocalTxByHash, fetchTransactionList, getMnemonicByHash } from './wallet';
@@ -973,9 +974,9 @@ const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amou
  * 消息处理列表
  */
 export const dataCenter: DataCenter = new DataCenter();
-
-// dataCenter.init();
-
+addSourceLoadedListener(() => {
+    dataCenter.init();
+});
 /**
  * 更新余额
  */

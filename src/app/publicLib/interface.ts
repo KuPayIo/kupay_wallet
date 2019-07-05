@@ -618,10 +618,15 @@ export enum ThirdCmd {
     GAMESERVICE,       // 游戏客服
     OFFICIALGROUPCHAT   // 官方群聊
 }
+
+export interface ThirdPushArgs {
+    cmd:ThirdCmd;         // 第三方游戏推送key
+    payload:any;
+}
 /**
  * postMessage args类型
  */
-export type PostMessageArgs = LoadedStage | ServerPushArgs | ThirdCmd;
+export type PostMessageArgs = LoadedStage | ServerPushArgs | ThirdPushArgs;
 
 /**
  * vm 往 webview 推送消息类型

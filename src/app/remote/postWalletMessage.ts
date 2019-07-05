@@ -34,10 +34,10 @@ export const postAllLoadedMessage = () => {
 /**
  * 推送third 相关
  */
-export const postThirdPushMessage = (cmd:ThirdCmd) => {
+export const postThirdPushMessage = (cmd:ThirdCmd,payload:any) => {
     const message:PostMessage = {
         moduleName:PostModule.THIRD,   // 模块名
-        args:cmd      // 参数
+        args:{ cmd,payload }      // 参数
     };
     WebViewManager.postMessage(walleWebViewtName,JSON.stringify(message));
 };
@@ -51,4 +51,38 @@ export const postServerPushMessage = (args:ServerPushArgs) => {
         args      // 参数
     };
     WebViewManager.postMessage(walleWebViewtName,JSON.stringify(message));
+};
+
+let vmStage:LoadedStage = LoadedStage.START;
+
+/**
+ * vmStage变化
+ */
+export const setVmStage = (stage:LoadedStage) => {
+    vmStage = stage;
+    if (vmStage === LoadedStage.STORELOADED) {
+        postStoreLoadedMessage();
+    } else if (vmStage === LoadedStage.ALLLOADED) {
+        postAllLoadedMessage();
+        sourceLoade();
+    }
+};
+
+const sourceLoadedCbs = [];
+
+/**
+ * 设置vm loaded监听
+ */
+export const addSourceLoadedListener = (cb:Function) => {
+    if (vmStage === LoadedStage.ALLLOADED) {
+        cb();
+    } else {
+        sourceLoadedCbs.push(cb);
+    }
+};
+
+const sourceLoade = () => {
+    for (const cb of sourceLoadedCbs) {
+        cb && cb();
+    }
 };
