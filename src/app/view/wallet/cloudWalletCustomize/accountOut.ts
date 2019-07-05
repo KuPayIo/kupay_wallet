@@ -21,11 +21,8 @@ interface Props {
 }
 export class AccountOut extends Widget {
     public props:any;
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-    }
-    public init() {
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
             recordList:[],
@@ -33,6 +30,16 @@ export class AccountOut extends Widget {
             canLoadMore:false,
             isRefreshing:false
         };
+    }
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.init();
+    }
+    public init() {
         getCloudWallets().then(cloudWallets => {
             const allLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]);
             this.props.recordList = this.parseRecordList(allLogs.withdrawLogs.list);

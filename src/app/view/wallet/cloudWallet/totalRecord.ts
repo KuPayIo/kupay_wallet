@@ -23,11 +23,8 @@ interface Props {
 
 export class TotalRecord extends Widget {
     public props:any;
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-    }
-    public init() {
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
             recordList:[], // 全部记录
@@ -40,6 +37,16 @@ export class TotalRecord extends Widget {
             canLoadMore:false,
             isRefreshing:false
         };
+    }
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.init();
+    }
+    public init() {
         if (this.props.isActive) {
             callGetAccountDetail(this.props.currencyName,1);
             callGetWithdrawLogs(this.props.currencyName);

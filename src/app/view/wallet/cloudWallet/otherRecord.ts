@@ -4,7 +4,7 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
+import { callGetAccountDetail } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { timestampFormat } from '../../../publicLib/tools';
 import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
@@ -19,14 +19,8 @@ interface Props {
 }
 export class OtherRecord extends Widget {
     public props:any;
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-    }
-    public init() {
-        if (this.props.isActive) {
-            callGetAccountDetail(this.props.currencyName,1);
-        }
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
             recordList:[],
@@ -34,6 +28,19 @@ export class OtherRecord extends Widget {
             canLoadMore:false,
             isRefreshing:false
         };
+    }
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.init();
+    }
+    public init() {
+        if (this.props.isActive) {
+            callGetAccountDetail(this.props.currencyName,1);
+        }
         getCloudWallets().then(cloudWallets => {
             const accountDetail = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).otherLogs;
             this.props.recordList = this.parseRecordList(accountDetail.list);

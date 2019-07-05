@@ -22,15 +22,8 @@ interface Props {
 }
 export class RechargeRecord extends Widget {
     public props:any;
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-        if (this.props.isActive) {
-            callGetRechargeLogs(this.props.currencyName);
-        }
-    }
-    public init() {
-        
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
             recordList:[],
@@ -38,6 +31,20 @@ export class RechargeRecord extends Widget {
             canLoadMore:false,
             isRefreshing:false
         };
+    }
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.init();
+        if (this.props.isActive) {
+            callGetRechargeLogs(this.props.currencyName);
+        }
+    }
+    public init() {
+        
         getCloudWallets().then(cloudWallets => {
             const rechargeLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).rechargeLogs;
             this.props.nextStart = rechargeLogs.start;

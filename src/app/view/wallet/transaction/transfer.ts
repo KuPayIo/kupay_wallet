@@ -66,16 +66,19 @@ export class Transfer extends Widget {
             currencyUnitSymbol:'',
             rate:0
         };
-        Promise.all([callGetCurrentAddrInfo(this.props.currencyName),
-            getCurrencyUnitSymbol(),
-            callFetchBalanceValueOfCoin(this.props.currencyName,1)]).then(([addrInfo,currencyUnitSymbol,rate]) => {
-                this.props.balance = formatBalance(addrInfo.balance);
-                this.props.fromAddr = addrInfo.addr;
-                this.props.currencyUnitSymbol = currencyUnitSymbol;
-                this.props.rate = rate;
-                this.paint();
-            });
-        
+        callGetCurrentAddrInfo(this.props.currencyName).then(addrInfo => {
+            this.props.balance = formatBalance(addrInfo.balance);
+            this.props.fromAddr = addrInfo.addr;
+            this.paint();
+        });
+        callFetchBalanceValueOfCoin(this.props.currencyName,1).then(rate => {
+            this.props.rate = rate;
+        });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol;
+            this.paint();
+        });
+
     }
 
     public updateMinerFeeList() {

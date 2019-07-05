@@ -17,12 +17,8 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Home extends Widget {
-    public setProps(props:any,oldProps:any) {
-        super.setProps(props,oldProps);
-        this.pageInit();
-        this.dataInit();
-    }
-    public pageInit() {
+    public create() {
+        super.create();
         this.props = {
             offlienType:OfflienType.WALLET,
             tabs:[{
@@ -38,17 +34,30 @@ export class Home extends Widget {
             totalAsset:'',
             currencyUnitSymbol:''
         };
+
+    }
+    public setProps(props:any,oldProps:any) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.dataInit();
     }
 
     public dataInit() {
-        Promise.all([getUserInfo(),callFetchLocalTotalAssets(),
-            callFetchCloudTotalAssets(),getCurrencyUnitSymbol()]).then(([userInfo,localTotalAssets,
-                cloudTotalAssets,currencyUnitSymbol]) => {
-                this.props.avatar = userInfo && userInfo.avatar;
-                this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
-                this.props.currencyUnitSymbol = currencyUnitSymbol; 
-                this.paint();
-            });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol; 
+            this.paint();
+        });
+        getUserInfo().then(userInfo => {
+            this.props.avatar = userInfo && userInfo.avatar;
+            this.paint();
+        });
+        Promise.all([callFetchLocalTotalAssets(),callFetchCloudTotalAssets()]).then(([localTotalAssets,cloudTotalAssets]) => {
+            this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
+            this.paint();
+        });
     }
 
     public tabsChangeClick(event: any, value: number) {
@@ -64,22 +73,21 @@ export class Home extends Widget {
     }
 
     public updateTotalAsset() {
-        Promise.all([callFetchLocalTotalAssets(),
-            callFetchCloudTotalAssets()]).then(([localTotalAssets,
-                cloudTotalAssets]) => {
-                this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
-                this.paint();
-            });
+        Promise.all([callFetchLocalTotalAssets(),callFetchCloudTotalAssets()]).then(([localTotalAssets,cloudTotalAssets]) => {
+            this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
+            this.paint();
+        });
     }
 
     public currencyUnitChange() {
-        Promise.all([callFetchLocalTotalAssets(),
-            callFetchCloudTotalAssets(),getCurrencyUnitSymbol()]).then(([localTotalAssets,
-                cloudTotalAssets,currencyUnitSymbol]) => {
-                this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
-                this.props.currencyUnitSymbol = currencyUnitSymbol; 
-                this.paint();
-            });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol; 
+            this.paint();
+        });
+        Promise.all([callFetchLocalTotalAssets(),callFetchCloudTotalAssets()]).then(([localTotalAssets,cloudTotalAssets]) => {
+            this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
+            this.paint();
+        });
     }
     
     /**
@@ -135,14 +143,6 @@ export class Home extends Widget {
 }
 
 // ==========================本地
-registerStoreData('user',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.dataInit();
-        w.paint();
-    }
-});
-
 registerStoreData('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
@@ -155,14 +155,6 @@ registerStoreData('cloud/cloudWallet',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
-    }
-});
-
-registerStoreData('setting/language', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.pageInit();
-        w.paint();
     }
 });
 

@@ -21,40 +21,15 @@ interface Props {
 }
 export class TransactionHome extends Widget {
     public props:any;
-
     public ok:() => void;
     public backPrePage() {
         this.ok && this.ok();
     }
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-        const currencyName = this.props.currencyName;
-        Promise.all([callGetCurrentAddrInfo(currencyName),
-            callFetchBalanceValueOfCoin(currencyName,1),
-            getCurrencyUnitSymbol(),
-            getStoreData('setting/changeColor','redUp')]).then(([addrInfo,oneBalanceValue,currencyUnitSymbol,color]) => {
-                callDcUpdateAddrInfo(addrInfo.addr,currencyName);
-                const balance = formatBalance(addrInfo.balance);
-                const balanceValue =  balance * oneBalanceValue;
-                this.props.balance = balance;
-                this.props.balanceValue = balanceValue;
-                this.props.addrInfo = addrInfo;
-                this.props.rate = formatBalanceValue(oneBalanceValue);
-                this.props.address = parseAccount(addrInfo.addr);
-                this.props.currencyUnitSymbol = currencyUnitSymbol;
-                this.props.redUp = (color === 'redUp');
-                this.paint();
-                callFetchTransactionList(addrInfo.addr,currencyName).then(orginTxList => {
-                    this.parseTxList(orginTxList);
-                });
-            });
-    }
-    public init() {
-        const currencyName = this.props.currencyName;
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
-            currencyLogo:calCurrencyLogoUrl(currencyName),
+            currencyLogo:'',
             balance:0,
             balanceValue:formatBalanceValue(0),
             rate:formatBalanceValue(0),
@@ -75,7 +50,48 @@ export class TransactionHome extends Widget {
             activeNum:0,
             address:''
         };
-
+    }
+    public setProps(props:Props,oldProps:Props) {
+        const currencyName = this.props.currencyName;
+        this.props = {
+            ...this.props,
+            currencyLogo:calCurrencyLogoUrl(currencyName),
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.init();
+        
+    }
+    public init() {
+        const currencyName = this.props.currencyName;
+        callGetCurrentAddrInfo(currencyName).then(addrInfo => {
+            callDcUpdateAddrInfo(addrInfo.addr,currencyName);
+            callFetchTransactionList(addrInfo.addr,currencyName).then(orginTxList => {
+                this.parseTxList(orginTxList);
+            });
+            const balance = formatBalance(addrInfo.balance);
+            const balanceValue =  balance * Number(this.props.rate);
+            this.props.balance = balance;
+            this.props.balanceValue = balanceValue;
+            this.props.addrInfo = addrInfo;
+            this.props.address = parseAccount(addrInfo.addr);
+            this.paint();
+            
+        });
+        callFetchBalanceValueOfCoin(currencyName,1).then(oneBalanceValue => {
+            const balanceValue =  this.props.balance * oneBalanceValue;
+            this.props.balanceValue = balanceValue;
+            this.props.rate = formatBalanceValue(oneBalanceValue);
+            this.paint();
+        });
+        getStoreData('setting/changeColor','redUp').then(color => {
+            this.props.redUp = (color === 'redUp');
+            this.paint();
+        });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol;
+            this.paint();
+        });
         this.canConvert();
     }
 
@@ -158,26 +174,6 @@ export class TransactionHome extends Widget {
         popNew('app-view-wallet-coinConvert-coinConvert',{ currencyName:this.props.currencyName });
     }
 
-    public currencyUnitChange() {
-        const currencyName = this.props.currencyName;
-        Promise.all([callGetCurrentAddrInfo(currencyName),
-            callFetchBalanceValueOfCoin(currencyName,1),
-            getCurrencyUnitSymbol()]).then(([addrInfo,oneBalanceValue,currencyUnitSymbol]) => {
-                const balance = formatBalance(addrInfo.balance);
-                const balanceValue =  balance * oneBalanceValue;
-                this.props.balance = balance;
-                this.props.balanceValue = balanceValue;
-                this.props.addrInfo = addrInfo;
-                this.props.rate = formatBalanceValue(oneBalanceValue);
-                this.props.currencyUnitSymbol = currencyUnitSymbol;
-                this.paint();
-                callFetchTransactionList(addrInfo.addr,currencyName).then(orginTxList => {
-                    this.parseTxList(orginTxList);
-                });
-            });
-        this.paint();
-    }
-
     public refreshClick() {
         callDcUpdateAddrInfo(this.props.addrInfo.addr,this.props.currencyName);
     }
@@ -222,13 +218,5 @@ registerStoreData('third/currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRate();
-    }
-});
-
-// 货币单位变化
-registerStoreData('setting/currencyUnit',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.currencyUnitChange();
     }
 });

@@ -26,7 +26,6 @@ export class CloudWalletHome extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        this.paint();
     }
     public init() {
         this.language = this.config.value[getLang()];
@@ -55,34 +54,42 @@ export class CloudWalletHome extends Widget {
             currencyUnitSymbol:'',
             redUp: true
         };
-        Promise.all([getCloudBalances(),callFetchCoinGain(currencyName),
-            callFetchBalanceValueOfCoin(currencyName,1),
-            getCurrencyUnitSymbol(),
-            getStoreData('setting/changeColor','redUp')]).then(([cloudBalances,gain,rate,currencyUnitSymbol,color]) => {
-                const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
-                const balanceValue = formatBalanceValue(balance * rate);
-                this.props.balance = balance;
-                this.props.balanceValue = balanceValue;
-                this.props.gain = gain;
-                this.props.rate = rate;
-                this.props.currencyUnitSymbol = currencyUnitSymbol;
-                this.props.redUp = color === 'redUp';
-                this.paint();
-            });
+        callFetchCoinGain(currencyName).then(gain => {
+            this.props.gain = gain;
+            this.paint();
+        });
+        Promise.all([getCloudBalances(),callFetchBalanceValueOfCoin(currencyName,1)]).then(([cloudBalances,rate]) => {
+            const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
+            const balanceValue = formatBalanceValue(balance * rate);
+            this.props.balance = balance;
+            this.props.balanceValue = balanceValue;
+            this.props.rate = rate;
+            this.paint();
+        });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol;
+            this.paint();
+        });
+        getStoreData('setting/changeColor','redUp').then(color => {
+            this.props.redUp = color === 'redUp';
+            this.paint();
+        });
     }
 
     public updateBalance() {
         const currencyName = this.props.currencyName;
-        Promise.all([getCloudBalances(),callFetchCoinGain(currencyName),
-            callFetchBalanceValueOfCoin(currencyName,1)]).then(([cloudBalances,gain,rate]) => {
-                const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
-                const balanceValue = formatBalanceValue(balance * rate);
-                this.props.balance = balance;
-                this.props.balanceValue = balanceValue;
-                this.props.gain = gain;
-                this.props.rate = rate;
-                this.paint();
-            });
+        callFetchCoinGain(currencyName).then(gain => {
+            this.props.gain = gain;
+            this.paint();
+        });
+        Promise.all([getCloudBalances(),callFetchBalanceValueOfCoin(currencyName,1)]).then(([cloudBalances,rate]) => {
+            const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
+            const balanceValue = formatBalanceValue(balance * rate);
+            this.props.balance = balance;
+            this.props.balanceValue = balanceValue;
+            this.props.rate = rate;
+            this.paint();
+        });
         
     }
     public tabsChangeClick(event: any, value: number) {

@@ -5,7 +5,7 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
+import { callGetAccountDetail } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { timestampFormat } from '../../../publicLib/tools';
@@ -21,11 +21,8 @@ interface Props {
 }
 export class AccountEntry extends Widget {
     public props:any;
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-    }
-    public init() {
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
             recordList:[],
@@ -33,7 +30,16 @@ export class AccountEntry extends Widget {
             canLoadMore:false,
             isRefreshing:false
         };
-
+    }
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.init();
+    }
+    public init() {
         getCloudWallets().then(cloudWallets => {
             const allLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]);
             this.props.recordList = this.parseRecordList(allLogs.rechargeLogs.list);

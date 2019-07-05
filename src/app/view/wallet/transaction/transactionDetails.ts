@@ -26,12 +26,8 @@ export class TransactionDetails extends Widget {
     public props:any;
     public ok:() => void;
     public language:any;
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-    }
-    public init() {
-        this.language = this.config.value[getLang()];
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
             tx:undefined,
@@ -44,24 +40,19 @@ export class TransactionDetails extends Widget {
             qrcode:'',
             webText:''
         };
-        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
-            const tx = fetchLocalTxByHash1(currencyRecords,this.props.hash);
-            const obj = parseStatusShow(tx);
-            const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;
-            const webText = tx.currencyName === 'BTC' ? this.language.tips[0] : this.language.tips[1];
-            this.props.tx = tx;
-            this.props.hashShow = parseAccount(tx.hash);
-            this.props.timeShow = timestampFormat(tx.time);
-            this.props.statusShow = obj.text;
-            this.props.statusIcon = obj.icon;
-            this.props.minerFeeUnit = tx.currencyName !== 'BTC' ? 'ETH' : 'BTC';
-            this.props.canResend = canResend(tx);
-            this.props.qrcode = `${qrcodePrefix}${tx.hash}`;
-            this.props.webText = webText;
-            this.paint();
-        });
-       
     }
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.language = this.config.value[getLang()];
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            this.updateTransaction(currencyRecords);
+        });
+    }
+    
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -95,9 +86,20 @@ export class TransactionDetails extends Widget {
         });
     }
 
-    public updateTransaction() {
-        // this.props.tx = fetchTxByHash(this.props.hash);
-        this.init();
+    public updateTransaction(currencyRecords:CurrencyRecord[]) {
+        const tx = fetchLocalTxByHash1(currencyRecords,this.props.hash);
+        const obj = parseStatusShow(tx);
+        const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;
+        const webText = tx.currencyName === 'BTC' ? this.language.tips[0] : this.language.tips[1];
+        this.props.tx = tx;
+        this.props.hashShow = parseAccount(tx.hash);
+        this.props.timeShow = timestampFormat(tx.time);
+        this.props.statusShow = obj.text;
+        this.props.statusIcon = obj.icon;
+        this.props.minerFeeUnit = tx.currencyName !== 'BTC' ? 'ETH' : 'BTC';
+        this.props.canResend = canResend(tx);
+        this.props.qrcode = `${qrcodePrefix}${tx.hash}`;
+        this.props.webText = webText;
         this.paint();
     }
 
@@ -114,9 +116,9 @@ export class TransactionDetails extends Widget {
 }
 
 // 交易记录变化
-registerStoreData('wallet/currencyRecords',() => {
+registerStoreData('wallet/currencyRecords',(currencyRecords:CurrencyRecord[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.updateTransaction();
+        w.updateTransaction(currencyRecords);
     }
 });

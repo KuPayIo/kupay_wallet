@@ -1,7 +1,6 @@
 /**
  * SC 交易记录主页
  */
-import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { callFetchBalanceValueOfCoin,callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
@@ -50,17 +49,22 @@ export class CloudWalletHome extends Widget {
             redUp: true
         };
 
-        Promise.all([getCloudBalances(),callFetchBalanceValueOfCoin(currencyName,1),
-            getCurrencyUnitSymbol(),getStoreData('setting/changeColor','redUp')]).then(([cloudBalances,rate,currencyUnitSymbol,color]) => {
-                const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
-                const balanceValue = formatBalanceValue(balance * rate);
-                this.props.balance = balance;
-                this.props.balanceValue = balanceValue;
-                this.props.rate = rate;
-                this.props.currencyUnitSymbol = currencyUnitSymbol;
-                this.props.redUp = color === 'redUp';
-                this.paint();
-            });
+        Promise.all([getCloudBalances(),callFetchBalanceValueOfCoin(currencyName,1)]).then(([cloudBalances,rate]) => {
+            const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
+            const balanceValue = formatBalanceValue(balance * rate);
+            this.props.balance = balance;
+            this.props.balanceValue = balanceValue;
+            this.props.rate = formatBalanceValue(rate);
+            this.paint();
+        });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol;
+            this.paint();
+        });
+        getStoreData('setting/changeColor','redUp').then(color => {
+            this.props.redUp = color === 'redUp';
+            this.paint();
+        });
     }
 
     public updateBalance() {
@@ -70,7 +74,7 @@ export class CloudWalletHome extends Widget {
             const balanceValue = formatBalanceValue(balance * rate);
             this.props.balance = balance;
             this.props.balanceValue = balanceValue;
-            this.props.rate = rate;
+            this.props.rate = formatBalanceValue(rate);
             this.paint();
         });
     }

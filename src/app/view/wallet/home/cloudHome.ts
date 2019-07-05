@@ -19,16 +19,8 @@ interface Props {
     isActive:boolean;
 }
 export class CloudHome extends Widget {
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.props.financialModulIsShow = getModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
-        this.init();
-        if (props.isActive) {
-            callGetProductList();
-            callGetServerCloudBalance();
-        }
-    }
-    public init() {
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
             totalAsset:formatBalanceValue(0),
@@ -37,18 +29,41 @@ export class CloudHome extends Widget {
             redUp:true,
             currencyUnitSymbol:''
         };
-        Promise.all([callFetchCloudTotalAssets(),callFetchCloudWalletAssetList(),
-            getCurrencyUnitSymbol(),
-            getStoreData('setting/changeColor','redUp'),
-            getStoreData('activity/financialManagement/products',[])]).then(([totalAsset,assetList,
-                currencyUnitSymbol,color,productList]) => {
-                this.props.totalAsset = formatBalanceValue(totalAsset);
-                this.props.assetList = assetList;
-                this.props.currencyUnitSymbol = currencyUnitSymbol;
-                this.props.redUp = color === 'redUp';
-                this.props.productList = productList;
-                this.paint();
-            });
+    }
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.props.financialModulIsShow = getModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
+        this.init();
+        if (props.isActive) {
+            callGetProductList();
+            callGetServerCloudBalance();
+        }
+    }
+    public init() {
+        callFetchCloudTotalAssets().then(totalAsset => {
+            this.props.totalAsset = formatBalanceValue(totalAsset);
+            this.paint();
+        });
+        callFetchCloudWalletAssetList().then(assetList => {
+            this.props.assetList = assetList;
+            this.paint();
+        });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol;
+            this.paint();
+        });
+        getStoreData('setting/changeColor','redUp').then(color => {
+            this.props.redUp = color === 'redUp';
+            this.paint();
+        });
+        getStoreData('activity/financialManagement/products',[]).then(productList => {
+            this.props.productList = productList;
+            this.paint();
+        });
     }
 
     // 条目点击
@@ -68,8 +83,11 @@ export class CloudHome extends Widget {
     }
     
     public updateBalance() {
-        Promise.all([callFetchCloudTotalAssets(),callFetchCloudWalletAssetList()]).then(([totalAsset,assetList]) => {
+        callFetchCloudTotalAssets().then(totalAsset => {
             this.props.totalAsset = formatBalanceValue(totalAsset);
+            this.paint();
+        });
+        callFetchCloudWalletAssetList().then(assetList => {
             this.props.assetList = assetList;
             this.paint();
         });
@@ -83,13 +101,18 @@ export class CloudHome extends Widget {
     }
 
     public currencyUnitChange() {
-        Promise.all([callFetchCloudTotalAssets(),callFetchCloudWalletAssetList(),
-            getCurrencyUnitSymbol()]).then(([totalAsset,assetList,currencyUnitSymbol]) => {
-                this.props.totalAsset = formatBalanceValue(totalAsset);
-                this.props.assetList = assetList;
-                this.props.currencyUnitSymbol = currencyUnitSymbol;
-                this.paint();
-            });
+        callFetchCloudTotalAssets().then(totalAsset => {
+            this.props.totalAsset = formatBalanceValue(totalAsset);
+            this.paint();
+        });
+        callFetchCloudWalletAssetList().then(assetList => {
+            this.props.assetList = assetList;
+            this.paint();
+        });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol;
+            this.paint();
+        });
     }
 }
 
@@ -98,7 +121,6 @@ registerStoreData('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-        w.paint();
     }
 });
 
@@ -139,7 +161,6 @@ registerStoreData('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-        w.paint();
     }
 });
 
@@ -147,7 +168,6 @@ registerStoreData('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-        w.paint();
     }
 });
 
