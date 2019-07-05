@@ -162,21 +162,16 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
             }
         } else { // 余额不够
             // TODO 跳转充值页面
-            minWebview1(webviewName);
+            // minWebview1(webviewName);
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
             console.log(`商户信息 ========== mch_id = ${order.mch_id}  mchInfo = ${mchInfo}`);
-            // const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName,() => {
-            //     WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
-            // });
-
-            // TODO 打开页面去充值
-            const rechargeSuccess = true;  // 充值成功  此处应是回调函数
-            if (rechargeSuccess) {  // 充值成功   直接购买
+            const [err,res] = await goRecharge(scBalance,fee_total);
+            if (!err) {  // 充值成功   直接购买
                 if (setNoPassword === SetNoPassword.SETED) {// 余额足够并且免密开启   直接购买
                     console.log('walletPay start------',order);
                     const payRes = await walletPay(order);
                     console.log('walletPay success',payRes);
-            
+                
                     return [undefined,{ result:PayCode.SUCCESS }];
                 } else if (setNoPassword === SetNoPassword.NOSETED) { // 余额足够  但是没有开启免密
                     return [undefined,{ result:PayCode.SETNOPASSWORD }]; 
@@ -184,8 +179,9 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
                     return [undefined,{ result:PayCode.EXCEEDLIMIT }]; 
                 }
             } else {
-                return [undefined,{ result:PayCode.RECHARGEFAILED }];
+                return [err,{ result:PayCode.RECHARGEFAILED }];
             }
+            
         }
     } catch (err) {
         console.log('thirdPay err =====',err);
@@ -389,7 +385,7 @@ export const minWebview1 = (webviewName: string) => {
  */
 export const inviteFriends = (payload:{webviewName: string;nickName:string;inviteCode:string;apkDownloadUrl:string}) => {
     console.log('wallet inviteFriends called',JSON.stringify(payload));
-    minWebview1(payload.webviewName);
+    // minWebview1(payload.webviewName);
     // TODO 此处判断default webview是否活跃
     // postThirdPushMessage(ThirdCmd.INVITE);
     goshare(ImageNameType.Wallet,payload.nickName,payload.inviteCode,payload.apkDownloadUrl,() => {
@@ -407,7 +403,7 @@ export const gotoRecharge = (webviewName: string) => {
     // minWebview1(webviewName);
     // TODO 如果需要最小化 充值成功后重新打开  需要把所需参数回传
     const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
-    goRecharge(scBalance);
+    goRecharge(scBalance,0);
 };
 
 /**

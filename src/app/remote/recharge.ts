@@ -20,9 +20,9 @@ export interface OrderDetail {
 /**
  * 去充值页面
  */
-export const goRecharge = async (balance:number) => {
+export const goRecharge = async (balance:number,muchNeed:number) => {
     try {
-        const { conpay, sMD, platform } = await openRechargePage(balance);
+        const { conpay, sMD, platform } = await openRechargePage(balance,muchNeed);
         console.log('充值数量',conpay);
         console.log('充值参数',sMD);
         console.log('充值方式',platform);
@@ -62,12 +62,12 @@ export const goRecharge = async (balance:number) => {
 /**
  * 打开充值页面
  */
-const openRechargePage = (balance:number):Promise<any> => {
+const openRechargePage = (balance:number,muchNeed:number):Promise<any> => {
     return new Promise((resolve,reject) => {
-        gopay(balance,(conpay:number, sMD:any, platform: payPlatform) => {
+        gopay(balance,muchNeed,(conpay:number, sMD:any, platform: payPlatform) => {
             resolve({ conpay,sMD,platform });    // 点击充值按钮的时候触发
-        },(err:any) => {
-            reject(err || new Error('gopay failed'));  
+        },() => {
+            reject(new Error('gopay failed'));  
         });
     });
 };
@@ -94,9 +94,9 @@ const iOSPay = (oid:string,sMD:any):Promise<any> => {
         goiOSPay(oid,sMD,(sID:string,trans:string) => {
             console.log('支付成功',sID);
             resolve({ sID,trans });
-        },(err) => {
+        },() => {
             console.log('支付失败');
-            reject(err || new Error('ios pay failed'));
+            reject(new Error('ios pay failed'));
         });
     });
 };

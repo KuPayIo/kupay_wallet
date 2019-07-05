@@ -655,8 +655,8 @@ export const callLockScreenVerify = (psw:string) => {
 /**
  * 去充值页面
  */
-export const callGoRecharge = (balance:number) => {
-    return vmRpcCall('callGoRecharge',[balance]);
+export const callGoRecharge = (balance:number,muchNeed:number) => {
+    return vmRpcCall('callGoRecharge',[balance,muchNeed]);
 };
 
 // ==================================recharge相关=========================================

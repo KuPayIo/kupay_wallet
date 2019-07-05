@@ -816,8 +816,8 @@ export const callLockScreenVerify = (psw:string,callback:Function) => {
 /**
  * 去充值页面
  */
-export const callGoRecharge = (balance:number,callback:Function) => {
-    goRecharge(balance).then(res => {
+export const callGoRecharge = (balance:number,muchNeed:number,callback:Function) => {
+    goRecharge(balance,muchNeed).then(res => {
         callback([undefined,res]);
     }).catch(err => {
         callback([handleError(err)]);

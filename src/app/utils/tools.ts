@@ -737,7 +737,7 @@ export const getCurrentAddrInfo1 = (currencyName:string,currencyRecords:Currency
 export const goRecharge = () => {
     getCloudBalances().then(cloudBalances => {
         const scBalance = cloudBalances.get(CloudCurrencyType.SC);
-        callGoRecharge(scBalance).then(([err,res]) => {
+        callGoRecharge(scBalance,0).then(([err,res]) => {
             if (err) {
                 popNewMessage('支付失败');
                 console.log('支付失败 err',err);
