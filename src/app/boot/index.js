@@ -1,5 +1,5 @@
 //!version=1.0.12.100917
-//!android_depend_version=1.0.0
+//!android_depend_version=1.0.0  
 //!ios_depend_version=1.0.0
 
 /**
@@ -31,7 +31,7 @@ winit.loadJS(winit.getLoadDomain("babel_polyfill.js"),
 
 // 现在没拦截了，所以需要改成depend
 var dependFile = ".depend";
-if (winit.httpDomains) {
+if (winit.httpDomains) {  
 	dependFile = "depend";
 }
 winit.loadJS(winit.getLoadDomain(dependFile), winit.path + dependFile + '?' + Math.random(), "utf8", winit.initFail, "load list error");

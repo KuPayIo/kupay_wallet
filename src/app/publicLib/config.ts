@@ -65,17 +65,17 @@ export const strength = 128;
 // 主网的币种
 export const MainChainCoin = {
     ETH: {
-        description: 'Ethereum',
+        description: 'Ethereum', 
         rate: { CNY: 3337.01, USD: 517.42 }
     },
     BTC: {
         description: 'Bitcoin',
-        rate: { CNY: 42868.55, USD: 6598.71 }
+        rate: { CNY: 42868.55, USD: 6598.71 } 
     }
 };
 
 // 分页每页条目数量
-export const PAGELIMIT = 10;
+export const PAGELIMIT = 10;  
 
 /**
  * 环境配置
@@ -83,10 +83,10 @@ export const PAGELIMIT = 10;
 export enum DevMode {
     Prod = 'prod',      // 发布环境
     Ropsten = 'ropsten',   // ropsten测试环境
-    Rinkeby = 'rinkeby'   // rinkeby测试环境 
+    Rinkeby = 'rinkeby'   // rinkeby测试环境   
 }
 // tslint:disable-next-line:variable-name
-export const dev_mode:any = DevMode.Ropsten;
+export const dev_mode:any = DevMode.Ropsten; 
 
 // btc网络
 export const btcNetwork = dev_mode === DevMode.Prod ? 'mainnet' : 'testnet';
@@ -95,7 +95,7 @@ export const btcNetwork = dev_mode === DevMode.Prod ? 'mainnet' : 'testnet';
 const ERC20TokensMainnet = {
     TRX:{
         contractAddr:'0xf230b790e05390fc8295f4d3f60332c93bed42e2',
-        description:'TRON',
+        description:'TRON', 
         decimals:6
     },
     BNB:{
