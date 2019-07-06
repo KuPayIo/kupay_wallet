@@ -2,6 +2,7 @@
 /***
  * 共用 tools
  */
+import { ArgonHash } from '../../pi/browser/argonHash';
 import { Config, inJSVM } from './config';
 import { CurrencyRecord } from './interface';
 import { getModulConfig } from './modulConfig';
@@ -70,7 +71,7 @@ export const timestampFormatToDate = (timestamp: number) => {
 };
 
 // 时间戳格式化 毫秒为单位
-export const timestampFormat = (timestamp: number) => {
+export const timestampFormat = (timestamp: number) => { 
     const date = new Date(timestamp);
     const year = date.getFullYear();
     const month = (date.getMonth() + 1) >= 10 ? (date.getMonth() + 1) : `0${date.getMonth() + 1}`;
@@ -289,4 +290,11 @@ export const piFetch = (url:string,param?:any):Promise<any> => {
         }
         
     });
+};
+
+export const performanceTest = () => {
+    const argonHash = new ArgonHash();
+    argonHash.init();
+
+    return argonHash.calcHashValuePromise({ pwd:'123456789', salt:'2104561' });
 };

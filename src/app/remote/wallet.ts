@@ -108,7 +108,9 @@ export const exportPrivateKeyByMnemonic = (mnemonic:string) => {
  */
 export const createWalletRandom = async (option: CreateWalletOption,tourist?:boolean) => {
     const secrectHash = await calcHashValue(option.psw,getStore('user/salt'));
+    const start = new Date().getTime();
     const gwlt = GlobalWallet.generate(secrectHash);
+    console.log('计算钱包相关耗时 ==',new Date().getTime() - start);
     // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
@@ -341,7 +343,7 @@ export const fetchTransactionList = (addr:string,currencyName:string) => {
                 }
             });
         }
-    });
+    });  
     
     return txList.sort((a, b) => b.time - a.time);
 };
@@ -580,5 +582,9 @@ export const exportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],cur
     }
 
     return keys;
-    
+};
+
+// rpc耗时测试
+export const rpcTimeingTest = () => {
+    return 124;
 };

@@ -20,20 +20,20 @@ export const run = (cb): void =>  {
     // 数据检查
     // checkUpdate();
     popNew('app-view-base-app');
+    const start = new Date().getTime();
     // 打开首页面
-    getStoreData('user/id').then(id => {
-        console.log('获取id ====',id);
+    Promise.all([getStoreData('user/id'),callGetAllAccount()]).then(([id,accounts]) => {
+        console.log('获取id耗时 ====',new Date().getTime() - start);
         if (!id) {
-            callGetAllAccount().then(accounts => {
-                if (accounts.length > 0) {
-                    popNew('app-view-base-entrance1');
-                } else {
-                    popNew('app-view-base-entrance');
-                }
-            }).catch(err => {
-                console.log('callGetAllAccount err=',err);
+            if (accounts.length > 0) {
+                popNew('app-view-base-entrance1');
+            } else {
                 popNew('app-view-base-entrance');
-            });
+            }
+                // 解决进入时闪一下问题
+            if (cb) cb();
+        } else {
+            if (cb) cb();
         }
     });
     
@@ -43,10 +43,6 @@ export const run = (cb): void =>  {
     preFetchFromNative();
     // app event 注册
     addAppEvent();
-    // 解决进入时闪一下问题
-    setTimeout(() => {
-        if (cb) cb();
-    }, 100);
 };
 
 /**

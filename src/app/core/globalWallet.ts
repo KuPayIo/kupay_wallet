@@ -74,11 +74,21 @@ export class GlobalWallet {
      */
     public static generate(secrectHash:string, vault?: Uint8Array) {
         const gwlt = new GlobalWallet();
+        const start1 = new Date().getTime();
         vault = vault || generateRandomValues(strength);
+        console.log('计算耗时 generateRandomValues = ',new Date().getTime() - start1);
+        const start2 = new Date().getTime();
         gwlt._vault = encrypt(u8ArrayToHexstr(vault),secrectHash);
+        console.log('计算耗时 encrypt = ',new Date().getTime() - start2);
+        const start3 = new Date().getTime();
         const mnemonic = toMnemonic(lang, vault);
+        console.log('计算耗时 toMnemonic = ',new Date().getTime() - start3);
+        const start4 = new Date().getTime();
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
+        console.log('计算耗时 initGwlt = ',new Date().getTime() - start4);
+        const start5 = new Date().getTime();
         gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
+        console.log('计算耗时 getPublicKeyByMnemonic = ',new Date().getTime() - start5);
 
         return gwlt;
     }
@@ -178,8 +188,12 @@ export class GlobalWallet {
     }
 
     private static createEthGwlt(mnemonic: string) {
+        const start1 = new Date().getTime();
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+        console.log('计算耗时 EthWallet.fromMnemonic = ',new Date().getTime() - start1);
+        const start2 = new Date().getTime();
         const address = ethWallet.selectAddress(0);
+        console.log('计算耗时 ethWallet.selectAddress = ',new Date().getTime() - start2);
         const addrInfo:AddrInfo = {
             addr: address,                  // 地址
             balance: 0,              // 余额
@@ -198,10 +212,14 @@ export class GlobalWallet {
     }
 
     private static createBtcGwlt(mnemonic: string) {
+        const start1 = new Date().getTime();
         const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
+        console.log('计算耗时 BTCWallet.fromMnemonic = ',new Date().getTime() - start1);
+        const start2 = new Date().getTime();
         btcWallet.unlock();
         const address = btcWallet.derive(0);
         btcWallet.lock();
+        console.log('计算耗时 BTCWallet.derive = ',new Date().getTime() - start2);
         const addrInfo:AddrInfo = {
             addr: address,                  // 地址
             balance: 0,              // 余额

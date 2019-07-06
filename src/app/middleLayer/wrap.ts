@@ -655,3 +655,7 @@ export const callGoRecharge = (balance:number,muchNeed:number) => {
 };
 
 // ==================================recharge相关=========================================
+
+export const callRpcTimeingTest = () => {
+    return vmRpcCall('callRpcTimeingTest',[]);
+};

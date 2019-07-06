@@ -372,23 +372,31 @@ winit.initNext = function () {
 			WebViewManager.addListenStage(function(stage){
 				if(stage === "firstStage"){    // 第一阶段完成  可以注册监听
 					// TODO 在回调中加载剩余代码 并且注册监听已经完成
-					console.time("enterApp ----");
 					var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/html.js","pi/ui/html.tpl"];
 					util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
-						console.timeEnd("enterApp ----");
 						var tab = util.loadCssRes(fileMap);
 						tab.timeout = 90000;
 						tab.release();
-						var vmLoaded = pi_modules.commonjs.exports.relativeGet("app/postMessage/vmLoaded").exports;
-						vmLoaded.addVmLoadedListener(function(){
-							// 加载根组件
-							var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
-							root.cfg.full = false; //PC模式
-							var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
-							index.run(function () {
-								// 关闭读取界面
-								document.body.removeChild(document.getElementById('rcmj_loading_log'));
-							});
+						// var vmLoaded = pi_modules.commonjs.exports.relativeGet("app/postMessage/vmLoaded").exports;
+						// vmLoaded.addVmLoadedListener(function(){
+						// 	// 加载根组件
+						// 	var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+						// 	root.cfg.full = false; //PC模式
+						// 	var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+						// 	index.run(function () {
+						// 		console.timeEnd('home enter');
+						// 		// 关闭读取界面
+						// 		document.body.removeChild(document.getElementById('rcmj_loading_log'));
+						// 	});
+						// });
+						// 加载根组件
+						var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+						root.cfg.full = false; //PC模式
+						var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+						index.run(function () {
+							console.timeEnd('home enter');
+							// 关闭读取界面
+							document.body.removeChild(document.getElementById('rcmj_loading_log'));
 						});
 						loadLeftSource();
 					}, function (r) {
@@ -398,6 +406,7 @@ winit.initNext = function () {
 			});
 			console.log("stage webview goReady");
 			WebViewManager.getReady("firstStage");   // 通知一阶段准备完毕
+			console.timeEnd('webview ready ok');
 		}
 	}
 
@@ -436,7 +445,6 @@ winit.initNext = function () {
 			tab.release();
 			var emitSourceLoaded = pi_modules.commonjs.exports.relativeGet("app/postMessage/localLoaded").exports.emitSourceLoaded;
 			emitSourceLoaded();
-			console.timeEnd('all resource loaded');
 			loadLeftImages();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
