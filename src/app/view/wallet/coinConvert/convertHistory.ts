@@ -7,6 +7,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData, setStoreData } from '../../../middleLayer/wrap';
+import { changellyGetTransactions } from '../../../net/changellyPull';
 import { timestampFormat } from '../../../publicLib/tools';
 import { parseAccount, popNewLoading } from '../../../utils/tools';
 // =========================================导出
@@ -203,7 +204,7 @@ export class ConvertHistory extends Widget {
 }
 
 /**
- * changelly 兑换状态
+ * changelly 兑换状态  
  */
 enum ChangellyStatus {
     Waiting = 'waiting', // Transaction is waiting for an incoming payment.

@@ -9,7 +9,7 @@ import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, 
 // tslint:disable-next-line:max-line-length
 import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, logoutAccountDel, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from './login';
 // tslint:disable-next-line:max-line-length
-import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getInviteCode, getMineDetail, getMining, getOneUserInfo, getProductList, getPurchaseRecord, getRealUser, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
+import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getInviteCode, getMineDetail, getMining, getOneUserInfo, getProductList, getPurchaseRecord, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
 // tslint:disable-next-line:max-line-length
 import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from './pullWallet';
 import { goRecharge } from './recharge';
@@ -226,15 +226,6 @@ export const callDefaultLogin = (hash:string,conRandom:string,callback:Function)
 // 获取云端余额
 export const callGetServerCloudBalance = (callback:Function) => {
     getServerCloudBalance().then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([err]);
-    });
-};
-
-// 获取真实用户
-export const callGetRealUser = (callback:Function) => {
-    getRealUser().then(res => {
         callback([undefined,res]);
     }).catch(err => {
         callback([err]);

@@ -9,7 +9,7 @@ import { Widget } from '../../../../pi/widget/widget';
 import { callFetchBalanceValueOfCoin, callFetchCoinGain,callGetAccountDetail, callGetRechargeLogs,callGetWithdrawLogs, getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { formatBalance, formatBalanceValue } from '../../../publicLib/tools';
-import { getCurrencyUnitSymbol } from '../../../utils/tools';
+import { getCurrencyUnitSymbol, popNewMessage } from '../../../utils/tools';
 import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -103,12 +103,20 @@ export class CloudWalletHome extends Widget {
      * 充值
      */
     public rechargeClick() {
+        popNewMessage('敬请期待');
+
+        return;
+        // TODO 暂时屏蔽
         popNew('app-view-wallet-cloudWallet-recharge',{ currencyName:this.props.currencyName });
     }
     /**
      * 提币
      */
     public withdrawClick() {
+        popNewMessage('敬请期待');
+        
+        return;
+        // TODO 暂时屏蔽
         popNew('app-view-wallet-cloudWallet-withdraw',{ currencyName:this.props.currencyName });
     }
 

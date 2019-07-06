@@ -49,11 +49,12 @@ export class RedEnvHistory extends Widget {
             topRefresh:false,
             avatar:''
         };
-        this.initData();
+        
         getUserInfo().then(userInfo => {
             this.props.avatar = userInfo.avatar;
             this.paint();
         });
+        this.initData();
     }
 
     /**
@@ -102,7 +103,7 @@ export class RedEnvHistory extends Widget {
     /**
      * 更新红包已领取数量
      */
-    public async initRedEn() {
+    public initRedEn() {
         for (const i in this.props.recordList) {
             this.props.recordList[i].outDate = Number(this.props.recordList[i].time) + (60 * 60 * 24 * 1000) < new Date().getTime();
         }

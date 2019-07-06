@@ -10,8 +10,8 @@ import { Widget } from '../../../pi/widget/widget';
 import { changellyGetCurrencies } from '../../net/changellyPull';
 import { setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { getModulConfig } from '../../publicLib/modulConfig';
-import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
-import { getCloudBalances, getCloudWallets, registerStoreData } from '../../viewLogic/common';
+import { checkPopPhoneTips, popNewMessage, rippleShow } from '../../utils/tools';
+import { registerStoreData } from '../../viewLogic/common';
 import { kickOffline } from '../../viewLogic/login';
 
 // ================================ 导出
@@ -69,7 +69,7 @@ export class App extends Widget {
             return getModulConfig(item.modulName);
         });
         // 币币兑换可用货币获取
-        // changellyGetCurrencies();
+        changellyGetCurrencies();
     }
 
     public tabBarChangeListener(event: any, index: number) {
@@ -79,9 +79,6 @@ export class App extends Widget {
         this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
-        // changellyGetCurrencies();
-        getCloudBalances();
-        getCloudWallets();
     }
 
     public switchToEarn() {

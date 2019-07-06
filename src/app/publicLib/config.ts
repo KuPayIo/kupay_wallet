@@ -83,7 +83,7 @@ export const PAGELIMIT = 10;
 export enum DevMode {
     Prod = 'prod',      // 发布环境
     Ropsten = 'ropsten',   // ropsten测试环境
-    Rinkeby = 'rinkeby'   // rinkeby测试环境
+    Rinkeby = 'rinkeby'   // rinkeby测试环境 
 }
 // tslint:disable-next-line:variable-name
 export const dev_mode:any = DevMode.Ropsten;

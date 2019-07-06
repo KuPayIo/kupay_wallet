@@ -442,7 +442,7 @@ export const parseConvertLog = (data,sta) => {
             suid: r[i][0],
             rid: r[i][1].toString(),
             rtype: r[i][2],
-            rtypeShow: parseRtype(r[i][2],getStaticLanguage()),
+            rtypeShow: parseRtype(r[i][2],getStore('setting/language')),
             ctype: r[i][3],
             ctypeShow:currencyType(currencyName),
             amount: smallUnit2LargeUnit(currencyName, r[i][4]),

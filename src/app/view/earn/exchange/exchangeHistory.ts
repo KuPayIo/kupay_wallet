@@ -132,7 +132,7 @@ export class ExchangeHistory extends Widget {
                 ctypeShow: '银锄',
                 amount: 1,
                 time: data.value,
-                timeShow: timestampFormat(data.value),
+                timeShow: timestampFormat(Number(data.value)),
                 userName:this.language.inviteRedEnv
             };
             setStoreData('activity/luckyMoney/invite',this.props.inviteObj);

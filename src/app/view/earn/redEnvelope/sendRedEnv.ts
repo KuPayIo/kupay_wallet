@@ -15,7 +15,7 @@ interface Props {
     message: string;
 }
 export class SendRedEnv extends Widget {
-    public props: Props;
+    public props: any;
     public language:any;
     public ok: () => void;
 
@@ -23,12 +23,22 @@ export class SendRedEnv extends Widget {
         super.create();
         this.language = this.config.value[getLang()];
     }
+    public setProps(props:Props,oldProps:Props) {
+        super.setProps(props);
+        getStoreData('setting/language','zh_Hans').then(lan => {
+            this.props.lan = lan;
+        });
+        getStoreData('user').then(user => {
+            this.props.user = user;
+        });
+    }
 
     /**
      * 发红包
      */
     public async sendRedEnv() {
-        const [lan,user] = await Promise.all([getStoreData('setting/language','zh_Hans'),getStoreData('user')]);
+        const lan = this.props.lan;
+        const user = this.props.user;
         let url = '';
         let title = '';
         const accId = user.info.acc_id;

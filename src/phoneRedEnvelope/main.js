@@ -336,5 +336,4 @@ function userDetails(uids){
     return JSON.parse(xmlhttp.responseText);
 }
 
-
-winit && winit();
+if(winit) winit();

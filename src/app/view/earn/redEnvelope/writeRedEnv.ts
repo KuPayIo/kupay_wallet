@@ -6,15 +6,15 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-// tslint:disable-next-line:max-line-length
-import { callGetRealUser,callGetServerCloudBalance,callVerifyIdentidy, setStoreData } from '../../../middleLayer/wrap';
+import { callGetServerCloudBalance,callVerifyIdentidy, setStoreData } from '../../../middleLayer/wrap';
 import { sendRedEnvlope } from '../../../net/pull';
 import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { currencyType } from '../../../publicLib/tools';
-import { popNewLoading, popNewMessage } from '../../../utils/tools';
+import { getUserInfo, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
 // ================================================导出
+
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
@@ -58,19 +58,17 @@ export class WriteRedEnv extends Widget {
         ktBalance:0,
         inFlag:''
     };
-    constructor() {
-        super();
-    }
 
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
         this.updateBalance();
-        callGetRealUser();
+        getUserInfo().then(userInfo => {
+            this.props.realUser = userInfo.isRealUser || !!userInfo.phoneNumber;
+        });
     }
 
     public setProps(props:any) {
-        super.setProps(this.props);
         console.log(props);
         this.props = {
             ...this.props,
@@ -78,13 +76,7 @@ export class WriteRedEnv extends Widget {
             ktShow:getModulConfig('KT_SHOW'),
             totalNum: props.inFlag === 'chat_user' ? 1 :0 // 单聊发送的红包只能固定为一个
         };
-    }
-
-    /**
-     * 更新真实用户
-     */
-    public updateRealUser(isRealUser:boolean) {
-        this.props.realUser = isRealUser;
+        super.setProps(this.props);
     }
 
     /**
@@ -310,12 +302,5 @@ registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
-    }
-});
-
-registerStoreData('user/info/isRealUser', (isRealUser:boolean) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateRealUser(isRealUser);
     }
 });

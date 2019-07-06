@@ -473,6 +473,7 @@ const registerStore = () => {
 
         // btc fees
         fetchBtcFees();
+        getRealUser();
     });
 };
 

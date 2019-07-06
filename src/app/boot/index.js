@@ -1,6 +1,6 @@
 //!version=1.0.12.100917
 //!android_depend_version=1.0.0
-//!ios_depend_version=3.0.0
+//!ios_depend_version=1.0.0
 
 /**
  * 以上三个版本的意义如下：

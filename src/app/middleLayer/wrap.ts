@@ -224,11 +224,6 @@ export const callGetServerCloudBalance = () => {
     return vmRpcCall('callGetServerCloudBalance',[]);
 };
 
-// 获取真实用户
-export const callGetRealUser = () => {
-    return vmRpcCall('callGetRealUser',[]);
-};
-
 // 手动重连
 export const callWalletManualReconnect = () => {
     return vmRpcCall('callWalletManualReconnect',[]);
