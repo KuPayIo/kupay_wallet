@@ -3,14 +3,13 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { uploadFileUrlPrefix } from '../../config';
-import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
-import { getModulConfig } from '../../modulConfig';
-import { loginSuccess } from '../../net/login';
-import { deleteAccount, getAllAccount } from '../../store/memstore';
-import { getLoginMod, getWalletToolsMod } from '../../utils/commonjsTools';
+import { callDeleteAccount,callGetAllAccount, callLoginSuccess,callVerifyIdentidy1, openWSConnect } from '../../middleLayer/wrap';
+import { uploadFileUrlPrefix } from '../../publicLib/config';
+import { CreateWalletOption } from '../../publicLib/interface';
+import { getModulConfig } from '../../publicLib/modulConfig';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewLoading, popNewMessage } from '../../utils/tools';
+import { CreateWalletType, touristLogin } from '../../viewLogic/localWallet';
 
 // ============================导出
 export class Entrance1 extends Widget {
@@ -21,25 +20,31 @@ export class Entrance1 extends Widget {
         this.init();
     }
     public init() {
-        const walletList = getAllAccount();
-        const accountList = [];
-        walletList.forEach(item => {
-            const nickName = item.user.info.nickName;
-            const avatar = item.user.info.avatar ? `${uploadFileUrlPrefix}${item.user.info.avatar}` : 'app/res/image1/default_avatar.png';
-            const id = item.user.id;
-            accountList.push({ nickName,avatar,id });
-        });
         this.props = {
             loginImg:getModulConfig('LOGIN_IMG'),
             login:false,
-            accountList,
+            accountList:[],
             selectedAccountIndex:0,
             psw:'',
             showMoreUser:false,
-            popHeight:this.calPopBoxHeight(accountList.length),
+            popHeight:0,
             forceCloseMoreUser:false,
             noAnimate:false
         };
+        callGetAllAccount().then(walletList => {
+            const accountList = [];
+            walletList.forEach(item => {
+                const nickName = item.user.info.nickName;
+                // tslint:disable-next-line:max-line-length
+                const avatar = item.user.info.avatar ? `${uploadFileUrlPrefix}${item.user.info.avatar}` : 'app/res/image1/default_avatar.png';
+                const id = item.user.id;
+                accountList.push({ nickName,avatar,id });
+            });
+
+            this.props.accountList = accountList;
+            this.props.popHeight = this.calPopBoxHeight(accountList.length);
+            this.paint();
+        });
     }
     public calPopBoxHeight(len:number) {
         const itemNum = 4;
@@ -63,17 +68,21 @@ export class Entrance1 extends Widget {
     }
     public delUserAccount(e:any,index:number) {
         const delAccount = this.props.accountList.splice(index,1)[0];
-        deleteAccount(delAccount.id);
-        if (getAllAccount().length > 0) {
-            this.props.popHeight = this.calPopBoxHeight(this.props.accountList.length);
-            if (index === this.props.selectedAccountIndex) {
-                this.props.selectedAccountIndex = 0;
-            }
-        } else {
-            this.ok && this.ok();
-            popNew('app-view-base-entrance');
-        }
-        this.paint();
+        callDeleteAccount(delAccount.id).then(() => {
+            callGetAllAccount().then(accounts => {
+                if (accounts.length > 0) {
+                    this.props.popHeight = this.calPopBoxHeight(this.props.accountList.length);
+                    if (index === this.props.selectedAccountIndex) {
+                        this.props.selectedAccountIndex = 0;
+                    }
+                } else {
+                    this.ok && this.ok();
+                    popNew('app-view-base-entrance');
+                }
+                this.paint();
+            });
+        });
+        
     }
     
     public chooseCurUser(e:any,index:number) {
@@ -91,11 +100,10 @@ export class Entrance1 extends Widget {
 
             return;
         }
-        const walletList = getAllAccount();
+        const walletList = await callGetAllAccount();
         const close = popNewLoading({ zh_Hans:'登录中',zh_Hant:'登錄中',en:'' });
         const account = walletList[this.props.selectedAccountIndex];
-        const walletToolsMod = await getWalletToolsMod();
-        const secretHash = await walletToolsMod.VerifyIdentidy1(this.props.psw,account.wallet.vault,account.user.salt);
+        const secretHash = await callVerifyIdentidy1(this.props.psw,account.wallet.vault,account.user.salt);
 
         close.callback(close.widget);
         if (!secretHash) {
@@ -103,7 +111,7 @@ export class Entrance1 extends Widget {
 
             return;
         }
-        loginSuccess(account,secretHash);
+        await callLoginSuccess(account,secretHash);
         this.ok && this.ok();
     }
 
@@ -149,7 +157,7 @@ export class Entrance1 extends Widget {
     // 游客登录
     public async touristLoginClick() {
         this.closePopBoxNoAnimate();
-        const option:Option = {
+        const option:CreateWalletOption = {
             psw: defaultPassword,
             nickName: await playerName()
         };
@@ -159,9 +167,7 @@ export class Entrance1 extends Widget {
 
                 return;
             }
-            getLoginMod().then(mod => {
-                mod.openConnect(secrectHash);
-            });
+            openWSConnect(secrectHash);
             
             this.ok && this.ok();
             popNewMessage('登录成功');

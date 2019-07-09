@@ -2,9 +2,8 @@
  * add asset 
  */
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../logic/dataCenter';
-import { getStore, setStore } from '../../../store/memstore';
-import { calCurrencyLogoUrl, fetchWalletAssetListAdded, getCurrentAddrInfo } from '../../../utils/tools';
+import { callUpdateShowCurrencys,getStoreData } from '../../../middleLayer/wrap';
+import { calCurrencyLogoUrl, fetchWalletAssetListAdded } from '../../../utils/tools';
 
 export class AddAsset extends Widget {
     public ok:() => void;
@@ -13,16 +12,21 @@ export class AddAsset extends Widget {
         this.init();
     }
     public init() {
-        const assetList = fetchWalletAssetListAdded();
-        assetList.map(item => {
-            item.logo = calCurrencyLogoUrl(item.currencyName);
-        });
+        
         this.props = {
-            assetList,
+            assetList:[],
             searchText:'',
-            showAssetList:assetList
+            showAssetList:[]
         };
-        console.log(this.props);
+        getStoreData('wallet').then(wallet => {
+            const assetList = fetchWalletAssetListAdded(wallet);
+            assetList.map(item => {
+                item.logo = calCurrencyLogoUrl(item.currencyName);
+            });
+            this.props.assetList = assetList;
+            this.props.showAssetList = assetList;
+            this.paint();
+        });
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -34,23 +38,10 @@ export class AddAsset extends Widget {
         const added = e.newType;
         const currencys = this.props.showAssetList[index];
         currencys.added = added;
+        callUpdateShowCurrencys(currencys.currencyName,added);
         this.paint();
 
         // 处理search数据
-        const wallet = getStore('wallet');
-        const showCurrencys = wallet.showCurrencys || [];
-        const oldIndex = showCurrencys.indexOf(currencys.currencyName);
-        if (added && oldIndex < 0) {
-            showCurrencys.push(currencys.currencyName);
-            const curAddr = getCurrentAddrInfo(currencys.currencyName);
-            dataCenter.updateAddrInfo(curAddr.addr, currencys.currencyName);
-            dataCenter.fetchErc20GasLimit(currencys.currencyName);
-        } else {
-            showCurrencys.splice(oldIndex, 1);
-        }
-        wallet.showCurrencys = showCurrencys;
-
-        setStore('wallet', wallet);
     }
 
     public searchTextChange(e:any) {

@@ -3,9 +3,9 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getPurchaseRecord } from '../../../net/pull';
-import { PurchaseHistory } from '../../../store/interface';
-import { getStore, register } from '../../../store/memstore';
+import { callGetPurchaseRecord,getStoreData } from '../../../middleLayer/wrap';
+import { PurchaseHistory } from '../../../publicLib/interface';
+import { registerStoreData } from '../../../viewLogic/common';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -25,9 +25,12 @@ export class HoldedFM extends Widget {
             ...this.props,
             purchaseRecord:[]
         };
-        if (this.props.isActive && getStore('user/conUid')) {
-            getPurchaseRecord();
-        }
+        getStoreData('user/id').then(uid => {
+            if (this.props.isActive && uid) {
+                callGetPurchaseRecord();
+            }
+        });
+        
     }
 
     public updatePurchaseRecord(purchaseRecord:PurchaseHistory[]) {
@@ -38,7 +41,7 @@ export class HoldedFM extends Widget {
 }
 
 // =====================================本地
-register('activity/financialManagement/purchaseHistories', (purchaseRecord) => {
+registerStoreData('activity/financialManagement/purchaseHistories', (purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updatePurchaseRecord(purchaseRecord);

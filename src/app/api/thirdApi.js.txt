@@ -447,7 +447,7 @@ pi_tools.popInputBox = function (title,okCB,cancelCB){
 
 //获取openID
 pi_jsApi.authorize = function (payload, callBack) {
-    pi_RPC_Method("app/api/JSAPI", "authorize", payload, function (error, result) {
+    pi_RPC_Method(pi_config.jsApi, "authorize", payload, function (error, result) {
         console.log('getOpenId call success', error);
         console.log('getOpenId call success', result);
         callBack(error, result);
@@ -513,7 +513,7 @@ pi_jsApi.setFreeSecrectPay = function (openFreeSecret) {
             password:value
         }
         pi_tools.popNewLoading('设置中...');
-        pi_RPC_Method("app/api/JSAPI", "setFreeSecrectPay", sendData, function (resCode1, msg1) {
+        pi_RPC_Method(pi_config.jsApi, "setFreeSecrectPay", sendData, function (resCode1, msg1) {
             if(msg1){
                 pi_store.freeSecret = !pi_store.freeSecret;
                 pi_tools.popNewMessage("设置成功");

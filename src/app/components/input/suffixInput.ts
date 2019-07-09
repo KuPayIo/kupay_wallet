@@ -31,6 +31,7 @@ interface State {
     currentValue:string;
     focused:boolean;
     showClear:boolean;
+    inputLock:boolean;
 }
 export class SuffixInput extends Widget {
     public props: Props;
@@ -42,7 +43,8 @@ export class SuffixInput extends Widget {
         this.state = {
             currentValue:'',
             focused: false,
-            showClear:false
+            showClear:false,
+            inputLock:false
         };
     }
     public setProps(props: Props, oldProps: Props) {
@@ -57,6 +59,9 @@ export class SuffixInput extends Widget {
     }
 
     public change(event:any) {
+        if (this.state.inputLock) {
+            return;
+        }
         const currentValue = event.currentTarget.value;
         this.state.currentValue = currentValue;
         this.state.showClear = this.props.clearable && this.state.currentValue !== '' && this.state.focused;
@@ -96,5 +101,22 @@ export class SuffixInput extends Widget {
     public showPassword() {
         this.props.closeEye = !this.props.closeEye;
         this.paint();
+    }
+
+    /**
+     * 用户开始进行非直接输入(中文输入)的时候触发，而在非直接输入结束。
+     */
+    public compositionstart() {
+        if (this.props.itype === 'text') {
+            this.state.inputLock = true;
+        }
+    }
+
+    /**
+     * 用户输入完成,点击候选词或确认按钮时触发
+     */
+    public compositionend(e: any) {
+        this.state.inputLock = false;
+        this.change(e);
     }
 }

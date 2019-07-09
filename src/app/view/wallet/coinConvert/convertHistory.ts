@@ -2,14 +2,14 @@
  * convertHistory
  */
 // =======================================导入
-import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { changellyGetTransactions } from '../../../net/pull3';
-import { getStore, setStore } from '../../../store/memstore';
-import { parseAccount, timestampFormat, popNewLoading } from '../../../utils/tools';
+import { getStoreData, setStoreData } from '../../../middleLayer/wrap';
+import { changellyGetTransactions } from '../../../net/changellyPull';
+import { timestampFormat } from '../../../publicLib/tools';
+import { parseAccount, popNewLoading } from '../../../utils/tools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -44,7 +44,7 @@ export class ConvertHistory extends Widget {
     public ok: () => void;
     public close:any;
     
-    public setProps(props:Json,oldProps:Json) {
+    public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
     }
@@ -64,7 +64,7 @@ export class ConvertHistory extends Widget {
     }
 
     public async getAllTransactions() {
-        const changellyPayinAddress = getStore('wallet/changellyPayinAddress');
+        const changellyPayinAddress = await getStoreData('wallet/changellyPayinAddress');
         let txHistory = [];
         const txPromises = [];
         for (const tmp of changellyPayinAddress) {
@@ -106,13 +106,13 @@ export class ConvertHistory extends Widget {
             console.log(err);
         } finally {
             this.close && this.close.callback(this.close.widget);
-            this.props.txsShow = this.filterTxHistory(txHistory);
+            this.props.txsShow = await this.filterTxHistory(txHistory);
             this.paint();
         }
     }
 
-    public filterTxHistory(txHistory:ChangellyTransactionsShow[]) {
-        let changellyTempTxs = getStore('wallet/changellyTempTxs');
+    public async filterTxHistory(txHistory:ChangellyTransactionsShow[]) {
+        let changellyTempTxs = await getStoreData('wallet/changellyTempTxs');
         const findIndexOf = (txId:string) => {
             let index = -1;
             for (let j = 0; j < txHistory.length;j++) {
@@ -153,7 +153,7 @@ export class ConvertHistory extends Widget {
             }
         }
             
-        setStore('wallet/changellyTempTxs',changellyTempTxs);
+        setStoreData('wallet/changellyTempTxs',changellyTempTxs);
         txHistory = txHistory.filter(tx => {
             return !!tx.payinHash;
         });
@@ -204,7 +204,7 @@ export class ConvertHistory extends Widget {
 }
 
 /**
- * changelly 兑换状态
+ * changelly 兑换状态  
  */
 enum ChangellyStatus {
     Waiting = 'waiting', // Transaction is waiting for an incoming payment.

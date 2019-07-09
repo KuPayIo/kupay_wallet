@@ -1,5 +1,4 @@
 import { shareDownload } from '../../../config';
-import { getLocalStorage } from '../../../store/filestore';
 
 /**
  * 第三方游戏相关配置
@@ -15,7 +14,7 @@ export const gameList = [
         title:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
         desc:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
         img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
-        url:'http://192.168.35.202/dst/boot/yineng/yineng.html?debug',
+        url:'http://xzxd.cocolandgame.com/dst/boot/yineng/yineng.html',
         apkDownloadUrl:shareDownload,
         webviewName:'fairyChivalry',
         accId:'268828',
@@ -58,7 +57,8 @@ export const getGameItem = (webviewName:string) => {
     const index = gameList.findIndex((item) => {
         return item.webviewName === webviewName;
     });
-    const gameItem =  getLocalStorage('officialService').gameList[index]; 
+    
+    const gameItem =  JSON.parse(localStorage.getItem('officialService')).gameList[index]; 
     console.log('获取游戏配置信息', gameList[index], gameItem);
 
     return {

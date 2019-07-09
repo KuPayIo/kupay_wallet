@@ -7,14 +7,16 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getModulConfig } from '../../modulConfig';
-import { register } from '../../store/memstore';
+import { changellyGetCurrencies } from '../../net/changellyPull';
+import { setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
+import { getModulConfig } from '../../publicLib/modulConfig';
 import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
+import { registerStoreData } from '../../viewLogic/common';
+import { kickOffline } from '../../viewLogic/login';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
-declare var pi_modules: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
@@ -66,6 +68,8 @@ export class App extends Widget {
         this.props.tabBarList = this.props.tabBarList.filter(item => {
             return getModulConfig(item.modulName);
         });
+        // 币币兑换可用货币获取
+        changellyGetCurrencies();
     }
 
     public tabBarChangeListener(event: any, index: number) {
@@ -75,6 +79,15 @@ export class App extends Widget {
         this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
+        // performanceTest();
+        // const start = new Date().getTime();
+        // callRpcTimeingTest().then(res => {
+        //     console.log('rpc耗时',new Date().getTime() - start);
+        //     console.log('更新测试 ===',res);
+        // });
+        // callJscPerformanceTest().then(res => {
+        //     console.log('jsc加密性能耗时',new Date().getTime() - start);
+        // });
     }
 
     public switchToEarn() {
@@ -108,24 +121,27 @@ export class App extends Widget {
 
 // ===================================================== 立即执行
 
-register('flags/level_3_page_loaded', (loaded: boolean) => {
-    const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
-    dataCenter.init();
+setSourceLoadedCallbackList(() => {
     checkPopPhoneTips();
-    if (localStorage.getItem('kickOffline')) {
-        const kickOffline = pi_modules.commonjs.exports.relativeGet('app/net/login').exports.kickOffline;
+    let res:any = localStorage.getItem('kickOffline');
+    if (res) {
+        res = JSON.parse(res);
         localStorage.removeItem('kickOffline');
-        kickOffline();  // 踢人下线提示
+        kickOffline(res.secretHash,res.phone,res.code,res.num);  // 踢人下线提示
     }
 });
 
+// localStorage key
+export const SettingLanguage = 'language';
+
 // 语言配置
-register('setting/language',(r) => {
+registerStoreData('setting/language',(r) => {
+    localStorage.setItem(SettingLanguage,r);
     setLang(r);
 });
 
 // 创建钱包成功
-register('flags/createWallet',(createWallet:boolean) => {
+registerStoreData('flags/createWallet',(createWallet:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.switchToPlay();
 });

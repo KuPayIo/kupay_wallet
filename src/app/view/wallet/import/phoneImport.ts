@@ -2,17 +2,17 @@
  * 云端绑定手机
  */
 // =================================================导入
-import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { Option, phoneImport } from '../../../logic/localWallet';
-import { getRandom, logoutAccountDel } from '../../../net/login';
+// tslint:disable-next-line:max-line-length
+import { callDcInitErc20GasLimit, callDcRefreshAllTx, callDeleteAccount, callGetAllAccount,callGetRandom,getStoreData, setStoreData } from '../../../middleLayer/wrap';
 import { regPhone, verifyPhone } from '../../../net/pull';
-import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
-import { getDataCenter } from '../../../utils/commonjsTools';
+import { CreateWalletOption } from '../../../publicLib/interface';
 import { defaultPassword } from '../../../utils/constants';
 import { delPopPhoneTips, playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
+import { phoneImport } from '../../../viewLogic/localWallet';
+import { logoutAccount } from '../../../viewLogic/login';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -40,9 +40,6 @@ export class PhoneImport extends Widget {
         this.cancel && this.cancel();
     }
     
-    public customerServiceClick() {
-        popNew('app-view-wallet-import-customerService');
-    }
     /**
      * 输入完成后确认
      */
@@ -56,7 +53,7 @@ export class PhoneImport extends Widget {
 
             return;
         }
-        const option:Option = {
+        const option:CreateWalletOption = {
             psw:defaultPassword,
             nickName:await playerName()
         };
@@ -70,8 +67,7 @@ export class PhoneImport extends Widget {
             return;
         }
         if (verify) {  // 已经注册过
-            const itype = await getRandom(secretHash,undefined,phoneNum,this.props.code.join(''),this.props.areaCode);
-            console.log('getRandom itype = ',itype);
+            const itype = await callGetRandom(secretHash,undefined,phoneNum,this.props.code.join(''),this.props.areaCode);
             close.callback(close.widget);
             if (itype === -301) {
                 this.phoneImportError('验证码错误');
@@ -83,16 +79,15 @@ export class PhoneImport extends Widget {
                 this.phoneImportError('出错啦');
             }
         } else {
-            const itype = await getRandom(secretHash);
-            console.log('getRandom itype = ',itype);
+            const itype = await callGetRandom(secretHash);
             if (itype === 1) {
                 const data = await regPhone(this.props.phone, this.props.areaCode,this.props.code.join(''));
                 close.callback(close.widget);
                 if (data && data.result === 1) {
-                    const userinfo = getStore('user/info');
+                    const userinfo = await getStoreData('user/info');
                     userinfo.phoneNumber = this.props.phone;
                     userinfo.areaCode = this.props.areaCode;
-                    setStore('user/info',userinfo,false);
+                    setStoreData('user/info',userinfo,false);
                     delPopPhoneTips();
                     this.ok && this.ok();
                 } else {
@@ -106,26 +101,24 @@ export class PhoneImport extends Widget {
         
     }
     // 手机导入失败
-    public phoneImportError(tips:string) {
+    public async phoneImportError(tips:string) {
         popNewMessage(tips);
-        logoutAccountDel(true);
+        await logoutAccount(true,true);
         this.props.code = [];
         this.setCode();
     }
     
     // 手机导入成功
-    public phoneImportSuccess(phoneNum:string) {
-        deletePrePhoneAccount(phoneNum);
-        const userInfo = getStore('user/info');
+    public async phoneImportSuccess(phoneNum:string) {
+        await deletePrePhoneAccount(phoneNum);
+        const userInfo = await getStoreData('user/info');
         userInfo.phoneNumber = phoneNum;
-        setStore('user/info',userInfo,false);
+        setStoreData('user/info',userInfo,false);
         popNewMessage('登录成功');
         this.ok && this.ok();
         // 刷新本地钱包
-        getDataCenter().then(dataCenter => {
-            dataCenter.refreshAllTx();
-            dataCenter.initErc20GasLimit();
-        });
+        callDcRefreshAllTx();
+        callDcInitErc20GasLimit();
     }
 
     /**
@@ -156,7 +149,7 @@ export class PhoneImport extends Widget {
             this.props.code.pop();
             const ind = this.props.code.length;
             if (ind >= 0) {
-            // tslint:disable-next-line:prefer-template
+                // tslint:disable-next-line:prefer-template
                 document.getElementById('codeInput' + ind).focus();
             }
             this.setCode();
@@ -167,7 +160,7 @@ export class PhoneImport extends Widget {
             // tslint:disable-next-line:prefer-template
             document.getElementById('codeInput' + (ind - 1)).blur();
             if (ind < 4) {
-            // tslint:disable-next-line:prefer-template
+                // tslint:disable-next-line:prefer-template
                 document.getElementById('codeInput' + ind).focus();
             }
         }
@@ -205,11 +198,13 @@ export class PhoneImport extends Widget {
  * 删除相同手机号绑定的账户
  */
 const deletePrePhoneAccount = (phoneNumber:string) => {
-    const accounts = getAllAccount();
-    for (const index in accounts) {
-        const account = accounts[index];
-        if (account.user.info.phoneNumber === phoneNumber) {
-            deleteAccount(account.user.id);
+    return callGetAllAccount().then(accounts => {
+        for (const index in accounts) {
+            const account = accounts[index];
+            if (account.user.info.phoneNumber === phoneNumber) {
+                return callDeleteAccount(account.user.id);
+            }
         }
-    }
+    });
+    
 };

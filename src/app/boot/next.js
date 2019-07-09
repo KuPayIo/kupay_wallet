@@ -39,6 +39,7 @@ winit.initNext = function () {
 	pi_update.severPort = winit.severPort;
 	pi_update.inAndroidApp = winit.inAndroidApp;
 	pi_update.inIOSApp = winit.inIOSApp;
+	pi_update.inApp = winit.inApp;
 	winit = undefined; //一定要立即释放，保证不会重复执行
 	//先登录
 
@@ -189,7 +190,7 @@ winit.initNext = function () {
 
 	// app下载入口函数
 	var appLoadEntrance = function(){
-		pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang"], {}, function (mods, tmpfm) {
+		pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang","pi/browser/webview"], {}, function (mods, tmpfm) {
 			html = mods[0],
 			util = mods[1],
 			lang = mods[2];
@@ -214,8 +215,10 @@ winit.initNext = function () {
 				loadChatSource();  // 聊天
 				loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
-				loadWalletLoginSource();  // 登录相关
 				loadImages(); // 预加载图片
+				if(!pi_update.inApp){
+					vmLoaded();
+				}
 				
 			});
 		}, function (result) {
@@ -223,145 +226,76 @@ winit.initNext = function () {
 		}, modProcess.handler);
 	}
 	
-	// 加载钱包项目登录相关资源
-	var loadWalletLoginSource = function(){
-		var sourceList = [
-			"app/net/login.js",
-			"app/net/push.js",
-			"earn/client/app/net/login.js",
-			"chat/client/app/net/login.js",
-			"earn/xlsx/awardCfg.c.js",
-			"earn/xlsx/awardCfg.s.js",
-			"earn/xlsx/item.c.js",
-			"earn/xlsx/item.s.js"
-		];
-		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
-			console.log(11111,Date.now()-self.startTime)
-			var tab = util.loadCssRes(fileMap);
-			tab.timeout = 90000;
-			tab.release();
-			// 聊天登录
-			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
-			// 活动注册
-			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
+	// vm代码加载
+	var vmLoaded = ()=>{
+		util.loadDir([ "app/store/","app/remote/postWalletMessage.js"], flags, fm, undefined, function (fileMap) {
+			// store 数据初始化完成后才通知 如果数据初始化没完成就通知  有可能数据还没读出来钱包就已经取了数据  导致数据不一致
+			var initStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore;
+			initStore().then(() => {
+				var WebViewManager = pi_modules.commonjs.exports.relativeGet("pi/browser/webview").exports.WebViewManager;
+				WebViewManager.addListenStage(function(stage){
+					if(stage === "firstStage"){    // 第一阶段完成  
+						// TODO 在回调中加载剩余代码 并且注册监听已经完成
+						var postStoreLoadedMessage = pi_modules.commonjs.exports.relativeGet("app/remote/postWalletMessage").exports.postStoreLoadedMessage;
+						console.log("postStoreLoadedMessage start-----------------------");
+						postStoreLoadedMessage();
+						// 加载剩下资源
+						util.loadDir([ "app/remote/","app/core/","app/publicLib/"], flags, fm, undefined, function (fileMap) {
+							var postAllLoadedMessage = pi_modules.commonjs.exports.relativeGet("app/remote/postWalletMessage").exports.postAllLoadedMessage;
+							console.log("postAllLoadedMessage start-----------------------");
+							postAllLoadedMessage();
+						}, function (r) {
+							console.log("加载目录失败, " + r.url + ", " + r.error + ":" + r.reason);
+						}, function(){});
+					}
+				});
+				console.log("stage vm goReady");
+				WebViewManager.getReady("firstStage"); // 通知一阶段准备完毕
+			});
 			
-			// erlang服务器推送注册
-			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
-			// erlang服务器连接登录
-			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.registerStore();
-			pi_modules.commonjs.exports.relativeGet("app/net/login").exports.openConnect();
 		}, function (r) {
-			alert("加载目录失败, " + r.error + ":" + r.reason);
-		}, dirProcess.handler);
-	}
-	
-	// 加载一些需要预加载的图片
-	var loadImages = function () {
-		util.loadDir(["app/res/image1/"], flags, fm, suffixCfg, function (fileMap) {
-			var tab = util.loadCssRes(fileMap);
-			tab.timeout = 90000;
-			tab.release();
-		}, function (r) {
-			alert("加载目录失败, " + r.error + ":" + r.reason);
-		}, dirProcess.handler);
+			console.log("加载目录失败, " + r.url + ", " + r.error + ":" + r.reason);
+		}, function(){});
 	}
 
+	
+	
 	// 加载钱包首页所需资源
 	var loadWalletFirstPageSource = function () {
 		console.time("fp loadWalletFirstPageSource");
 		// var routerPathList = calcRouterPathList();
 		var sourceList = [
+			"app/postMessage/",
+			"app/viewLogic/",
+			"earn/client/app/net/login.js",
+			"chat/client/app/net/login.js",
+			"earn/xlsx/awardCfg.c.js",
+			"earn/xlsx/awardCfg.s.js",
+			"earn/xlsx/item.c.js",
+			"earn/xlsx/item.s.js",
 			"pi/ui/lang.js",
 			"pi/ui/lang.tpl",
 			"app/view/base/",
 			"app/components1/",
 			"app/res/css/",
 			"app/res/js/",
-			"app/view/ceshi/",
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
 			"earn/client/app/res/css/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
-			// debugger
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
 			fpFlags.walletReady = true;
+			// 聊天登录
+			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
+			// 活动注册
+			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
+
 			enterApp();
 			
-		}, function (r) {
-			alert("加载目录失败, " + r.error + ":" + r.reason);
-		}, dirProcess.handler);
-	}
-
-	// 全部所需资源下载完成,进入app,显示界面
-	var enterApp = function(){
-		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
-		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
-			console.time("enterApp ----");
-			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/html.js","pi/ui/html.tpl"];
-			util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
-				console.timeEnd("enterApp ----");
-				var tab = util.loadCssRes(fileMap);
-				tab.timeout = 90000;
-				tab.release();
-				// 加载根组件
-				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
-				root.cfg.full = false; //PC模式
-				var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
-				index.run(function () {
-					// 关闭读取界面
-					document.body.removeChild(document.getElementById('rcmj_loading_log'));
-				});
-				loadLeftSource();
-			}, function (r) {
-				alert("加载目录失败, " + r.error + ":" + r.reason);
-			}, dirProcess.handler);
-		}
-	}
-
-	// 加载剩下的资源
-	var loadLeftSource = function () {
-		var level2SourceList = [
-			"app/core/",
-			"app/logic/",
-			"app/components/",
-			"app/api/",
-			"app/view/",
-			"chat/client/app/view/",
-			"chat/client/app/widget/",
-			"chat/client/app/res/",
-			"earn/client/app/view/",
-			"earn/client/app/test/",
-			"earn/client/app/components/",
-			"earn/client/app/xls/",
-			"earn/xlsx/",
-			"earn/client/app/res/"
-		];
-
-		// 加载其他文件
-		util.loadDir(level2SourceList, flags, fm, undefined, function (fileMap) {
-			var tab = util.loadCssRes(fileMap);
-			tab.timeout = 90000;
-			tab.release();
-			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
-			setStore('flags/level_3_page_loaded', true);
-			console.timeEnd('all resource loaded');
-			loadLeftImages();
-		}, function (r) {
-			alert("加载目录失败, " + r.error + ":" + r.reason);
-		}, dirProcess.handler);
-	}
-
-
-	// 加载一些需要预加载的图片
-	var loadLeftImages = function () {
-		util.loadDir(["app/res/image/","chat/client/app/res/images/","earn/client/app/res/image/"], flags, fm, suffixCfg, function (fileMap) {
-			var tab = util.loadCssRes(fileMap);
-			tab.timeout = 90000;
-			tab.release();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -428,6 +362,106 @@ winit.initNext = function () {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
+
+	// 全部所需资源下载完成,进入app,显示界面
+	var enterApp = function(){
+		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
+		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
+			// TODO 通知底层准备完成
+			var WebViewManager = pi_modules.commonjs.exports.relativeGet("pi/browser/webview").exports.WebViewManager;
+			WebViewManager.addListenStage(function(stage){
+				if(stage === "firstStage"){    // 第一阶段完成  可以注册监听
+					// TODO 在回调中加载剩余代码 并且注册监听已经完成
+					var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/html.js","pi/ui/html.tpl"];
+					util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
+						var tab = util.loadCssRes(fileMap);
+						tab.timeout = 90000;
+						tab.release();
+						// var vmLoaded = pi_modules.commonjs.exports.relativeGet("app/postMessage/vmLoaded").exports;
+						// vmLoaded.addVmLoadedListener(function(){
+						// 	// 加载根组件
+						// 	var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+						// 	root.cfg.full = false; //PC模式
+						// 	var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+						// 	index.run(function () {
+						// 		console.timeEnd('home enter');
+						// 		// 关闭读取界面
+						// 		document.body.removeChild(document.getElementById('rcmj_loading_log'));
+						// 	});
+						// });
+						// 加载根组件
+						var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+						root.cfg.full = false; //PC模式
+						var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+						index.run(function () {
+							console.timeEnd('home enter');
+							// 关闭读取界面
+							document.body.removeChild(document.getElementById('rcmj_loading_log'));
+						});
+						loadLeftSource();
+					}, function (r) {
+						alert("加载目录失败, " + r.error + ":" + r.reason);
+					}, dirProcess.handler);
+				}
+			});
+			console.log("stage webview goReady");
+			WebViewManager.getReady("firstStage");   // 通知一阶段准备完毕
+			console.timeEnd('webview ready ok');
+		}
+	}
+
+	// 加载一些需要预加载的图片
+	var loadImages = function () {
+		util.loadDir(["app/res/image1/"], flags, fm, suffixCfg, function (fileMap) {
+			var tab = util.loadCssRes(fileMap);
+			tab.timeout = 90000;
+			tab.release();
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
+
+
+	// 加载剩下的资源
+	var loadLeftSource = function () {
+		var level2SourceList = [
+			"app/components/",
+			"app/view/",
+			"chat/client/app/view/",
+			"chat/client/app/widget/",
+			"chat/client/app/res/",
+			"earn/client/app/view/",
+			"earn/client/app/test/",
+			"earn/client/app/components/",
+			"earn/client/app/xls/",
+			"earn/xlsx/",
+			"earn/client/app/res/"
+		];
+
+		// 加载其他文件
+		util.loadDir(level2SourceList, flags, fm, undefined, function (fileMap) {
+			var tab = util.loadCssRes(fileMap);
+			tab.timeout = 90000;
+			tab.release();
+			var emitSourceLoaded = pi_modules.commonjs.exports.relativeGet("app/postMessage/localLoaded").exports.emitSourceLoaded;
+			emitSourceLoaded();
+			loadLeftImages();
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
+
+	// 加载剩下的图片
+	var loadLeftImages = function () {
+		util.loadDir(["app/res/image/","chat/client/app/res/images/","earn/client/app/res/image/"], flags, fm, suffixCfg, function (fileMap) {
+			var tab = util.loadCssRes(fileMap);
+			tab.timeout = 90000;
+			tab.release();
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
+
 
 };
 

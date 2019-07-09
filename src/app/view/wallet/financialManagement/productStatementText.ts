@@ -3,7 +3,7 @@
  * 理财声明
  */
 import { getLang } from '../../../../pi/util/lang';
-import { getModulConfig } from '../../../modulConfig';
+import { getModulConfig } from '../../../publicLib/modulConfig';
 
 // tslint:disable-next-line:max-func-body-length
 export const getProductStatement = () => {

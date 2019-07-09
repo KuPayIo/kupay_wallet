@@ -5,11 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
-import { getStore, register } from '../../../store/memstore';
-import { currencyType, parseStatusShow, timestampFormat } from '../../../utils/tools';
-import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
+import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
+import { currencyType, timestampFormat } from '../../../publicLib/tools';
+import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
+import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -22,19 +22,26 @@ interface Props {
 
 export class TotalRecord extends Widget {
     public props:any;
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-    }
-    public init() {
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
             recordList:[], // 全部记录
             canLoadMore:false,
             isRefreshing:false
         };
+    }
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.init();
+    }
+    public init() {
         if (this.props.isActive) {
-            getAccountDetail(this.props.currencyName,1);
+            callGetAccountDetail(this.props.currencyName,1);
         }
         this.updateRecordList();
     }
@@ -44,16 +51,17 @@ export class TotalRecord extends Widget {
      */
     public updateRecordList() {
         if (!this.props.currencyName) return;
-        const cloudWallets = getStore('cloud/cloudWallets');
-        const data = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
-        this.props.otherNext = data.start; 
-        this.props.recordList = this.parseList(data.list);
-        this.props.recordList.sort((v1,v2) => {
-            return v2.time - v1.time;
+        getCloudWallets().then(cloudWallets => {
+            const data = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).otherLogs;
+            this.props.otherNext = data.start; 
+            this.props.recordList = this.parseList(data.list);
+            this.props.recordList.sort((v1,v2) => {
+                return v2.time - v1.time;
+            });
+            this.props.canLoadMore = data.canLoadMore;
+            this.props.isRefreshing = false;
+            this.paint();
         });
-        this.props.canLoadMore = data.canLoadMore;
-        this.props.isRefreshing = false;
-        this.paint();
     }
 
     /**
@@ -88,7 +96,7 @@ export class TotalRecord extends Widget {
      * 请求更多数据
      */
     public loadMore() {
-        getAccountDetail(this.props.currencyName,0,this.props.otherNext);
+        callGetAccountDetail(this.props.currencyName,0,this.props.otherNext);
     }
 
     /**
@@ -109,18 +117,21 @@ export class TotalRecord extends Widget {
      * 更新交易状态
      */
     public updateTransaction() {
-        const list = this.props.rechargeList.concat(this.props.withdrawList);
-        list.forEach(item => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const list = this.props.rechargeList.concat(this.props.withdrawList);
+            list.forEach((item) => {
+                const txDetail = fetchLocalTxByHash1(currencyRecords,item.hash);
+                const obj = parseStatusShow(txDetail);
+                item.statusShow = obj.text;
+            });
+            this.props.recordList = list;
+            this.paint();
         });
-        this.paint();
     }
 }
 
 // 云端记录变化
-register('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();

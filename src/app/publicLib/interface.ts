@@ -1,8 +1,34 @@
-import { TaskSid } from './parse';
 
 /**
  * 内存中的数据结构
  */
+
+/**
+ * 后端定义的任务id
+ */
+export enum TaskSid {
+    Mine = '11',                 // 游戏 实际上是appid
+    Recharge = 301,            // 充值
+    Withdraw = 302,            // 提现
+    CreateWallet = 1001,       // 创建钱包
+    FirstChargeEth = 1002,     // 以太坊首次转入
+    BindPhone = 1003,          // 注册手机
+    ChargeEth = 1004,          // 存币
+    InviteFriends = 1005,      // 邀请真实好友
+    BuyFinancial = 1007,       // 购买理财产品
+    Transfer = 1008,           // 交易奖励
+    Dividend = 1009,           // 分红
+    Mining = 1010,             // 挖矿
+    Chat = 1011,               // 聊天
+    FinancialManagement = 330, // 理财
+    LuckyMoney = 340,           // 红包
+    LuckyMoneyRetreat = 341,     // 回退红包
+    Wxpay = 370,                // 微信支付
+    Alipay = 371,               // 支付宝支付
+    Apple_pay = 372,            // iOS支付
+    Consume = 360,               // 消费
+    Receipt = 361               // 收款
+}
 
 /**
  * 全局store数据
@@ -522,4 +548,90 @@ export interface LockScreen {
 export interface Silver {
     price:number;          // 价格
     change:number;         // 涨跌
+}
+
+/**
+ * 创建钱包option
+ */
+export interface CreateWalletOption {
+    psw: string; // 密码
+    nickName: string; // 昵称
+    imageBase64?: string; // 图片base64
+    imagePsw?: string; // 图片密码
+    mnemonic?: string; // 助记词
+    fragment1?: string; // 片段1
+    fragment2?: string; // 片段2
+    valut?:any;     // 图片密码
+}
+
+export interface TxPayload {
+    fromAddr:string;        // 转出地址
+    toAddr:string;          // 转入地址
+    pay:number;             // 转账金额
+    currencyName:string;    // 转账货币
+    fee:number;             // 矿工费
+    minerFeeLevel:MinerFeeLevel;   // 矿工费等级
+}
+
+/**
+ * 推送消息模块
+ */ 
+export enum PostModule {
+    LOADED = 0,    // 资源加载
+    SERVER = 1,   // 服务端推送
+    THIRD = 2     // 第三方游戏推送
+}  
+
+/**
+ * 加载阶段
+ */
+export enum LoadedStage {
+    START = 0,                 // 开始加载
+    STORELOADED = 1,           // store模块加载完毕并且数据初始化成功
+    ALLLOADED = 2              // 所有资源加载完毕
+}
+
+export enum ServerPushKey {
+    CMD = 'cmd',                // 踢人下线
+    EVENTPAYOK = 'event_pay_ok',         // 充值成功
+    EVENTINVITESUCCESS = 'event_invite_success',   // 邀请好友成功
+    EVENTCONVERTINVITE = 'event_convert_invite',   // 兑换邀请码成功
+    EVENTINVITEREAL = 'event_invite_real',          // 邀请好友并成为真实用户事件
+    ALTERBALANCEOK = 'alter_balance_ok'            // 余额变化事件
+}
+/**
+ * 服务器推送
+ */
+export interface ServerPushArgs {
+    key:ServerPushKey;            // 服务器推送key
+    result:any;           // 服务器推送内容
+}
+
+/**
+ * 三方命令
+ */
+export enum ThirdCmd {
+    CLOSE = 0,        // 关闭
+    MIN,              // 最小化
+    INVITE,             // 邀请好友
+    RECHARGE,         // 充值
+    GAMESERVICE,       // 游戏客服
+    OFFICIALGROUPCHAT   // 官方群聊
+}
+
+export interface ThirdPushArgs {
+    cmd:ThirdCmd;         // 第三方游戏推送key
+    payload:any;
+}
+/**
+ * postMessage args类型
+ */
+export type PostMessageArgs = LoadedStage | ServerPushArgs | ThirdPushArgs;
+
+/**
+ * vm 往 webview 推送消息类型
+ */
+export interface PostMessage {
+    moduleName:PostModule;   // 模块名
+    args:PostMessageArgs;                // 参数
 }

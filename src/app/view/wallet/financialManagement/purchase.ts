@@ -4,14 +4,14 @@
 // ===============================================导入
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { recharge } from '../../../net/pullWallet';
-import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../store/interface';
-import { getCloudBalances } from '../../../store/memstore';
-import { defaultGasLimit } from '../../../utils/constants';
-// tslint:disable-next-line:max-line-length
-import { fetchGasPrice, formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
-import { wei2Eth } from '../../../utils/unitTools';
-import { purchaseProduct } from '../../../utils/walletTools';
+import { callFetchGasPrice,callGetCurrentAddrInfo } from '../../../middleLayer/wrap';
+import { defaultGasLimit } from '../../../publicLib/config';
+import { CloudCurrencyType, MinerFeeLevel, Product, TxHistory, TxStatus, TxType } from '../../../publicLib/interface';
+import { formatBalance } from '../../../publicLib/tools';
+import { wei2Eth } from '../../../publicLib/unitTools';
+import { popNewMessage, popPswBox } from '../../../utils/tools';
+import { getCloudBalances } from '../../../viewLogic/common';
+import { purchaseProduct, recharge } from '../../../viewLogic/localWallet';
 import { forelet,WIDGET_NAME } from './productDetail';
 // ==================================================导出
 interface Props {
@@ -31,18 +31,22 @@ export class ProductDetail extends Widget {
     }
     public init() {
         const spend = formatBalance(this.props.product.unitPrice * this.props.amount);
-        const cloudBalance = getCloudBalances().get(CloudCurrencyType.ETH);
-        const localBalance = getCurrentAddrInfo('ETH').balance;
         this.props = {
             ...this.props,
             spend,
-            cloudBalance,
-            localBalance
+            cloudBalance:0,
+            localBalance:0
         }; 
+        Promise.all([callGetCurrentAddrInfo('ETH'),getCloudBalances()]).then(([addrInfo,cloudBalances]) => {
+            this.props.cloudBalance = cloudBalances.get(CloudCurrencyType.ETH);
+            this.props.localBalance = addrInfo.balance;
+            this.paint();
+        });
     }
     public close() {
         this.ok && this.ok();
     }
+
     public async purchaseClicked() {
         const psw = await popPswBox();
         if (!psw) return;
@@ -53,8 +57,10 @@ export class ProductDetail extends Widget {
                 w.ok && w.ok();
             }
         } else if (this.props.cloudBalance + this.props.localBalance >= this.props.spend) {
-            const fromAddr = getCurrentAddrByCurrencyName('ETH');
+            const addrInfo = await callGetCurrentAddrInfo('ETH');
+            const fromAddr = addrInfo.addr;
             const pay = this.props.spend - this.props.cloudBalance;
+            const gasPrice = await callFetchGasPrice(MinerFeeLevel.Standard);
             const tx:TxHistory = {
                 hash:'',
                 txType:TxType.Recharge,
@@ -67,7 +73,7 @@ export class ProductDetail extends Widget {
                 needConfirmedBlockNumber:0,
                 info: '',
                 currencyName: 'ETH',
-                fee: wei2Eth(defaultGasLimit * fetchGasPrice(MinerFeeLevel.Standard)),
+                fee: wei2Eth(defaultGasLimit * gasPrice),
                 nonce:0,
                 minerFeeLevel:MinerFeeLevel.Standard,
                 addr:fromAddr

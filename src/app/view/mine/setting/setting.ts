@@ -6,10 +6,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { logoutAccount, logoutAccountDel } from '../../../net/login';
-import { getStore, register, setStore } from '../../../store/memstore';
-import { hasWallet, popPswBox, rippleShow } from '../../../utils/tools';
-import { backupMnemonic } from '../../../utils/walletTools';
+import { callBackupMnemonic, getStoreData, setStoreData } from '../../../middleLayer/wrap';
+import { popPswBox, rippleShow } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
+import { logoutAccount } from '../../../viewLogic/login';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -30,36 +30,38 @@ export class Setting extends Widget {
 
     public init() {
         this.language = this.config.value[getLang()];
-        const lan = getStore('setting/language', 'zh_Hans');
-        const unit = getStore('setting/currencyUnit', 'CNY');
-        const color = getStore('setting/changeColor', 'redUp');
+        
         this.props = {
             lockScreenPsw: '',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 
             lockScreenTitle: '',  // 锁屏密码页面标题
             numberOfErrors: 0,  // 锁屏密码输入错误次数
-            itemList: [
-                { title: this.language.itemTitle[0], list: this.language.languageSet, selected: lan, flag: 0 },
-                { title: this.language.itemTitle[1], list: this.language.currencyUnit, selected: unit, flag: 1 },
-                { title: this.language.itemTitle[2], list: this.language.changeColor, selected: color, flag: 2 }
-            ],
+            itemList: [],
             wallet: null
         };
         this.initData();
     }
 
     public initData() {
-        const wallet = getStore('wallet');
-        if (wallet) {
+        Promise.all([getStoreData('wallet'),getStoreData('setting')]).then(([wallet,setting]) => {
             this.props.wallet = wallet;
-        }
-        const ls = getStore('setting/lockScreen');
-        if (ls) {
-            this.props.lockScreenPsw = ls.psw;
-            this.props.openLockScreen = ls.psw && ls.open !== false;
-        }
+            const ls = setting.lockScreen;
+            if (ls) {
+                this.props.lockScreenPsw = ls.psw;
+                this.props.openLockScreen = ls.psw && ls.open !== false;
+            }
+            const lan = setting.language || 'zh_Hans';
+            const unit = setting.currencyUnit || 'CNY';
+            const color = setting.changeColor || 'redUp';
 
-        this.paint();
+            const itemList = [
+                { title: this.language.itemTitle[0], list: this.language.languageSet, selected: lan, flag: 0 },
+                { title: this.language.itemTitle[1], list: this.language.currencyUnit, selected: unit, flag: 1 },
+                { title: this.language.itemTitle[2], list: this.language.changeColor, selected: color, flag: 2 }
+            ];
+            this.props.itemList = itemList;
+            this.paint();
+        });
     }
 
     // 动画效果执行
@@ -73,12 +75,12 @@ export class Setting extends Widget {
     /**
      * 处理锁屏开关切换
      */
-    public onSwitchChange() {
+    public async onSwitchChange() {
         if (this.props.openLockScreen) {   // 如果锁屏开关打开则直接关闭
-            const ls = getStore('setting/lockScreen');
+            const ls = await getStoreData('setting/lockScreen');
             ls.open = !ls.open;
             this.props.openLockScreen = false;
-            setStore('setting/lockScreen', ls);
+            setStoreData('setting/lockScreen', ls);
         } else if (this.props.wallet) {
             popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
                 if (!r) {
@@ -113,7 +115,6 @@ export class Setting extends Widget {
      * 点击切换基础属性 
      */
     public itemClick(ind: number) {
-        // if (!hasWallet()) return;
         const data = this.props.itemList[ind];
         popNew('app-view-mine-setting-itemList', data);
     }
@@ -124,7 +125,7 @@ export class Setting extends Widget {
     public async backUp() {
         const psw = await popPswBox();
         if (!psw) return;
-        const ret = await backupMnemonic(psw);
+        const ret = await callBackupMnemonic(psw);
         if (ret) {
             popNew('app-view-wallet-backup-index', { ...ret,pi_norouter:true });
             this.ok && this.ok();
@@ -134,9 +135,9 @@ export class Setting extends Widget {
     /**
      * 退出账户不删除信息
      */
-    public logOut() {
-        if (!hasWallet()) return;
-        const setPsw = getStore('wallet').setPsw;
+    public async logOut() {
+        const wallet = await getStoreData('wallet');
+        const setPsw = wallet.setPsw;
         if (!setPsw) {
             this.language.modalBox2.sureText = this.language.modalBox2.sureText1;
         }
@@ -159,9 +160,8 @@ export class Setting extends Widget {
     /**
      * 注销账户
      */
-    public logOutDel() {
-        if (!hasWallet()) return;
-        const setPsw = getStore('wallet').setPsw;
+    public async logOutDel() {
+        const setPsw = await getStoreData('wallet/setPsw');
         if (!setPsw) {
             this.language.modalBox3.sureText = this.language.modalBox3.sureText1;
         }
@@ -174,7 +174,7 @@ export class Setting extends Widget {
             console.log('取消2');
         }, () => {
             popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
-                logoutAccountDel();
+                logoutAccount(true);
                 this.backPrePage();
             });
         });
@@ -182,39 +182,39 @@ export class Setting extends Widget {
 }
 
 // ================================================本地，立即执行
-register('setting/language', (r) => {
+registerStoreData('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.language = w.config.value[r];
         w.init();
     }
 });
-register('setting/currencyUnit', () => {
+registerStoreData('setting/currencyUnit', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-register('setting/changeColor', () => {
+registerStoreData('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
-register('setting/lockScreen', () => {
+registerStoreData('setting/lockScreen', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-register('wallet', () => {
+registerStoreData('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
 
-register('user',() => {
+registerStoreData('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();

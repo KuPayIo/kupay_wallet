@@ -6,14 +6,14 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { LockScreen } from '../../store/interface';
-import { getStore, register, setStore  } from '../../store/memstore';
-import { getLoginMod, getWalletToolsMod } from '../../utils/commonjsTools';
+import { callLockScreenHash, callLockScreenVerify, callVerifyIdentidy,getStoreData, setStoreData } from '../../middleLayer/wrap';
+import { getSourceLoaded, setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
+import { LockScreen } from '../../publicLib/interface';
 import { popNewLoading, popNewMessage } from '../../utils/tools';
+import { logoutAccount } from '../../viewLogic/login';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
-declare var pi_modules : any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
@@ -71,19 +71,18 @@ export class LockScreenPage extends Widget {
     /**
      * 重复锁屏密码
      */
-    public  reSetLockPsw() {
+    public reSetLockPsw() {
         popNew('app-components1-keyboard-keyboard',{ title: this.language.keyboardTitle[1] },async (r) => {
             if (this.props.lockScreenPsw !== r) {
                 popNewMessage(this.language.tips[0]);
                 this.reSetLockPsw();
             } else {
-                const walletToolsMod = await getWalletToolsMod();
-                const hash256 = walletToolsMod.lockScreenHash(r);
-                const ls:LockScreen = getStore('setting/lockScreen'); 
-                ls.psw = hash256;
-                ls.open = true;
-                setStore('setting/lockScreen',ls);
-                popNewMessage(this.language.tips[1]);
+                await Promise.all([callLockScreenHash(r),getStoreData('setting/lockScreen')]).then(([hash256,ls]) => {
+                    ls.psw = hash256;
+                    ls.open = true;
+                    setStoreData('setting/lockScreen',ls);
+                    popNewMessage(this.language.tips[1]);
+                });
             }
             this.close(true);
         },() => {
@@ -94,17 +93,17 @@ export class LockScreenPage extends Widget {
     /**
      * 进入APP解锁屏幕
      */
-    public unLockScreen(ind:number) {
-        const ls:LockScreen = getStore('setting/lockScreen');
+    public async unLockScreen(ind:number) {
+        const ls:LockScreen = await getStoreData('setting/lockScreen');
         if (ls.locked || ind > 2) {
             ls.locked = true;
-            setStore('setting/lockScreen',ls);
+            await setStoreData('setting/lockScreen',ls);
             this.verifyPsw();
         } else {
             const title = this.props.errorTips[ind === 0 ? 3 :ind];
             popNew('app-components1-keyboard-keyboard',{ title:title,closePage:1 },async (r) => {
-                const walletToolsMod = await getWalletToolsMod();
-                if (walletToolsMod.lockScreenVerify(r)) {  // 原密码输入成功后重新设置密码
+                const verify = await callLockScreenVerify(r);
+                if (verify) {  // 原密码输入成功后重新设置密码
                     this.close(true);
                 } else {
                     this.unLockScreen(++ind);
@@ -127,17 +126,16 @@ export class LockScreenPage extends Widget {
             }
             const close = popNewLoading(this.language.loading); 
             if (this.props.loading) {
-                const VerifyIdentidy = pi_modules.commonjs.exports.relativeGet('app/utils/walletTools').exports.VerifyIdentidy;
-                const fg = await VerifyIdentidy(r);
+                const fg = await callVerifyIdentidy(r);
                 close.callback(close.widget);
                 if (fg) {  // 三次密码错误但成功验证身份后重新设置密码
-                    let ls:LockScreen = getStore('setting/lockScreen');
+                    let ls:LockScreen = await getStoreData('setting/lockScreen');
                     ls = {
                         psw:'',
                         open:false,
                         locked:false
                     };
-                    setStore('setting/lockScreen',ls);
+                    setStoreData('setting/lockScreen',ls);
                     this.setLockPsw();
                     
                 } else {  // 进入APP验证身份失败后再次进入验证身份步骤
@@ -147,10 +145,7 @@ export class LockScreenPage extends Widget {
             }
         },(fg) => {
             if (fg) {  // 退出当前钱包，跳转到登录页面
-                getLoginMod().then(loginMod => {
-                    loginMod.logoutAccount();
-                });
-                popNew('app-view-wallet-create-home');
+                logoutAccount();
             }
         });
     }
@@ -159,14 +154,15 @@ export class LockScreenPage extends Widget {
      * 判断资源加载完成
      */
     public judgeLoading() {
-        const loaded = getStore('flags/level_3_page_loaded');
+        const loaded = getSourceLoaded();
         if (loaded) {
             this.props.loading = true;
             this.paint();
         }
     }
 }
-register('flags/level_3_page_loaded',(loaded:boolean) => {
+
+setSourceLoadedCallbackList(() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.judgeLoading();

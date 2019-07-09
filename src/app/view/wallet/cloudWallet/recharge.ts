@@ -5,14 +5,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
-import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
-import { recharge, resendRecharge } from '../../../net/pullWallet';
-import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../store/interface';
-import { register } from '../../../store/memstore';
-// tslint:disable-next-line:max-line-length
-import { formatBalance, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox } from '../../../utils/tools';
-import { fetchMinerFeeList } from '../../../utils/walletTools';
+import {  callFetchBtcFees, callFetchGasPrices,callFetchMinerFeeList, callGetCurrentAddrInfo } from '../../../middleLayer/wrap';
+import { MinerFeeLevel, TxHistory, TxStatus, TxType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { formatBalance } from '../../../publicLib/tools';
+import { popNewMessage, popPswBox } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
+import { recharge, resendRecharge } from '../../../viewLogic/localWallet';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -35,11 +34,11 @@ export class Recharge extends Widget {
     public async init() {
         this.language = this.config.value[getLang()];
         if (this.props.currencyName === 'BTC') {
-            fetchBtcFees();
+            callFetchBtcFees();
         } else {
-            fetchGasPrices();
+            callFetchGasPrices();
         }
-        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
+       
         const tx = this.props.tx;
         console.log(tx);
         const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
@@ -52,22 +51,30 @@ export class Recharge extends Widget {
         this.props = {
             ...this.props,
             topBarTitle,
-            fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
+            fromAddr:'',
             amount:tx ? tx.pay : 0,
-            balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
-            minerFee:minerFeeList[curLevel].minerFee,
-            minerFeeList,
+            balance:formatBalance(0),
+            minerFee:0,
+            minerFeeList:[],
             curLevel,
             minLevel:curLevel,
             inputDisabled:tx ? true : false
         };
-        
+        Promise.all([callFetchMinerFeeList(this.props.currencyName),
+            callGetCurrentAddrInfo(this.props.currencyName)]).then(([minerFeeList,addrInfo]) => {
+                this.props.minerFeeList = minerFeeList;
+                this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
+                this.props.fromAddr = addrInfo.addr;
+                this.props.balance = formatBalance(addrInfo.balance);
+                this.paint();
+            });
     }
     public updateMinerFeeList() {
-        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
-        this.props.minerFeeList = minerFeeList;
-        this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
-        this.paint();
+        callFetchMinerFeeList(this.props.currencyName).then(minerFeeList => {
+            this.props.minerFeeList = minerFeeList;
+            this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
+            this.paint();
+        });
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -148,7 +155,7 @@ export class Recharge extends Widget {
 }
 
 // gasPrice变化
-register('third/gasPrice',() => {
+registerStoreData('third/gasPrice',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();
@@ -156,7 +163,7 @@ register('third/gasPrice',() => {
 });
 
 // btcMinerFee变化
-register('third/btcMinerFee',() => {
+registerStoreData('third/btcMinerFee',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();

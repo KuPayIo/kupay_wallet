@@ -1,20 +1,22 @@
 /**
  * 数据更新中心
  */
-import { btcNetwork, defaultEthToAddr, ERC20Tokens, MainChainCoin } from '../config';
 import { BtcApi } from '../core/btc/api';
 import { BTCWallet } from '../core/btc/wallet';
 import { Api as EthApi } from '../core/eth/api';
 import { EthWallet } from '../core/eth/wallet';
-import { getSilverPrice } from '../net/pull';
-import { changellyGetCurrencies, fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../net/pull3';
-import { BigNumber } from '../res/js/bignumber';
-import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../store/interface';
+import { BigNumber } from '../publicLib/bignumber';
+// tslint:disable-next-line:max-line-length
+import { btcNetwork, defaultEthToAddr, erc20GasLimitRate, ERC20Tokens, ethTokenTransferCode, lang, MainChainCoin } from '../publicLib/config';
+import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../publicLib/interface';
+import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../publicLib/pull3';
+import { formatBalance } from '../publicLib/tools';
+import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../publicLib/unitTools';
 import { getStore,setStore } from '../store/memstore';
-import { erc20GasLimitRate, ethTokenTransferCode, lang } from '../utils/constants';
-import { formatBalance,getAddrsAll,getConfirmBlockNumber,getCurrentEthAddr, parseTransferExtraInfo, updateLocalTx } from '../utils/tools';
-import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
-import { fetchLocalTxByHash,fetchTransactionList,getMnemonicByHash } from '../utils/walletTools';
+import { addSourceLoadedListener } from './postWalletMessage';
+import { getSilverPrice } from './pull';
+import { getAddrsAll, getConfirmBlockNumber, getCurrentAddrInfo, parseTransferExtraInfo, updateLocalTx } from './tools';
+import { fetchLocalTxByHash, fetchTransactionList, getMnemonicByHash } from './wallet';
 /**
  * 创建事件处理器表
  * @example
@@ -34,10 +36,8 @@ class DataCenter {
    * 初始化
    */
     public init() {
-        // 币币兑换可用货币获取
-        changellyGetCurrencies();
         // 更新黄金价格
-        this.updateGoldPrice();
+        // this.updateGoldPrice();
         // 更新人民币美元汇率
         // this.updateUSDRate();
         // 更新货币对比USDT的比率
@@ -115,7 +115,7 @@ class DataCenter {
      */
     public fetchErc20GasLimit(currencyName:string) {
         const defaultPay = 0;
-        const fromAddr = getCurrentEthAddr();
+        const fromAddr = getCurrentAddrInfo('ETH').addr;
         estimateGasERC20(currencyName, defaultEthToAddr,fromAddr, defaultPay).then(res => {
             const gasLimitMap = getStore('third/gasLimitMap');
             gasLimitMap.set(currencyName, res * erc20GasLimitRate);
@@ -307,8 +307,9 @@ class DataCenter {
         try {
             const api = new EthApi();
             const r: any = await api.getAllTransactionsOf(addr);
-            // console.log(r);
+            // 此处只使用hash是为了兼容我们自己搭建的节点接口 
             const ethTrans = this.filterEthTrans(r.result);
+            // 此处使用本地交易记录hash是因为发送的时候会生成一个本地记录  此时接口返回有可能还没有这个交易hash
             const localTxList = fetchTransactionList(addr, 'ETH');
             const allTxHash = [];
             localTxList.forEach(item => {
@@ -408,7 +409,7 @@ class DataCenter {
     /**
      * 获取eth交易详情
      */
-    private async getEthTransactionByHash(hash: string, addr: string) {
+    private async getEthTransactionByHash(hash: string, addr: string,blockHeight:number) {
         if (!hash) return;
         const api = new EthApi();
         const res1: any = await api.getTransactionReceipt(hash);
@@ -417,7 +418,7 @@ class DataCenter {
         const res2: any = await api.getTransaction(hash);
         const blockHash = res1.blockHash;
         const res3: any = await api.getBlock(blockHash);
-        const blockHeight = Number(await api.getBlockNumber());
+        
         const confirmedBlockNumber = blockHeight - res1.blockNumber + 1;
         const pay = wei2Eth(res2.value);
         const needConfirmedBlockNumber = getConfirmBlockNumber('ETH', pay);
@@ -449,7 +450,7 @@ class DataCenter {
     /**
      * 获取erc20交易详情
      */
-    private async getERC20TransactionByHash(currencyName: string,hash: string,addr: string) {
+    private async getERC20TransactionByHash(currencyName: string,hash: string,addr: string,blockHeight:number) {
         if (!hash) return;
         const api = new EthApi();
         const res1: any = await api.getTransactionReceipt(hash);
@@ -457,7 +458,6 @@ class DataCenter {
         const res2: any = await api.getTransaction(hash);
         const blockHash = res1.blockHash;
         const res3: any = await api.getBlock(blockHash);
-        const blockHeight = Number(await api.getBlockNumber());
         const confirmedBlockNumber = blockHeight - res1.blockNumber + 1;
         const obj = this.parseErc20Input(res2.input);
         if (!obj) return;
@@ -791,11 +791,15 @@ class DataCenter {
      */
     private async updateTxStatus(hash: string,currencyName: string,addr: string) {
         if (currencyName === 'ETH') {
-            this.getEthTransactionByHash(hash, addr);
+            const api = new EthApi();
+            const blockHeight = Number(await api.getBlockNumber());
+            this.getEthTransactionByHash(hash, addr,blockHeight);
         } else if (currencyName === 'BTC') {
             this.getBTCTransactionByHash(hash, addr);
         } else {
-            this.getERC20TransactionByHash(currencyName, hash, addr);
+            const api = new EthApi();
+            const blockHeight = Number(await api.getBlockNumber());
+            this.getERC20TransactionByHash(currencyName, hash, addr,blockHeight);
         }
     }
 
@@ -970,3 +974,40 @@ const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amou
  * 消息处理列表
  */
 export const dataCenter: DataCenter = new DataCenter();
+addSourceLoadedListener(() => {
+    dataCenter.init();
+});
+/**
+ * 更新余额
+ */
+export const dcUpdateBalance = (addr: string, currencyName: string) => {
+    dataCenter.updateBalance(addr,currencyName);
+};
+
+/**
+ * 刷新本地钱包
+ */
+export const dcRefreshAllTx = () => {
+    dataCenter.refreshAllTx();
+};
+
+/**
+ * 初始化ERC20代币GasLimit
+ */
+export const dcInitErc20GasLimit = () => {
+    dataCenter.initErc20GasLimit();
+};
+
+/**
+ * 更新地址相关 交易记录及余额定时更新
+ */
+export const dcUpdateAddrInfo = (addr: string, currencyName: string) => {
+    dataCenter.updateAddrInfo(addr,currencyName);
+};
+
+/**
+ * 通过hash清楚定时器
+ */
+export const dcClearTxTimer = (hash: string) => {
+    dataCenter.clearTxTimer(hash);
+};

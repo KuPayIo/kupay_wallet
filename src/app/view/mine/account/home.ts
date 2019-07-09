@@ -5,14 +5,15 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { selectImage } from '../../../logic/native';
+import { getStoreData } from '../../../middleLayer/wrap';
 import { uploadFile } from '../../../net/pull';
-import { getStore, register } from '../../../store/memstore';
 import { changeWalletName, walletNameAvailable } from '../../../utils/account';
-import { getMnemonic, getUserInfo, imgResize, popNewLoading, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
-import { backupMnemonic } from '../../../utils/walletTools';
+import { getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
+import { exportMnemonic } from '../../../viewLogic/localWallet';
+import { selectImage } from '../../../viewLogic/native';
 // ================================ 导出
-// tslint:disable-next-line:no-reserved-keywords
+// tslint:disable-next-line:no-reserved-keywords 
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
@@ -26,29 +27,30 @@ export class AccountHome extends Widget {
         this.init();
     }
     public init() {
-        const userInfo = getUserInfo();
-        const wallet = getStore('wallet');
-        const backup = wallet.isBackup;
 
         this.props = {
-            isTourist:!wallet.setPsw,
+            isTourist:false,
             avatar: '',
             nickName: '',
             phone: '',
-            backup,
+            backup:false,
             canEditName: false,
             editName:'',
             chooseImage: false,
             avatarHtml: ''
         };
-        if (userInfo.phoneNumber) {
-            const str = String(userInfo.phoneNumber).substr(3, 6);
-            this.props.phone = userInfo.phoneNumber.replace(str, '******');
-        }
-        this.props.nickName = userInfo.nickName ? userInfo.nickName : this.language.defaultName;
-        this.props.editName = this.props.nickName;
-        this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
-        this.paint();
+        Promise.all([getUserInfo(),getStoreData('wallet')]).then(([userInfo,wallet]) => {
+            if (userInfo.phoneNumber) {
+                const str = String(userInfo.phoneNumber).substr(3, 6);
+                this.props.phone = userInfo.phoneNumber.replace(str, '******');
+            }
+            this.props.nickName = userInfo.nickName ? userInfo.nickName : this.language.defaultName;
+            this.props.editName = this.props.nickName;
+            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+            this.props.backup = wallet.isBackup;
+            this.props.isTourist = !wallet.setPsw;
+            this.paint();
+        });
     }
 
     /**
@@ -91,9 +93,9 @@ export class AccountHome extends Widget {
     public async backupWalletClick() {
         const psw = await popPswBox();
         if (!psw) return;
-        const ret = await backupMnemonic(psw);
+        const ret = await exportMnemonic(psw);
         if (ret) {
-            popNew('app-view-wallet-backup-index', { ...ret,pi_norouter:true });
+            popNew('app-view-wallet-backup-index', { ...ret });
         }
 
     }
@@ -102,19 +104,10 @@ export class AccountHome extends Widget {
     public async exportPrivateKeyClick() {
         const psw = await popPswBox();
         if (!psw) return;
-        const close = popNewLoading(this.language.loading);
-        try {
-            const mnemonic = await getMnemonic(psw);
-            if (mnemonic) {
-                popNew('app-view-mine-account-exportPrivateKey', { mnemonic });
-            } else {
-                popNewMessage(this.language.tips[1]);
-            }
-        } catch (error) {
-            console.log(error);
-            popNewMessage(this.language.tips[1]);
+        const ret = await exportMnemonic(psw,false);
+        if (ret && ret.mnemonic) {
+            popNew('app-view-mine-account-exportPrivateKey', { mnemonic:ret.mnemonic });
         }
-        close.callback(close.widget);
     }
 
     public uploadAvatar() {
@@ -195,21 +188,21 @@ export class AccountHome extends Widget {
     }
 }
 
-register('user/info', () => {
+registerStoreData('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
 
-register('wallet', () => {
+registerStoreData('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
 
-register('setting/language', (r) => {
+registerStoreData('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.language = w.config.value[r];

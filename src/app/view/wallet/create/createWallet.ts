@@ -3,13 +3,12 @@
  */
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { createWallet, CreateWalletType } from '../../../logic/localWallet';
-import { selectImage } from '../../../logic/native';
-import { openConnect } from '../../../net/login';
+import { openWSConnect,setStoreData } from '../../../middleLayer/wrap';
 import { uploadFile } from '../../../net/pull';
-import { setStore } from '../../../store/memstore';
 import { pswEqualed, walletNameAvailable } from '../../../utils/account';
 import { imgResize, playerName, popNew3, popNewMessage } from '../../../utils/tools';
+import { createWallet, CreateWalletType } from '../../../viewLogic/localWallet';
+import { selectImage } from '../../../viewLogic/native';
 interface Props {
     itype: CreateWalletType;
     mnemonic?: string;// 助记词
@@ -135,10 +134,13 @@ export class CreateWallet extends Widget {
         console.timeEnd('pi_create createWallet all need');
         if (!secrectHash) {
             popNewMessage(this.language.tips[4]);
+
+            return;
         }
 
-        setStore('flags/createWallet',true);
-        openConnect(secrectHash);
+        setStoreData('flags/createWallet',true);
+        popNewMessage('登录成功');
+        openWSConnect(secrectHash);
 
         if (this.props.chooseImage) {
             this.props.imagePicker.getContent({

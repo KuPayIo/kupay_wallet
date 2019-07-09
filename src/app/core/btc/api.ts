@@ -1,7 +1,8 @@
 /**
  * Api v2
  */
-import { DevMode } from '../../config';
+import { DevMode } from '../../publicLib/config';
+import { piFetch } from '../../publicLib/tools';
 import { config } from '../config';
 
 /* tslint:disable:no-var-keyword */
@@ -22,24 +23,20 @@ interface Options {
 
 const sendRequest = async (endpoint: string, opt: Options = { method: 'GET' }): Promise<any> => {
     opt.method = opt.method || 'GET';
-    try {
-        let response: any;
-        if (opt.method === 'GET') {
-            response = await fetch(endpoint);
-        } else if (opt.method === 'POST') {
-            response = await fetch(endpoint, {
-                method: opt.method,
-                body: JSON.stringify({ rawtx:opt.body }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        }
-
-        return await response.json();
-    } catch (e) {
-        Promise.reject(e);
+    let response: any;
+    if (opt.method === 'GET') {
+        response = await piFetch(endpoint);
+    } else if (opt.method === 'POST') {
+        response = await piFetch(endpoint, {
+            method: opt.method,
+            body: JSON.stringify({ rawtx:opt.body }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
+
+    return  response;
 };
 
 export const BtcApi = {
@@ -87,13 +84,12 @@ export const BtcApi = {
 
     estimateMinerFee: async (): Promise<any> => {
         // use blockcypher.com at present
-        const response = await fetch('https://api.blockcypher.com/v1/btc/main');
-        const json = await response.json();
+        const response = await piFetch('https://api.blockcypher.com/v1/btc/main');
 
         return {
-            high: json.high_fee_per_kb,
-            medium: json.medium_fee_per_kb,
-            low: json.low_fee_per_kb
+            high: response.high_fee_per_kb,
+            medium: response.medium_fee_per_kb,
+            low: response.low_fee_per_kb
         };
     },
 

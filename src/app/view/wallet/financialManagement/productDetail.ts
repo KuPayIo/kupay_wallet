@@ -5,10 +5,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getPurchaseRecord } from '../../../net/pull';
-import { Product, PurchaseHistory } from '../../../store/interface';
-import { getStore, register } from '../../../store/memstore';
-import { calPercent, fetchHoldedProductAmount, hasWallet, popNewMessage } from '../../../utils/tools';
+import { callGetPurchaseRecord,getStoreData } from '../../../middleLayer/wrap';
+import { Product, PurchaseHistory } from '../../../publicLib/interface';
+import { calPercent, popNewMessage } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 
 // ====================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -28,10 +28,12 @@ export class ProductDetail extends Widget {
         this.init();
     }
     public init() {
-        if (getStore('user/conUid')) {
-            // 获取购买记录
-            getPurchaseRecord();
-        }
+        getStoreData('user/id').then(uid => {
+            if (uid) {
+                // 获取购买记录
+                callGetPurchaseRecord();
+            }
+        });
         const product = this.props.product;
         const res = calPercent(product.surplus,product.total);
         // console.log(res);
@@ -87,7 +89,6 @@ export class ProductDetail extends Widget {
         popNewMessage(tips[getLang()]);
 
         return;
-        if (!hasWallet()) return;
         popNew('app-view-wallet-financialManagement-productStatement',{ product:this.props.product,amount:this.props.amount });
     }
 
@@ -100,7 +101,7 @@ export class ProductDetail extends Widget {
 }
 
 // =====================================本地
-register('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
+registerStoreData('activity/financialManagement/purchaseHistories', async (purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updatePurchaseRecord(purchaseRecord);

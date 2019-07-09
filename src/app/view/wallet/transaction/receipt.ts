@@ -1,12 +1,13 @@
 /**
  * receipt
  */
-import { ShareToPlatforms, ShareType } from '../../../../pi/browser/shareToPlatforms';
+import { ShareType } from '../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { makeScreenShot } from '../../../logic/native';
-import { copyToClipboard, getCurrentAddrByCurrencyName, getUserInfo, popNewMessage } from '../../../utils/tools';
+import { callGetCurrentAddrInfo } from '../../../middleLayer/wrap';
+import { copyToClipboard, getUserInfo, popNewMessage } from '../../../utils/tools';
+import { makeScreenShot } from '../../../viewLogic/native';
 
 interface Props {
     currencyName:string;
@@ -25,15 +26,16 @@ export class Receipt extends Widget {
     }
     public init() {
         this.language = this.config.value[getLang()];
-        const userInfo = getUserInfo();
         this.props = {
             ...this.props,
-            fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName)
+            fromAddr:'',
+            avatar:''
         };
-        if (userInfo) {
+        Promise.all([getUserInfo(),callGetCurrentAddrInfo(this.props.currencyName)]).then(([userInfo,addrInfo]) => {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
-        }
-        
+            this.props.fromAddr = addrInfo.addr;
+            this.paint();
+        });
     }
 
     public copyClick() {

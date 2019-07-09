@@ -2,7 +2,9 @@
  * choose currency
  */
 import { Widget } from '../../../pi/widget/widget';
-import { formatBalance, getCurrentAddrInfo } from '../../utils/tools';
+import { getStoreData } from '../../middleLayer/wrap';
+import { formatBalance } from '../../publicLib/tools';
+import { calCurrencyLogoUrl, getCurrentAddrInfo1 } from '../../utils/tools';
 
 interface Props {
     list:string[];
@@ -13,22 +15,26 @@ export class ChooseCurrency extends Widget {
     public cancel:() => void;
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
-        const currencyShowList = [];
-        this.props.list.forEach(item => {
-            // tslint:disable-next-line:max-line-length
-            const balance = getCurrentAddrInfo(item).balance;
-            currencyShowList.push({
-                name:item,
-                balance:formatBalance(balance),
-                // tslint:disable-next-line:prefer-template
-                img:'../../res/image/currency/' + item + '.png'
-            });
-        });
+       
         this.props = {
             ...this.props,
-            currencyShowList,
+            currencyShowList:[],
             selected:this.props.selected
         };
+        getStoreData('wallet/currencyRecords').then(currencyRecords => {
+            const currencyShowList = [];
+            this.props.list.forEach(item => {
+                const balance = getCurrentAddrInfo1(item,currencyRecords).balance;
+                currencyShowList.push({
+                    name:item,
+                    balance:formatBalance(balance),
+                    img:calCurrencyLogoUrl(item)
+
+                });
+            });
+            this.props.currencyShowList = currencyShowList;
+            this.paint();
+        });
     }
 
     public changeSelect(e:any,ind:number) {

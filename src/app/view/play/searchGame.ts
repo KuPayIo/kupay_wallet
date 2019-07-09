@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { hasWallet, rippleShow } from '../../utils/tools';
+import { rippleShow } from '../../utils/tools';
 import { activityList } from './home/gameConfig';
 
 interface Props {
@@ -46,7 +46,6 @@ export class SearchGame extends Widget {
      * @param index 序号
      */
     public activityClick(index:number) {
-        if (!hasWallet()) return;
         popNew(this.props.gameList[index].url);
     }
     

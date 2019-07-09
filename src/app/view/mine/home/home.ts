@@ -8,11 +8,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { doScanQrCode } from '../../../logic/native';
-import { getModulConfig } from '../../../modulConfig';
-import { getStore, register } from '../../../store/memstore';
-import { copyToClipboard, getUserInfo, hasWallet, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
-import { backupMnemonic } from '../../../utils/walletTools';
+import { callBackupMnemonic,getStoreData } from '../../../middleLayer/wrap';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { copyToClipboard, getUserInfo, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
+import { doScanQrCode } from '../../../viewLogic/native';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -92,25 +92,25 @@ export class Home extends Widget {
      * 更新数据
      */
     public initData() {
-        const userInfo = getUserInfo();
-        if (userInfo) {
-            this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
-            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
-            this.props.userLevel = userInfo.level;
-        }
-
-        const wallet = getStore('wallet');
-        if (wallet) {
-            this.props.hasWallet = true;
-            this.props.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
-            this.props.hasBackupMnemonic = wallet.isBackup;    
-            this.props.isTourist = !wallet.setPsw;        
-        } else {
-            this.props.hasWallet = false;
-            this.props.acc_id = '';
-        }
-        this.medalest();
-        this.paint();
+        Promise.all([getUserInfo(),getStoreData('wallet')]).then(([userInfo,wallet]) => {
+            if (userInfo) {
+                this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
+                this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+                this.props.userLevel = userInfo.level;
+            }
+            if (wallet) {
+                this.props.hasWallet = true;
+                this.props.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
+                this.props.hasBackupMnemonic = wallet.isBackup;    
+                this.props.isTourist = !wallet.setPsw;        
+            } else {
+                this.props.hasWallet = false;
+                this.props.acc_id = '';
+            }
+            this.medalest();
+            this.paint();
+        });
+        
     }
     // 获取最高勋章
     public medalest() {
@@ -153,7 +153,7 @@ export class Home extends Widget {
     public async backUp() {
         const psw = await popPswBox();
         if (!psw) return;
-        const ret = await backupMnemonic(psw);
+        const ret = await callBackupMnemonic(psw);
         if (ret) {
             popNew('app-view-wallet-backup-index',{ ...ret });
         }
@@ -164,7 +164,6 @@ export class Home extends Widget {
      */
     public itemClick(ind:number) {
         if (ind === 0) {
-            if (!hasWallet()) return;
             popNew('app-view-mine-account-home');
         } else {
             popNew(this.props.list[ind].components);
@@ -238,15 +237,11 @@ export class Home extends Widget {
         // this.backPrePage();
     }
 
-    public tex() {
-        console.log(getUserInfo());
-        console.log(getStore('user/id'));
-    }
 }
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-register('user',() => {
+registerStoreData('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -254,26 +249,26 @@ register('user',() => {
     }
 });
 
-register('wallet', () => {
+registerStoreData('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-register('user/info', () => {
+registerStoreData('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-register('setting/language', (r) => {
+registerStoreData('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.language = w.config.value[r];
         w.paint();
     }
 });
-register('user/offline',(r) => {
+registerStoreData('user/offline',(r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.props.offline = r;

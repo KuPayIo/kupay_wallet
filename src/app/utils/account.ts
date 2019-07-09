@@ -2,7 +2,7 @@
 /**
  * 和账号相关的工具
  */
-import { getStore, setStore } from '../store/memstore';
+import { getStoreData, setStoreData } from '../middleLayer/wrap';
 import { getStrLen } from './tools';
 
 /**
@@ -19,9 +19,11 @@ export const walletNameAvailable = (walletName) => {
  * @param walletName wallet name
  */
 export const changeWalletName = (walletName:string) => {
-    const userInfo = getStore('user/info');
-    userInfo.nickName = walletName;
-    setStore('user/info', userInfo);
+    return getStoreData('user/info').then(userInfo => {
+        userInfo.nickName = walletName;
+        setStoreData('user/info', userInfo);
+    });
+    
 };
 
 /**

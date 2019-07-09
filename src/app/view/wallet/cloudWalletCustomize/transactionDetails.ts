@@ -2,16 +2,18 @@
  * 交易详情页面
  */
 import { ShareType } from '../../../../pi/browser/shareToPlatforms';
+import { payPlatform } from '../../../../pi/browser/vm';
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { makeScreenShot } from '../../../logic/native';
-import { getModulConfig } from '../../../modulConfig';
-import { getOneUserInfo } from '../../../net/pull';
-import { TaskSid } from '../../../store/parse';
-import { SCPrecision } from '../../../utils/constants';
+import { callGetOneUserInfo } from '../../../middleLayer/wrap';
+import { SCPrecision } from '../../../publicLib/config';
+import { TaskSid } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { timestampFormat } from '../../../publicLib/tools';
 import { getOrderDetail, getOrderLocal } from '../../../utils/recharge';
-import { popNewMessage, timestampFormat } from '../../../utils/tools';
+import { popNewMessage } from '../../../utils/tools';
+import { makeScreenShot } from '../../../viewLogic/native';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -42,7 +44,7 @@ enum PayState {
 export class TransactionDetails extends Widget {
     public ok:() => void;
 
-    public setProps(props:any) {
+    public setProps(props:Props) {
         this.props = {
             scShow:getModulConfig('SC_SHOW'),
             state:'查询失败',
@@ -61,7 +63,7 @@ export class TransactionDetails extends Widget {
      */
     public initData() {
         const itype = this.props.itype;
-        if (itype === TaskSid.Alipay || itype === TaskSid.Wxpay) {   // 微信支付宝支付
+        if (itype === TaskSid.Alipay || itype === TaskSid.Wxpay || itype === TaskSid.Apple_pay) {   // 微信支付宝支付
             getOrderDetail(this.props.oid).then(res => {
                 this.setData(res);
             }).catch(() => {
@@ -87,13 +89,14 @@ export class TransactionDetails extends Widget {
         this.props.amount = res.num / SCPrecision;
         this.props.money = res.total / SCPrecision;
         this.props.transactionTime = timestampFormat(res.time * 1000); 
-        this.props.transactionType = res.payType === 'alipay' ? '支付宝支付' :'微信支付' ;
+        // tslint:disable-next-line:max-line-length
+        this.props.transactionType = res.payType === payPlatform.apple_pay ? 'ios支付' : (res.payType === payPlatform.aliPay ? '支付宝支付' :'微信支付')  ;
         this.paint();
     }
 
     // 云端支付
     public async setData1(res:any) {
-        const mchInfo = await getOneUserInfo([Number(res.mch_id)]);
+        const mchInfo = await callGetOneUserInfo([Number(res.mch_id)]);
         console.log(`商户信息 ========== mch_id = ${res.mch_id}  mchInfo = ${mchInfo}`);
         this.props.state = PayState[1];
         this.props.amount = res.total_fee / SCPrecision;

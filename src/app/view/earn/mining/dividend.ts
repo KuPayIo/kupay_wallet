@@ -7,11 +7,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
-import { getDividend, getDividHistory, getMining } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
-import { getCloudBalances, getStore, register } from '../../../store/memstore';
-import { PAGELIMIT } from '../../../utils/constants';
+import { callGetDividend, callGetDividHistory,callGetMining, getStoreData } from '../../../middleLayer/wrap';
+import { PAGELIMIT } from '../../../publicLib/config';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -49,7 +49,7 @@ export class Dividend extends Widget {
                 // { num:0.02,time:'04-30  14:32:00' },
                 // { num:0.02,time:'04-30  14:32:00' }
             ],
-            ktBalance:getCloudBalances().get(CloudCurrencyType.KT),  // KT持有量 
+            ktBalance:0,  // KT持有量 
             hasMore:false,
             refresh:true,
             start:''
@@ -76,37 +76,41 @@ export class Dividend extends Widget {
      * 获取更新数据
      */
     public initData() {
-        const data = getStore('activity/dividend/total');
-        if (data) {
-            this.props.totalDivid = data.totalDivid;
-            this.props.totalDays = data.totalDays;
-            this.props.thisDivid = data.thisDivid;
-            this.props.yearIncome = Number(data.yearIncome) === 0 ? this.language.noneYearIncome :data.yearIncome;
-        }
+        Promise.all([getCloudBalances(),getStoreData('activity/dividend')]).then(([cloudBalances,dividend]) => {
+            this.props.ktBalance = cloudBalances.get(CloudCurrencyType.KT);
+            const data = dividend.total;
+            if (data) {
+                this.props.totalDivid = data.totalDivid;
+                this.props.totalDays = data.totalDays;
+                this.props.thisDivid = data.thisDivid;
+                this.props.yearIncome = Number(data.yearIncome) === 0 ? this.language.noneYearIncome :data.yearIncome;
+            }
 
-        const history = getStore('activity/dividend/history');  
-        if (history) {
-            const hList = history.list;
-            if (hList && hList.length > this.props.data.length) {
-                console.log('load more from local');
+            const history = dividend.history;  
+            if (history) {
+                const hList = history.list;
+                if (hList && hList.length > this.props.data.length) {
+                    console.log('load more from local');
                   
+                } else {
+                    console.log('load more from server');
+                    callGetDividHistory(this.props.start);
+                }
             } else {
                 console.log('load more from server');
-                getDividHistory(this.props.start);
+                callGetDividHistory(this.props.start);
             }
-        } else {
-            console.log('load more from server');
-            getDividHistory(this.props.start);
-        }
 
-        this.loadMore();
-        this.paint();
+            this.loadMore();
+            this.paint();
+        });
+        
     }
     /**
      *  本地实际加载数据
      */
     public async loadMore() {
-        const data = getStore('activity/dividend/history');  
+        const data = await getStoreData('activity/dividend/history');  
         if (!data) return;
         const hList = data.list;
         const start = this.props.data.length;
@@ -154,7 +158,7 @@ export class Dividend extends Widget {
             this.props.firstClick = false;
 
             setTimeout(() => {// 数字动画效果执行完后刷新页面
-                getMining();
+                callGetMining();
                 this.initEvent();
                 this.paint();
             },500);
@@ -197,20 +201,20 @@ export class Dividend extends Widget {
      */
     private initEvent() {
         // 这里发起通信
-        getDividend();
-        getDividHistory();
+        callGetDividend();
+        callGetDividHistory();
     }
 }
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-register('activity/dividend/total', () => {
+registerStoreData('activity/dividend/total', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-register('activity/dividend/history', () => {
+registerStoreData('activity/dividend/history', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();

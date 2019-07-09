@@ -2,15 +2,14 @@
  * RedEnvDetail
  */
 import { ShareType } from '../../../../pi/browser/shareToPlatforms';
-import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { sharePerUrl, uploadFileUrlPrefix } from '../../../config';
-import { getInviteCode, getOneUserInfo, queryDetailLog } from '../../../net/pull';
-import { LuckyMoneyType } from '../../../store/interface';
-import { getStore } from '../../../store/memstore';
+import { sharePerUrl } from '../../../config';
+import { callGetInviteCode,callGetOneUserInfo, callQueryDetailLog, getStoreData } from '../../../middleLayer/wrap';
+import { uploadFileUrlPrefix } from '../../../publicLib/config';
+import { LuckyMoneyType } from '../../../publicLib/interface';
 import { getUserInfo } from '../../../utils/tools';
 
 // ================================================导出
@@ -33,7 +32,7 @@ export class RedEnvDetail extends Widget {
     public language:any;
     public ok: () => void;
 
-    public setProps(props: Json, oldProps?: Json)  {
+    public setProps(props: Props, oldProps?: Props)  {
         super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
         this.props = {
@@ -55,19 +54,20 @@ export class RedEnvDetail extends Widget {
     }
 
     public async initData() {
-        const value = await queryDetailLog(getStore('user/conUid'),this.props.rid);
+        const uid = await getStoreData('user/conUid');
+        const value = await callQueryDetailLog(uid,this.props.rid);
         if (!value) return;
         this.props.redBagList = value[0];        
         this.props.message = value[1];
 
-        const user = getUserInfo();
+        const user = await getUserInfo();
         if (!user) return;
         this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
         this.props.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
 
         const redBagList = value[0];
         for (const i in redBagList) {
-            const user = await getOneUserInfo([redBagList[i].cuid]);
+            const user = await callGetOneUserInfo([redBagList[i].cuid]);
             this.props.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
             // tslint:disable-next-line:max-line-length
             this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../res/image/default_avater_big.png'; 
@@ -102,7 +102,7 @@ export class RedEnvDetail extends Widget {
     public async againSend() {
         let url = '';
         let title = '';
-        const lanSet = getStore('setting/language');
+        const lanSet = await getStoreData('setting/language');
         let lan:any;
         if (lanSet) {
             lan = lanSet;
@@ -119,7 +119,7 @@ export class RedEnvDetail extends Widget {
             url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
             title = this.language.redEnvType[1]; 
         } else if (this.props.rid === '-1') {
-            const inviteCodeInfo = await getInviteCode();
+            const inviteCodeInfo = await callGetInviteCode();
             if (inviteCodeInfo.result !== 1) return;
                 
             url = `${sharePerUrl}?cid=${inviteCodeInfo.cid}&type=${LuckyMoneyType.Invite}&lan=${lan}`;

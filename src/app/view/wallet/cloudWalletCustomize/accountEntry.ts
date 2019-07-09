@@ -5,11 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
-import { getAccountDetail } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
-import { getStore, register } from '../../../store/memstore';
-import { timestampFormat } from '../../../utils/tools';
+import { callGetAccountDetail } from '../../../middleLayer/wrap';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { timestampFormat } from '../../../publicLib/tools';
+import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -21,32 +21,46 @@ interface Props {
 }
 export class AccountEntry extends Widget {
     public props:any;
+    public create() {
+        super.create();
+        this.props = {
+            ...this.props,
+            recordList:[],
+            nextStart:'',
+            canLoadMore:false,
+            isRefreshing:false
+        };
+    }
     public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
         this.init();
     }
     public init() {
-        const allLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]);
-        console.log('allLogs',allLogs);
-        this.props = {
-            ...this.props,
-            recordList:this.parseRecordList(allLogs.rechargeLogs.list),
-            nextStart:allLogs.otherLogs.start,
-            canLoadMore:allLogs.otherLogs.canLoadMore,
-            isRefreshing:false
-        };
+        getCloudWallets().then(cloudWallets => {
+            const allLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]);
+            this.props.recordList = this.parseRecordList(allLogs.rechargeLogs.list);
+            this.props.nextStart = allLogs.otherLogs.start;
+            this.props.canLoadMore = allLogs.otherLogs.canLoadMore;
+            this.paint();
+        });
     }
     /**
      * 更新props数据
      */
     public updateRecordList() {
         if (!this.props) return;
-        const allLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]);
-        this.props.nextStart = allLogs.otherLogs.start;
-        this.props.canLoadMore = allLogs.otherLogs.canLoadMore;
-        this.props.recordList = this.parseRecordList(allLogs.rechargeLogs.list);
+        getCloudWallets().then(cloudWallets => {
+            const allLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]);
+            this.props.recordList = this.parseRecordList(allLogs.rechargeLogs.list);
+            this.props.nextStart = allLogs.otherLogs.start;
+            this.props.canLoadMore = allLogs.otherLogs.canLoadMore;
+            this.paint();
+        });
         this.props.isRefreshing = false;
-        this.paint();
     }
 
     // tslint:disable-next-line:typedef
@@ -67,7 +81,7 @@ export class AccountEntry extends Widget {
     }
 
     public loadMore() {
-        getAccountDetail(this.props.currencyName,0,this.props.nextStart);
+        callGetAccountDetail(this.props.currencyName,0,this.props.nextStart);
     }
     public getMoreList() {
         const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
@@ -92,7 +106,7 @@ export class AccountEntry extends Widget {
     }
 }
 
-register('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();

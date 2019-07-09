@@ -11,8 +11,10 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { getStore, register } from '../../../store/memstore';
-import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
+import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,callGetInviteCode, getStoreData } from '../../../middleLayer/wrap';
+import { LuckyMoneyType } from '../../../publicLib/interface';
+import { getUserInfo, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
@@ -28,14 +30,11 @@ export class PlayHome extends Widget {
     
     constructor() {
         super();
-        console.time('loginMod thirdApiPromise');
-        console.time('loginMod thirdApiDependPromise');
         this.thirdApiPromise = new Promise((resolve) => {
             const path = 'app/api/thirdApi.js.txt';
             loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
-                console.timeEnd('loginMod thirdApiPromise');
                 resolve(content);
             }, () => {
                 //
@@ -49,7 +48,6 @@ export class PlayHome extends Widget {
             loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
-                console.timeEnd('loginMod thirdApiDependPromise');
                 resolve(content);
             }, () => {
                 //
@@ -66,15 +64,21 @@ export class PlayHome extends Widget {
         };
         super.setProps(this.props);
         console.log(props);
-        const userInfo = getUserInfo();
-        if (userInfo) {
-            this.props.avatar = userInfo.avatar;
-            this.props.refresh = false;
-        }
+        this.props.refresh = false;
         this.props.gameList = gameList;
         this.props.activityList = activityList;
         this.props.loaded = false;
-
+        getUserInfo().then(userInfo => {
+            if (userInfo) {
+                this.props.avatar = userInfo.avatar;
+                this.props.nickName = userInfo.nickName;
+                this.paint();
+            }
+        });
+        callGetInviteCode().then(inviteCodeInfo => {
+            this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
+            this.paint();
+        });
     }
 
     public attach() {
@@ -141,10 +145,12 @@ export class PlayHome extends Widget {
     /**
      * 点击游戏
      */
-    public gameClick(num:number) {
+    public async gameClick(num:number) {
         closePopFloatBox();
-        if (!getStore('user/id')) return;
-        if (!getStore('user/isLogin')) {
+        const id = await getStoreData('user/id');
+        if (!id) return;
+        const isLogin = await getStoreData('user/isLogin');
+        if (!isLogin) {
             popNewMessage('登录中,请稍后再试');
 
             return;
@@ -158,11 +164,19 @@ export class PlayHome extends Widget {
             const gameTitle = gameList[num].title.zh_Hans;
             const gameUrl =   gameList[num].url;
             const webviewName = gameList[num].webviewName;
+            const [addrInfo,baseUrl] = await Promise.all([callGetCurrentAddrInfo('ETH'),callGetEthApiBaseUrl()]);
             const pi3Config:any = getPi3Config();
+            pi3Config.web3EthDefaultAccount = addrInfo.addr;
+            pi3Config.web3ProviderNetWork = baseUrl;
             pi3Config.appid = gameList[num].appid;
             pi3Config.gameName = gameTitle;
             pi3Config.webviewName = webviewName;
-            
+            pi3Config.apkDownloadUrl = gameList[num].apkDownloadUrl;
+            pi3Config.userInfo = {
+                nickName:this.props.nickName,
+                inviteCode:this.props.inviteCode
+            };
+
             const pi3ConfigStr = `
                 window.pi_config = ${JSON.stringify(pi3Config)};
             `;
@@ -181,7 +195,6 @@ export class PlayHome extends Widget {
      * @param index 序号
      */
     public activityClick(index:number) {
-        if (!hasWallet()) return;
         popNew3(this.props.activityList[index].url);
     }
 
@@ -189,38 +202,42 @@ export class PlayHome extends Widget {
      * 默认进入游戏
      */
     public defaultEnterGame() {
-        console.log(`getStore('user/isLogin') = ${getStore('user/isLogin')},isActive = ${this.props.isActive}`);
+        // TODO  暂时屏蔽默认进入游戏
+        return;
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
-        const phoneNumber = getUserInfo().phoneNumber;    
-        console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
-        if (!firstEnterGame || phoneNumber) {
-            if (!getStore('user/isLogin')  || !this.props.isActive || hasEnterGame) {
-                console.log('defaultEnterGame failed');
-    
-                return;
-            } else {
-                console.log('defaultEnterGame success');
-                this.gameClick(0);
-                localStorage.setItem('firstEnterGame','true');
+        Promise.all([getUserInfo(),getStoreData('user/isLogin')]).then(([userInfo,isLogin]) => {
+            const phoneNumber = userInfo.phoneNumber;    
+            console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
+            if (!firstEnterGame || phoneNumber) {
+                if (!isLogin  || !this.props.isActive || hasEnterGame) {
+                    console.log('defaultEnterGame failed');
+        
+                    return;
+                } else {
+                    console.log('defaultEnterGame success');
+                    this.gameClick(0);
+                    localStorage.setItem('firstEnterGame','true');
+                }
             }
-        }
+        });
     }
 
 }
 let hasEnterGame = false;
 // ========================================
-register('user/info',() => {
+registerStoreData('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        const userInfo = getUserInfo();
-        if (userInfo) {
-            w.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
-        }
-        w.paint();
+        getUserInfo().then(userInfo => {
+            if (userInfo) {
+                w.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
+                w.paint();
+            }
+        });
     }
 });
 
-register('user/isLogin', (isLogin:boolean) => {
+registerStoreData('user/isLogin', (isLogin:boolean) => {
     setTimeout(() => {
         const w:any = forelet.getWidget(WIDGET_NAME);
         w && w.defaultEnterGame();

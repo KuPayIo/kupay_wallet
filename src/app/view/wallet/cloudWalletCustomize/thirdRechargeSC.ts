@@ -4,12 +4,13 @@
 
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
-import { getAccountDetail } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
-import { getCloudBalances, getStore } from '../../../store/memstore';
-import { SCPrecision, SCUnitprice, wxPayShow } from '../../../utils/constants';
+import { callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
+import { SCPrecision } from '../../../publicLib/config';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { SCUnitprice, wxPayShow } from '../../../utils/constants';
 import { confirmPay, OrderDetail, PayType } from '../../../utils/recharge';
+import { getCloudBalances } from '../../../viewLogic/common';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,20 +21,30 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class ThirdRechargeSC  extends Widget {
     public ok: (rechargeSuccess?:boolean) => void;
     public setProps(props: any) {
-        const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
-        const needPay = (props.order.total_fee - scBalance * SCPrecision) / SCPrecision;
+        
         this.props = {
             ...props,
-            acc_id:getStore('user/info').acc_id,
+            acc_id:'',
             scShow:getModulConfig('SC_SHOW'),
-            scBalance,
+            scBalance:0,
             total_fee_show:props.order.total_fee / SCPrecision,
-            needPay,
+            needPay:true,
             payType: PayType.WX,
             walletName:getModulConfig('WALLET_NAME')
 
         };
         super.setProps(this.props);
+        getCloudBalances().then(cloudBalances => {
+            const scBalance = cloudBalances.get(CloudCurrencyType.SC);
+            this.props.scBalance = scBalance;
+            const needPay = (props.order.total_fee - scBalance * SCPrecision) / SCPrecision;
+            this.props.needPay = needPay;
+            this.paint();
+        });
+        getStoreData('user/info').then(info => {
+            this.props.acc_id = info.acc_id;
+            this.paint();
+        });
     }
 
     /**
@@ -51,7 +62,7 @@ export class ThirdRechargeSC  extends Widget {
         };
         confirmPay(orderDetail).then(res => {
             if (res) {
-                getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
+                callGetAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
                 this.props.okCB && this.props.okCB();
                 setTimeout(() => {
                     this.ok && this.ok(true);

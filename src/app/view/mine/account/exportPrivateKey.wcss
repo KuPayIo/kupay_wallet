@@ -5,8 +5,10 @@
 .container{
     flex: 1 0 0;
     margin: 30px 20px 0;
+    display: flex;
 }
 .currency-container{
+    flex: 1 0 0;
     overflow-x: hidden;
     overflow-y: auto;
     scroll-behavior: smooth;

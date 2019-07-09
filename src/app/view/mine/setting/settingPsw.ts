@@ -4,11 +4,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { setStore } from '../../../store/memstore';
+import { callPasswordChange, callVerifyIdentidy,setStoreData } from '../../../middleLayer/wrap';
 import { pswEqualed } from '../../../utils/account';
 import { defaultPassword } from '../../../utils/constants';
 import { getUserInfo, popNewLoading, popNewMessage } from '../../../utils/tools';
-import { passwordChange, VerifyIdentidy } from '../../../utils/walletTools';
 
 export class SettingPsw extends Widget {
     public props: any;
@@ -68,7 +67,7 @@ export class SettingPsw extends Widget {
             return;
         }
         const loading = popNewLoading('正在设置');
-        const secretHash = await VerifyIdentidy(defaultPassword);
+        const secretHash = await callVerifyIdentidy(defaultPassword);
         // 判断原密码是否正确
         if (!secretHash) {
             popNewMessage('设置失败');
@@ -76,12 +75,12 @@ export class SettingPsw extends Widget {
 
             return;
         }
-        await passwordChange(secretHash, this.props.walletPsw);
+        await callPasswordChange(secretHash, this.props.walletPsw);
         loading.callback(loading.widget);
         popNewMessage('设置成功');
-        setStore('flags/setPsw',false);
+        setStoreData('flags/setPsw',false);
         this.ok && this.ok();
-        const userInfo = getUserInfo();
+        const userInfo = await getUserInfo();
         if (!userInfo.phoneNumber) {
             popNew('app-view-mine-setting-phone',{ jump:true });
         }

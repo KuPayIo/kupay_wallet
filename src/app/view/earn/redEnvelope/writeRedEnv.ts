@@ -6,13 +6,15 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
-import { getRealUser, getServerCloudBalance, sendRedEnvlope } from '../../../net/pull';
-import { CloudCurrencyType, LuckyMoneyType } from '../../../store/interface';
-import { getCloudBalances, getStore, register, setStore } from '../../../store/memstore';
-import { currencyType, popNewLoading, popNewMessage } from '../../../utils/tools';
-import { VerifyIdentidy } from '../../../utils/walletTools';
+import { callGetServerCloudBalance,callVerifyIdentidy, setStoreData } from '../../../middleLayer/wrap';
+import { sendRedEnvlope } from '../../../net/pull';
+import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { currencyType } from '../../../publicLib/tools';
+import { getUserInfo, popNewLoading, popNewMessage } from '../../../utils/tools';
+import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
 // ================================================导出
+
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
@@ -40,33 +42,33 @@ export class WriteRedEnv extends Widget {
 
     public props:Props = {
         ktShow:getModulConfig('KT_SHOW'),
-        list: [],
+        list: [
+            { img: '../../res/image1/currency/KT.png', name: 'KT', num: 0 },
+            { img: '../../res/image1/currency/BTC.png', name: 'BTC', num:0 },
+            { img: '../../res/image1/currency/ETH.png', name: 'ETH', num:0 }
+        ],
         selected: 0,
         showPin: false,
         totalAmount: 0,
         totalNum: 0,
         oneAmount: 0,
         message: '',
-        realUser: getStore('user/info/isRealUser'),
+        realUser: false,
         forceHide:false,
         ktBalance:0,
         inFlag:''
     };
-    constructor() {
-        super();
-    }
 
     public create() {
         super.create();
         this.language = this.config.value[getLang()];
         this.updateBalance();
-        if (!this.props.realUser) {
-            getRealUser();
-        }
+        getUserInfo().then(userInfo => {
+            this.props.realUser = userInfo.isRealUser || !!userInfo.phoneNumber;
+        });
     }
 
     public setProps(props:any) {
-        super.setProps(this.props);
         console.log(props);
         this.props = {
             ...this.props,
@@ -74,30 +76,21 @@ export class WriteRedEnv extends Widget {
             ktShow:getModulConfig('KT_SHOW'),
             totalNum: props.inFlag === 'chat_user' ? 1 :0 // 单聊发送的红包只能固定为一个
         };
-    }
-
-    /**
-     * 更新真实用户
-     */
-    public updateRealUser() {
-        this.props.realUser = getStore('user/info/isRealUser');
+        super.setProps(this.props);
     }
 
     /**
      * 更新余额
      */
     public updateBalance() {
-        const list = [
-            { img: '../../res/image1/currency/KT.png', name: 'KT', num: 500 },
-            { img: '../../res/image1/currency/BTC.png', name: 'BTC', num: 0.01 },
-            { img: '../../res/image1/currency/ETH.png', name: 'ETH', num: 0.5 }
-        ];
-        const data = getCloudBalances();
-        for (const i in list) {
-            list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
-        }
-        this.props.list = list;
-        this.paint(true);
+        getCloudBalances().then(data => {
+            const list = this.props.list;
+            for (const i in list) {
+                list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
+            }
+            this.props.list = list;
+            this.paint(true);
+        });
     }
 
     public backPrePage() {
@@ -235,7 +228,7 @@ export class WriteRedEnv extends Widget {
         },
             async (r) => {
                 const close = popNewLoading(this.language.loading);
-                const secretHash = await VerifyIdentidy(r);
+                const secretHash = await callVerifyIdentidy(r);
                 close.callback(close.widget);
                 if (secretHash) {
                     this.sendRedEnv(secretHash);
@@ -265,8 +258,8 @@ export class WriteRedEnv extends Widget {
             this.props.totalNum = 0;
             this.props.totalAmount = 0;
             this.props.message = '';
-            getServerCloudBalance();// 更新余额
-            setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
+            callGetServerCloudBalance();// 更新余额
+            setStoreData('activity/luckyMoney/sends', undefined);// 更新红包记录
             this.paint(true);
         });
         if (this.props.inFlag === 'chat_user' || this.props.inFlag === 'chat_group') {
@@ -305,16 +298,9 @@ export class WriteRedEnv extends Widget {
 
 }
 // =====================================本地
-register('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
-    }
-});
-
-register('user/info/isRealUser', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateRealUser();
     }
 });

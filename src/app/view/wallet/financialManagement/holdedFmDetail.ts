@@ -5,11 +5,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { buyBack, getPurchaseRecord } from '../../../net/pull';
-import { PurchaseHistory } from '../../../store/interface';
-import { register } from '../../../store/memstore';
+import { callGetPurchaseRecord,callVerifyIdentidy } from '../../../middleLayer/wrap';
+import { buyBack } from '../../../net/pull';
+import { PurchaseHistory } from '../../../publicLib/interface';
 import { popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
-import { VerifyIdentidy } from '../../../utils/walletTools';
+import { registerStoreData } from '../../../viewLogic/common';
 interface Props {
     product:PurchaseHistory;
     index:number;
@@ -49,7 +49,7 @@ export class HoldedFmDetail extends Widget {
         const psw = await popPswBox();
         if (!psw) return;
         const close = popNewLoading(this.language.loading);
-        const secretHash = await VerifyIdentidy(psw);
+        const secretHash = await callVerifyIdentidy(psw);
         if (!secretHash) {
             popNewMessage(this.language.tips[0]);
             close.callback(close.widget);
@@ -60,7 +60,7 @@ export class HoldedFmDetail extends Widget {
         close.callback(close.widget);
         if (result) {
             popNewMessage(this.language.tips[1]);
-            getPurchaseRecord();
+            callGetPurchaseRecord();
         } else {
             popNewMessage(this.language.tips[2]);
         }
@@ -82,7 +82,7 @@ export class HoldedFmDetail extends Widget {
     }
 }
 
-register('activity/financialManagement/purchaseHistories',(purchaseRecord) => {
+registerStoreData('activity/financialManagement/purchaseHistories',(purchaseRecord) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         const data = {

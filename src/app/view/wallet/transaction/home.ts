@@ -4,12 +4,12 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { dataCenter } from '../../../logic/dataCenter';
-import { TxHistory, TxType } from '../../../store/interface';
-import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { calCurrencyLogoUrl, currencyExchangeAvailable, fetchBalanceValueOfCoin, formatBalance, formatBalanceValue, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, parseAccount, parseStatusShow, parseTxTypeShow, timestampFormat } from '../../../utils/tools';
-import { fetchTransactionList } from '../../../utils/walletTools';
+import { callCurrencyExchangeAvailable, callDcUpdateAddrInfo, callFetchBalanceValueOfCoin,callFetchTransactionList, callGetCurrentAddrInfo,getStoreData } from '../../../middleLayer/wrap';
+import { CurrencyRecord, TxHistory, TxType } from '../../../publicLib/interface';
+import { formatBalance, formatBalanceValue, timestampFormat } from '../../../publicLib/tools';
+import { calCurrencyLogoUrl, getCurrencyUnitSymbol, parseAccount, parseStatusShow, parseTxTypeShow } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -21,62 +21,93 @@ interface Props {
 }
 export class TransactionHome extends Widget {
     public props:any;
-
     public ok:() => void;
     public backPrePage() {
         this.ok && this.ok();
     }
+    public create() {
+        super.create();
+        this.props = {
+            ...this.props,
+            currencyLogo:'',
+            balance:0,
+            balanceValue:formatBalanceValue(0),
+            rate:formatBalanceValue(0),
+            txList:[],
+            canConvert:false,
+            redUp:true,
+            currencyUnitSymbol:'',
+            tabs:[{
+                tab:'全部',
+                list:[]
+            },{
+                tab:'转账',
+                list:[]
+            },{
+                tab:'收款',
+                list:[]
+            }],
+            activeNum:0,
+            address:''
+        };
+    }
     public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
+        const currencyName = props.currencyName;
+        this.props = {
+            ...this.props,
+            ...props,
+            currencyLogo:calCurrencyLogoUrl(currencyName)
+        };
+        super.setProps(this.props,oldProps);
         this.init();
-        dataCenter.updateAddrInfo(getCurrentAddrInfo(this.props.currencyName).addr,this.props.currencyName);
+        
     }
     public init() {
         const currencyName = this.props.currencyName;
-        const balance = formatBalance(getCurrentAddrInfo(this.props.currencyName).balance);
-        const balanceValue =  fetchBalanceValueOfCoin(currencyName,balance);
-        const txList = this.parseTxList();
-        const canConvert = this.canConvert();
-        const color = getStore('setting/changeColor','redUp');
-        const addr = parseAccount(getCurrentAddrByCurrencyName(currencyName));
-        
-        this.props = {
-            ...this.props,
-            currencyLogo:calCurrencyLogoUrl(currencyName),
-            balance,
-            balanceValue:formatBalanceValue(balanceValue),
-            rate:formatBalanceValue(fetchBalanceValueOfCoin(currencyName,1)),
-            txList,
-            canConvert,
-            redUp:color === 'redUp',
-            currencyUnitSymbol:getCurrencyUnitSymbol(),
-            tabs:[{
-                tab:'全部',
-                list:txList
-            },{
-                tab:'转账',
-                list:this.transferList(txList)
-            },{
-                tab:'收款',
-                list:this.receiptList(txList)
-            }],
-            activeNum:0,
-            address:addr
-        };
-        
+        callGetCurrentAddrInfo(currencyName).then(addrInfo => {
+            callDcUpdateAddrInfo(addrInfo.addr,currencyName);
+            callFetchTransactionList(addrInfo.addr,currencyName).then(orginTxList => {
+                this.parseTxList(orginTxList);
+            });
+            const balance = formatBalance(addrInfo.balance);
+            const balanceValue =  balance * Number(this.props.rate);
+            this.props.balance = balance;
+            this.props.balanceValue = balanceValue;
+            this.props.addrInfo = addrInfo;
+            this.props.address = parseAccount(addrInfo.addr);
+            this.paint();
+            
+        });
+        callFetchBalanceValueOfCoin(currencyName,1).then(oneBalanceValue => {
+            const balanceValue =  this.props.balance * oneBalanceValue;
+            this.props.balanceValue = balanceValue;
+            this.props.rate = formatBalanceValue(oneBalanceValue);
+            this.paint();
+        });
+        getStoreData('setting/changeColor','redUp').then(color => {
+            this.props.redUp = (color === 'redUp');
+            this.paint();
+        });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol;
+            this.paint();
+        });
+        this.canConvert();
     }
+
     // 解析txList
-    public parseTxList() {
-        const currencyName = this.props.currencyName;
-        const curAddr = getCurrentAddrByCurrencyName(currencyName);
-        const txList = fetchTransactionList(curAddr,currencyName);
+    public parseTxList(txList:any) {
         txList.forEach(item => {
             item.TimeShow = timestampFormat(item.time).slice(5);
             item.statusShow =  parseStatusShow(item).text; 
             item.txTypeShow = parseTxTypeShow(item.txType);
         });
 
-        return txList;
+        this.props.txList = txList;
+        this.props.tabs[0].list = txList;
+        this.props.tabs[1].list = this.transferList(txList);
+        this.props.tabs[2].list = this.receiptList(txList);
+        this.paint();
     }
     /**
      * 转账记录
@@ -103,17 +134,21 @@ export class TransactionHome extends Widget {
     }
 
     public canConvert() {
-        const convertCurrencys = currencyExchangeAvailable();
-        for (let i = 0;i < convertCurrencys.length;i++) {
-            if (convertCurrencys[i] === this.props.currencyName) {
-                return true;
+        callCurrencyExchangeAvailable().then(convertCurrencys => {
+            let canConvert = false;
+            for (let i = 0;i < convertCurrencys.length;i++) {
+                if (convertCurrencys[i] === this.props.currencyName) {
+                    canConvert = true;
+                    break;
+                }
             }
-        }
-
-        return false;
+            this.props.canConvert = canConvert;
+            this.paint();
+        });
     }
     public txListItemClick(e:any,index:number) {
-        popNew('app-view-wallet-transaction-transactionDetails',{ hash:this.props.txList[index].hash });
+        const hash = this.props.tabs[this.props.activeNum].list[index].hash;
+        popNew('app-view-wallet-transaction-transactionDetails',{ hash });
     }
     // 转账
     public doTransferClick() {
@@ -128,57 +163,60 @@ export class TransactionHome extends Widget {
         popNew('app-view-wallet-transaction-chooseAddr',{ currencyName:this.props.currencyName });
     }
     public updateRate() {
-        this.props.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
-        this.paint();
+        callFetchBalanceValueOfCoin(this.props.currencyName,1).then(rate => {
+            this.props.rate = formatBalanceValue(rate);
+            this.paint();
+        });
+        
     }
 
     public convertCurrencyClick() {
         popNew('app-view-wallet-coinConvert-coinConvert',{ currencyName:this.props.currencyName });
     }
 
-    public currencyUnitChange() {
-        this.props.rate = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,1));
-        this.props.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(this.props.currencyName,this.props.balance));
-        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
-        this.paint();
+    public refreshClick() {
+        callDcUpdateAddrInfo(this.props.addrInfo.addr,this.props.currencyName);
     }
 
-    public refreshClick() {
-        dataCenter.updateAddrInfo(getCurrentAddrInfo(this.props.currencyName).addr,this.props.currencyName);
+    public updateCurrencyRecords(currencyRecords: CurrencyRecord[]) {
+        const currencyName = this.props.currencyName;
+        callGetCurrentAddrInfo(currencyName).then(addrInfo => {
+            const balance = formatBalance(addrInfo.balance);
+            const balanceValue =  balance * this.props.rate;
+            this.props.balance = balance;
+            this.props.balanceValue = balanceValue;
+            this.props.addrInfo = addrInfo;
+            this.props.address = parseAccount(addrInfo.addr);
+            this.paint();
+            callFetchTransactionList(addrInfo.addr,currencyName).then(orginTxList => {
+                this.parseTxList(orginTxList);
+            });
+        });
+        
     }
 }
 
 // ==========================本地
 
 // 当前钱包变化
-register('wallet/currencyRecords',() => {
+registerStoreData('wallet/currencyRecords',(currencyRecords: CurrencyRecord[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
-        w.paint();
+        w.updateCurrencyRecords(currencyRecords);
     }
 });
 
 // 汇率变化
-register('third/rate', () => {
+registerStoreData('third/rate', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRate();
     }
 });
-
 // 涨跌幅变化
-register('third/currency2USDTMap', () => {
+registerStoreData('third/currency2USDTMap', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRate();
-    }
-});
-
-// 货币单位变化
-register('setting/currencyUnit',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.currencyUnitChange();
     }
 });

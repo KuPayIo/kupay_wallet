@@ -4,9 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { CreateWalletType } from '../../../logic/localWallet';
-import { doScanQrCode } from '../../../logic/native';
 import { mnemonicFragmentDecrypt, popNewMessage } from '../../../utils/tools';
+import { CreateWalletType } from '../../../viewLogic/localWallet';
+import { doScanQrCode } from '../../../viewLogic/native';
 import { forelet,WIDGET_NAME } from './home';
 
 export class FragmentImport extends Widget {

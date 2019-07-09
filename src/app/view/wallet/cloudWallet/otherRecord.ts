@@ -4,10 +4,10 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
-import { getStore, register } from '../../../store/memstore';
-import { timestampFormat } from '../../../utils/tools';
+import { callGetAccountDetail } from '../../../middleLayer/wrap';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { timestampFormat } from '../../../publicLib/tools';
+import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -19,35 +19,50 @@ interface Props {
 }
 export class OtherRecord extends Widget {
     public props:any;
+    public create() {
+        super.create();
+        this.props = {
+            ...this.props,
+            recordList:[],
+            nextStart:'',
+            canLoadMore:false,
+            isRefreshing:false
+        };
+    }
     public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
         this.init();
     }
     public init() {
         if (this.props.isActive) {
-            getAccountDetail(this.props.currencyName,1);
+            callGetAccountDetail(this.props.currencyName,1);
         }
-        const accountDetail = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).otherLogs;
-        this.props = {
-            ...this.props,
-            recordList:this.parseRecordList(accountDetail.list),
-            nextStart:accountDetail.start,
-            canLoadMore:accountDetail.canLoadMore,
-            isRefreshing:false
-        };
+        getCloudWallets().then(cloudWallets => {
+            const accountDetail = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).otherLogs;
+            this.props.recordList = this.parseRecordList(accountDetail.list);
+            this.props.nextStart = accountDetail.start;
+            this.props.canLoadMore = accountDetail.canLoadMore;
+            this.paint();
+        });
+
     }
     public updateRecordList() {
         if (!this.props) return;
-        const accountDetail = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).otherLogs;
-        const list = accountDetail.list;
-        this.props.nextStart = accountDetail.start;
-        this.props.canLoadMore = accountDetail.canLoadMore;
-        this.props.recordList = this.parseRecordList(list);
+        getCloudWallets().then(cloudWallets => {
+            const accountDetail = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).otherLogs;
+            this.props.recordList = this.parseRecordList(accountDetail.list);
+            this.props.nextStart = accountDetail.start;
+            this.props.canLoadMore = accountDetail.canLoadMore;
+            this.paint();
+        });
         this.props.isRefreshing = false;
-        this.paint();
     }
-    // tslint:disable-next-line:typedef
-    public parseRecordList(list) {
+
+    public parseRecordList(list:any) {
         list.forEach((item) => {
             item.amountShow = item.amount >= 0 ? `+${item.amount}` : `${item.amount}`;
             item.timeShow = timestampFormat(item.time).slice(5);
@@ -58,7 +73,7 @@ export class OtherRecord extends Widget {
     }
 
     public loadMore() {
-        getAccountDetail(this.props.currencyName,1,this.props.nextStart);
+        callGetAccountDetail(this.props.currencyName,1,this.props.nextStart);
     }
     public getMoreList() {
         const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
@@ -73,7 +88,7 @@ export class OtherRecord extends Widget {
     }
 }
 
-register('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();

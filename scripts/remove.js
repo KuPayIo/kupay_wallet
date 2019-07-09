@@ -2,8 +2,9 @@ const fs = require("fs");
 const init = (cfgPath) => {
     const str = fs.readFileSync(cfgPath, "utf8");
     const config = JSON.parse(str);
-    deleteall(config.dsts[0].path);
-    deleteall(config.dsts[1].path);
+    for(let i = 0;i < config.dsts.length - 1;i++){
+        deleteall(config.dsts[i].path);
+    }
     let arr = fs.readdirSync("./");
     arr.forEach(v => {
         if (v.indexOf(".depend") > -1) {

@@ -7,11 +7,10 @@ import { appLanguageList, LocalLanguageMgr } from '../../pi/browser/localLanguag
 import { HandlerMap } from '../../pi/util/event';
 import { setLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { defaultSetting } from '../config';
-import { topHeight } from '../utils/constants';
-import { deleteFile, getFile, getLocalStorage, initFileStore, setLocalStorage, writeFile } from './filestore';
+import { defaultSetting, topHeight } from '../publicLib/config';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, BtcMinerFee, ChangellyPayinAddr, ChangellyTempTxs, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Setting, Silver, Store, TxHistory, UserInfo, Wallet } from './interface';
+import { AddrInfo, BtcMinerFee, ChangellyPayinAddr, ChangellyTempTxs, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Setting, Silver, Store, TxHistory, UserInfo, Wallet } from '../publicLib/interface';
+import { deleteFile, getFile, getLocalStorage, initFileStore, initLocalStorageFileStore, setLocalStorage, writeFile } from './filestore';
 
 // ============================================ 导出
 
@@ -19,17 +18,19 @@ import { AddrInfo, BtcMinerFee, ChangellyPayinAddr, ChangellyTempTxs, CloudCurre
  * 初始化store
  */
 export const initStore = () => {
-    return new Promise(resolve => {
-        registerFileStore();    // 注册监听
-        initAccount();          // 账户初始化
+    registerFileStore();    // 注册监听
+        
+    return initFile().then(() => {
         initSettings();         // 设置初始化
         initThird();            // 三方数据初始化
         initInviteUsers();      // 邀请好友数据初始化
-        initFile().then(() => {
-            resolve();
-        });             // indexDb数据初始化
-    });
-    
+        
+        return initAccount().then(() => { // 账户初始化
+            initFileStore().then(() => {  // indexDb数据初始化
+                initTxHistory();         // 历史记录初始化
+            });
+        });          
+    });            
 };
 
 /**
@@ -47,7 +48,7 @@ const isObject = (value: any) => {
 export const deepCopy = (v: any): any => {
     if (!v || v instanceof Promise || !isObject(v)) return v;
     if (v instanceof Map) {
-        return new Map(JSON.parse(JSON.stringify(v)));
+        return new Map([...v]);
     }
 
     const newobj = v.constructor === Array ? [] : {};
@@ -140,6 +141,14 @@ export const getCloudBalances = () => {
 };
 
 /**
+ * vm 中JSON.stringify 对map 使用返回"{}"
+ * rpc调用的时候会使用JSON.stringify 需要转一下
+ */
+export const getCloudBalances1 = () => {
+    return [...getCloudBalances()];
+};
+
+/**
  * 初始化cloudWallets
  */
 export const initCloudWallets = () => {
@@ -164,31 +173,35 @@ export const initCloudWallets = () => {
  * 获取所有的账户列表
  */
 export const getAllAccount = () => {
-    const localAcccounts = getLocalStorage('accounts', {
+    return getLocalStorage('accounts', {
         currenctId: '',
         accounts: {}
+    }).then(localAcccounts => {
+        const accounts = [];
+        for (const key in localAcccounts.accounts) {
+            accounts.push(localAcccounts.accounts[key]);
+        }
+    
+        return accounts.sort((item1,item2) => {
+            return item2.wallet.logoutTimestamp - item1.wallet.logoutTimestamp;
+        });
     });
-    const accounts = [];
-    for (const key in localAcccounts.accounts) {
-        accounts.push(localAcccounts.accounts[key]);
-    }
-
-    return accounts.sort((item1,item2) => {
-        return item2.wallet.logoutTimestamp - item1.wallet.logoutTimestamp;
-    });
+    
 };
 
 /**
  * 删除账户
  */
 export const deleteAccount = (id: string) => {
-    const localAcccounts = getLocalStorage('accounts', {
+    return getLocalStorage('accounts', {
         currenctId: '',
         accounts: {}
+    }).then(localAcccounts => {
+        deleteFile(id);
+        delete localAcccounts.accounts[id];
+        setLocalStorage('accounts', localAcccounts);
     });
-    deleteFile(id);
-    delete localAcccounts.accounts[id];
-    setLocalStorage('accounts', localAcccounts);
+   
 };
 
 // ===================================================本地
@@ -196,17 +209,8 @@ export const deleteAccount = (id: string) => {
  * indexDB数据初始化
  */
 const initFile = () => {
-    return new Promise(resolve => {
-        initFileStore().then(() => {
-            const txHistoryPromise = initTxHistory();         // 历史记录初始化
-            // const activityPromise = initActivity();         // 活动初始化
-            Promise.all([txHistoryPromise]).then(() => {
-                resolve();
-            });
-            
-        });
-    });
-    
+    return initLocalStorageFileStore();
+
 };
 
 /**
@@ -253,69 +257,71 @@ const getTxHistory = (fileTxHistorys: FileTxHistory[], currencyName: string, add
  * 账户初始化
  */
 const initAccount = () => {
-    const localAcccounts = getLocalStorage('accounts', {
+    return getLocalStorage('accounts', {
         currenctId: '',
         accounts: {}
-    });
-    const curAccount = localAcccounts.accounts[localAcccounts.currenctId];
-    if (curAccount) {
-        const fileUser = curAccount.user;
-
-        // store.user init
-        store.user.id = fileUser.id;
-        store.user.token = fileUser.token;
-        store.user.publicKey = fileUser.publicKey;
-        store.user.salt = fileUser.salt;
-        store.user.info = {
-            ...fileUser.info
-        };
-
-        // store.cloud init
-        const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(curAccount.cloud.cloudWallets);
-        for (const [key, value] of localCloudWallets) {
-            const cloudWallet = store.cloud.cloudWallets.get(key);
-            cloudWallet.balance = localCloudWallets.get(key).balance;
-
-        }
-
-        // store.wallet init
-        const localWallet = curAccount.wallet;
-        const currencyRecords = [];
-        for (const localRecord of localWallet.currencyRecords) {
-            const addrs = [];
-            for (const info of localRecord.addrs) {
-                const addrInfo: AddrInfo = {
-                    addr: info.addr,
-                    balance: info.balance,
-                    txHistory: []
-                };
-                addrs.push(addrInfo);
-            }
-            const record: CurrencyRecord = {
-                currencyName: localRecord.currencyName,
-                currentAddr: localRecord.currentAddr,
-                addrs,
-                updateAddr: localRecord.updateAddr
+    }).then(localAcccounts => {
+        const curAccount = localAcccounts.accounts[localAcccounts.currenctId];
+        if (curAccount) {
+            const fileUser = curAccount.user;
+    
+            // store.user init
+            store.user.id = fileUser.id;
+            store.user.token = fileUser.token;
+            store.user.publicKey = fileUser.publicKey;
+            store.user.salt = fileUser.salt;
+            store.user.info = {
+                ...fileUser.info
             };
-            currencyRecords.push(record);
+    
+            // store.cloud init
+            const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(curAccount.cloud.cloudWallets);
+            for (const [key, value] of localCloudWallets) {
+                const cloudWallet = store.cloud.cloudWallets.get(key);
+                cloudWallet.balance = localCloudWallets.get(key).balance;
+    
+            }
+    
+            // store.wallet init
+            const localWallet = curAccount.wallet;
+            const currencyRecords = [];
+            for (const localRecord of localWallet.currencyRecords) {
+                const addrs = [];
+                for (const info of localRecord.addrs) {
+                    const addrInfo: AddrInfo = {
+                        addr: info.addr,
+                        balance: info.balance,
+                        txHistory: []
+                    };
+                    addrs.push(addrInfo);
+                }
+                const record: CurrencyRecord = {
+                    currencyName: localRecord.currencyName,
+                    currentAddr: localRecord.currentAddr,
+                    addrs,
+                    updateAddr: localRecord.updateAddr
+                };
+                currencyRecords.push(record);
+            }
+            
+            const wallet: Wallet = {
+                vault: localWallet.vault,
+                setPsw:localWallet.setPsw,
+                isBackup: localWallet.isBackup,
+                sharePart:false,
+                helpWord:false,
+                showCurrencys: localWallet.showCurrencys,
+                currencyRecords,
+                changellyPayinAddress:localWallet.changellyPayinAddress || [],
+                changellyTempTxs:localWallet.changellyTempTxs || [],
+                logoutTimestamp:localWallet.logoutTimestamp || 0
+            };
+            store.wallet = wallet;
+        } else {
+            store.user.salt = cryptoRandomInt().toString();
         }
-        
-        const wallet: Wallet = {
-            vault: localWallet.vault,
-            setPsw:localWallet.setPsw,
-            isBackup: localWallet.isBackup,
-            sharePart:false,
-            helpWord:false,
-            showCurrencys: localWallet.showCurrencys,
-            currencyRecords,
-            changellyPayinAddress:localWallet.changellyPayinAddress || [],
-            changellyTempTxs:localWallet.changellyTempTxs || [],
-            logoutTimestamp:localWallet.logoutTimestamp || 0
-        };
-        store.wallet = wallet;
-    } else {
-        store.user.salt = cryptoRandomInt().toString();
-    }
+    });
+    
 };
 
 /**
@@ -330,23 +336,24 @@ const initSettings = () => {
         success: (localLan) => {
             // tslint:disable-next-line:radix
             langNum = parseInt(localLan);
-            const localSet = getLocalStorage('setting');
-            if (!localSet) {
-                if (langNum === appLanguageList.zh_Hans || langNum === appLanguageList.zh_Hant) {
-                    setLang(appLanguageList[langNum]);
-                    store.setting.language = appLanguageList[langNum];
-                } else {
-                    setLang(defaultSetting.DEFAULT_LANGUAGE);
-                    store.setting.language = defaultSetting.DEFAULT_LANGUAGE;
+            getLocalStorage('setting').then(localSet => {
+                if (!localSet) {
+                    if (langNum === appLanguageList.zh_Hans || langNum === appLanguageList.zh_Hant) {
+                        setLang(appLanguageList[langNum]);
+                        store.setting.language = appLanguageList[langNum];
+                    } else {
+                        setLang(defaultSetting.DEFAULT_LANGUAGE);
+                        store.setting.language = defaultSetting.DEFAULT_LANGUAGE;
+                    }
                 }
-            }
-
+            });
+            
         },
         fail: (result) => {
             console.log(result);
         }
     });
-    const setting = getLocalStorage('setting', {
+    getLocalStorage('setting', {
         language: defaultSetting.DEFAULT_LANGUAGE,
         changeColor: defaultSetting.DEFAULT_CHANGECOLOR,
         currencyUnit: defaultSetting.DEFAULT_CURRENCY,
@@ -357,27 +364,30 @@ const initSettings = () => {
         deviceId: '',
         topHeight,
         bottomHeight:0
+    }).then(setting => {
+        store.setting = {
+            ...store.setting,
+            ...setting
+        };
+        setLang(setting.language);
     });
-    store.setting = {
-        ...store.setting,
-        ...setting
-    };
-    setLang(setting.language);
-
+    
 };
 
 /**
  * 三方数据初始
  */
 const initThird = () => {
-    const third = getLocalStorage('third');
-    if (!third) return;
-    store.third.gasPrice = third.gasPrice;
-    store.third.btcMinerFee = third.btcMinerFee;
-    store.third.rate = third.rate;
-    store.third.silver = third.silver;
-    store.third.gasLimitMap = new Map<string, number>(third.gasLimitMap);
-    store.third.currency2USDTMap = new Map<string, Currency2USDT>(third.currency2USDTMap);
+    getLocalStorage('third').then(third => {
+        if (!third) return;
+        store.third.gasPrice = third.gasPrice;
+        store.third.btcMinerFee = third.btcMinerFee;
+        store.third.rate = third.rate;
+        store.third.silver = third.silver;
+        store.third.gasLimitMap = new Map<string, number>(third.gasLimitMap);
+        store.third.currency2USDTMap = new Map<string, Currency2USDT>(third.currency2USDTMap);
+    });
+   
 };
 
 /**
@@ -443,11 +453,13 @@ const inviteUsersChange = () => {
  * 邀请好友数据初始
  */
 const initInviteUsers = () => {
-    const data = getLocalStorage('inviteUsers');
-    if (!data) return;
-    console.log('===========================邀请好友数据初始',data);
-    setStore('inviteUsers/invite_success',data.invite_success);
-    setStore('inviteUsers/convert_invite',data.convert_invite);
+    getLocalStorage('inviteUsers').then(data => {
+        if (!data) return;
+        console.log('===========================邀请好友数据初始',data);
+        setStore('inviteUsers/invite_success',data.invite_success);
+        setStore('inviteUsers/convert_invite',data.convert_invite);
+    });
+    
 };
 
 /**
@@ -455,92 +467,93 @@ const initInviteUsers = () => {
  */
 const accountChange = () => {
     const storeUser = getStore('user');
-    const localAccounts = getLocalStorage('accounts', {
+    
+    return getLocalStorage('accounts', {
         currenctId: '',
         accounts: {}
-    });
-
-    if (!storeUser.id) {
-        const flags = getStore('flags');
-        const saveAccount = flags.saveAccount;
-        if (saveAccount) {
-            localAccounts.accounts[localAccounts.currenctId].wallet.logoutTimestamp = new Date().getTime();
-            localAccounts.currenctId = '';
-            setLocalStorage('accounts', localAccounts);
-        } else {
-            deleteFile(localAccounts.currenctId);
-            delete localAccounts.accounts[localAccounts.currenctId];
-            localAccounts.currenctId = '';
-            setLocalStorage('accounts', localAccounts);
-
+    }).then(localAccounts => {
+        if (!storeUser.id) {
+            const flags = getStore('flags');
+            const saveAccount = flags.saveAccount;
+            if (saveAccount) {
+                localAccounts.accounts[localAccounts.currenctId].wallet.logoutTimestamp = new Date().getTime();
+                localAccounts.currenctId = '';
+                setLocalStorage('accounts', localAccounts);
+            } else {
+                deleteFile(localAccounts.currenctId);
+                delete localAccounts.accounts[localAccounts.currenctId];
+                localAccounts.currenctId = '';
+                setLocalStorage('accounts', localAccounts);
+    
+            }
+    
+            return;
         }
-
-        return;
-    }
-    const localUser: LocalUser = {
-        id: storeUser.id,
-        token: storeUser.token,
-        publicKey: storeUser.publicKey,
-        salt: storeUser.salt,
-        info: storeUser.info
-    };
-
-    const storeCloudWallets: Map<CloudCurrencyType, LocalCloudWallet> = getStore('cloud/cloudWallets');
-    const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>();
-
-    for (const [k, v] of storeCloudWallets) {
-        const cloudWallet: LocalCloudWallet = { balance: v.balance };
-        localCloudWallets.set(k, cloudWallet);
-    }
-
-    const wallet = getStore('wallet');
-    const fileTxHistorys = [];
-    let localWallet: LocalWallet = null;
-    if (wallet) {
-        const localCurrencyRecords = wallet.currencyRecords.map(record => {
-            const addrs = record.addrs.map(info => {
-                const fileTxHistory: FileTxHistory = {
-                    currencyName: record.currencyName,
-                    addr: info.addr,
-                    txHistory: info.txHistory
-                };
-                fileTxHistorys.push(fileTxHistory);
-
+        const localUser: LocalUser = {
+            id: storeUser.id,
+            token: storeUser.token,
+            publicKey: storeUser.publicKey,
+            salt: storeUser.salt,
+            info: storeUser.info
+        };
+    
+        const storeCloudWallets: Map<CloudCurrencyType, LocalCloudWallet> = getStore('cloud/cloudWallets');
+        const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>();
+    
+        for (const [k, v] of storeCloudWallets) {
+            const cloudWallet: LocalCloudWallet = { balance: v.balance };
+            localCloudWallets.set(k, cloudWallet);
+        }
+    
+        const wallet = getStore('wallet');
+        const fileTxHistorys = [];
+        let localWallet: LocalWallet = null;
+        if (wallet) {
+            const localCurrencyRecords = wallet.currencyRecords.map(record => {
+                const addrs = record.addrs.map(info => {
+                    const fileTxHistory: FileTxHistory = {
+                        currencyName: record.currencyName,
+                        addr: info.addr,
+                        txHistory: info.txHistory
+                    };
+                    fileTxHistorys.push(fileTxHistory);
+    
+                    return {
+                        addr: info.addr,
+                        balance: info.balance
+                    };
+                });
+    
                 return {
-                    addr: info.addr,
-                    balance: info.balance
+                    ...record,
+                    addrs
                 };
             });
-
-            return {
-                ...record,
-                addrs
+    
+            localWallet = {
+                vault: wallet.vault,
+                setPsw:wallet.setPsw,
+                isBackup: wallet.isBackup,
+                showCurrencys: wallet.showCurrencys,
+                currencyRecords: localCurrencyRecords,
+                changellyPayinAddress:wallet.changellyPayinAddress,
+                changellyTempTxs:wallet.changellyTempTxs,
+                logoutTimestamp:wallet.logoutTimestamp
             };
-        });
-
-        localWallet = {
-            vault: wallet.vault,
-            setPsw:wallet.setPsw,
-            isBackup: wallet.isBackup,
-            showCurrencys: wallet.showCurrencys,
-            currencyRecords: localCurrencyRecords,
-            changellyPayinAddress:wallet.changellyPayinAddress,
-            changellyTempTxs:wallet.changellyTempTxs,
-            logoutTimestamp:wallet.logoutTimestamp
+        }
+    
+        const newAccount: Account = {
+            user: localUser,
+            wallet: localWallet,
+            cloud: { cloudWallets: <any>[...localCloudWallets] }
         };
-    }
-
-    const newAccount: Account = {
-        user: localUser,
-        wallet: localWallet,
-        cloud: { cloudWallets: localCloudWallets }
-    };
-
-    localAccounts.currenctId = storeUser.id;
-    localAccounts.accounts[storeUser.id] = newAccount;
-
-    setLocalStorage('accounts', localAccounts);
-    writeFile(storeUser.id, fileTxHistorys);
+    
+        localAccounts.currenctId = storeUser.id;
+        localAccounts.accounts[storeUser.id] = newAccount;
+    
+        setLocalStorage('accounts', localAccounts);
+        writeFile(storeUser.id, fileTxHistorys);
+    });
 
 };
 
@@ -667,8 +680,6 @@ const store: Store = {
         convert_invite: null   // 邀请我的好友的accid
     }
 };
-
-initStore();
 
 // =======================localStorage interface===============================
 

@@ -5,22 +5,23 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { ERC20Tokens } from '../../../config';
-import { dataCenter } from '../../../logic/dataCenter';
-import { doScanQrCode } from '../../../logic/native';
-import { fetchBtcFees, fetchGasPrices } from '../../../net/pull';
-import { resendNormalTransfer, transfer, TxPayload } from '../../../net/pullWallet';
-import { MinerFeeLevel, TxHistory } from '../../../store/interface';
-import { register } from '../../../store/memstore';
+// tslint:disable-next-line:max-line-length
+import { callDcUpdateAddrInfo, callFetchBalanceValueOfCoin, callFetchBtcFees, callFetchGasPrices, callFetchMinerFeeList,callGetCurrentAddrInfo, callTransfer,callUpdateLocalTx } from '../../../middleLayer/wrap';
+import { ERC20Tokens } from '../../../publicLib/config';
+import { MinerFeeLevel, TxHistory, TxPayload } from '../../../publicLib/interface';
+import { formatBalance } from '../../../publicLib/tools';
 import { doErrorShow } from '../../../utils/toolMessages';
 // tslint:disable-next-line:max-line-length
-import { fetchBalanceValueOfCoin, formatBalance, getCurrencyUnitSymbol, getCurrentAddrByCurrencyName, getCurrentAddrInfo, getStaticLanguage, judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox, updateLocalTx } from '../../../utils/tools';
-import { fetchMinerFeeList } from '../../../utils/walletTools';
+import {  getCurrencyUnitSymbol, getStaticLanguage, judgeAddressAvailable, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
+import { resendNormalTransfer } from '../../../viewLogic/localWallet';
+import { doScanQrCode } from '../../../viewLogic/native';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 interface Props {
     currencyName:string;
     tx?:TxHistory;
@@ -35,38 +36,57 @@ export class Transfer extends Widget {
         this.init();
     }
 
-    public async init() {
+    public init() {
         this.language = this.config.value[getLang()];
         if (this.props.currencyName === 'BTC') {
-            fetchBtcFees();
+            callFetchBtcFees();
         } else {
-            fetchGasPrices();
+            callFetchGasPrices();
         }
-        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
+        callFetchMinerFeeList(this.props.currencyName).then(minerFeeList => {
+            this.props.minerFeeList = minerFeeList;
+            this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
+            this.paint();
+        });
         const tx = this.props.tx;
         const curLevel:MinerFeeLevel = tx ? tx.minerFeeLevel + 1 : MinerFeeLevel.Standard;
         this.props = {
             ...this.props,
-            fromAddr:getCurrentAddrByCurrencyName(this.props.currencyName),
+            fromAddr:'',
             // tslint:disable-next-line:binary-expression-operand-order
             toAddr:tx ? tx.toAddr : '' || (this.props.address || ''),
             amount:tx ? tx.pay : 0,
-            balance:formatBalance(getCurrentAddrInfo(this.props.currencyName).balance),
-            minerFee:minerFeeList[curLevel].minerFee,
-            minerFeeList,
+            balance:formatBalance(0),
+            minerFee:0,
+            minerFeeList:[],
             curLevel,
             minLevel:curLevel,
             inputDisabled:tx ? true : false,
             amountShow:'0.00',
-            currencyUnitSymbol:getCurrencyUnitSymbol()
+            currencyUnitSymbol:'',
+            rate:0
         };
+        callGetCurrentAddrInfo(this.props.currencyName).then(addrInfo => {
+            this.props.balance = formatBalance(addrInfo.balance);
+            this.props.fromAddr = addrInfo.addr;
+            this.paint();
+        });
+        callFetchBalanceValueOfCoin(this.props.currencyName,1).then(rate => {
+            this.props.rate = rate;
+        });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol;
+            this.paint();
+        });
+
     }
 
     public updateMinerFeeList() {
-        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
-        this.props.minerFeeList = minerFeeList;
-        this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
-        this.paint();
+        callFetchMinerFeeList(this.props.currencyName).then(minerFeeList => {
+            this.props.minerFeeList = minerFeeList;
+            this.props.minerFee = minerFeeList[this.props.curLevel].minerFee;
+            this.paint();
+        });
     }
     public backPrePage() {
         this.ok && this.ok();
@@ -95,8 +115,8 @@ export class Transfer extends Widget {
     // 转账金额变化
     public amountChange(e:any) {
         this.props.amount = e.value;
-        const amountShow = formatBalance(fetchBalanceValueOfCoin(this.props.currencyName,e.value));
-        this.props.amountShow =  amountShow === 0 ? '0.00' :amountShow;
+        const amountShow = formatBalance(this.props.amount * this.props.rate);
+        this.props.amountShow =  amountShow === 0 ? '0.00' : amountShow;
         this.paint();
     }
 
@@ -114,7 +134,8 @@ export class Transfer extends Widget {
         }
 
         if (ERC20Tokens[this.props.currencyName]) {
-            if (this.props.balance < Number(this.props.amount) || this.props.minerFee > getCurrentAddrInfo('ETH').balance) {
+            const ethAddrInfo = await callGetCurrentAddrInfo('ETH');
+            if (this.props.balance < Number(this.props.amount) || this.props.minerFee > ethAddrInfo.balance) {
                 popNewMessage(this.language.tips[2]);
     
                 return;
@@ -151,10 +172,11 @@ export class Transfer extends Widget {
         let ret;
         if (!this.props.tx) {
             const loading = popNewLoading(getStaticLanguage().transfer.loading);
-            transfer(passwd,txPayload).then(([err,tx]) => {
+            callTransfer(passwd,txPayload).then(([err,tx]) => {
                 if (!err) {
-                    updateLocalTx(tx);
-                    dataCenter.updateAddrInfo(tx.addr,tx.currencyName);
+                    callUpdateLocalTx(tx).then(() => {
+                        callDcUpdateAddrInfo(tx.addr,tx.currencyName);
+                    });
                     popNewMessage(getStaticLanguage().transfer.transSuccess);
                     popNew('app-view-wallet-transaction-transactionDetails', { hash:tx.hash });
                     this.ok && this.ok();
@@ -189,7 +211,7 @@ export class Transfer extends Widget {
 }
 
 // gasPrice变化
-register('third/gasPrice',() => {
+registerStoreData('third/gasPrice',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();
@@ -197,7 +219,7 @@ register('third/gasPrice',() => {
 });
 
 // btcMinerFee变化
-register('third/btcMinerFee',() => {
+registerStoreData('third/btcMinerFee',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateMinerFeeList();

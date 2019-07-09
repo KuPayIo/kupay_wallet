@@ -7,8 +7,8 @@ import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore, register as earnRegister } from '../../../earn/client/app/store/memstore';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { walletManualReconnect } from '../../net/login';
-import { getStore, register } from '../../store/memstore';
+import { callWalletManualReconnect,getStoreData } from '../../middleLayer/wrap';
+import { registerStoreData } from '../../viewLogic/common';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -24,7 +24,7 @@ export class OfflineTip extends Widget {
     public create() {
         super.create();
          // 钱包login
-        register('user/isLogin', (isLogin:boolean) => {
+        registerStoreData('user/isLogin', (isLogin:boolean) => {
             this.updateDate(OfflienType.WALLET,isLogin);
         });
 
@@ -54,18 +54,23 @@ export class OfflineTip extends Widget {
         this.props.reconnecting = true;   // 正在连接
         const offlienType = this.props.offlienType;
         if (offlienType === OfflienType.WALLET) {  // 钱包重连
-            walletManualReconnect();
+            callWalletManualReconnect();
         } else if (offlienType === OfflienType.CHAT) {  // 聊天重连
-            if (!getStore('user/isLogin')) {
-                walletManualReconnect();
-            }
+            getStoreData('user/isLogin').then(isLogin => {
+                if (!isLogin) {
+                    callWalletManualReconnect();
+                }
+            });
+           
             if (!chatGetStore('isLogin')) {
                 chatManualReconnect();
             }
         } else {   // 活动重连
-            if (!getStore('user/isLogin')) {
-                walletManualReconnect();
-            }
+            getStoreData('user/isLogin').then(isLogin => {
+                if (!isLogin) {
+                    callWalletManualReconnect();
+                }
+            });
             if (!earnGetStore('userInfo/isLogin')) {
                 earnManualReconnect();
             }
@@ -74,11 +79,14 @@ export class OfflineTip extends Widget {
     }
 
     public updateDate(offlienType:OfflienType,isLogin:boolean) {
-        if (offlienType === OfflienType.WALLET || offlienType === this.props.offlienType) {  // 钱包重连
-            this.props.isLogin = getStore('user/id') ?  isLogin : true;
-            this.props.reconnecting = false;
-            this.paint();
-        }
+        getStoreData('user/id').then(uid => {
+            if (offlienType === OfflienType.WALLET || offlienType === this.props.offlienType) {  // 钱包重连
+                this.props.isLogin = uid ?  isLogin : true;
+                this.props.reconnecting = false;
+                this.paint();
+            }
+        });
+        
     }
 }
 

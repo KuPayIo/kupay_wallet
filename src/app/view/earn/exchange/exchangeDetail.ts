@@ -5,10 +5,10 @@ import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { uploadFileUrlPrefix } from '../../../config';
-import { getOneUserInfo, queryDetailLog } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
-import { currencyType } from '../../../utils/tools';
+import { callGetOneUserInfo, callQueryDetailLog } from '../../../middleLayer/wrap';
+import { uploadFileUrlPrefix } from '../../../publicLib/config';
+import { CloudCurrencyType } from '../../../publicLib/interface';
+import { currencyType } from '../../../publicLib/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -62,7 +62,7 @@ export class ExchangeDetail extends Widget {
     }
 
     public async initData() {
-        const value = await queryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);
+        const value = await callQueryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);
         if (!value) return;
         this.props.redBagList = value[0];        
         this.props.message = value[1];
@@ -71,7 +71,7 @@ export class ExchangeDetail extends Widget {
         this.props.totalAmount = value[4];
 
         if (this.props.suid) {
-            const user = await getOneUserInfo([this.props.suid]);
+            const user = await callGetOneUserInfo([this.props.suid]);
             console.log('exchange detail user',user);
             if (!user) return;
             this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
@@ -84,7 +84,7 @@ export class ExchangeDetail extends Widget {
         }
         
         for (let i = 0;i < redBagList.length;i++) {
-            const person = await getOneUserInfo([redBagList[i].cuid]);
+            const person = await callGetOneUserInfo([redBagList[i].cuid]);
             if (!person) break;
             this.props.redBagList[i].userName = person.nickName ? person.nickName :this.language.defaultUserName;
             // tslint:disable-next-line:max-line-length

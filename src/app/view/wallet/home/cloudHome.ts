@@ -3,12 +3,13 @@
  */
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
-import { getProductList, getServerCloudBalance } from '../../../net/pull';
-import { CloudCurrencyType, Product } from '../../../store/interface';
-import { getStore, register } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { fetchCloudTotalAssets, fetchCloudWalletAssetList, formatBalanceValue, getCurrencyUnitSymbol, hasWallet, popNew3 } from '../../../utils/tools';
+import { callFetchCloudTotalAssets, callFetchCloudWalletAssetList,callGetProductList, callGetServerCloudBalance,getStoreData } from '../../../middleLayer/wrap';
+import { CloudCurrencyType, Product } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { formatBalanceValue } from '../../../publicLib/tools';
+import { getCurrencyUnitSymbol, popNew3 } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -18,30 +19,55 @@ interface Props {
     isActive:boolean;
 }
 export class CloudHome extends Widget {
+    public create() {
+        super.create();
+        this.props = {
+            ...this.props,
+            totalAsset:formatBalanceValue(0),
+            assetList:[],
+            productList:[],
+            redUp:true,
+            currencyUnitSymbol:''
+        };
+    }
     public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
         this.props.financialModulIsShow = getModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
         this.init();
         if (props.isActive) {
-            getProductList();
-            getServerCloudBalance();
+            callGetProductList();
+            callGetServerCloudBalance();
         }
     }
     public init() {
-        const color = getStore('setting/changeColor','redUp');
-        this.props = {
-            ...this.props,
-            totalAsset:formatBalanceValue(fetchCloudTotalAssets()),
-            assetList:fetchCloudWalletAssetList(),
-            productList:getStore('activity/financialManagement/products',[]),
-            redUp:color === 'redUp',
-            currencyUnitSymbol:getCurrencyUnitSymbol()
-        };
+        callFetchCloudTotalAssets().then(totalAsset => {
+            this.props.totalAsset = formatBalanceValue(totalAsset);
+            this.paint();
+        });
+        callFetchCloudWalletAssetList().then(assetList => {
+            this.props.assetList = assetList;
+            this.paint();
+        });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol;
+            this.paint();
+        });
+        getStoreData('setting/changeColor','redUp').then(color => {
+            this.props.redUp = color === 'redUp';
+            this.paint();
+        });
+        getStoreData('activity/financialManagement/products',[]).then(productList => {
+            this.props.productList = productList;
+            this.paint();
+        });
     }
 
     // 条目点击
     public itemClick(e:any) {
-        if (!hasWallet()) return;
         const index = e.index;
         const v = this.props.assetList[index];
         if (v.currencyName === CloudCurrencyType[CloudCurrencyType.SC] || v.currencyName === CloudCurrencyType[CloudCurrencyType.KT]) {
@@ -57,9 +83,14 @@ export class CloudHome extends Widget {
     }
     
     public updateBalance() {
-        this.props.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
-        this.props.assetList = fetchCloudWalletAssetList();
-        this.paint();
+        callFetchCloudTotalAssets().then(totalAsset => {
+            this.props.totalAsset = formatBalanceValue(totalAsset);
+            this.paint();
+        });
+        callFetchCloudWalletAssetList().then(assetList => {
+            this.props.assetList = assetList;
+            this.paint();
+        });
     }
     public optimalClick() {
         popNew3('app-view-wallet-financialManagement-home',{ activeNum:0 });
@@ -70,24 +101,31 @@ export class CloudHome extends Widget {
     }
 
     public currencyUnitChange() {
-        this.props.totalAsset = formatBalanceValue(fetchCloudTotalAssets());
-        this.props.assetList = fetchCloudWalletAssetList();
-        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
-        this.paint();
+        callFetchCloudTotalAssets().then(totalAsset => {
+            this.props.totalAsset = formatBalanceValue(totalAsset);
+            this.paint();
+        });
+        callFetchCloudWalletAssetList().then(assetList => {
+            this.props.assetList = assetList;
+            this.paint();
+        });
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol;
+            this.paint();
+        });
     }
 }
 
 // =======================本地
-register('user',() => {
+registerStoreData('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-        w.paint();
     }
 });
 
 // 云端余额变化
-register('cloud/cloudWallets',() => {
+registerStoreData('cloud/cloudWallets',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -95,7 +133,7 @@ register('cloud/cloudWallets',() => {
 });
 
 // 货币涨跌幅度变化
-register('currency2USDTMap',() => {
+registerStoreData('currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
@@ -103,7 +141,7 @@ register('currency2USDTMap',() => {
 });
 
 // 理财产品变化
-register('activity/financialManagement/products', async (productList) => {
+registerStoreData('activity/financialManagement/products', async (productList) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateProductList(productList);
@@ -112,31 +150,29 @@ register('activity/financialManagement/products', async (productList) => {
 });
 
 // 白银价格变化
-register('third/silver', () => {
+registerStoreData('third/silver', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();
     }
     
 });
-register('setting/language', () => {
+registerStoreData('setting/language', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-        w.paint();
     }
 });
 
-register('setting/changeColor', () => {
+registerStoreData('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
-        w.paint();
     }
 });
 
 // 货币单位变化
-register('setting/currencyUnit',() => {
+registerStoreData('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();

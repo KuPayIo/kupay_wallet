@@ -1,19 +1,16 @@
 /**
  * 授权、支付等API
  */
+import { goshare, ImageNameType } from '../../pi/browser/vm';
 import { WebViewManager } from '../../pi/browser/webview';
-import { popNew } from '../../pi/ui/root';
-import { sign } from '../core/genmnemonic';
-import { GlobalWallet } from '../core/globalWallet';
-import { getOpenId } from '../net/login';
-import { getOneUserInfo, requestAsync } from '../net/pull';
-import { CloudCurrencyType } from '../store/interface';
+import { SCPrecision } from '../publicLib/config';
+import { CloudCurrencyType, ThirdCmd } from '../publicLib/interface';
 import { getCloudBalances } from '../store/memstore';
-import { SCPrecision } from '../utils/constants';
-import { getUserInfo } from '../utils/tools';
-import { getMnemonicByHash, VerifyIdentidy } from '../utils/walletTools';
-import { getGameItem } from '../view/play/home/gameConfig';
-import { minWebview1 } from './thirdBase';
+import { getOpenId, requestAsync } from './login';
+import { postThirdPushMessage } from './postWalletMessage';
+import { getOneUserInfo } from './pull';
+import { goRecharge } from './recharge';
+import { exportPrivateKeyByMnemonic, genmnemonicSign, getMnemonicByHash, VerifyIdentidy } from './wallet';
 
 export enum resCode {
     SUCCESS = undefined,   // 成功
@@ -34,15 +31,15 @@ export enum SetNoPassword {
  */
 export const authorize = (payload, callback) => {
     console.log('authorize called',payload);
-    getOpenId(payload.appId).then(resData => {
+    getOpenId(payload.appId).then((resData) => {
         const ret:any = {};
         ret.openId = resData.openid;
-        if (payload.avatar) {
-            ret.avatar = getUserInfo().avatar;
-        }
-        if (payload.nickName) {
-            ret.nickName = getUserInfo().nickName;
-        }
+        // if (payload.avatar) {
+        //     ret.avatar = userInfo.avatar;
+        // }
+        // if (payload.nickName) {
+        //     ret.nickName = userInfo.nickName;
+        // }
         callback(undefined,ret);
     }).catch(err => {
         callback(err);
@@ -165,18 +162,16 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
             }
         } else { // 余额不够
             // TODO 跳转充值页面
-            minWebview1(webviewName);
+            // minWebview1(webviewName);
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
             console.log(`商户信息 ========== mch_id = ${order.mch_id}  mchInfo = ${mchInfo}`);
-            const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName,() => {
-                WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
-            });
-            if (rechargeSuccess) {  // 充值成功   直接购买
+            const [err,res] = await goRecharge(scBalance,fee_total);
+            if (!err) {  // 充值成功   直接购买
                 if (setNoPassword === SetNoPassword.SETED) {// 余额足够并且免密开启   直接购买
                     console.log('walletPay start------',order);
                     const payRes = await walletPay(order);
                     console.log('walletPay success',payRes);
-            
+                
                     return [undefined,{ result:PayCode.SUCCESS }];
                 } else if (setNoPassword === SetNoPassword.NOSETED) { // 余额足够  但是没有开启免密
                     return [undefined,{ result:PayCode.SETNOPASSWORD }]; 
@@ -184,25 +179,15 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
                     return [undefined,{ result:PayCode.EXCEEDLIMIT }]; 
                 }
             } else {
-                return [undefined,{ result:PayCode.RECHARGEFAILED }];
+                return [err,{ result:PayCode.RECHARGEFAILED }];
             }
+            
         }
     } catch (err) {
         console.log('thirdPay err =====',err);
 
         return [err,{ result:PayCode.FAILED }];
     }
-};
-
-/**
- * 跳转充值页面
- */
-const gotoRecharge = (order:ThirdOrder,beneficiary:string = '好嗨游戏',okCB:Function) => {
-    return new Promise(resolve => {
-        popNew('app-view-wallet-cloudWalletCustomize-thirdRechargeSC',{ order,beneficiary,okCB },(rechargeSuccess:boolean) => {
-            resolve(rechargeSuccess);
-        });
-    });
 };
 
 /**
@@ -219,7 +204,7 @@ const openPayment = (order: any) => {
 /**
  * 支付接口(输入密码进行支付)
  */
-const orderPay = (order: any,secretHash?:string) => {
+const orderPay = async (order: any,secretHash?:string) => {
     const signJson = {
         appid: order.appid,
         transaction_id: order.transaction_id,
@@ -229,7 +214,7 @@ const orderPay = (order: any,secretHash?:string) => {
     // tslint:disable-next-line:variable-name
     let no_password = SetNoPassword.SETED;  // 使用免密
     if (secretHash) {
-        signStr = getSign(signJson, secretHash);
+        signStr = await getSign(signJson, secretHash);
         no_password = SetNoPassword.NOSETED;
     }
     const param:any = {
@@ -306,7 +291,7 @@ const setNoPWD = async (appid:string,noPSW:number,secretHash:string) => {
         no_password: noPSW,
         nonce_str: Math.random().toFixed(5)
     };
-    const signStr = getSign(signJson, secretHash);
+    const signStr = await getSign(signJson, secretHash);
     const msg = {
         type: 'wallet/order@set_nopwd',
         param:{
@@ -345,11 +330,11 @@ export const closePayment = async (transactionId:string,okCb?:Function,failCb?:F
  * 获取签名
  * @param json 签名json
  */
-const getSign = (json:any,secretHash:string) => {
-    const mnemonic = getMnemonicByHash(secretHash);
-    const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
+const getSign = async (json:any,secretHash:string) => {
+    const mnemonic = await getMnemonicByHash(secretHash);
+    const privateKey = await exportPrivateKeyByMnemonic(mnemonic);
 
-    return sign(jsonUriSort(json), wlt.exportPrivateKey());
+    return genmnemonicSign(jsonUriSort(json), privateKey);
 };
 
 /**
@@ -369,4 +354,74 @@ const jsonUriSort = (json) => {
     }
 
     return msg;
+};
+
+ /**
+  * 关闭打开的webview
+  */
+export const closeWebview = (webviewName: string) => {
+    console.log('wallet closeWebview called');
+    WebViewManager.close(webviewName);
+};
+
+/**
+ * 最小化webview
+ */
+export const minWebview = (payload:{webviewName: string;popFloatBox:boolean}) => {
+    console.log('wallet minWebview called');
+    minWebview1(payload.webviewName);
+};
+
+/**
+ * 最小化webview
+ */
+export const minWebview1 = (webviewName: string) => {
+    console.log('wallet minWebview called');
+    WebViewManager.minWebView(webviewName);
+};
+
+/**
+ * 邀请好友
+ */
+export const inviteFriends = (payload:{webviewName: string;nickName:string;inviteCode:string;apkDownloadUrl:string}) => {
+    console.log('wallet inviteFriends called',JSON.stringify(payload));
+    // minWebview1(payload.webviewName);
+    // TODO 此处判断default webview是否活跃
+    // postThirdPushMessage(ThirdCmd.INVITE);
+    goshare(ImageNameType.Wallet,payload.nickName,payload.inviteCode,payload.apkDownloadUrl,() => {
+        console.log('分享成功');
+    },() => {
+        console.log('分享失败');
+    });
+};
+
+/**
+ * 去充值
+ */
+export const gotoRecharge = (webviewName: string) => {
+    console.log('wallet gotoRecharge called');
+    // minWebview1(webviewName);
+    // TODO 如果需要最小化 充值成功后重新打开  需要把所需参数回传
+    const scBalance = getCloudBalances().get(CloudCurrencyType.SC);
+    goRecharge(scBalance,0);
+};
+
+/**
+ * 游戏客服
+ */
+export const gotoGameService = (webviewName: string) => {
+    console.log('wallet gotoGameService called');
+    minWebview1(webviewName);
+    // TODO 此处判断default webview是否活跃
+    postThirdPushMessage(ThirdCmd.GAMESERVICE,webviewName);
+};
+
+/**
+ * 官方群聊
+ */
+export const gotoOfficialGroupChat = (webviewName: string) => {
+    console.log('wallet gotoOfficialGroupChat called');
+    minWebview1(webviewName);
+    // TODO 此处判断default webview是否活跃
+    postThirdPushMessage(ThirdCmd.OFFICIALGROUPCHAT,webviewName);
 };

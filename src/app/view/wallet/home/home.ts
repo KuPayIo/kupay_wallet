@@ -5,23 +5,20 @@
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { getServerCloudBalance } from '../../../net/pull';
-import { getStore, register } from '../../../store/memstore';
-import { getDataCenter } from '../../../utils/commonjsTools';
 // tslint:disable-next-line:max-line-length
-import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue, getCurrencyUnitSymbol, getUserInfo } from '../../../utils/tools';
+import { callDcUpdateBalance,callFetchCloudTotalAssets,callFetchLocalTotalAssets, callGetServerCloudBalance,getStoreData } from '../../../middleLayer/wrap';
+import { formatBalanceValue } from '../../../publicLib/tools';
+import { getCurrencyUnitSymbol, getUserInfo } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
 // ============================导出
+
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Home extends Widget {
-    public setProps(props:any,oldProps:any) {
-        super.setProps(props,oldProps);
-        this.pageInit();
-        this.dataInit();
-    }
-    public pageInit() {
+    public create() {
+        super.create();
         this.props = {
             offlienType:OfflienType.WALLET,
             tabs:[{
@@ -37,16 +34,30 @@ export class Home extends Widget {
             totalAsset:'',
             currencyUnitSymbol:''
         };
-        this.paint();
-        // console.log('updateTest');
+
+    }
+    public setProps(props:any,oldProps:any) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.dataInit();
     }
 
     public dataInit() {
-        const userInfo = getUserInfo();
-        this.props.avatar = userInfo && userInfo.avatar;
-        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
-        this.props.currencyUnitSymbol = getCurrencyUnitSymbol(); 
-        this.paint();
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol; 
+            this.paint();
+        });
+        getUserInfo().then(userInfo => {
+            this.props.avatar = userInfo && userInfo.avatar;
+            this.paint();
+        });
+        Promise.all([callFetchLocalTotalAssets(),callFetchCloudTotalAssets()]).then(([localTotalAssets,cloudTotalAssets]) => {
+            this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
+            this.paint();
+        });
     }
 
     public tabsChangeClick(event: any, value: number) {
@@ -55,20 +66,28 @@ export class Home extends Widget {
     }
 
     public userInfoChange() {
-        const userInfo = getUserInfo();
-        this.props.avatar = userInfo.avatar || '';
-        this.paint();
+        getUserInfo().then(userInfo => {
+            this.props.avatar = userInfo.avatar || '';
+            this.paint();
+        });
     }
 
     public updateTotalAsset() {
-        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
-        this.paint();
+        Promise.all([callFetchLocalTotalAssets(),callFetchCloudTotalAssets()]).then(([localTotalAssets,cloudTotalAssets]) => {
+            this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
+            this.paint();
+        });
     }
 
     public currencyUnitChange() {
-        this.props.totalAsset = formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets());
-        this.props.currencyUnitSymbol = getCurrencyUnitSymbol();
-        this.paint();
+        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
+            this.props.currencyUnitSymbol = currencyUnitSymbol; 
+            this.paint();
+        });
+        Promise.all([callFetchLocalTotalAssets(),callFetchCloudTotalAssets()]).then(([localTotalAssets,cloudTotalAssets]) => {
+            this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
+            this.paint();
+        });
     }
     
     /**
@@ -80,7 +99,6 @@ export class Home extends Widget {
             // 加载数据完成
             this.props.loaded = true;
             this.paint();
-
         },2000);
 
     }
@@ -103,22 +121,21 @@ export class Home extends Widget {
             this.props.refreshing = false;
             this.paint();
         },1000);
-        getServerCloudBalance();
-        const wallet = getStore('wallet');
-        if (!wallet) return;
-        const list = [];
-        wallet.currencyRecords.forEach(v => {
-            if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
-                v.addrs.forEach(addrInfo => {
-                    list.push({ addr: addrInfo.addr, currencyName: v.currencyName });
-                });
-                
-            }
-        });
-       
-        getDataCenter().then(dataCenter => {
+        callGetServerCloudBalance();
+        getStoreData('wallet').then(wallet => {
+            if (!wallet) return;
+            const list = [];
+            wallet.currencyRecords.forEach(v => {
+                if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
+                    v.addrs.forEach(addrInfo => {
+                        list.push({ addr: addrInfo.addr, currencyName: v.currencyName });
+                    });
+                    
+                }
+            });
+           
             list.forEach(v => {
-                dataCenter.updateBalance(v.addr, v.currencyName);
+                callDcUpdateBalance(v.addr, v.currencyName);
             });
         });
     }
@@ -126,14 +143,7 @@ export class Home extends Widget {
 }
 
 // ==========================本地
-register('user',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.dataInit();
-    }
-});
-
-register('user/info',() => {
+registerStoreData('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.userInfoChange();
@@ -141,29 +151,22 @@ register('user/info',() => {
 });
 
 // 云端余额变化
-register('cloud/cloudWallet',() => {
+registerStoreData('cloud/cloudWallet',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
     }
 });
 
-register('setting/language', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.pageInit();
-    }
-});
-
 // 货币涨跌幅度变化
-register('third/currency2USDTMap',() => {
+registerStoreData('third/currency2USDTMap',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTotalAsset();
     }
 });
 // 货币单位变化
-register('setting/currencyUnit',() => {
+registerStoreData('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();

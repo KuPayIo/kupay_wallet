@@ -6,8 +6,8 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { sharePerUrl } from '../../../config';
-import { LuckyMoneyType } from '../../../store/interface';
-import { getStore } from '../../../store/memstore';
+import { getStoreData } from '../../../middleLayer/wrap';
+import { LuckyMoneyType } from '../../../publicLib/interface';
 
 interface Props {
     rid: string;
@@ -15,7 +15,7 @@ interface Props {
     message: string;
 }
 export class SendRedEnv extends Widget {
-    public props: Props;
+    public props: any;
     public language:any;
     public ok: () => void;
 
@@ -23,16 +23,26 @@ export class SendRedEnv extends Widget {
         super.create();
         this.language = this.config.value[getLang()];
     }
+    public setProps(props:Props,oldProps:Props) {
+        super.setProps(props);
+        getStoreData('setting/language','zh_Hans').then(lan => {
+            this.props.lan = lan;
+        });
+        getStoreData('user').then(user => {
+            this.props.user = user;
+        });
+    }
 
     /**
      * 发红包
      */
-    public sendRedEnv() {
+    public async sendRedEnv() {
+        const lan = this.props.lan;
+        const user = this.props.user;
         let url = '';
         let title = '';
-        const lan = getStore('setting/language','zh_Hans');
-        const accId = getStore('user/info/acc_id');
-        const uid = getStore('user/conUid');
+        const accId = user.info.acc_id;
+        const uid = user.conUid;
         if (this.props.rtype === '00') {
             // tslint:disable-next-line:max-line-length
             url = `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${this.props.rid}&uid=${uid}&accId=${accId}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;

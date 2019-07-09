@@ -1,7 +1,7 @@
 /**
  * ETH wallet implementation
  */
-import { ERC20Tokens } from '../../config';
+import { ERC20Tokens } from '../../publicLib/config';
 import { getEthApiBaseUrl } from '../config';
 import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';

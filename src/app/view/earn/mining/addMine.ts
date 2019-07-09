@@ -4,9 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../modulConfig';
-import { getMineDetail } from '../../../net/pull';
-import { getStore, register } from '../../../store/memstore';
+import { callGetMineDetail,getStoreData } from '../../../middleLayer/wrap';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { registerStoreData } from '../../../viewLogic/common';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -69,7 +69,7 @@ export class Dividend extends Widget {
             ]
         };
         this.initData();
-        getMineDetail();
+        callGetMineDetail();
     }
 
     public backPrePage() {
@@ -91,21 +91,20 @@ export class Dividend extends Widget {
      * 获取更新数据
      */
     public initData() {
-        const detail = getStore('activity/mining/addMine');
-        // tslint:disable-next-line:max-line-length
-        if (detail && detail.length > 0) {
-            for (const i in this.props.data) {
-                this.props.data[i].isComplete = detail[i].isComplete;
-                this.props.data[i].itemKT = detail[i].itemNum;
+        getStoreData('activity/mining/addMine').then(detail => {
+            if (detail && detail.length > 0) {
+                for (const i in this.props.data) {
+                    this.props.data[i].isComplete = detail[i].isComplete;
+                    this.props.data[i].itemKT = detail[i].itemNum;
+                }
             }
-        }
-
-        this.paint();
-
+    
+            this.paint();
+        });
     }
 }
 
-register('activity/mining/addMine', () => {
+registerStoreData('activity/mining/addMine', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

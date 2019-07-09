@@ -5,9 +5,9 @@
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { getProductList, getPurchaseRecord } from '../../../net/pull';
-import { getStore } from '../../../store/memstore';
-import { fetchCloudTotalAssets, fetchLocalTotalAssets, formatBalanceValue } from '../../../utils/tools';
+// tslint:disable-next-line:max-line-length
+import { callFetchCloudTotalAssets, callFetchLocalTotalAssets,callGetProductList,callGetPurchaseRecord, getStoreData } from '../../../middleLayer/wrap';
+import { formatBalanceValue } from '../../../publicLib/tools';
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -25,11 +25,13 @@ export class Home extends Widget {
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.init();
-        getProductList();
-        if (getStore('user/id')) {
-            getPurchaseRecord();
-        }
-       
+        callGetProductList();
+        getStoreData('user/id').then(uid => {
+            if (uid) {
+                callGetPurchaseRecord();
+            }
+        });
+        
     }
     public init() {
         this.language = this.config.value[getLang()];
@@ -43,9 +45,13 @@ export class Home extends Widget {
                 components:'app-view-wallet-financialManagement-holdedFM'
             }],
             avatar:'',
-            totalAsset:formatBalanceValue(fetchLocalTotalAssets() + fetchCloudTotalAssets()),
+            totalAsset:formatBalanceValue(0),
             refreshing:false
         };
+        Promise.all([callFetchCloudTotalAssets(),callFetchLocalTotalAssets()]).then(([cloudTotal,localTotal]) => {
+            this.props.totalAsset = formatBalanceValue(cloudTotal + localTotal);
+            this.paint();
+        });
     }
     public tabsChangeClick(event: any, value: number) {
         this.props.activeNum = value;
@@ -56,15 +62,15 @@ export class Home extends Widget {
         this.props.refreshing = true;
         this.paint();
         if (this.props.activeNum === 0) {
-            getProductList().then(() => {
+            callGetProductList().then(() => {
                 this.props.refreshing = false;
-                console.log('getProductList refresh');
+                console.log('callGetProductList refresh');
                 this.paint();
             });
         } else {
-            getPurchaseRecord().then(() => {
+            callGetPurchaseRecord().then(() => {
                 this.props.refreshing = false;
-                console.log('getPurchaseRecord refresh');
+                console.log('callGetPurchaseRecord refresh');
                 this.paint();
             });
         }

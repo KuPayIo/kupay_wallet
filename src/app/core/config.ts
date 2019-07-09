@@ -1,4 +1,4 @@
-import { dev_mode, DevMode } from '../config';
+import { dev_mode, DevMode } from '../publicLib/config';
 
 /**
  * config file
@@ -9,7 +9,7 @@ export const config = {
     [DevMode.Ropsten]: {
         // https://api.blockcypher.com/v1/btc/main
         // tslint:disable-next-line:no-http-string
-        BtcApiBaseUrl: 'http://39.104.129.43:3002/insight-api',
+        BtcApiBaseUrl: 'https://test-insight.bitpay.com/api',
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
         // http://192.168.33.115:8545       
         EthApiBaseUrl: 'https://ropsten.infura.io/Y4zS49bjsYwtRU3Tt4Yj',
@@ -20,7 +20,7 @@ export const config = {
     [DevMode.Rinkeby]: {
         // https://api.blockcypher.com/v1/btc/main
         // tslint:disable-next-line:no-http-string
-        BtcApiBaseUrl: 'http://39.104.129.43:3002/insight-api',
+        BtcApiBaseUrl: 'https://test-insight.bitpay.com/api',
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
         // https://rinkeby.infura.io/Y4zS49bjsYwtRU3Tt4Yj
         // http://192.168.33.115:8545       
@@ -30,7 +30,7 @@ export const config = {
         EthscanRopstenTokenTransferEvent: 'https://api-rinkeby.etherscan.io/api?module=account&action=tokentx'
     },
     [DevMode.Prod]: {
-        BtcApiBaseUrl: 'http://39.104.129.43:3001/insight-api',
+        BtcApiBaseUrl: 'https://insight.bitpay.com/api',
         BtcMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1/?convert=CNY',
         EthApiBaseUrl: 'https://mainnet.infura.io/Y4zS49bjsYwtRU3Tt4Yj',
         EthMarketPriceOracleUrl: 'https://api.coinmarketcap.com/v2/ticker/1027/?convert=CNY',

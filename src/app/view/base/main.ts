@@ -9,57 +9,61 @@ import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore } from '../../../earn/client/app/store/memstore';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { getDeviceAllDetail } from '../../logic/native';
-import { walletManualReconnect } from '../../net/login';
-import { LockScreen } from '../../store/interface';
-import { getAllAccount, getStore, setStore } from '../../store/memstore';
+import { callGetAllAccount,callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
+import { LockScreen } from '../../publicLib/interface';
 import { piRequire } from '../../utils/commonjsTools';
+import { getScreenModify } from '../../viewLogic/native';
 
 // ============================== 导出
 export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查
-    checkUpdate();
-    // 打开首页面
+    // checkUpdate();
     popNew('app-view-base-app');
-    if (!getStore('user/id')) {
-        if (getAllAccount().length > 0) {
-            popNew('app-view-base-entrance1');
+    const start = new Date().getTime();
+    // 打开首页面
+    Promise.all([getStoreData('user/id'),callGetAllAccount()]).then(([id,accounts]) => {
+        console.log('获取id耗时 ====',new Date().getTime() - start);
+        if (!id) {
+            if (accounts.length > 0) {
+                popNew('app-view-base-entrance1');
+            } else {
+                popNew('app-view-base-entrance');
+            }
+                // 解决进入时闪一下问题
+            if (cb) cb();
         } else {
-            popNew('app-view-base-entrance');
+            if (cb) cb();
         }
-    }
+    });
+    
     // 锁屏页面
     popNewPage();
     // 预先从底层获取一些数据
     preFetchFromNative();
-    console.timeEnd('home enter');
     // app event 注册
     addAppEvent();
-    // 解决进入时闪一下问题
-    setTimeout(() => {
-        if (cb) cb();
-    }, 100);
 };
 
 /**
  * 界面入口
  */
 const popNewPage = () => {
-    if (ifNeedUnlockScreen()) {
-        popNew('app-components1-lockScreenPage-lockScreenPage', {
-            openApp: true
-        });
-    }
+    ifNeedUnlockScreen().then(locked => {
+        if (locked) {
+            popNew('app-components1-lockScreenPage-lockScreenPage', {
+                openApp: true
+            });
+        }
+    });
 };
 
 /**
  * 预先从底层获取一些数据
  */
 const preFetchFromNative = () => {
-    getDeviceAllDetail();
-    piRequire(['app/logic/native']).then(mods => {
-        mods[0].getScreenModify();
+    getScreenModify();
+    piRequire(['app/viewLogic/native']).then(mods => {
         // 预先随机下载
         mods[0].preLoadAd(undefined,() => {
             mods[0].preLoadAd(undefined,() => {
@@ -82,15 +86,21 @@ const addAppEvent = () => {
         // 注册appResumed
         addAppResumed(() => {
             console.log('addAppResumed callback called');
-            if (ifNeedUnlockScreen()) {
-                popNew('app-components-lockScreenPage-lockScreenPage', {
-                    openApp: true
-                });
-            }
-            setTimeout(() => {
-                if (!getStore('user/isLogin')) {
-                    walletManualReconnect();
+            ifNeedUnlockScreen().then(loccked => {
+                if (loccked) {
+                    popNew('app-components-lockScreenPage-lockScreenPage', {
+                        openApp: true
+                    });
                 }
+            });
+            
+            setTimeout(() => {
+                getStoreData('user/isLogin').then(isLogin => {
+                    if (!isLogin) {
+                        callWalletManualReconnect();
+                    }
+                });
+                
                 if (!chatGetStore('isLogin')) {
                     chatManualReconnect();
                 }
@@ -132,10 +142,10 @@ const addAppEvent = () => {
 /**
  * 是否需要解锁屏幕
  */
-const ifNeedUnlockScreen = () => {
+const ifNeedUnlockScreen = async () => {
     const unlockScreen = document.getElementById('keyboard');
     if (unlockScreen) return false;
-    const ls: LockScreen = getStore('setting/lockScreen',{});
+    const ls: LockScreen = await getStoreData('setting/lockScreen',{});
     const lockScreenPsw = ls.psw;
     const openLockScreen = ls.open !== false;
 

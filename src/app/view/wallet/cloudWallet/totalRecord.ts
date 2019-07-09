@@ -6,11 +6,11 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { getAccountDetail, getRechargeLogs, getWithdrawLogs } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
-import { getStore, register } from '../../../store/memstore';
-import { parseStatusShow, timestampFormat } from '../../../utils/tools';
-import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { callGetAccountDetail, callGetRechargeLogs, callGetWithdrawLogs,getStoreData } from '../../../middleLayer/wrap';
+import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
+import { timestampFormat } from '../../../publicLib/tools';
+import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
+import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -23,11 +23,8 @@ interface Props {
 
 export class TotalRecord extends Widget {
     public props:any;
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-    }
-    public init() {
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
             recordList:[], // 全部记录
@@ -40,10 +37,20 @@ export class TotalRecord extends Widget {
             canLoadMore:false,
             isRefreshing:false
         };
+    }
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.init();
+    }
+    public init() {
         if (this.props.isActive) {
-            getAccountDetail(this.props.currencyName,1);
-            getWithdrawLogs(this.props.currencyName);
-            getRechargeLogs(this.props.currencyName);
+            callGetAccountDetail(this.props.currencyName,1);
+            callGetWithdrawLogs(this.props.currencyName);
+            callGetRechargeLogs(this.props.currencyName);
         }
         this.updateRecordList();
     }
@@ -53,25 +60,22 @@ export class TotalRecord extends Widget {
      */
     public updateRecordList() {
         if (!this.props.currencyName) return;
-        const cloudWallets = getStore('cloud/cloudWallets');
-        const data1 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
-        this.props.rechargeNext = data1.start;
-        this.props.rechargeList = this.parseRechargeList(data1.list);
-
-        const data2 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).otherLogs;
-        this.props.otherNext = data2.start;
-        this.props.otherList = this.parseOtherList(data2.list);
-        const data3 = cloudWallets.get(CloudCurrencyType[this.props.currencyName]).withdrawLogs;
-        this.props.withdrawNext = data3.start;
-        this.props.withdrawList = this.parseWithdrawList(data3.list);
-
-        this.props.recordList = [].concat(this.props.rechargeList,this.props.otherList,this.props.withdrawList);
-        this.props.recordList.sort((v1,v2) => {
-            return v2.time - v1.time;
+        getCloudWallets().then(cloudWallets => {
+            const data1 = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).rechargeLogs;
+            this.props.rechargeNext = data1.start;
+            this.parseRechargeList(data1.list);
+    
+            const data2 = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).otherLogs;
+            this.props.otherNext = data2.start;
+            this.props.otherList = this.parseOtherList(data2.list);
+            const data3 = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).withdrawLogs;
+            this.props.withdrawNext = data3.start;
+            this.parseWithdrawList(data3.list);
+    
+            this.props.canLoadMore = data1.canLoadMore || data2.canLoadMore || data3.canLoadMore;
+            this.props.isRefreshing = false;
+            this.paint();
         });
-        this.props.canLoadMore = data1.canLoadMore | data2.canLoadMore | data3.canLoadMore;
-        this.props.isRefreshing = false;
-        this.paint();
     }
     /**
      * 解析其他记录
@@ -89,35 +93,47 @@ export class TotalRecord extends Widget {
      * 解析提币记录
      */
     public parseWithdrawList(list:any[]) {
-        const withdraw = { zh_Hans:'提币',zh_Hant:'提幣',en:'' };
-        list.forEach((item) => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
-            item.behavior = withdraw[getLang()];
-            item.amountShow = `-${item.amount}`;
-            item.timeShow = timestampFormat(item.time).slice(5);
-            item.iconShow = `cloud_withdraw_icon.png`;
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const withdraw = { zh_Hans:'提币',zh_Hant:'提幣',en:'' };
+            list.forEach((item) => {
+                const txDetail = fetchLocalTxByHash1(currencyRecords,item.hash);
+                const obj = parseStatusShow(txDetail);
+                item.statusShow = obj.text;
+                item.behavior = withdraw[getLang()];
+                item.amountShow = `-${item.amount}`;
+                item.timeShow = timestampFormat(item.time).slice(5);
+                item.iconShow = `cloud_withdraw_icon.png`;
+            });
+            this.props.withdrawList = list;
+            this.props.recordList = this.props.rechargeList.concat(this.props.withdrawList);
+            this.props.recordList.sort((v1,v2) => {
+                return v2.time - v1.time;
+            });
+            this.paint();
         });
-
-        return list;
     }
     /**
      * 解析充值记录
      */
     public parseRechargeList(list:any[]) {
-        const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
-        list.forEach((item) => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
-            item.behavior = recharge[getLang()];
-            item.amountShow = `+${item.amount}`;
-            item.timeShow = timestampFormat(item.time).slice(5);
-            item.iconShow = `cloud_charge_icon.png`;
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
+            list.forEach((item) => {
+                const txDetail =  fetchLocalTxByHash1(currencyRecords,item.hash);
+                const obj = parseStatusShow(txDetail);
+                item.statusShow = obj.text;
+                item.behavior = recharge[getLang()];
+                item.amountShow = `+${item.amount}`;
+                item.timeShow = timestampFormat(item.time).slice(5);
+                item.iconShow = `cloud_charge_icon.png`;
+            });
+            this.props.rechargeList = list;
+            this.props.recordList = this.props.rechargeList.concat(this.props.withdrawList);
+            this.props.recordList.sort((v1,v2) => {
+                return v2.time - v1.time;
+            });
+            this.paint();
         });
-
-        return list;
     }
 
     /**
@@ -133,9 +149,9 @@ export class TotalRecord extends Widget {
      * 请求更多数据
      */
     public loadMore() {
-        getAccountDetail(this.props.currencyName,0,this.props.otherNext);
-        getWithdrawLogs(this.props.currencyName,this.props.withdrawNext);
-        getRechargeLogs(this.props.currencyName,this.props.rechargeNext);
+        callGetAccountDetail(this.props.currencyName,0,this.props.otherNext);
+        callGetWithdrawLogs(this.props.currencyName,this.props.withdrawNext);
+        callGetRechargeLogs(this.props.currencyName,this.props.rechargeNext);
     }
 
     /**
@@ -157,18 +173,22 @@ export class TotalRecord extends Widget {
      * 更新交易状态
      */
     public updateTransaction() {
-        const list = this.props.rechargeList.concat(this.props.withdrawList);
-        list.forEach(item => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const list = this.props.rechargeList.concat(this.props.withdrawList);
+            list.forEach((item) => {
+                const txDetail = fetchLocalTxByHash1(currencyRecords,item.hash);
+                const obj = parseStatusShow(txDetail);
+                item.statusShow = obj.text;
+            });
+            this.props.recordList = list;
+            this.paint();
         });
-        this.paint();
+        
     }
 }
 
 // 云端记录变化
-register('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();
@@ -176,7 +196,7 @@ register('cloud/cloudWallets', () => {
 });
 
 // 本地交易变化,更新状态
-register('wallet/currencyRecords',() => {
+registerStoreData('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

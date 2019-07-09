@@ -3,8 +3,7 @@
  */
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { deleteMnemonic, helpWord } from '../../../logic/localWallet';
-import { popNewMessage, shuffle } from '../../../utils/tools';
+import { deleteMnemonic, helpWord, popNewMessage, shuffle } from '../../../utils/tools';
 
 interface Props {
     mnemonic: string;

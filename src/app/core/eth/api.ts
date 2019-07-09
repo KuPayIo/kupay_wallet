@@ -1,7 +1,8 @@
 /**
  * ETH api
  */
-import { DevMode } from '../../config';
+import { DevMode } from '../../publicLib/config';
+import { piFetch } from '../../publicLib/tools';
 import { config } from '../config';
 import { Web3 } from '../thirdparty/web3.min';
 
@@ -36,25 +37,18 @@ if (config.dev_mode === DevMode.Ropsten) {
 export class Api {
 
     public getBalance(address: string): Promise<any> {
-        return new Promise((resovle, reject) => {
-            try {
-                const response = fetch(ETH_API_BASE_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        id: 1,
-                        method: 'eth_getBalance',
-                        params: [address, 'latest']
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                resovle(response.then(res => res.json()));
-            } catch (e) {
-                reject(e);
+        return piFetch(ETH_API_BASE_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                id: 1,
+                method: 'eth_getBalance',
+                params: [address, 'latest']
+            }),
+            headers: {
+                'Content-Type': 'application/json'
             }
-
         });
+
     }
 
     public sendRawTransaction(serializedTx: any): Promise<string> {
@@ -161,17 +155,12 @@ export class Api {
     }
 
     public async getExchangeRate(): Promise<any> {
-        try {
-            const response = await fetch(ETH_MARKET_PRICE_ORACLE_URL);
-            const data = await response.json();
+        const response = await piFetch(ETH_MARKET_PRICE_ORACLE_URL);
 
-            return {
-                CNY: data.data.quotes.CNY.price,
-                USD: data.data.quotes.USD.price
-            };
-        } catch (e) {
-            return Promise.reject(e);
-        }
+        return {
+            CNY: response.data.quotes.CNY.price,
+            USD: response.data.quotes.USD.price
+        };
     }
     /**
      * Docs: https://etherscan.io/apis#accounts
@@ -181,15 +170,10 @@ export class Api {
      * @returns {Promise<{}>}
      * @memberof Api
      */
-    public async getAllTransactionsOf(address: string): Promise<any> {
-        try {
-            const url = ETHSCAN_ROPSTEN_API_URL + address;
-            const response = await fetch(url);
+    public getAllTransactionsOf(address: string): Promise<any> {
+        const url = ETHSCAN_ROPSTEN_API_URL + address;
 
-            return await response.json();
-        } catch (e) {
-            return Promise.reject(e);
-        }
+        return piFetch(url);
     }
 
     /**
@@ -227,13 +211,8 @@ export class Api {
     public async getTokenTransferEvents(contractAddress: string, address: string): Promise<any> {
         const path = ETHSCAN_ROPSTEN_TOKEN_TRANSFER_EVENT + `&contractAddress=${contractAddress}&address=${address}`;
         // console.log(path);
-        try {
-            const response = await fetch(path);
-
-            return response.json();
-        } catch (e) {
-            return Promise.reject(e);
-        }
+        
+        return piFetch(path);
     }
 
 }

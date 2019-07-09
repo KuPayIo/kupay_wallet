@@ -6,11 +6,11 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../pi/widget/painter';
 import { Widget } from '../../../../pi/widget/widget';
-import { getRechargeLogs } from '../../../net/pull';
-import { CloudCurrencyType } from '../../../store/interface';
-import { getStore, register } from '../../../store/memstore';
-import { parseStatusShow, timestampFormat } from '../../../utils/tools';
-import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { callGetRechargeLogs,getStoreData } from '../../../middleLayer/wrap';
+import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
+import { timestampFormat } from '../../../publicLib/tools';
+import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
+import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -22,62 +22,89 @@ interface Props {
 }
 export class RechargeRecord extends Widget {
     public props:any;
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-        if (this.props.isActive) {
-            getRechargeLogs(this.props.currencyName);
-        }
-    }
-    public init() {
-        const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
             recordList:[],
-            nextStart:rechargeLogs.start,
-            canLoadMore:rechargeLogs.canLoadMore,
+            nextStart:'',
+            canLoadMore:false,
             isRefreshing:false
         };
-        this.props.recordList = this.parseRecordList(rechargeLogs.list);
+    }
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.init();
+        if (this.props.isActive) {
+            callGetRechargeLogs(this.props.currencyName);
+        }
+    }
+    public init() {
+        
+        getCloudWallets().then(cloudWallets => {
+            const rechargeLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).rechargeLogs;
+            this.props.nextStart = rechargeLogs.start;
+            this.props.canLoadMore = rechargeLogs.canLoadMore;
+            this.parseRecordList(rechargeLogs.list);
+            this.paint();
+        });
+        
     }
     public updateRecordList() {
         if (!this.props) return;
-        const rechargeLogs = getStore('cloud/cloudWallets').get(CloudCurrencyType[this.props.currencyName]).rechargeLogs;
-        const list = rechargeLogs.list;
-        this.props.nextStart = rechargeLogs.start;
-        this.props.canLoadMore = rechargeLogs.canLoadMore;
-        this.props.recordList = this.parseRecordList(list);
-        this.props.isRefreshing = false;
-        this.paint();
-    }
-    // tslint:disable-next-line:typedef
-    public parseRecordList(list) {
-        const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
-        list.forEach((item) => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            console.log(txDetail);
-            item.statusShow = obj.text;
-            item.behavior = recharge[getLang()];
-            item.amountShow = `+${item.amount}`;
-            item.timeShow = timestampFormat(item.time).slice(5);
-            item.iconShow = `cloud_charge_icon.png`;
+        getCloudWallets().then(cloudWallets => {
+            const rechargeLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).rechargeLogs;
+            this.props.nextStart = rechargeLogs.start;
+            this.props.canLoadMore = rechargeLogs.canLoadMore;
+            this.parseRecordList(rechargeLogs.list);
+            this.paint();
         });
+        this.props.isRefreshing = false;
+    }
 
-        return list;
+    public parseRecordList(list:any) {
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
+            list.forEach((item) => {
+                const txDetail = fetchLocalTxByHash1(currencyRecords,item.hash);
+                const obj = parseStatusShow(txDetail);
+                console.log(txDetail);
+                item.statusShow = obj.text;
+                item.behavior = recharge[getLang()];
+                item.amountShow = `+${item.amount}`;
+                item.timeShow = timestampFormat(item.time).slice(5);
+                item.iconShow = `cloud_charge_icon.png`;
+            });
+            this.props.recordList = list;
+            this.paint();
+        });
     }
 
     public updateTransaction() {
-        const list = this.props.recordList;
-        list.forEach(item => {
-            const txDetail = fetchLocalTxByHash1(item.hash);
-            const obj = parseStatusShow(txDetail);
-            item.statusShow = obj.text;
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            const recharge = { zh_Hans:'充值',zh_Hant:'充值',en:'' };
+            const list = this.props.recordList;
+            list.forEach((item) => {
+                const txDetail = fetchLocalTxByHash1(currencyRecords,item.hash);
+                const obj = parseStatusShow(txDetail);
+                console.log(txDetail);
+                item.statusShow = obj.text;
+                item.behavior = recharge[getLang()];
+                item.amountShow = `+${item.amount}`;
+                item.timeShow = timestampFormat(item.time).slice(5);
+                item.iconShow = `cloud_charge_icon.png`;
+            });
+            this.props.recordList = list;
+            this.paint();
         });
-        this.paint();
     }
+    
     public loadMore() {
-        getRechargeLogs(this.props.currencyName,this.props.nextStart);
+        callGetRechargeLogs(this.props.currencyName,this.props.nextStart);
     }
     public getMoreList() {
         const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
@@ -95,7 +122,7 @@ export class RechargeRecord extends Widget {
     }
 }
 
-register('cloud/cloudWallets', () => {
+registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();
@@ -103,7 +130,7 @@ register('cloud/cloudWallets', () => {
 });
 
 // 本地交易变化,更新状态
-register('wallet/currencyRecords',() => {
+registerStoreData('wallet/currencyRecords',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateTransaction();

@@ -10,6 +10,8 @@
         on-input="change"
         on-blur="blur"
         on-focus="focus"
+        on-compositionstart="compositionstart"
+        on-compositionend="compositionend"
     />
     {{if it1.showClear}}
     <div w-class="pi-input__suffixBox" on-tap="clearClickListener">

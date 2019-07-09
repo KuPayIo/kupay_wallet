@@ -4,10 +4,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { ahashToArgon2Hash, CreateWalletType } from '../../../logic/localWallet';
-import { selectImage } from '../../../logic/native';
-import { getStore, setStore } from '../../../store/memstore';
+import { callPreCalAhashToArgon2Hash } from '../../../middleLayer/wrap';
 import { popNewMessage } from '../../../utils/tools';
+import { CreateWalletType } from '../../../viewLogic/localWallet';
+import { selectImage } from '../../../viewLogic/native';
 
 export class ImageImport extends Widget {
     public cancel: () => void;
@@ -60,15 +60,12 @@ export class ImageImport extends Widget {
             return;
         }
         const imagePsw = this.props.imagePsw;
-        const imgArgon2HashPromise = new Promise((resolve) => {
-            this.props.imagePicker.getAHash({
-                success(ahash:string) {
-                    console.log('image ahash = ',ahash);
-                    resolve(ahashToArgon2Hash(ahash,imagePsw));
-                }
-            });
+        this.props.imagePicker.getAHash({
+            success(ahash:string) {
+                console.log('image ahash = ',ahash);
+                callPreCalAhashToArgon2Hash(ahash,imagePsw);
+            }
         });
-        setStore('flags/imgArgon2HashPromise',imgArgon2HashPromise);
         popNew('app-view-wallet-create-createWallet',{ itype:CreateWalletType.Image },() => {
             this.ok && this.ok();
         });

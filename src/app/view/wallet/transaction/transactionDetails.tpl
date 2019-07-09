@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="shareScreen">
+    {{if it.tx}}
     <div w-class="top-head">
-
         {{if it.tx.txType === 1}}
             {{: topBarTitle = {"zh_Hans":"转账","zh_Hant":"轉賬","en":""} }}
         {{else}}
@@ -8,7 +8,6 @@
         {{end}}
   
         <widget w-tag="app-components-topBar-topBar">{"title":{{topBarTitle}},background:"linear-gradient(to right,#38CFE7,#318DE6);position: fixed;",nextImg:"../../res/image/share_white.png"}</widget>
-
     </div>
     <div w-class="body">
         <div w-class="status-container">
@@ -64,4 +63,5 @@
             </div>
         </div>
     </div>
+    {{end}}
 </div>

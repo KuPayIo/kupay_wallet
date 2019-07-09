@@ -2,19 +2,16 @@
  * coinconvert
  */
 // =======================================导入
-import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { ERC20Tokens } from '../../../config';
-import { changellyCreateTransaction, changellyGetExchangeAmount, changellyGetMinAmount } from '../../../net/pull3';
-import { transfer, TxPayload } from '../../../net/pullWallet';
-import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel } from '../../../store/interface';
-import { getStore, setStore } from '../../../store/memstore';
 // tslint:disable-next-line:max-line-length
-import { calCurrencyLogoUrl, currencyExchangeAvailable, getCurrentAddrByCurrencyName, getCurrentAddrInfo, popNewMessage, popPswBox, popNewLoading } from '../../../utils/tools';
-import { fetchMinerFeeList } from '../../../utils/walletTools';
+import { callCurrencyExchangeAvailable, callFetchMinerFeeList, callGetCurrentAddrInfo,callTransfer, getStoreData,setStoreData } from '../../../middleLayer/wrap';
+import { changellyCreateTransaction, changellyGetExchangeAmount, changellyGetMinAmount } from '../../../net/changellyPull';
+import { ERC20Tokens } from '../../../publicLib/config';
+import { ChangellyPayinAddr, ChangellyTempTxs, MinerFeeLevel, TxPayload } from '../../../publicLib/interface';
+import { calCurrencyLogoUrl, popNewLoading, popNewMessage, popPswBox } from '../../../utils/tools';
 // =========================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -39,11 +36,13 @@ export class CoinConvert extends Widget {
     public rateDetail() {
         const outCurrency = this.props.outCurrency;
         const minerFeeLevel = MinerFeeLevel.Standard;
-        const minerFeeList = fetchMinerFeeList(this.props.outCurrency);
-        const fee = minerFeeList[minerFeeLevel].minerFee;
-        const cn = (outCurrency === 'ETH' || ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
-        const tips = `${this.language.tips[5]} ${fee} ${cn}`;
-        popNew('app-components-allModalBox-modalBox1',{ title:this.language.title,content:this.language.content,tips:tips });
+        callFetchMinerFeeList(this.props.outCurrency).then(minerFeeList => {
+            const fee = minerFeeList[minerFeeLevel].minerFee;
+            const cn = (outCurrency === 'ETH' || ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
+            const tips = `${this.language.tips[5]} ${fee} ${cn}`;
+            popNew('app-components-allModalBox-modalBox1',{ title:this.language.title,content:this.language.content,tips:tips });
+        });
+        
     }
 
     /**
@@ -53,22 +52,16 @@ export class CoinConvert extends Widget {
         popNew('app-view-wallet-coinConvert-convertHistory',{ currencyName:this.props.outCurrency,addr:this.props.curOutAddr });
     }
 
-    public setProps(props:Json,oldProps:Json) {
+    public setProps(props:Props,oldProps:Props) {
         super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
-        const dataList = currencyExchangeAvailable();
-        const canCurrencyExchange = dataList.indexOf(props.currencyName) >= 0;
-
-        const outCurrency = canCurrencyExchange ? props.currencyName : 'ETH';
-        const inCurrency = (outCurrency === 'BTC' ||  ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
-        
         // ZRX   BAT
         this.props = {
             ...this.props,
-            outCurrency,
-            outCurrencyLogo:calCurrencyLogoUrl(outCurrency),
-            inCurrency,
-            inCurrencyLogo:calCurrencyLogoUrl(inCurrency),
+            outCurrency:'',
+            outCurrencyLogo:'',
+            inCurrency:'',
+            inCurrencyLogo:'',
             pair:'',
             minimum:0,
             rate:0,
@@ -81,17 +74,27 @@ export class CoinConvert extends Widget {
             curOutAddr:'',
             curInAddr:''
         };
-        this.init();
+        
         this.updateMinerFee();
+        callCurrencyExchangeAvailable().then(dataList => {
+            const canCurrencyExchange = dataList.indexOf(props.currencyName) >= 0;
+            const outCurrency = canCurrencyExchange ? props.currencyName : 'ETH';
+            const inCurrency = (outCurrency === 'BTC' ||  ERC20Tokens[outCurrency]) ? 'ETH' : 'BTC';
+            this.props.outCurrency = outCurrency;
+            this.props.outCurrencyLogo = calCurrencyLogoUrl(outCurrency);
+            this.props.inCurrency = inCurrency;
+            this.props.inCurrencyLogo = calCurrencyLogoUrl(inCurrency);
+            this.init();
+            this.paint();
+        });
     }
 
     // 更新矿工费
     public async updateMinerFee() {
-        const minerFeeList = fetchMinerFeeList(this.props.currencyName);
-        console.log(minerFeeList);
-        // const gasLimit = obj.gasLimit;
-        this.props.outMinerFee = minerFeeList[0].minerFee;
-        this.paint();
+        callFetchMinerFeeList(this.props.currencyName).then(minerFeeList => {
+            this.props.outMinerFee = minerFeeList[0].minerFee;
+            this.paint();
+        });
     }
 
     public destroy() {
@@ -103,11 +106,16 @@ export class CoinConvert extends Widget {
         this.props.outAmount = 0;
         this.props.receiveAmount = 0;
         this.setPair();
-        // 获取出币币种的余额和当前使用地址
-        this.props.curOutAddr = getCurrentAddrByCurrencyName(this.props.outCurrency);
-        this.props.outBalance = getCurrentAddrInfo(this.props.outCurrency).balance;
-        // 获取入币币种的当前使用地址
-        this.props.curInAddr = getCurrentAddrByCurrencyName(this.props.inCurrency);
+        Promise.all([callGetCurrentAddrInfo(this.props.outCurrency),
+            callGetCurrentAddrInfo(this.props.inCurrency)]).then(([outAddrInfo,inAddrInfo]) => {
+                // 获取出币币种的余额和当前使用地址
+                this.props.curOutAddr = outAddrInfo.addr;
+                this.props.outBalance = outAddrInfo.balance;
+                // 获取入币币种的当前使用地址
+                this.props.curInAddr = inAddrInfo.addr;
+                this.paint();
+            });
+        
         this.marketInfoUpdated();
     }
     
@@ -179,8 +187,8 @@ export class CoinConvert extends Widget {
     // }
 
     // 选择入币币种 如果入币币种和出币币种一样时,出币币种顺延一种
-    public inCurrencySelectClick() {
-        const dataList = currencyExchangeAvailable();
+    public async inCurrencySelectClick() {
+        const dataList = await callCurrencyExchangeAvailable();
         popNew('app-components-chooseCurrency-chooseCurrency',{ list:dataList,selected:dataList.indexOf(this.props.inCurrency) },(r) => {
             const currencyName = dataList[r];
             if (this.props.inCurrency === currencyName) return;
@@ -236,12 +244,12 @@ export class CoinConvert extends Widget {
         const close = popNewLoading(this.language.loading);
         const withdrawalAddress = this.props.curInAddr; // 入账币种的地址
         const returnAddress =  this.props.curOutAddr;// 失败后的退款地址
-        changellyCreateTransaction(outCurrency,inCurrency,withdrawalAddress,outAmount,returnAddress).then(res => {
+        changellyCreateTransaction(outCurrency,inCurrency,withdrawalAddress,outAmount,returnAddress).then(async (res) => {
             console.log('changellyCreateTransaction = ',res);
             if (res.result) {
                 const payinAddress = res.result.payinAddress;
                 const minerFeeLevel = MinerFeeLevel.Standard;
-                const minerFeeList = fetchMinerFeeList(outCurrency);
+                const minerFeeList = await callFetchMinerFeeList(outCurrency);
                 const fee = minerFeeList[minerFeeLevel].minerFee;
                 const payload:TxPayload = {
                     fromAddr:returnAddress,        
@@ -253,7 +261,7 @@ export class CoinConvert extends Widget {
                 };
                 this.props.inMinerFee = fee;
                 // close && close.callback(close.widget);
-                const changellyPayinAddress = getStore('wallet/changellyPayinAddress');
+                const changellyPayinAddress = await getStoreData('wallet/changellyPayinAddress');
                 const tmp:ChangellyPayinAddr = {
                     currencyName:outCurrency,
                     payinAddress
@@ -263,23 +271,23 @@ export class CoinConvert extends Widget {
                 });
                 if (index < 0) {
                     changellyPayinAddress.push(tmp);
-                    setStore('wallet/changellyPayinAddress',changellyPayinAddress);
+                    setStoreData('wallet/changellyPayinAddress',changellyPayinAddress);
                 }
                 
-                transfer(passwd,payload).then(([err,tx]) => {
+                callTransfer(passwd,payload).then(async ([err,tx]) => {
                     close && close.callback(close.widget);
                     if (err) {
                         popNewMessage(this.language.messages[3]);
                     } else {
                         popNewMessage(this.language.messages[4]);
                     }
-                    const changellyTempTxs = getStore('wallet/changellyTempTxs');
+                    const changellyTempTxs = await getStoreData('wallet/changellyTempTxs');
                     const tempTxs:ChangellyTempTxs = {
                         hash:tx.hash,
                         id:res.result.id
                     };
                     changellyTempTxs.push(tempTxs);
-                    setStore('wallet/changellyTempTxs',changellyTempTxs);
+                    setStoreData('wallet/changellyTempTxs',changellyTempTxs);
                 });
             } else {
                 close && close.callback(close.widget);

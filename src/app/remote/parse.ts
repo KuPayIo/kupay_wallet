@@ -1,68 +1,44 @@
 
 import { isArray } from '../../pi/net/websocket/util';
-import { uploadFileUrlPrefix } from '../config';
-import { PAGELIMIT } from '../utils/constants';
+import { PAGELIMIT, uploadFileUrlPrefix } from '../publicLib/config';
 // tslint:disable-next-line:max-line-length
-import { currencyType, formatBalance, GetDateDiff,getStaticLanguage,parseRtype, timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../utils/tools';
-import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../utils/unitTools';
+import { CloudCurrencyType,LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, PurchaseHistory, TaskSid } from '../publicLib/interface';
 // tslint:disable-next-line:max-line-length
-import { CloudCurrencyType, LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, PurchaseHistory } from './interface';
-import { getStore } from './memstore';
+import { currencyType, formatBalance, GetDateDiff, parseRtype, timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../publicLib/tools';
+import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../publicLib/unitTools';
+import { getStaticLanguage } from '../remote/tools';
+import { getStore } from '../store/memstore';
+
 /**
  * 解析数据
  */
-// ===================================================== 导入
+// ===================================================== 导入  
+
 // ===================================================== 导出
 /**
  * 解析云端账号余额
  */
 export const parseCloudBalance = (balanceInfo): Map<CloudCurrencyType, number> => {
     const m = new Map<CloudCurrencyType, number>();
-    for (let i = 0; i < balanceInfo.value.length; i++) {
+    for (let i = 0; i < balanceInfo.value.length; i++) {   
         const each = balanceInfo.value[i];
-        m.set(each[0], smallUnit2LargeUnit(CloudCurrencyType[each[0]], each[1]));
-    }
-    
+        m.set(each[0], smallUnit2LargeUnit(CloudCurrencyType[each[0]], each[1])); 
+    } 
+     
     return m;
 };
 
 /**
- * 后端定义的任务id
- */
-export enum TaskSid {
-    Mine = '11',                 // 游戏 实际上是appid
-    Recharge = 301,            // 充值
-    Withdraw = 302,            // 提现
-    CreateWallet = 1001,       // 创建钱包
-    FirstChargeEth = 1002,     // 以太坊首次转入
-    BindPhone = 1003,          // 注册手机
-    ChargeEth = 1004,          // 存币
-    InviteFriends = 1005,      // 邀请真实好友
-    BuyFinancial = 1007,       // 购买理财产品
-    Transfer = 1008,           // 交易奖励
-    Dividend = 1009,           // 分红
-    Mining = 1010,             // 挖矿
-    Chat = 1011,               // 聊天
-    FinancialManagement = 330, // 理财
-    LuckyMoney = 340,           // 红包
-    LuckyMoneyRetreat = 341,     // 回退红包
-    Wxpay = 370,                // 微信支付
-    Alipay = 371,               // 支付宝支付
-    Consume = 360,               // 消费
-    Receipt = 361               // 收款
-}
-
-/**
  * 解析云端账号详情
  */
-export const parseCloudAccountDetail = (coinType: string, infos) => {
-    if (!infos) return [];
-    const list = [];
+export const parseCloudAccountDetail = (coinType: string, infos) => { 
+    if (!infos) return []; 
+    const list = []; 
     infos.forEach(v => {
         const itype = v[0];
         const amount = smallUnit2LargeUnit(coinType, v[1]);
         const detailTypes = getStaticLanguage().cloudAccountDetail.types;
-        let behavior = '';
+        let behavior = ''; 
         let behaviorIcon = '';
         switch (itype) {
             case TaskSid.Mine:
@@ -99,6 +75,10 @@ export const parseCloudAccountDetail = (coinType: string, infos) => {
                 break;
             case TaskSid.Alipay:
                 behavior = coinType === 'KT' ? detailTypes[12] : detailTypes[9];
+                behaviorIcon = 'alipay_rechange.png';
+                break;
+            case TaskSid.Apple_pay:
+                behavior = coinType === 'KT' ? detailTypes[12] : detailTypes[13];
                 behaviorIcon = 'alipay_rechange.png';
                 break;
             case TaskSid.Consume:
@@ -333,7 +313,7 @@ export const parseRechargeWithdrawalLog = (coin,val) => {
 };
 
 /**
- * 解析购买记录
+ * 获取购买记录
  */
 const getproductById = (id:string) => {
     const productList = getStore('activity/financialManagement/products');
@@ -346,6 +326,9 @@ const getproductById = (id:string) => {
     return null;
 };
 
+/**
+ * 解析购买记录
+ */
 export const parsePurchaseRecord = (res:any) => {
     const record = [];
     for (let i = 0;i < res.value.length;i++) {
@@ -459,7 +442,7 @@ export const parseConvertLog = (data,sta) => {
             suid: r[i][0],
             rid: r[i][1].toString(),
             rtype: r[i][2],
-            rtypeShow: parseRtype(r[i][2]),
+            rtypeShow: parseRtype(r[i][2],getStore('setting/language')),
             ctype: r[i][3],
             ctypeShow:currencyType(currencyName),
             amount: smallUnit2LargeUnit(currencyName, r[i][4]),

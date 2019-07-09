@@ -6,13 +6,13 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { makeScreenShot, openNewActivity } from '../../../logic/native';
-import { TxType } from '../../../store/interface';
-import { register } from '../../../store/memstore';
+import { getStoreData } from '../../../middleLayer/wrap';
+import { CurrencyRecord, TxType } from '../../../publicLib/interface';
+import { timestampFormat } from '../../../publicLib/tools';
 import { blockchainUrl, etherscanUrl } from '../../../utils/constants';
-// tslint:disable-next-line:max-line-length
-import { canResend, copyToClipboard, parseAccount, parseStatusShow, popNewMessage, timestampFormat } from '../../../utils/tools';
-import { fetchLocalTxByHash1 } from '../../../utils/walletTools';
+import { canResend, copyToClipboard, fetchLocalTxByHash1, parseAccount, parseStatusShow, popNewMessage } from '../../../utils/tools';
+import { registerStoreData } from '../../../viewLogic/common';
+import { makeScreenShot, openNewActivity } from '../../../viewLogic/native';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -26,30 +26,33 @@ export class TransactionDetails extends Widget {
     public props:any;
     public ok:() => void;
     public language:any;
-    public setProps(props:Props,oldProps:Props) {
-        super.setProps(props,oldProps);
-        this.init();
-    }
-    public init() {
-        this.language = this.config.value[getLang()];
-        const tx = fetchLocalTxByHash1(this.props.hash);
-        console.log(`transactionDetails tx is `,tx);
-        const obj = parseStatusShow(tx);
-        const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;
-        const webText = tx.currencyName === 'BTC' ? this.language.tips[0] : this.language.tips[1];
+    public create() {
+        super.create();
         this.props = {
             ...this.props,
-            tx,
-            hashShow:parseAccount(tx.hash),
-            timeShow:timestampFormat(tx.time),
-            statusShow:obj.text,
-            statusIcon:obj.icon,
-            minerFeeUnit:tx.currencyName !== 'BTC' ? 'ETH' : 'BTC',
-            canResend:canResend(tx),
-            qrcode:`${qrcodePrefix}${tx.hash}`,
-            webText
+            tx:undefined,
+            hashShow:'',
+            timeShow:'',
+            statusShow:'',
+            statusIcon:'',
+            minerFeeUnit:'',
+            canResend:false,
+            qrcode:'',
+            webText:''
         };
     }
+    public setProps(props:Props,oldProps:Props) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
+        this.language = this.config.value[getLang()];
+        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+            this.updateTransaction(currencyRecords);
+        });
+    }
+    
     public backPrePage() {
         this.ok && this.ok();
     }
@@ -83,9 +86,20 @@ export class TransactionDetails extends Widget {
         });
     }
 
-    public updateTransaction() {
-        // this.props.tx = fetchTxByHash(this.props.hash);
-        this.init();
+    public updateTransaction(currencyRecords:CurrencyRecord[]) {
+        const tx = fetchLocalTxByHash1(currencyRecords,this.props.hash);
+        const obj = parseStatusShow(tx);
+        const qrcodePrefix = tx.currencyName === 'BTC' ?  blockchainUrl : etherscanUrl;
+        const webText = tx.currencyName === 'BTC' ? this.language.tips[0] : this.language.tips[1];
+        this.props.tx = tx;
+        this.props.hashShow = parseAccount(tx.hash);
+        this.props.timeShow = timestampFormat(tx.time);
+        this.props.statusShow = obj.text;
+        this.props.statusIcon = obj.icon;
+        this.props.minerFeeUnit = tx.currencyName !== 'BTC' ? 'ETH' : 'BTC';
+        this.props.canResend = canResend(tx);
+        this.props.qrcode = `${qrcodePrefix}${tx.hash}`;
+        this.props.webText = webText;
         this.paint();
     }
 
@@ -102,9 +116,9 @@ export class TransactionDetails extends Widget {
 }
 
 // 交易记录变化
-register('wallet/currencyRecords',() => {
+registerStoreData('wallet/currencyRecords',(currencyRecords:CurrencyRecord[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.updateTransaction();
+        w.updateTransaction(currencyRecords);
     }
 });
