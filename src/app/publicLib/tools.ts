@@ -296,5 +296,5 @@ export const performanceTest = () => {
     const argonHash = new ArgonHash();
     argonHash.init();
 
-    return argonHash.calcHashValuePromise({ pwd:'123456789', salt:'2104561' });
+    return argonHash.calcHashValuePromise({ pwd:'123456789', salt:'210456001' });
 };

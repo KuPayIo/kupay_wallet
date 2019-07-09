@@ -480,3 +480,5 @@ const registerStore = () => {
 registerStore();
 
 addFirstRegisterListener(openConnect);  // 在第一次注册成功后才连接服务器
+
+console.log('更新测试1');

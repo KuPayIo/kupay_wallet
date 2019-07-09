@@ -656,6 +656,16 @@ export const callGoRecharge = (balance:number,muchNeed:number) => {
 
 // ==================================recharge相关=========================================
 
+/**
+ * rpc通信耗时测试
+ */
 export const callRpcTimeingTest = () => {
     return vmRpcCall('callRpcTimeingTest',[]);
+};
+
+/**
+ * jsc加密性能测试
+ */
+export const callJscPerformanceTest = () => {
+    return vmRpcCall('callJscPerformanceTest',[]);
 };

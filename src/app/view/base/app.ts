@@ -7,12 +7,10 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callRpcTimeingTest } from '../../middleLayer/wrap';
 import { changellyGetCurrencies } from '../../net/changellyPull';
 import { setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { getModulConfig } from '../../publicLib/modulConfig';
-import { performanceTest } from '../../publicLib/tools';
-import { checkPopPhoneTips, popNewMessage, rippleShow } from '../../utils/tools';
+import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
 import { registerStoreData } from '../../viewLogic/common';
 import { kickOffline } from '../../viewLogic/login';
 
@@ -81,11 +79,15 @@ export class App extends Widget {
         this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
-        performanceTest();
-        console.time('rpc耗时');
-        callRpcTimeingTest().then(res => {
-            console.timeEnd('rpc耗时');
-        });
+        // performanceTest();
+        // const start = new Date().getTime();
+        // callRpcTimeingTest().then(res => {
+        //     console.log('rpc耗时',new Date().getTime() - start);
+        //     console.log('更新测试 ===',res);
+        // });
+        // callJscPerformanceTest().then(res => {
+        //     console.log('jsc加密性能耗时',new Date().getTime() - start);
+        // });
     }
 
     public switchToEarn() {

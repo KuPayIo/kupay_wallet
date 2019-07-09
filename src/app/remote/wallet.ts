@@ -1,5 +1,6 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { arrayBufferToBase64, base64ToArrayBuffer } from '../../pi/util/base64';
+import { cryptoRandomInt } from '../../pi/util/math';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
@@ -47,7 +48,7 @@ export const sha256 = (data: string) => {
  * 获取memery hash
  */
 export const calcHashValue = (pwd, salt?) => {
-    const argonHash = new ArgonHash();
+    const argonHash = new ArgonHash(); 
     argonHash.init();
 
     return argonHash.calcHashValuePromise({ pwd, salt });
@@ -586,5 +587,14 @@ export const exportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],cur
 
 // rpc耗时测试
 export const rpcTimeingTest = () => {
-    return 124;
+    return 12345; 
+};
+
+// 加密测试
+export const jscPerformanceTest = () => {
+    const start = new Date().getTime();
+    const ret = encrypt('123456789',cryptoRandomInt().toString());
+    console.log('计算加密耗时 =',new Date().getTime() - start);  
+    
+    return 12345678;
 };

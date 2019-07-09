@@ -31,11 +31,11 @@ export const initFileStore = () => {
 export const writeFile = (key: string,data:any,okCB?,errCB?) => {
     if (!initSuccess) return;
     mod.write(impl,key,JSON.stringify(data),() => {
-        console.log(`写入indexDB成功 key = ${key},value = ${JSON.stringify(data)}`);
+        // console.log(`写入indexDB成功 key = ${key},value = ${JSON.stringify(data)}`);
         okCB && okCB();
     },(err) => {
-        console.log(`写入indexDB失败 key = ${key},value = ${JSON.stringify(data)}`);
-        console.log('写入indexDB失败原因 = ',JSON.stringify(err));
+        // console.log(`写入indexDB失败 key = ${key},value = ${JSON.stringify(data)}`);
+        // console.log('写入indexDB失败原因 = ',JSON.stringify(err));
         errCB && errCB(err);
     });
 };

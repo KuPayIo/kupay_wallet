@@ -5,7 +5,7 @@ import { LoadedStage, PostMessage, PostModule, ServerPushArgs, ThirdCmd } from '
  * 主动向钱包推消息
  */
 
-const walleWebViewtName = 'default'; // 钱包webView name
+const walleWebViewtName = 'default'; // 钱包webView name  
 /**
  * 推送vm 资源加载相关消息
  */
