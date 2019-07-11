@@ -398,15 +398,14 @@ export const parseSendRedEnvLog = (value,sta) => {
     const r = value[2];
     for (let i = 0; i < r.length;i++) {
         const currencyName = CloudCurrencyType[r[i][2]];
-        const totalAmount = smallUnit2LargeUnit(currencyName,r[i][3]);
-        const otherDetail = parseExchangeDetail(r[i][6],totalAmount,r[i][5].length);
+        const otherDetail = parseExchangeDetail(r[i][6],r[i][2],r[i][3],r[i][5].length);
        
         const record:LuckyMoneySendDetail = {
             rid:r[i][0].toString(),
             rtype:r[i][1],
             ctype:r[i][2],
             ctypeShow:currencyType(currencyName),
-            amount:totalAmount,
+            amount:smallUnit2LargeUnit(currencyName,r[i][3]),
             time:r[i][4],
             timeShow:timestampFormat(r[i][4]),
             codes:r[i][5],
@@ -465,9 +464,10 @@ export const parseConvertLog = (data,sta) => {
 /**
  * 解析红包兑换详情
  */
-export const parseExchangeDetail = (value,totalAmount,totalNum) => {
+export const parseExchangeDetail = (value,currencyName = undefined,totalAmount = 0,totalNum = 0):any[] => {
     const data = value[1];  // TODO 这里value[1]有可能为空串表示没有被兑换
     const redBagList:LuckyMoneyDetail[] = [];
+    currencyName = currencyName ? currencyName : data[0][3];
     let curNum = 0;  
     if (data) {
         for (let i = 0;i < data.length;i++) {
@@ -490,6 +490,8 @@ export const parseExchangeDetail = (value,totalAmount,totalNum) => {
         
     }
     const message = unicodeArray2Str(value[0]);
+    totalNum = totalNum ? totalNum : data.length;
+    totalAmount = smallUnit2LargeUnit(CloudCurrencyType[currencyName],totalAmount);
 
     return [redBagList, message, curNum, totalNum, totalAmount]; // 兑换人员列表，红包留言，已兑换个数，总个数，红包总金额
 };
