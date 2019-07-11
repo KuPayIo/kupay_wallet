@@ -1,12 +1,13 @@
 /**
  * 本地钱包相关操作
  */
+import { getStore as gameGetStore, setStore as gameSetStore } from '../../earn/client/app/store/memstore';
 import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 // tslint:disable-next-line:max-line-length
-import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callBuyProduct, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDcClearTxTimer, callDcInitErc20GasLimit, callDcRefreshAllTx, callDcUpdateAddrInfo, callDeletLocalTx, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetAllAccount, callGetPurchaseRecord, callGetRechargeLogs, callGetServerCloudBalance, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callResendBtcRecharge, callResendBtcTransfer ,callUpdateLocalTx,callVerifyIdentidy, setStoreData } from '../middleLayer/wrap';
+import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callBuyProduct, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDcClearTxTimer, callDcInitErc20GasLimit, callDcRefreshAllTx, callDcUpdateAddrInfo, callDeletLocalTx, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetAllAccount, callGetHighTop, callGetPurchaseRecord, callGetRechargeLogs, callGetServerCloudBalance, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callResendBtcRecharge ,callResendBtcTransfer,callUpdateLocalTx, callVerifyIdentidy, setStoreData } from '../middleLayer/wrap';
 import { Config, ERC20Tokens } from '../publicLib/config';
-import { CreateWalletOption, TxHistory } from '../publicLib/interface';
+import { CloudCurrencyType, CreateWalletOption, TxHistory } from '../publicLib/interface';
 import { doErrorShow } from '../utils/toolMessages';
 import { closeAllPage, getPopPhoneTips, getStaticLanguage, popNewLoading, popNewMessage } from '../utils/tools';
 
@@ -163,7 +164,7 @@ export const forceOffline = () => {
             closeAllPage();
             const accounts = await callGetAllAccount();
             if (accounts.length > 0) {
-                popNew('app-view-base-entrance1');
+                popNew('app-view-base-entrance1',{ accounts });
             } else {
                 popNew('app-view-base-entrance');
             }
@@ -173,7 +174,7 @@ export const forceOffline = () => {
             closeAllPage();
             const accounts = await callGetAllAccount();
             if (accounts.length > 0) {
-                popNew('app-view-base-entrance1');
+                popNew('app-view-base-entrance1',{ accounts });
             } else {
                 popNew('app-view-base-entrance');
             }
@@ -227,6 +228,14 @@ export const balanceChange = (args:any) => {
         setPswPop();
     } else if (args.popType === 1) {
         bindPhonePop();
+    }
+    if (args.cointype === CloudCurrencyType.KT) {
+        callGetHighTop(100).then((data) => {
+            const mine = gameGetStore('mine',{});
+            mine.miningRank = data.miningRank || 0;
+            gameSetStore('mine',mine);  
+        });
+        console.log('KT余额变化');
     }
 };
 

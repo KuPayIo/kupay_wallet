@@ -94,6 +94,12 @@ export const callDeleteAccount = (id: string) => {
     return vmRpcCall('callDeleteAccount',[id]);
 };
 
+/**
+ * 获取首页登录所需数据
+ */
+export const callGetHomePageEnterData = () => {
+    return vmRpcCall('callGetHomePageEnterData',[]);
+};
 // ===========================================memstroe相关===================================================================
 
 // ===========================================tools相关===================================================================
@@ -232,16 +238,10 @@ export const callWalletManualReconnect = () => {
 /**
  * 注销账户保留数据
  */
-export const callLogoutAccount = () => {
-    return vmRpcCall('callLogoutAccount',[]);
+export const callLogoutAccount = (save:boolean = true) => {
+    return vmRpcCall('callLogoutAccount',[save]);
 };
 
-/**
- * 注销账户并删除数据
- */
-export const callLogoutAccountDel = () => {
-    return vmRpcCall('callLogoutAccountDel',[]);
-};
 /**
  * 登录某个账号成功
  */
@@ -382,6 +382,11 @@ export const callGetOneUserInfo = (uids: number[], isOpenid: number = 0) => {
  */
 export const callGetInviteCode = () => {
     return vmRpcCall('callGetInviteCode',[]);
+};
+
+// 获取好友嗨豆排名
+export const callGetFriendsKTTops = (arr:any) => {
+    return vmRpcCall('callGetFriendsKTTops',[arr]);
 };
 // ===========================================net相关===================================================================
 
@@ -661,11 +666,4 @@ export const callGoRecharge = (balance:number,muchNeed:number) => {
  */
 export const callRpcTimeingTest = () => {
     return vmRpcCall('callRpcTimeingTest',[]);
-};
-
-/**
- * jsc加密性能测试
- */
-export const callJscPerformanceTest = () => {
-    return vmRpcCall('callJscPerformanceTest',[]);
 };

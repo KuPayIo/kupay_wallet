@@ -161,7 +161,6 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
                 return [undefined,{ result:PayCode.EXCEEDLIMIT }]; 
             }
         } else { // 余额不够
-            // TODO 跳转充值页面
             // minWebview1(webviewName);
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
             console.log(`商户信息 ========== mch_id = ${order.mch_id}  mchInfo = ${mchInfo}`);

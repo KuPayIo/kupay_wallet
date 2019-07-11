@@ -67,7 +67,7 @@ export class App extends Widget {
         
         this.props.tabBarList = this.props.tabBarList.filter(item => {
             return getModulConfig(item.modulName);
-        });
+        });  
         // 币币兑换可用货币获取
         changellyGetCurrencies();
     }
@@ -79,15 +79,6 @@ export class App extends Widget {
         this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
-        // performanceTest();
-        // const start = new Date().getTime();
-        // callRpcTimeingTest().then(res => {
-        //     console.log('rpc耗时',new Date().getTime() - start);
-        //     console.log('更新测试 ===',res);
-        // });
-        // callJscPerformanceTest().then(res => {
-        //     console.log('jsc加密性能耗时',new Date().getTime() - start);
-        // });
     }
 
     public switchToEarn() {

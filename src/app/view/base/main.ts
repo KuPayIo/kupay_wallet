@@ -9,7 +9,7 @@ import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore } from '../../../earn/client/app/store/memstore';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { callGetAllAccount,callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
+import { callGetHomePageEnterData, callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
 import { LockScreen } from '../../publicLib/interface';
 import { piRequire } from '../../utils/commonjsTools';
 import { getScreenModify } from '../../viewLogic/native';
@@ -19,26 +19,25 @@ export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查
     // checkUpdate();
-    popNew('app-view-base-app');
     const start = new Date().getTime();
-    // 打开首页面
-    Promise.all([getStoreData('user/id'),callGetAllAccount()]).then(([id,accounts]) => {
+    callGetHomePageEnterData().then((res) => {
+        popNew('app-view-base-app');
         console.log('获取id耗时 ====',new Date().getTime() - start);
+        console.log('home page data geted',res);
+        const id = res[0];
+        const accounts = res[1];
         if (!id) {
             if (accounts.length > 0) {
-                popNew('app-view-base-entrance1');
+                popNew('app-view-base-entrance1',{ accounts });
             } else {
                 popNew('app-view-base-entrance');
             }
-                // 解决进入时闪一下问题
-            if (cb) cb();
-        } else {
-            if (cb) cb();
-        }
+        } 
+         // 锁屏页面
+        popNewPage();
+        if (cb) cb();
     });
     
-    // 锁屏页面
-    popNewPage();
     // 预先从底层获取一些数据
     preFetchFromNative();
     // app event 注册

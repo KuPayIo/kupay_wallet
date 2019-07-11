@@ -1,6 +1,6 @@
 import { popNew } from '../../pi/ui/root';
 // tslint:disable-next-line:max-line-length
-import { callDefaultLogin, callGetAllAccount, callGetOpenId, callGetRandom, callLogoutAccount, callLogoutAccountDel,callVerifyIdentidy, getStoreData, openWSConnect, setStoreData } from '../middleLayer/wrap';
+import { callDefaultLogin, callGetOpenId, callGetRandom, callLogoutAccount,callVerifyIdentidy, getStoreData, openWSConnect, setStoreData } from '../middleLayer/wrap';
 import { getSourceLoaded } from '../postMessage/localLoaded';
 import { CMD } from '../publicLib/config';
 import { defaultPassword } from '../utils/constants';
@@ -60,17 +60,17 @@ export const kickOffline = (secretHash:string = '',phone?:number,code?:number,nu
  * 注销账户并删除数据
  */
 export const logoutAccount = async (del:boolean = false,noLogin:boolean = false) => {
+    let accounts; // [err,accounts]
     if (del) {
-        await callLogoutAccountDel();
+        accounts = await callLogoutAccount(false);
     } else {
-        await callLogoutAccount();
+        accounts = await callLogoutAccount();
     }
     delPopPhoneTips();
     if (!noLogin) {
         closeAllPage();
-        const accounts = await callGetAllAccount();
         if (accounts.length > 0) {
-            popNew('app-view-base-entrance1');
+            popNew('app-view-base-entrance1',{ accounts });
         } else {
             popNew('app-view-base-entrance');
         }
@@ -114,6 +114,7 @@ const loginWalletSuccess = () => {
             loginType.success(res.openid);
         }).catch(err => {
             console.log(`appId ${loginType.appId} get openId failed`,err);
+            popNewMessage('openid 获取失败');
         });
     }
 };

@@ -67,7 +67,7 @@ const openRechargePage = (balance:number,muchNeed:number):Promise<any> => {
         gopay(balance,muchNeed,(conpay:number, sMD:any, platform: payPlatform) => {
             resolve({ conpay,sMD,platform });    // 点击充值按钮的时候触发
         },() => {
-            reject(new Error('gopay failed'));  
+            reject(new Error('gopay failed'));   
         });
     });
 };

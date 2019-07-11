@@ -398,13 +398,15 @@ export const parseSendRedEnvLog = (value,sta) => {
     const r = value[2];
     for (let i = 0; i < r.length;i++) {
         const currencyName = CloudCurrencyType[r[i][2]];
-        const otherDetail = parseExchangeDetail(r[i][6]);
+        const totalAmount = smallUnit2LargeUnit(currencyName,r[i][3]);
+        const otherDetail = parseExchangeDetail(r[i][6],totalAmount,r[i][5].length);
+       
         const record:LuckyMoneySendDetail = {
             rid:r[i][0].toString(),
             rtype:r[i][1],
             ctype:r[i][2],
             ctypeShow:currencyType(currencyName),
-            amount:smallUnit2LargeUnit(currencyName,r[i][3]),
+            amount:totalAmount,
             time:r[i][4],
             timeShow:timestampFormat(r[i][4]),
             codes:r[i][5],
@@ -463,32 +465,33 @@ export const parseConvertLog = (data,sta) => {
 /**
  * 解析红包兑换详情
  */
-export const parseExchangeDetail = (value) => {
-    const data = value[1];
+export const parseExchangeDetail = (value,totalAmount,totalNum) => {
+    const data = value[1];  // TODO 这里value[1]有可能为空串表示没有被兑换
     const redBagList:LuckyMoneyDetail[] = [];
     let curNum = 0;  
-    let totalAmount = 0;  
-    for (let i = 0;i < data.length;i++) {
-        const amount = smallUnit2LargeUnit(CloudCurrencyType[data[i][3]],data[i][4]);
-        if (data[i][1] !== 0 && data[i][5] !== 0) {
-            const redBag:LuckyMoneyDetail = {
-                suid:data[i][0],
-                cuid:data[i][1],
-                rtype:data[i][2],
-                ctype:data[i][3],
-                amount,
-                time:data[i][5],
-                timeShow:timestampFormat(data[i][5])
-            };
-            redBagList.push(redBag);
-            curNum ++;
+    if (data) {
+        for (let i = 0;i < data.length;i++) {
+            const amount = smallUnit2LargeUnit(CloudCurrencyType[data[i][3]],data[i][4]);
+            if (data[i][1] !== 0 && data[i][5] !== 0) {
+                const redBag:LuckyMoneyDetail = {
+                    suid:data[i][0],
+                    cuid:data[i][1],
+                    rtype:data[i][2],
+                    ctype:data[i][3],
+                    amount,
+                    time:data[i][5],
+                    timeShow:timestampFormat(data[i][5])
+                };
+                redBagList.push(redBag);
+                curNum ++;
+            }
+            totalAmount += Number(data[i][4]);
         }
-        totalAmount += Number(data[i][4]);
+        
     }
     const message = unicodeArray2Str(value[0]);
-    totalAmount = smallUnit2LargeUnit(CloudCurrencyType[data[0][3]],totalAmount);
 
-    return [redBagList, message, curNum, data.length, totalAmount]; // 兑换人员列表，红包留言，已兑换个数，总个数，红包总金额
+    return [redBagList, message, curNum, totalNum, totalAmount]; // 兑换人员列表，红包留言，已兑换个数，总个数，红包总金额
 };
 
 /**

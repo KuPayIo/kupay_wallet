@@ -1,5 +1,5 @@
 import { WebViewManager } from '../../pi/browser/webview';
-import { register } from './memstore';
+import { getAllAccount, getStore, register } from './memstore';
 
 const walletName = 'default';
 const LISTENERSTORENAME = 'app/postMessage/listenerStore';
@@ -36,6 +36,43 @@ export const addFirstRegisterListener = (cb:Function) => {
 export const emitFirstRegister = () => {
     firstRegisterSuccess = true;
     for (const cb of firstRegisterCbs) {
+        cb && cb();
+    }
+};
+
+let homePageDataGeted = false;
+const homePageDataGetedCbs = [];
+/**
+ * 获取首页登录所需数据
+ */
+export const getHomePageEnterData = () => {
+    return getAllAccount().then(accounts => {
+        setTimeout(() => {
+            emitGetHomePageEnterData();
+        },17);
+        
+        return [getStore('user/id'),accounts];
+    });
+};
+
+/**
+ * 注册获取首页数据监听
+ */
+export const addGetHomePageEnterDataListener = (cb:Function) => {
+    if (homePageDataGeted) {
+        cb();
+    } else {
+        homePageDataGetedCbs.push(cb);
+    }
+    
+};
+
+/**
+ * 触发获取首页数据
+ */
+export const emitGetHomePageEnterData = () => {
+    homePageDataGeted = true;
+    for (const cb of homePageDataGetedCbs) {
         cb && cb();
     }
 };

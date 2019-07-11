@@ -8,7 +8,7 @@ import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
-import { Account, getStore, initCloudWallets,LocalCloudWallet, register, setStore } from '../store/memstore';
+import { Account, getAllAccount, getStore,initCloudWallets, LocalCloudWallet, register, setStore } from '../store/memstore';
 import { addFirstRegisterListener } from '../store/vmRegister';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';
@@ -304,10 +304,17 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
 };
 
 /**
- * 注销账户并删除数据
+ * 注销账户
  */
-export const logoutAccountDel = () => {
+export const logoutAccount = (save:boolean = true) => {
+    const wallet = getStore('wallet');
+    setStore('flags/saveAccount', false , false); // 重置saveAccount
+    if (save && wallet.setPsw) {
+        setStore('flags/saveAccount', true);
+    }
+    
     setStore('user/token','');
+    const uid = getStore('user/id');
     const user = {
         id: '',                      // 该账号的id
         isLogin: false,              // 登录状态
@@ -370,18 +377,20 @@ export const logoutAccountDel = () => {
     setTimeout(() => {
         openConnect();
     },100);
-};
+    
+    return getAllAccount().then(accounts => {
+        const flags = getStore('flags');
+        const saveAccount = flags.saveAccount;
+        if (saveAccount) {
+            return accounts;
+        } else {
+            accounts = accounts.filter(account => {
+                return account.user.id !== uid;
+            });
 
-/**
- * 注销账户保留数据
- */
-export const logoutAccount = () => {
-    const wallet = getStore('wallet');
-    setStore('flags/saveAccount', false , false); // 重置saveAccount
-    if (wallet.setPsw) {
-        setStore('flags/saveAccount', true);
-    }
-    logoutAccountDel();
+            return accounts;
+        }
+    });
 };
 
 /**
@@ -480,5 +489,3 @@ const registerStore = () => {
 registerStore();
 
 addFirstRegisterListener(openConnect);  // 在第一次注册成功后才连接服务器
-
-console.log('更新测试1');

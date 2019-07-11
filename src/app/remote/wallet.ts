@@ -589,12 +589,3 @@ export const exportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],cur
 export const rpcTimeingTest = () => {
     return 12345; 
 };
-
-// 加密测试
-export const jscPerformanceTest = () => {
-    const start = new Date().getTime();
-    const ret = encrypt('123456789',cryptoRandomInt().toString());
-    console.log('计算加密耗时 =',new Date().getTime() - start);  
-    
-    return 12345678;
-};
