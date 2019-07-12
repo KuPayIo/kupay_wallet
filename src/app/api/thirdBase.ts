@@ -48,7 +48,7 @@ export const minWebview = (payload:{webviewName: string;popFloatBox:boolean}) =>
     if (popFloatBox) {
         popFloatBoxClose = popNew('app-components-floatBox-floatBox',{ webviewName });
     }
-    minWebview1(webviewName);
+    // minWebview1(webviewName);
 };
 
 /**

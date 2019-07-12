@@ -114,9 +114,23 @@ const loginWalletSuccess = () => {
             loginType.success(res.openid);
         }).catch(err => {
             console.log(`appId ${loginType.appId} get openId failed`,err);
-            popNewMessage('openid 获取失败');
+            // popNewMessage('openid 获取失败');
+            openIdFail(loginType);
         });
     }
+};
+
+/**
+ * openid获取失败  尝试再次获取直到成功
+ */
+const openIdFail = (loginType:any) => {
+    callGetOpenId(loginType.appId).then(res => {
+        loginType.success(res.openid);
+    }).catch(err => {
+        console.log(`appId ${loginType.appId} get openId failed`,err);
+        // popNewMessage('openid 获取失败');
+        openIdFail(loginType);
+    });
 };
 
 // 用户登出回调

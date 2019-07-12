@@ -208,18 +208,17 @@ export const setPswPop = () => {
         popModalBoxs('app-components-modalBox-modalBox',modalBox[getLang()],() => {  
             popNew('app-view-mine-setting-settingPsw',{});
         },undefined,true);
-        setStoreData('flags/setPsw',false);
-    },3000);
+    },2000);
 };
 
 // 绑定手机弹框
 export const bindPhonePop = () => {
     setTimeout(() => {
         popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
+            setStoreData('flags/bindPhone',false); 
             popNew('app-view-mine-setting-phone',{ jump:true });
         },undefined,true);    
-        setStoreData('flags/bindPhone',false);  
-    },3000);
+    },2000);
 };
 
 // 余额变化  密码弹框或手机弹框

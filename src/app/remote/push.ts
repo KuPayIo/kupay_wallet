@@ -3,7 +3,7 @@
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { CMD } from '../publicLib/config';
-import { CloudCurrencyType, ServerPushArgs, ServerPushKey } from '../publicLib/interface';
+import { ServerPushArgs, ServerPushKey } from '../publicLib/interface';
 import { getStore, setStore } from '../store/memstore';
 import { logoutAccount } from './login';
 import { postServerPushMessage } from './postWalletMessage';

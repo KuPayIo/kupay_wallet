@@ -369,6 +369,7 @@ export const closeWebview = (webviewName: string) => {
 export const minWebview = (payload:{webviewName: string;popFloatBox:boolean}) => {
     console.log('wallet minWebview called');
     minWebview1(payload.webviewName);
+    postThirdPushMessage(ThirdCmd.MIN,payload);
 };
 
 /**

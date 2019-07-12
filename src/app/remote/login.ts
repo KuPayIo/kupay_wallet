@@ -190,9 +190,12 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
     const deviceDetail = await getDeviceAllDetail();
     const mnemonic = getMnemonicByHash(hash);
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
-    console.log('================',wlt.exportPrivateKey());
-    // const sign = genmnemonicMod.sign;
-    const signStr = sign(conRandom, wlt.exportPrivateKey());
+    const start1 = new Date().getTime();
+    const privateKey = wlt.exportPrivateKey();
+    console.log('计算耗时 exportPrivateKey = ',new Date().getTime() - start1);
+    const start2 = new Date().getTime();
+    const signStr = sign(conRandom, privateKey);
+    console.log('计算耗时 sign = ',new Date().getTime() - start2);
     const param:any = { sign: signStr };
     if (inAndroidApp || inIOSApp) {
         param.operator = deviceDetail.operator;
