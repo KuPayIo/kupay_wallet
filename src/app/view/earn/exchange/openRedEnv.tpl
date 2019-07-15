@@ -5,7 +5,7 @@
         <div w-class="title">{{it.message}}</div>
         <div w-class="content">{{it.tag}}</div>
         <div style="position: absolute;margin-top: 590px;text-align: center;width: 100%;">
-            <img w-class="sendRedBtn {{it.openClick ? 'sendRedBtnClick' : ''}}" src="../../../res/image/openRedEnv.png" on-tap="openRedEnv"/>
+            <img w-class="sendRedBtn sendRedBtnClick {{it.openClick ? 'sendRedBtnClick' : ''}}" src="../../../res/image/openRedEnv.png" on-tap="openRedEnv"/>
         </div>
     </div>
 </div>

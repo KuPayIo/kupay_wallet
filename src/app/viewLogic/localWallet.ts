@@ -215,7 +215,6 @@ export const setPswPop = () => {
 export const bindPhonePop = () => {
     setTimeout(() => {
         popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
-            setStoreData('flags/bindPhone',false); 
             popNew('app-view-mine-setting-phone',{ jump:true });
         },undefined,true);    
     },2000);

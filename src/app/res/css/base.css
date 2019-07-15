@@ -2,7 +2,12 @@ img[src=""],
 img:not([src]) {
     opacity: 0;
 }
-
+input:disabled, input[disabled]{ 
+    -webkit-opacity:1; 
+    opacity: 1;
+    color:#8d9399;
+    -webkit-text-fill-color:#8d9399; 
+}
 div{
     box-sizing: border-box;
 }

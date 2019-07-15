@@ -317,7 +317,7 @@ pi_tools.dragDom = function(element, callback) {
         params.currentX = event.changedTouches[0].clientX;
         params.currentY = event.changedTouches[0].clientY;
     };
-    document.ontouchend = function(){
+    element.ontouchend = function(){
         console.log("onmouseup");
         params.flag = false;    
         if(getCss(element, "left") !== "auto"){
