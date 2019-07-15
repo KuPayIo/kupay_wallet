@@ -189,6 +189,7 @@ export class PlayHome extends Widget {
      * 默认进入游戏
      */
     public defaultEnterGame() {
+        return;
         console.log(`getStore('user/isLogin') = ${getStore('user/isLogin')},isActive = ${this.props.isActive}`);
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
         const phoneNumber = getUserInfo().phoneNumber;    
@@ -200,7 +201,7 @@ export class PlayHome extends Widget {
                 return;
             } else {
                 console.log('defaultEnterGame success');
-                this.gameClick(0);
+                this.gameClick(1);
                 localStorage.setItem('firstEnterGame','true');
             }
         }

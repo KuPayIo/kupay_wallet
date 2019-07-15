@@ -15,11 +15,25 @@ export const gameList = [
         title:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
         desc:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
         img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
-        url:'http://192.168.35.202/dst/boot/yineng/yineng.html?debug',
+        url:'http://www.baidu.com',
         apkDownloadUrl:shareDownload,
         webviewName:'fairyChivalry',
-        accId:'268828',
-        groupId:10001,
+        appid:'102'
+    },{ // http://192.168.31.10:3003/index.html
+        title:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
+        desc:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
+        img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
+        url: 'http://192.168.34.72/tuishu/client/boot/index.html',  //     http://192.168.34.72/tuishu/client/boot/index.html
+        apkDownloadUrl:shareDownload,
+        webviewName:'tuishu',
+        appid:'102'
+    },{ // http://192.168.31.10:3003/index.html
+        title:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
+        desc:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
+        img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
+        url:'http://192.168.34.72:5432/index.html', // http://192.168.34.72:5432/index.html
+        apkDownloadUrl:shareDownload,
+        webviewName:'reader',
         appid:'102'
     }
 ];
@@ -58,7 +72,12 @@ export const getGameItem = (webviewName:string) => {
     const index = gameList.findIndex((item) => {
         return item.webviewName === webviewName;
     });
-    const gameItem =  getLocalStorage('officialService').gameList[index]; 
+    const officialService = getLocalStorage('officialService');
+    let gameItem = {};
+    if(officialService){
+        gameItem =  officialService.gameList[index];
+    }
+      
     console.log('获取游戏配置信息', gameList[index], gameItem);
 
     return {

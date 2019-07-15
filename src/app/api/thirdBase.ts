@@ -24,11 +24,15 @@ logoutWallet(() => {
         curWebviewName = undefined;
     }
 });
-
+/**
+ * 关闭悬浮框
+ */
 export const closePopFloatBox = () => {
     popFloatBoxClose && popFloatBoxClose.callback(popFloatBoxClose.widget);
     popFloatBoxClose = undefined;
 };
+
+
  /**
   * 关闭打开的webview
   */
@@ -93,7 +97,7 @@ export const gotoRecharge = (webviewName: string) => {
  */
 export const gotoGameService = (webviewName: string) => {
     console.log('wallet gotoGameService called');
-    const item = getGameItem(webviewName);
+    const item:any = getGameItem(webviewName);
     getChatUid(item.accId).then((r) => {
         popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER,okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
@@ -107,7 +111,7 @@ export const gotoGameService = (webviewName: string) => {
  */
 export const gotoOfficialGroupChat = (webviewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
-    const item = getGameItem(webviewName);
+    const item:any = getGameItem(webviewName);
     applyToGroup(item.groupId).then((r) => {
         popNew('chat-client-app-view-chat-chat',{ id: r, chatType: GENERATOR_TYPE.GROUP,okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');

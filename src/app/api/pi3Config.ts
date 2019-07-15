@@ -17,7 +17,7 @@ export const getPi3Config = () => {
         buttonMod:ButtonMods.FLOATBUTTON2,   // 当前按钮模式
         thirdBase:'app/api/thirdBase',
         jsApi:'app/api/JSAPI',
-        imgUrlPre:'http://192.168.31.10/wallet/app/res/image/third/',
+        imgUrlPre:'http://192.168.33.13/wallet/app/res/image/third/',
         web3EthDefaultAccount:getCurrentEthAddr() ,
         web3ProviderNetWork:getEthApiBaseUrl()
     };

@@ -14,6 +14,8 @@ import { getUserInfo } from '../utils/tools';
 import { getMnemonicByHash, VerifyIdentidy } from '../utils/walletTools';
 import { getGameItem } from '../view/play/home/gameConfig';
 import { minWebview1 } from './thirdBase';
+import { loadDir } from '../../pi/widget/util';
+import { getPi3Config } from './pi3Config';
 
 export enum resCode {
     SUCCESS = undefined,   // 成功
@@ -48,6 +50,60 @@ export const authorize = (payload, callback) => {
         callback(err);
     });
 };
+
+/**
+ * 打开一个新的webview
+ * @param payload 
+ */
+export const openNewWebview = (payload:{ webviewName: string;url:string;args:Object})=>{
+    const thirdApiPromise = new Promise((resolve) => {
+        const path = 'app/api/thirdApi.js.txt';
+        loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
+            const arr = new Uint8Array(fileMap[path]);
+            const content = new TextDecoder().decode(arr);
+            resolve(content);
+        }, () => {
+            //
+        }, () => {
+            //
+        });
+    });
+
+    const thirdApiDependPromise = new Promise((resolve) => {
+        const path = 'app/api/thirdApiDepend.js.txt';
+        loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
+            const arr = new Uint8Array(fileMap[path]);
+            const content = new TextDecoder().decode(arr);
+            resolve(content);
+        }, () => {
+            //
+        }, () => {
+            //
+        });
+    });
+    const gameItem = getGameItem(payload.webviewName);
+    const pi3Config:any = getPi3Config();
+    pi3Config.appid = gameItem.appid;
+    pi3Config.gameName = gameItem.title.zh_Hans;
+    pi3Config.webviewName = payload.webviewName;
+    const pi3ConfigStr = `
+        window.pi_config = ${JSON.stringify(pi3Config)};
+    `;
+    const configPromise = Promise.resolve(pi3ConfigStr);
+    const allPromise = Promise.all([configPromise,thirdApiDependPromise,thirdApiPromise]);
+    WebViewManager.close(payload.webviewName);
+    allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
+        const content =  configContent + thirdApiDependContent + thirdApiContent;
+        let search = [];
+        if(typeof payload.args === "object"){
+            for(const k in payload.args){
+                search.push(`${k}=${payload.args[k]}`)
+            }
+        }
+        const gameUrl = `${payload.url}?${search.join("&")}`;
+        WebViewManager.open(payload.webviewName, gameUrl, pi3Config.gameName, content);
+    });
+}
 
 /**
  * 查询是否开启免密支付
