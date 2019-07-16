@@ -32,7 +32,6 @@ export const closePopFloatBox = () => {
     popFloatBoxClose = undefined;
 };
 
-
  /**
   * 关闭打开的webview
   */
