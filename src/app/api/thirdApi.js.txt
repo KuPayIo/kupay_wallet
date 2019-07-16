@@ -302,12 +302,6 @@ pi_tools.createThirdApiStyleTag = function() {
     document.getElementsByTagName("head")[0].appendChild(style);
 };
 
-
-
-
-
-
-
 //--------创建标签----------------------------------------------------------------------------------------------------------------------------
 
 
@@ -499,6 +493,13 @@ pi_jsApi.thirdPay = function (order, callBack) {
         }
     });
 };
+
+// 打开新页面
+pi_jsApi.openNewWebview = function(payload){
+    pi_RPC_Method("app/api/JSAPI", "openNewWebview", payload, function (error, result) {
+        console.log('openNewWebview call success');
+    });
+}
 
 // 第三方设置免密支付
 // openFreeSecret:设置免密支付状态  

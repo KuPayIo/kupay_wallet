@@ -155,24 +155,31 @@ export class PlayHome extends Widget {
         } else {
             setPopPhoneTips();
             hasEnterGame = true;
-            const gameTitle = gameList[num].title.zh_Hans;
-            const gameUrl =   gameList[num].url;
-            const webviewName = gameList[num].webviewName;
+            const gameItem = gameList[num];
+            const gameTitle = gameItem.title.zh_Hans;
+            const gameUrl =   gameItem.url;
+            const webviewName = gameItem.webviewName;
             const pi3Config:any = getPi3Config();
-            pi3Config.appid = gameList[num].appid;
+            pi3Config.appid = gameItem.appid;
             pi3Config.gameName = gameTitle;
             pi3Config.webviewName = webviewName;
+            pi3Config.fromWallet = true;
             
             const pi3ConfigStr = `
                 window.pi_config = ${JSON.stringify(pi3Config)};
             `;
             this.configPromise = Promise.resolve(pi3ConfigStr);
-
-            const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
-            allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
-                const content =  configContent + thirdApiDependContent + thirdApiContent;
-                WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
-            });
+            if (gameItem.usePi) { // 有pi的项目
+                this.configPromise.then(configContent => {
+                    WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent);
+                });
+            } else {
+                const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
+                allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
+                    const content =  configContent + thirdApiDependContent + thirdApiContent;
+                    WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
+                });
+            }
         }
     }
 
@@ -189,6 +196,7 @@ export class PlayHome extends Widget {
      * 默认进入游戏
      */
     public defaultEnterGame() {
+        return;
         console.log(`getStore('user/isLogin') = ${getStore('user/isLogin')},isActive = ${this.props.isActive}`);
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
         const phoneNumber = getUserInfo().phoneNumber;    
@@ -200,7 +208,7 @@ export class PlayHome extends Widget {
                 return;
             } else {
                 console.log('defaultEnterGame success');
-                this.gameClick(0);
+                this.gameClick(1);
                 localStorage.setItem('firstEnterGame','true');
             }
         }

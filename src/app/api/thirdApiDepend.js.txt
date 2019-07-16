@@ -256,8 +256,6 @@ window.pi_RPC_Method = (function () {
     };
 })();
 
-
-
 /**
  * 函数防抖
  */
@@ -311,7 +309,7 @@ pi_tools.dragDom = function(element, callback) {
         params.currentX = event.changedTouches[0].clientX;
         params.currentY = event.changedTouches[0].clientY;
     };
-    document.ontouchend = function(){
+    element.ontouchend = function(){
         console.log("onmouseup");
         params.flag = false;    
         if(getCss(element, "left") !== "auto"){
@@ -336,6 +334,7 @@ pi_tools.dragDom = function(element, callback) {
         }
     }    
 };
+
 /**
  * 自适应
  */
@@ -593,6 +592,7 @@ pi_tools.buttonModInit = function(){
         }
     }
 };
+
 /**
  * 悬浮框按钮样式1初始化
  */
