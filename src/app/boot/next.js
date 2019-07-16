@@ -350,7 +350,7 @@ winit.initNext = function () {
 			setStore('flags/level_3_page_loaded', true);
 			console.timeEnd('all resource loaded');
 			loadLeftImages();
-			loadPiSdk();
+			// loadPiSdk();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);

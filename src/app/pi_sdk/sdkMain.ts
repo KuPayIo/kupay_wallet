@@ -1,4 +1,3 @@
-import { getFreeSecret } from './sdkApi';
 import { buttonModInit, createThirdApiStyleTag, createThirdBaseStyle } from './sdkTools';
 
 /**

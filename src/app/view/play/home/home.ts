@@ -25,6 +25,9 @@ export class PlayHome extends Widget {
     public configPromise:Promise<string>;
     public thirdApiDependPromise:Promise<string>;
     public thirdApiPromise:Promise<string>;
+    public piSdkPromise:Promise<string>;
+    public injectStartPromise:Promise<string>;
+    public injectEndPromise:Promise<string>;
     
     constructor() {
         super();
@@ -57,6 +60,48 @@ export class PlayHome extends Widget {
                 //
             });
         });
+        this.injectStartPromise = new Promise((resolve) => {
+            const path = 'app/api/injectStart.js.txt';
+            loadDir([path,'app/api/JSAPI.js','app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
+                const arr = new Uint8Array(fileMap[path]);
+                const content = new TextDecoder().decode(arr);
+                resolve(content);
+            }, () => {
+                //
+            }, () => {
+                //
+            });
+        });
+        this.injectEndPromise = new Promise((resolve) => {
+            const path = 'app/api/injectEnd.js.txt';
+            loadDir([path], undefined, undefined, undefined, fileMap => {
+                const arr = new Uint8Array(fileMap[path]);
+                const content = new TextDecoder().decode(arr);
+                console.timeEnd('loginMod thirdApiDependPromise');
+                resolve(content);
+            }, () => {
+                //
+            }, () => {
+                //
+            });
+        });
+
+        this.piSdkPromise = new Promise((resolve) => {
+            const sdkToolsPath = 'app/pi_sdk/sdkTools.js';
+            const sdkApiPath = 'app/pi_sdk/sdkApi.js';
+            const sdkMainPath = 'app/pi_sdk/sdkMain.js';
+            loadDir([sdkToolsPath,sdkApiPath,sdkMainPath], undefined, undefined, undefined, fileMap => {
+                // tslint:disable-next-line:max-line-length
+                const arrs = [new Uint8Array(fileMap[sdkToolsPath]),new Uint8Array(fileMap[sdkApiPath]),new Uint8Array(fileMap[sdkMainPath])];
+                const content = new TextDecoder().decode(arrs[0]) + new TextDecoder().decode(arrs[1]) + new TextDecoder().decode(arrs[2]);
+                resolve(content);
+            }, () => {
+                //
+            }, () => {
+                //
+            });
+        });
+
     }
     
     public setProps(props:Json) {
@@ -174,9 +219,14 @@ export class PlayHome extends Widget {
                     WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent);
                 });
             } else {
-                const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
-                allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
-                    const content =  configContent + thirdApiDependContent + thirdApiContent;
+                // const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
+                // allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
+                //     const content =  configContent + thirdApiDependContent + thirdApiContent;
+                //     WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
+                // });
+                const allPromise = Promise.all([this.injectStartPromise,this.configPromise,this.piSdkPromise,this.injectEndPromise]);
+                allPromise.then(([injectStartContent,configContent,piSdkContent,injectEndContent]) => {
+                    const content =  injectStartContent + configContent + piSdkContent + injectEndContent;
                     WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
                 });
             }
