@@ -1,21 +1,18 @@
 import { closePopBox, popInputBox, popNewLoading, popNewMessage } from './sdkTools';
 
-declare var pi_RPC_Method;
-declare var pi_config;
-declare var pi_store;
+// tslint:disable-next-line:variable-name
+const pi_sdk = (<any>window).pi_sdk || {};
 
 // tslint:disable-next-line:variable-name
-const pi_jsApi:any = (<any>window).pi_jsApi || {};      // 全局api
 
 /**
  * 获取是否开启免密支付
  */
 export const getFreeSecret = () => {
     console.log('getFreeSecret called');
-    console.log('准备获取绵密 = ',pi_RPC_Method);
-    pi_RPC_Method(pi_config.jsApi, 'querySetNoPassword', pi_config.appid,  (error, startFreeSecret) => {
+    pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'querySetNoPassword', pi_sdk.config.appid,  (error, startFreeSecret) => {
         console.log('getFreeSecret called callback',startFreeSecret);
-        pi_store.freeSecret = startFreeSecret;
+        pi_sdk.store.freeSecret = startFreeSecret;
     });
 };
 
@@ -27,14 +24,14 @@ export const setFreeSecrectPay =  (openFreeSecret) => {
     const title = openFreeSecret ? '设置免密支付' : '关闭免密支付'; 
     popInputBox(title,(value) => {
         const sendData = {
-            appid: pi_config.appid,
+            appid: pi_sdk.config.appid,
             noPSW: openFreeSecret ? 1 : 0,
             password:value
         };
         popNewLoading('设置中...');
-        pi_RPC_Method(pi_config.jsApi, 'setFreeSecrectPay', sendData,  (resCode1, msg1) => {
+        pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'setFreeSecrectPay', sendData,  (resCode1, msg1) => {
             if (msg1) {
-                pi_store.freeSecret = !pi_store.freeSecret;
+                pi_sdk.store.freeSecret = !pi_sdk.store.freeSecret;
                 popNewMessage('设置成功');
             } else {
                 popNewMessage('设置失败');
@@ -48,7 +45,7 @@ export const setFreeSecrectPay =  (openFreeSecret) => {
 
 // 获取openID
 const authorize = (payload, callBack) => {
-    pi_RPC_Method(pi_config.jsApi, 'authorize', payload,  (error, result) => {
+    pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'authorize', payload,  (error, result) => {
         console.log('getOpenId call success', error);
         console.log('getOpenId call success', result);
         callBack(error, result);
@@ -67,7 +64,7 @@ const thirdPay =  (order, callBack) => {
     };
     closePopBox();
     popNewLoading('支付中...');
-    pi_RPC_Method(pi_config.jsApi, 'thirdPay', { order,webviewName:pi_config.webviewName },  (error, res) => {
+    pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'thirdPay', { order,webviewName:pi_sdk.config.webviewName },  (error, res) => {
         console.log('thirdPay call success',res);
         closePopBox();
         if (res.result === payCode.SUCCESS) {
@@ -77,7 +74,7 @@ const thirdPay =  (order, callBack) => {
             const title = res.result === payCode.SETNOPASSWORD ? '未开启免密支付，请输入支付密码' : '免密额度到达上限';
             popInputBox(title,(value) => {
                 popNewLoading('支付中...');
-                pi_RPC_Method(pi_config.jsApi, 'thirdPayDirect', { order,password:value },  (error, res) => {
+                pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'thirdPayDirect', { order,password:value },  (error, res) => {
                     console.log('thirdPayDirect call success',res);
                     closePopBox();
                     if (res.result === payCode.ERRORPSW) {
@@ -102,14 +99,19 @@ const thirdPay =  (order, callBack) => {
 
 // 打开新页面
 const openNewWebview = (payload) => {
-    pi_RPC_Method(pi_config.jsApi, 'openNewWebview', payload,  (error, result) => {
+    pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'openNewWebview', payload,  (error, result) => {
         console.log('openNewWebview call success');
     });
 };
 
 // ----------对外接口------------------------------------------------------------------------------------------
 
-pi_jsApi.authorize = authorize;
-pi_jsApi.thirdPay = thirdPay;
-pi_jsApi.openNewWebview = openNewWebview;
-(<any>window).pi_jsApi = pi_jsApi;
+// tslint:disable-next-line:variable-name
+const pi_api = {
+    authorize,
+    thirdPay,
+    openNewWebview
+}; 
+
+pi_sdk.api = pi_api;
+(<any>window).pi_sdk = pi_sdk;

@@ -23,43 +23,12 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
     public ok: () => void;
     public configPromise:Promise<string>;
-    public thirdApiDependPromise:Promise<string>;
-    public thirdApiPromise:Promise<string>;
     public piSdkPromise:Promise<string>;
     public injectStartPromise:Promise<string>;
     public injectEndPromise:Promise<string>;
     
     constructor() {
         super();
-        console.time('loginMod thirdApiPromise');
-        console.time('loginMod thirdApiDependPromise');
-        this.thirdApiPromise = new Promise((resolve) => {
-            const path = 'app/api/thirdApi.js.txt';
-            loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
-                const arr = new Uint8Array(fileMap[path]);
-                const content = new TextDecoder().decode(arr);
-                console.timeEnd('loginMod thirdApiPromise');
-                resolve(content);
-            }, () => {
-                //
-            }, () => {
-                //
-            });
-        });
-
-        this.thirdApiDependPromise = new Promise((resolve) => {
-            const path = 'app/api/thirdApiDepend.js.txt';
-            loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
-                const arr = new Uint8Array(fileMap[path]);
-                const content = new TextDecoder().decode(arr);
-                console.timeEnd('loginMod thirdApiDependPromise');
-                resolve(content);
-            }, () => {
-                //
-            }, () => {
-                //
-            });
-        });
         this.injectStartPromise = new Promise((resolve) => {
             const path = 'app/api/injectStart.js.txt';
             loadDir([path,'app/api/JSAPI.js','app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
@@ -210,8 +179,12 @@ export class PlayHome extends Widget {
             pi3Config.webviewName = webviewName;
             pi3Config.fromWallet = true;
             
+            // tslint:disable-next-line:variable-name
+            const pi_sdk = {
+                config:pi3Config
+            };
             const pi3ConfigStr = `
-                window.pi_config = ${JSON.stringify(pi3Config)};
+                window.pi_sdk = ${JSON.stringify(pi_sdk)};
             `;
             this.configPromise = Promise.resolve(pi3ConfigStr);
             if (gameItem.usePi) { // 有pi的项目
@@ -219,11 +192,6 @@ export class PlayHome extends Widget {
                     WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent);
                 });
             } else {
-                // const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
-                // allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
-                //     const content =  configContent + thirdApiDependContent + thirdApiContent;
-                //     WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
-                // });
                 const allPromise = Promise.all([this.injectStartPromise,this.configPromise,this.piSdkPromise,this.injectEndPromise]);
                 allPromise.then(([injectStartContent,configContent,piSdkContent,injectEndContent]) => {
                     const content =  injectStartContent + configContent + piSdkContent + injectEndContent;

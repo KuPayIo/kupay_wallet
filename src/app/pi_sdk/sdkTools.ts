@@ -1,9 +1,14 @@
 /**
  * sdk tools
  */
+// tslint:disable-next-line:variable-name
+const pi_sdk = (<any>window).pi_sdk || {};
 
-declare var pi_config;
-declare var pi_store;
+// tslint:disable-next-line:variable-name
+const pi_config = pi_sdk.config;
+
+// tslint:disable-next-line:variable-name
+const pi_store = pi_sdk.store;
 
 /**
  * 悬浮框按钮样式
