@@ -1,4 +1,3 @@
-import { getFreeSecret } from './sdkApi';
 import { buttonModInit, createThirdApiStyleTag, createThirdBaseStyle } from './sdkTools';
 
 /**
@@ -11,18 +10,18 @@ let webviewManagerPath;   // pi库webview文件路径
 let pi_RPC_Method:Function;     // rpc调用
 
 // tslint:disable-next-line:variable-name
-const pi_sdk:any = {};         // pi sdk
+const pi_sdk:any = (<any>window).pi_sdk || {};         // pi sdk
 
 // tslint:disable-next-line:variable-name
-const pi_jsApi:any = (<any>window).pi_jsApi || {};      // 全局api
+const pi_jsApi:any = pi_sdk.api;      // api
 
 // tslint:disable-next-line:variable-name
-const pi_store:any = {       // 全局store
-    freeSecret:false       // 是否开启免密支付
+const pi_store:any = pi_sdk.store || {       // store
+    freeSecret:false                         // 是否开启免密支付
 };   
 
 // tslint:disable-next-line:variable-name
-const pi_config:any = (<any>window).pi_config || {};  // 全局配置信息
+const pi_config:any = pi_sdk.config || {};  // 配置信息
 
 /**
  * button id定义
@@ -134,7 +133,7 @@ const setWebviewManager = (path:string) => {
     if (!pi_config.fromWallet) return;  
     webviewManagerPath = path;
     console.log('setWebviewManager path = ',path);
-    (<any>window).pi_RPC_Method = pi_RPC_Method = (moduleName:string, methodName:string, param:any, callback:Function) => {
+    pi_sdk.pi_RPC_Method = pi_RPC_Method = (moduleName:string, methodName:string, param:any, callback:Function) => {
         const exs = pi_modules[webviewManagerPath].exports;
         if (!exs || !exs.WebViewManager || ! exs.WebViewManager.rpc) throw new Error('can\'t find WebViewManager');
         const rpcData = {
@@ -162,8 +161,7 @@ pi_config.showButtons = showButtons;
 
 pi_sdk.setWebviewManager = setWebviewManager;
 pi_sdk.piSdkInit = piSdkInit;
+pi_sdk.config = pi_config;
+pi_sdk.store = pi_store;
 
-(<any>window).pi_config = pi_config;
-(<any>window).pi_store = pi_store;
-(<any>window).pi_jsApi = pi_jsApi;
 (<any>window).pi_sdk = pi_sdk; 

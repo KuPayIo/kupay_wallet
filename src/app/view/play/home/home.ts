@@ -23,19 +23,17 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
     public ok: () => void;
     public configPromise:Promise<string>;
-    public thirdApiDependPromise:Promise<string>;
-    public thirdApiPromise:Promise<string>;
+    public piSdkPromise:Promise<string>;
+    public injectStartPromise:Promise<string>;
+    public injectEndPromise:Promise<string>;
     
     constructor() {
         super();
-        console.time('loginMod thirdApiPromise');
-        console.time('loginMod thirdApiDependPromise');
-        this.thirdApiPromise = new Promise((resolve) => {
-            const path = 'app/api/thirdApi.js.txt';
-            loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
+        this.injectStartPromise = new Promise((resolve) => {
+            const path = 'app/api/injectStart.js.txt';
+            loadDir([path,'app/api/JSAPI.js','app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
-                console.timeEnd('loginMod thirdApiPromise');
                 resolve(content);
             }, () => {
                 //
@@ -43,10 +41,9 @@ export class PlayHome extends Widget {
                 //
             });
         });
-
-        this.thirdApiDependPromise = new Promise((resolve) => {
-            const path = 'app/api/thirdApiDepend.js.txt';
-            loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
+        this.injectEndPromise = new Promise((resolve) => {
+            const path = 'app/api/injectEnd.js.txt';
+            loadDir([path], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
                 console.timeEnd('loginMod thirdApiDependPromise');
@@ -57,6 +54,23 @@ export class PlayHome extends Widget {
                 //
             });
         });
+
+        this.piSdkPromise = new Promise((resolve) => {
+            const sdkToolsPath = 'app/pi_sdk/sdkTools.js';
+            const sdkApiPath = 'app/pi_sdk/sdkApi.js';
+            const sdkMainPath = 'app/pi_sdk/sdkMain.js';
+            loadDir([sdkToolsPath,sdkApiPath,sdkMainPath], undefined, undefined, undefined, fileMap => {
+                // tslint:disable-next-line:max-line-length
+                const arrs = [new Uint8Array(fileMap[sdkToolsPath]),new Uint8Array(fileMap[sdkApiPath]),new Uint8Array(fileMap[sdkMainPath])];
+                const content = new TextDecoder().decode(arrs[0]) + new TextDecoder().decode(arrs[1]) + new TextDecoder().decode(arrs[2]);
+                resolve(content);
+            }, () => {
+                //
+            }, () => {
+                //
+            });
+        });
+
     }
     
     public setProps(props:Json) {
@@ -165,8 +179,12 @@ export class PlayHome extends Widget {
             pi3Config.webviewName = webviewName;
             pi3Config.fromWallet = true;
             
+            // tslint:disable-next-line:variable-name
+            const pi_sdk = {
+                config:pi3Config
+            };
             const pi3ConfigStr = `
-                window.pi_config = ${JSON.stringify(pi3Config)};
+                window.pi_sdk = ${JSON.stringify(pi_sdk)};
             `;
             this.configPromise = Promise.resolve(pi3ConfigStr);
             if (gameItem.usePi) { // 有pi的项目
@@ -174,9 +192,9 @@ export class PlayHome extends Widget {
                     WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent);
                 });
             } else {
-                const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
-                allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
-                    const content =  configContent + thirdApiDependContent + thirdApiContent;
+                const allPromise = Promise.all([this.injectStartPromise,this.configPromise,this.piSdkPromise,this.injectEndPromise]);
+                allPromise.then(([injectStartContent,configContent,piSdkContent,injectEndContent]) => {
+                    const content =  injectStartContent + configContent + piSdkContent + injectEndContent;
                     WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
                 });
             }
