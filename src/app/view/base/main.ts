@@ -7,12 +7,14 @@ import { getStore as chatGetStore } from '../../../chat/client/app/data/store';
 import { chatManualReconnect } from '../../../chat/client/app/net/init';
 import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore } from '../../../earn/client/app/store/memstore';
+import { addAppBackPressed, addAppResumed } from '../../../pi/browser/app_comon_event';
+import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
 import { callGetHomePageEnterData, callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
 import { LockScreen } from '../../publicLib/interface';
-import { piRequire } from '../../utils/commonjsTools';
-import { getScreenModify } from '../../viewLogic/native';
+import { popNewMessage } from '../../utils/tools';
+import { getScreenModify, preLoadAd } from '../../viewLogic/native';
 
 // ============================== 导出
 export const run = (cb): void =>  {
@@ -62,12 +64,10 @@ const popNewPage = () => {
  */
 const preFetchFromNative = () => {
     getScreenModify();
-    piRequire(['app/viewLogic/native']).then(mods => {
         // 预先随机下载
-        mods[0].preLoadAd(undefined,() => {
-            mods[0].preLoadAd(undefined,() => {
-                mods[0].preLoadAd(undefined);
-            });
+    preLoadAd(undefined,() => {
+        preLoadAd(undefined,() => {
+            preLoadAd(undefined);
         });
     });
 };
@@ -79,27 +79,23 @@ const checkUpdate = () => {
  * 注册app event
  */
 const addAppEvent = () => {
-    piRequire(['pi/browser/app_comon_event','pi/browser/exitApp']).then(mods => {
-        const addAppResumed = mods[0].addAppResumed;
-        const addAppBackPressed = mods[0].addAppBackPressed;
-        // 注册appResumed
-        addAppResumed(() => {
-            console.log('addAppResumed callback called');
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
             ifNeedUnlockScreen().then(loccked => {
                 if (loccked) {
-                    popNew('app-components-lockScreenPage-lockScreenPage', {
+                    popNew('app-components1-lockScreenPage-lockScreenPage', {
                         openApp: true
                     });
                 }
             });
-            
+
             setTimeout(() => {
                 getStoreData('user/isLogin').then(isLogin => {
                     if (!isLogin) {
                         callWalletManualReconnect();
                     }
                 });
-                
+                    
                 if (!chatGetStore('isLogin')) {
                     chatManualReconnect();
                 }
@@ -107,32 +103,57 @@ const addAppEvent = () => {
                     earnManualReconnect();
                 }
             },100);  // 检查是否已经退出登录
-        });
+        }
+    });
+    // 注册appResumed
+    // addAppResumed(() => {
+    //     alert('addAppResumed callback called');
+    //     ifNeedUnlockScreen().then(loccked => {
+    //         if (loccked) {
+    //             popNew('app-components-lockScreenPage-lockScreenPage', {
+    //                 openApp: true
+    //             });
+    //         }
+    //     });
+            
+    //     setTimeout(() => {
+    //         getStoreData('user/isLogin').then(isLogin => {
+    //             if (!isLogin) {
+    //                 callWalletManualReconnect();
+    //             }
+    //         });
+                
+    //         if (!chatGetStore('isLogin')) {
+    //             chatManualReconnect();
+    //         }
+    //         if (!earnGetStore('userInfo/isLogin')) {
+    //             earnManualReconnect();
+    //         }
+    //     },100);  // 检查是否已经退出登录
+    // });
 
-        let startTime = 0;
+    let startTime = 0;
         // 注册appBackPressed
-        addAppBackPressed(() => {
-            let doubleClick = false;
-            const now = new Date().getTime();
-            if (now - startTime <= 300) {
-                doubleClick = true;
-            }
-            startTime = now;
-            console.log('addActivityBackPressed callback called');
-            if (backList.length === 1) {
-                if (!doubleClick) return;
-                const ExitApp = mods[1].ExitApp;
-                const exitApp = new ExitApp();
-                exitApp.init();
-                exitApp.ToHome({});
-            } else {
-                const widget = lastBack();
-                const entranceName = 'app-view-base-entrance';
-                const entranceName1 = 'app-view-base-entrance1';
-                if (widget.name === entranceName || widget.name === entranceName1) return;
-                backCall();
-            }
-        });
+    addAppBackPressed(() => {
+        let doubleClick = false;
+        const now = new Date().getTime();
+        if (now - startTime <= 300) {
+            doubleClick = true;
+        }
+        startTime = now;
+        console.log('addActivityBackPressed callback called');
+        if (backList.length === 1) {
+            if (!doubleClick) return;
+            const exitApp = new ExitApp();
+            exitApp.init();
+            exitApp.ToHome({});
+        } else {
+            const widget = lastBack();
+            const entranceName = 'app-view-base-entrance';
+            const entranceName1 = 'app-view-base-entrance1';
+            if (widget.name === entranceName || widget.name === entranceName1) return;
+            backCall();
+        }
     });
 };
 

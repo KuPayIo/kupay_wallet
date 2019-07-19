@@ -527,8 +527,10 @@ export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callb
  * 关掉所有页面 （不包括首页面）
  */
 export const closeAllPage = () => {
-    for (let i = backList.length;i > 1;i--) {
-        backCall();
+    for (const v of backList) {
+        if (v.widget.name !== 'app-view-base-app') {
+            backCall();
+        }
     }
 };
 
@@ -761,7 +763,7 @@ export const deepCopy = (v: any): any => {
  * 函数节流
  */
 export const throttle = (func) => {
-    const intervel = 50;
+    const intervel = 100;
     let lastTime = 0;
 
     return  () => {
