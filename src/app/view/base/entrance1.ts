@@ -13,6 +13,7 @@ import { CreateWalletType, touristLogin } from '../../viewLogic/localWallet';
 
 // ============================导出
 export class Entrance1 extends Widget {
+    // 
     public ok: () => void;
     public setProps(props:any) {
         const accounts = props.accounts;

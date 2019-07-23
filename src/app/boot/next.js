@@ -152,7 +152,7 @@ winit.initNext = function () {
 			throw new Error("H5 update error!");
 		}
 
-		if (needUpdate) {
+		if (needUpdate) { 
 			var updateContent = pi_update.updateJson.h5UpdateContent || [];
 			var updateVersion =  pi_update.updateJson.version || "";
 			var option = {
@@ -160,17 +160,30 @@ winit.initNext = function () {
 				version:updateVersion
 			};
 			pi_update.modifyContent(option);
+			var start = new Date().getTime();
+			var total;
 			h5UpdateMod.update(function (e) {
 				//{type: "saveFile", total: 4, count: 1}
 				console.log("update progress: ", e);
 				pi_update.updateProgress(e);
+				total = e.total;
 			}, function () {
 				setTimeout(()=>{
 					pi_update.closePop();
 					// 重启
 					h5UpdateMod.reload();
 				},200);
-				
+				var updateTime = new Date().getTime() - start;
+				self.updateMsg = { total,updateTime };
+				var timeArrStr = localStorage.getItem('timeArr');
+				let timeArr;
+				if (timeArrStr) {
+					timeArr = JSON.parse(timeArrStr);
+				} else {
+					timeArr = [];
+				}
+				timeArr.push({ updateMsg });
+				localStorage.setItem('timeArr',JSON.stringify(timeArr));
 			});
 		} else {
 			// 这里是项目加载的开始
@@ -212,20 +225,47 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				loadChatSource();  // 聊天
-				loadEarnSource();  // 活动
-				loadWalletFirstPageSource();  //钱包
-				loadImages(); // 预加载图片
-				if(!pi_update.inApp){
-					vmLoaded();
-				}
-				
+				firstStageLoaded();
 			});
 		}, function (result) {
 			alert("加载基础模块失败, " + result.error + ":" + result.reason);
 		}, modProcess.handler);
 	}
 	
+	// 加载第一阶段必须文件 加载完成后即可获取数据
+	var firstStageLoaded = function(){
+		var sourceList = [
+			"app/postMessage/"
+		];
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
+			console.log("firstStageLoaded success-----------------");
+			var WebViewManager = pi_modules.commonjs.exports.relativeGet("pi/browser/webview").exports.WebViewManager;
+			WebViewManager.addListenStage(function(stage){
+				if(stage === "firstStage"){    // 第一阶段完成  可以注册监听
+					// TODO 在回调中加载剩余代码 并且注册监听已经完成
+					var callGetHomePageEnterData = pi_modules.commonjs.exports.relativeGet("app/middleLayer/wrap").exports.callGetHomePageEnterData;
+					callGetHomePageEnterData().then(function(res){
+						fpFlags.homePageReady = true;
+						fpFlags.homePageData = res;
+						enterApp();
+					});
+				}
+			});
+			console.log("stage webview goReady");
+			WebViewManager.getReady("firstStage");   // 通知一阶段准备完毕
+			// 继续加载首页所需
+			loadChatSource();  // 聊天
+			loadEarnSource();  // 活动
+			loadWalletFirstPageSource();  //钱包
+			loadImages(); // 预加载图片
+			if(!pi_update.inApp){
+				// vmLoaded();
+			}
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
+
 	// vm代码加载
 	var vmLoaded = ()=>{
 		util.loadDir([ "app/store/","app/remote/postWalletMessage.js"], flags, fm, undefined, function (fileMap) {
@@ -265,7 +305,6 @@ winit.initNext = function () {
 		console.time("fp loadWalletFirstPageSource");
 		// var routerPathList = calcRouterPathList();
 		var sourceList = [
-			"app/postMessage/",
 			"app/viewLogic/",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",
@@ -282,7 +321,11 @@ winit.initNext = function () {
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
-			"earn/client/app/res/css/"
+			"earn/client/app/res/css/",
+			"pi/ui/root.js",
+			"pi/ui/root.tpl",
+			"pi/ui/html.js",
+			"pi/ui/html.tpl"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
@@ -365,48 +408,16 @@ winit.initNext = function () {
 
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
-		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
-		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
-			// TODO 通知底层准备完成
-			var WebViewManager = pi_modules.commonjs.exports.relativeGet("pi/browser/webview").exports.WebViewManager;
-			WebViewManager.addListenStage(function(stage){
-				if(stage === "firstStage"){    // 第一阶段完成  可以注册监听
-					// TODO 在回调中加载剩余代码 并且注册监听已经完成
-					var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/html.js","pi/ui/html.tpl"];
-					util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
-						var tab = util.loadCssRes(fileMap);
-						tab.timeout = 90000;
-						tab.release();
-						// var vmLoaded = pi_modules.commonjs.exports.relativeGet("app/postMessage/vmLoaded").exports;
-						// vmLoaded.addVmLoadedListener(function(){
-						// 	// 加载根组件
-						// 	var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
-						// 	root.cfg.full = false; //PC模式
-						// 	var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
-						// 	index.run(function () {
-						// 		console.timeEnd('home enter');
-						// 		// 关闭读取界面
-						// 		document.body.removeChild(document.getElementById('rcmj_loading_log'));
-						// 	});
-						// });
-						// 加载根组件
-						var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
-						root.cfg.full = false; //PC模式
-						var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
-						index.run(function () {
-							console.timeEnd('home enter');
-							// 关闭读取界面
-							document.body.removeChild(document.getElementById('rcmj_loading_log'));
-						});
-						loadLeftSource();
-					}, function (r) {
-						alert("加载目录失败, " + r.error + ":" + r.reason);
-					}, dirProcess.handler);
-				}
+		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady && fpFlags.homePageReady){
+			// 加载根组件
+			var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+			root.cfg.full = false; //PC模式
+			var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+			index.run(fpFlags.homePageData,function () {
+				// 关闭读取界面
+				document.body.removeChild(document.getElementById('rcmj_loading_log'));
 			});
-			console.log("stage webview goReady");
-			WebViewManager.getReady("firstStage");   // 通知一阶段准备完毕
-			console.timeEnd('webview ready ok');
+			loadLeftSource();
 		}
 	}
 

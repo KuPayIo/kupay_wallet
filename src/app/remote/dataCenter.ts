@@ -21,7 +21,7 @@ import { fetchLocalTxByHash, fetchTransactionList, getMnemonicByHash } from './w
  * 创建事件处理器表
  * @example
  */
-class DataCenter {
+class DataCenter { 
     public timerRef: number = 0;
     public timerRef1: number = 0;
     public updateList: any[] = [];

@@ -402,10 +402,7 @@
 	</style>
 	<!-- <script src="http://soeasysdk.com/soeasysr/zm_engine_v2.js"></script> -->
 	<script type="text/javascript">
-		// alert("index.html");
 		self.startTime = Date.now();
-		console.time('webview ready ok');
-		console.time('home enter');
 		var LOG_TIME = Date.now()
 		var PRE_TIME = LOG_TIME;
 		var TIME_STR = ""
@@ -440,7 +437,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = true; 
+			winit.debug = false; 
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 

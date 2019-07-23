@@ -79,6 +79,7 @@ export class App extends Widget {
         this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
+        console.log(JSON.parse(localStorage.getItem('timeArr')));
     }
 
     public switchToEarn() {

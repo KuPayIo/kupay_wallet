@@ -7,38 +7,43 @@ import { getStore as chatGetStore } from '../../../chat/client/app/data/store';
 import { chatManualReconnect } from '../../../chat/client/app/net/init';
 import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore } from '../../../earn/client/app/store/memstore';
-import { addAppBackPressed, addAppResumed } from '../../../pi/browser/app_comon_event';
+import { addAppBackPressed } from '../../../pi/browser/app_comon_event';
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { callGetHomePageEnterData, callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
+import { callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
 import { LockScreen } from '../../publicLib/interface';
-import { popNewMessage } from '../../utils/tools';
 import { getScreenModify, preLoadAd } from '../../viewLogic/native';
 
 // ============================== 导出
-export const run = (cb): void =>  {
+export const run = (homePageData,cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
-    // 数据检查
-    // checkUpdate();
-    const start = new Date().getTime();
-    callGetHomePageEnterData().then((res) => {
-        popNew('app-view-base-app');
-        console.log('获取id耗时 ====',new Date().getTime() - start);
-        console.log('home page data geted',res);
-        const id = res[0];
-        const accounts = res[1];
-        if (!id) {
-            if (accounts.length > 0) {
-                popNew('app-view-base-entrance1',{ accounts });
-            } else {
-                popNew('app-view-base-entrance');
-            }
-        } 
+    // 数据检查  
+    // checkUpdate();  
+    popNew('app-view-base-app');
+    const homeEnter = Date.now() - self.startTime;
+    const id = homePageData[0];
+    const accounts = homePageData[1];
+    if (!id) {
+        if (accounts.length > 0) {
+            popNew('app-view-base-entrance1',{ accounts });
+        } else {
+            popNew('app-view-base-entrance');
+        }
+    } 
          // 锁屏页面
-        popNewPage();
-        if (cb) cb();
-    });
+    popNewPage();
+    if (cb) cb();
+    const pageShow = Date.now() - self.startTime;
+    const timeArrStr = localStorage.getItem('timeArr');
+    let timeArr;
+    if (timeArrStr) {
+        timeArr = JSON.parse(timeArrStr);
+    } else {
+        timeArr = [];
+    }
+    timeArr.push({ homeEnter,pageShow });
+    localStorage.setItem('timeArr',JSON.stringify(timeArr));
     
     // 预先从底层获取一些数据
     preFetchFromNative();
@@ -72,7 +77,7 @@ const preFetchFromNative = () => {
     });
 };
 const checkUpdate = () => {
-  // todo
+  // todo 
 };
 
 /**
