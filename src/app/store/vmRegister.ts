@@ -4,6 +4,7 @@ import { getAllAccount, getStore, register } from './memstore';
 const walletName = 'default';
 const LISTENERSTORENAME = 'app/postMessage/listenerStore';
 const methodName = 'notifyListener';
+const registerKeys = {};
 /**
  * 注册store
  */
@@ -11,9 +12,12 @@ export const vmRegisterStore = (keysStr:string) => {
     console.log('注册vmRegisterStore ===',keysStr);
     const keys = keysStr.split(',');
     for (const key of keys) {         // 一次性注册keys
-        register(key,(data:any) => {
-            WebViewManager.rpc(walletName,{ moduleName:LISTENERSTORENAME,methodName,params:[key,JSON.stringify(data)] });
-        });
+        if (!registerKeys[key]) {  // 防止重复注册
+            register(key,(data:any) => {
+                WebViewManager.rpc(walletName,{ moduleName:LISTENERSTORENAME,methodName,params:[key,JSON.stringify(data)] });
+            });
+            registerKeys[key] = true;
+        }
     }
 };
 

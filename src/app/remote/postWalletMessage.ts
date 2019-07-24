@@ -57,14 +57,18 @@ let vmStage:LoadedStage = LoadedStage.START;
 
 /**
  * vmStage变化
+ * @param firstLoaded 是否是第一次加载
  */
-export const setVmStage = (stage:LoadedStage) => {
+export const setVmStage = (stage:LoadedStage,firstLoaded:boolean = true) => {
     vmStage = stage;
     if (vmStage === LoadedStage.STORELOADED) {
         postStoreLoadedMessage();
     } else if (vmStage === LoadedStage.ALLLOADED) {
         postAllLoadedMessage();
-        sourceLoade();
+        if (firstLoaded) {
+            sourceLoade();
+        }
+        
     }
 };
 
@@ -79,6 +83,13 @@ export const addSourceLoadedListener = (cb:Function) => {
     } else {
         sourceLoadedCbs.push(cb);
     }
+};
+
+/**
+ * 获取vmStage
+ */
+export const getVmStage = () => {
+    return vmStage;
 };
 
 const sourceLoade = () => {

@@ -1,4 +1,5 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
+import { WebViewManager } from '../../pi/browser/webview';
 import { arrayBufferToBase64, base64ToArrayBuffer } from '../../pi/util/base64';
 import { BTCWallet } from '../core/btc/wallet';
 import { Cipher } from '../core/crypto/cipher';
@@ -586,5 +587,7 @@ export const exportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],cur
 
 // rpc耗时测试
 export const rpcTimeingTest = () => {
+    // WebViewManager.reloadDefault();
+    
     return 12345; 
 };

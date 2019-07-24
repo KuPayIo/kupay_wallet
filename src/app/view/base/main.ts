@@ -11,12 +11,13 @@ import { addAppBackPressed } from '../../../pi/browser/app_comon_event';
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
+import { callEmitWebviewReload, callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
 import { LockScreen } from '../../publicLib/interface';
 import { getScreenModify, preLoadAd } from '../../viewLogic/native';
 
 // ============================== 导出
 export const run = (homePageData,cb): void =>  {
+    callEmitWebviewReload();
     addWidget(document.body, 'pi-ui-root');
     // 数据检查  
     // checkUpdate();  
@@ -34,7 +35,6 @@ export const run = (homePageData,cb): void =>  {
          // 锁屏页面
     popNewPage();
     if (cb) cb();
-    const pageShow = Date.now() - self.startTime;
     const timeArrStr = localStorage.getItem('timeArr');
     let timeArr;
     if (timeArrStr) {
@@ -42,7 +42,7 @@ export const run = (homePageData,cb): void =>  {
     } else {
         timeArr = [];
     }
-    timeArr.push({ homeEnter,pageShow });
+    timeArr.push({ homeEnter,getData:self.getDataEnd - self.getDataStart });
     localStorage.setItem('timeArr',JSON.stringify(timeArr));
     
     // 预先从底层获取一些数据
@@ -110,32 +110,6 @@ const addAppEvent = () => {
             },100);  // 检查是否已经退出登录
         }
     });
-    // 注册appResumed
-    // addAppResumed(() => {
-    //     alert('addAppResumed callback called');
-    //     ifNeedUnlockScreen().then(loccked => {
-    //         if (loccked) {
-    //             popNew('app-components-lockScreenPage-lockScreenPage', {
-    //                 openApp: true
-    //             });
-    //         }
-    //     });
-            
-    //     setTimeout(() => {
-    //         getStoreData('user/isLogin').then(isLogin => {
-    //             if (!isLogin) {
-    //                 callWalletManualReconnect();
-    //             }
-    //         });
-                
-    //         if (!chatGetStore('isLogin')) {
-    //             chatManualReconnect();
-    //         }
-    //         if (!earnGetStore('userInfo/isLogin')) {
-    //             earnManualReconnect();
-    //         }
-    //     },100);  // 检查是否已经退出登录
-    // });
 
     let startTime = 0;
         // 注册appBackPressed

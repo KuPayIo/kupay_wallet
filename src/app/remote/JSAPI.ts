@@ -5,11 +5,12 @@ import { goshare, ImageNameType } from '../../pi/browser/vm';
 import { WebViewManager } from '../../pi/browser/webview';
 import { SCPrecision } from '../publicLib/config';
 import { CloudCurrencyType, ThirdCmd } from '../publicLib/interface';
-import { getCloudBalances } from '../store/memstore';
+import { getCloudBalances, getStore, setStore } from '../store/memstore';
 import { getOpenId, requestAsync } from './login';
 import { postThirdPushMessage } from './postWalletMessage';
 import { getOneUserInfo } from './pull';
 import { goRecharge } from './recharge';
+import { addWebviewReloadListener } from './reload';
 import { exportPrivateKeyByMnemonic, genmnemonicSign, getMnemonicByHash, VerifyIdentidy } from './wallet';
 
 export enum resCode {
@@ -361,6 +362,7 @@ const jsonUriSort = (json) => {
 export const closeWebview = (webviewName: string) => {
     console.log('wallet closeWebview called');
     WebViewManager.close(webviewName);
+    openDefaultWebview();
 };
 
 /**
@@ -369,7 +371,9 @@ export const closeWebview = (webviewName: string) => {
 export const minWebview = (payload:{webviewName: string;popFloatBox:boolean}) => {
     console.log('wallet minWebview called');
     minWebview1(payload.webviewName);
-    postThirdPushMessage(ThirdCmd.MIN,payload);
+    openDefaultWebview(() => {
+        postThirdPushMessage(ThirdCmd.MIN,payload);
+    });
 };
 
 /**
@@ -412,8 +416,10 @@ export const gotoRecharge = (webviewName: string) => {
 export const gotoGameService = (webviewName: string) => {
     console.log('wallet gotoGameService called');
     minWebview1(webviewName);
-    // TODO 此处判断default webview是否活跃
-    postThirdPushMessage(ThirdCmd.GAMESERVICE,webviewName);
+    openDefaultWebview(() => {
+        postThirdPushMessage(ThirdCmd.GAMESERVICE,webviewName);
+    });
+    
 };
 
 /**
@@ -422,6 +428,26 @@ export const gotoGameService = (webviewName: string) => {
 export const gotoOfficialGroupChat = (webviewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
     minWebview1(webviewName);
-    // TODO 此处判断default webview是否活跃
-    postThirdPushMessage(ThirdCmd.OFFICIALGROUPCHAT,webviewName);
+    openDefaultWebview(() => {
+        postThirdPushMessage(ThirdCmd.OFFICIALGROUPCHAT,webviewName);
+    });
+};
+
+/**
+ * 打开默认webview
+ * @param cb 成功回调
+ */
+const openDefaultWebview = (cb?:Function) => {
+    WebViewManager.isDefaultKilled((killed:boolean) => {
+        if (killed) {
+            addWebviewReloadListener(cb);
+            addWebviewReloadListener(() => {     // 通知已经登录成功
+                setStore('user/isLogin',true);
+                setStore('flags/doLoginSuccess',true);
+            });
+            WebViewManager.reloadDefault();
+        } else {
+            cb && cb();
+        }
+    });
 };

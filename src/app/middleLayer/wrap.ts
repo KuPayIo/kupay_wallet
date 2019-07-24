@@ -661,6 +661,17 @@ export const callGoRecharge = (balance:number,muchNeed:number) => {
 
 // ==================================recharge相关=========================================
 
+// ==================================reload相关=========================================
+
+/**
+ * reload success
+ */
+export const callEmitWebviewReload = () => {
+    return vmRpcCall('callEmitWebviewReload',[]);
+};
+
+// ==================================reload相关=========================================
+
 /**
  * rpc通信耗时测试
  */

@@ -235,7 +235,8 @@ winit.initNext = function () {
 	// 加载第一阶段必须文件 加载完成后即可获取数据
 	var firstStageLoaded = function(){
 		var sourceList = [
-			"app/postMessage/"
+			"app/postMessage/",
+			"app/viewLogic/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.log("firstStageLoaded success-----------------");
@@ -244,7 +245,9 @@ winit.initNext = function () {
 				if(stage === "firstStage"){    // 第一阶段完成  可以注册监听
 					// TODO 在回调中加载剩余代码 并且注册监听已经完成
 					var callGetHomePageEnterData = pi_modules.commonjs.exports.relativeGet("app/middleLayer/wrap").exports.callGetHomePageEnterData;
+					self.getDataStart = Date.now();
 					callGetHomePageEnterData().then(function(res){
+						self.getDataEnd = Date.now();
 						fpFlags.homePageReady = true;
 						fpFlags.homePageData = res;
 						enterApp();
@@ -305,7 +308,6 @@ winit.initNext = function () {
 		console.time("fp loadWalletFirstPageSource");
 		// var routerPathList = calcRouterPathList();
 		var sourceList = [
-			"app/viewLogic/",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",
 			"earn/xlsx/awardCfg.c.js",

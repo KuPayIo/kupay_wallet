@@ -291,9 +291,9 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
                 setStore('flags/doLoginFailed',true);
             }
         }
-        setStore('user/conUid', resp.uid);
+        setStore('user/conUid', resp.uid,false);
         console.log('uid =',resp.uid);
-        setStore('user/conRandom', conRandom);
+        setStore('user/conRandom', conRandom,false);
     } catch (res) {
         console.log('getRandom endTime= ',new Date().getTime());
         resp = res;

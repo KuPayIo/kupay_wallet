@@ -14,6 +14,7 @@ import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend
 // tslint:disable-next-line:max-line-length
 import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from './pullWallet';
 import { goRecharge } from './recharge';
+import { emitWebviewReload } from './reload';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList,getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from './tools';
 // tslint:disable-next-line:max-line-length
@@ -835,6 +836,17 @@ export const callGoRecharge = (balance:number,muchNeed:number,callback:Function)
 };
 
 // ==================================recharge相关=========================================
+
+// ==================================reload相关=========================================
+
+/**
+ * reload success
+ */
+export const callEmitWebviewReload = (callback:Function) => {
+    callback([undefined,emitWebviewReload()]);
+};
+
+// ==================================reload相关=========================================
 
 /**
  * rpc通信测试
