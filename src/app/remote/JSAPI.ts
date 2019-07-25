@@ -440,11 +440,11 @@ export const gotoOfficialGroupChat = (webviewName: string) => {
 const openDefaultWebview = (cb?:Function) => {
     WebViewManager.isDefaultKilled((killed:boolean) => {
         if (killed) {
-            addWebviewReloadListener(cb);
             addWebviewReloadListener(() => {     // 通知已经登录成功
                 setStore('user/isLogin',true);
                 setStore('flags/doLoginSuccess',true);
             });
+            addWebviewReloadListener(cb);
             WebViewManager.reloadDefault();
         } else {
             cb && cb();

@@ -20,9 +20,8 @@ export const run = (homePageData,cb): void =>  {
     callEmitWebviewReload();
     addWidget(document.body, 'pi-ui-root');
     // 数据检查  
-    // checkUpdate();  
+    checkUpdate();  
     popNew('app-view-base-app');
-    const homeEnter = Date.now() - self.startTime;
     const id = homePageData[0];
     const accounts = homePageData[1];
     if (!id) {
@@ -32,18 +31,10 @@ export const run = (homePageData,cb): void =>  {
             popNew('app-view-base-entrance');
         }
     } 
-         // 锁屏页面
+    // 锁屏页面;
     popNewPage();
+    self.homeEnter = Date.now() - self.startTime;
     if (cb) cb();
-    const timeArrStr = localStorage.getItem('timeArr');
-    let timeArr;
-    if (timeArrStr) {
-        timeArr = JSON.parse(timeArrStr);
-    } else {
-        timeArr = [];
-    }
-    timeArr.push({ homeEnter,getData:self.getDataEnd - self.getDataStart });
-    localStorage.setItem('timeArr',JSON.stringify(timeArr));
     
     // 预先从底层获取一些数据
     preFetchFromNative();

@@ -7,11 +7,10 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callRpcTimeingTest } from '../../middleLayer/wrap';
 import { changellyGetCurrencies } from '../../net/changellyPull';
 import { setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { getModulConfig } from '../../publicLib/modulConfig';
-import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
+import { checkPopPhoneTips, getUserInfo, rippleShow } from '../../utils/tools';
 import { registerStoreData } from '../../viewLogic/common';
 import { kickOffline } from '../../viewLogic/login';
 
@@ -63,7 +62,11 @@ export class App extends Widget {
                     components: 'app-view-wallet-home-home'
                 }
             ],
-            tabBarAnimateClasss:''
+            tabBarAnimateClasss:'',
+            userInfo:{
+                avatar:'',
+                nickName:''
+            }
         };
         
         this.props.tabBarList = this.props.tabBarList.filter(item => {
@@ -71,6 +74,10 @@ export class App extends Widget {
         });  
         // 币币兑换可用货币获取
         changellyGetCurrencies();
+        getUserInfo().then(userInfo => {
+            this.props.userInfo = userInfo;
+            this.paint();
+        });
     }
 
     public tabBarChangeListener(event: any, index: number) {
@@ -132,6 +139,16 @@ export const SettingLanguage = 'language';
 registerStoreData('setting/language',(r) => {
     localStorage.setItem(SettingLanguage,r);
     setLang(r);
+});
+
+registerStoreData('user/info',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        getUserInfo().then(userInfo => {
+            w.props.userInfo = userInfo;
+            w.paint();
+        });
+    }
 });
 
 // 创建钱包成功

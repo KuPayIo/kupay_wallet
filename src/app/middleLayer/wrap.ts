@@ -12,20 +12,32 @@ export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' 
 
 const inApp = navigator.userAgent.indexOf('YINENG') >= 0;     // 是否是移动端
 
+const obj = {};
+let count = 0;
+
 /**
  * vm rpc 调用
  * rpc调用有两种模式 callback放在rpc函数调用最后面实现对同步函数的rpc调用  放置rpcData 下params参数最后面实现对异步函数的rpc调用
  * @param data 参数 
  */
 const vmRpcCall = (methodName:string,params: any[]):Promise<any> => {
-    // return Promise.reject();
+    count++;
+    // if (count > 0) {
+    //     return Promise.resolve();
+    // }
+   
     return loadMod().then(() => {
         return new Promise((resolve,reject) => {
+            let count = obj[methodName] || 0;
+            obj[methodName] = ++count;
+            console.log(`vmRpcCall ${methodName} params = `,params);
             // 在params后面加入callback函数  实现对异步函数的rpc调用
             params.push(([error,res]) => { 
                 if (error) reject(error);
+                // console.log(`vmRpcCall method ${methodName} end = `,new Date().getTime());
                 resolve(res);
             });
+            // console.log(`vmRpcCall method ${methodName} start = `,new Date().getTime());
             WebViewManager.rpc(vmName,{ moduleName:COREWRAPMODULENAME,methodName,params });
         });
 

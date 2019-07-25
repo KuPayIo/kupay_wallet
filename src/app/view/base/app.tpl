@@ -13,7 +13,7 @@
 {{else}}
     {{for i, v of it.tabBarList}}
     <div style="visibility: {{v.modulName == it.isActive ? 'visible' : 'hidden'}}; z-index:{{v.modulName == it.isActive ? 0 :-1}}; position:absolute; width:100%;height:100%;">
-        <widget w-tag={{v.components}} >{isActive:{{v.modulName == it.isActive}} }</widget>
+        <widget w-tag={{v.components}} >{isActive:{{v.modulName == it.isActive}},userInfo:{{it.userInfo}} }</widget>
     </div>
     {{end}}
 {{end}}

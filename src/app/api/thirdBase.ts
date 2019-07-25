@@ -1,7 +1,9 @@
+import { getStore as chatGetStore, register as chatRegister, unregister as chatUnregister } from '../../chat/client/app/data/store';
 import { applyToGroup, getChatUid } from '../../chat/client/app/net/rpc';
 import { GENERATOR_TYPE } from '../../chat/server/data/db/user.s';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
+import { popNew3 } from '../utils/tools';
 import { getGameItem } from '../view/play/home/gameConfig';
 import { logoutWallet } from '../viewLogic/login';
 
@@ -48,7 +50,6 @@ export const minWebview = (payload:{webviewName: string;popFloatBox:boolean}) =>
     if (popFloatBox) {
         popFloatBoxClose = popNew('app-components-floatBox-floatBox',{ webviewName });
     }
-    // minWebview1(webviewName);
 };
 
 /**
@@ -73,7 +74,6 @@ export const inviteFriends = (webviewName: string) => {
             WebViewManager.open(webviewName, `${gameItem.url}?${Math.random()}`, webviewName,'');
         }
     });
-    minWebview1(webviewName);
 };
 
 /**
@@ -86,7 +86,6 @@ export const gotoRecharge = (webviewName: string) => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
         }
     });
-    minWebview1(webviewName);
 };
 
 /**
@@ -94,13 +93,24 @@ export const gotoRecharge = (webviewName: string) => {
  */
 export const gotoGameService = (webviewName: string) => {
     console.log('wallet gotoGameService called');
+    if (!chatGetStore('uid')) {
+        const isLoginCb = (uid:number) => {
+            gotoGameService1(webviewName);
+            chatUnregister('uid',isLoginCb);
+        };
+        chatRegister('uid',isLoginCb);
+    } else {
+        gotoGameService1(webviewName);
+    }
+};
+
+const gotoGameService1 = (webviewName: string) => {
     const item = getGameItem(webviewName);
     getChatUid(item.accId).then((r) => {
-        popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER,okCB:() => {
+        popNew3('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER,okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
         } });
     });
-    minWebview1(webviewName);
 };
 
 /**
@@ -108,11 +118,23 @@ export const gotoGameService = (webviewName: string) => {
  */
 export const gotoOfficialGroupChat = (webviewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
+    if (!chatGetStore('uid')) {
+        const isLoginCb = (uid:number) => {
+            gotoOfficialGroupChat1(webviewName);
+            chatUnregister('uid',isLoginCb);
+        };
+        chatRegister('uid',isLoginCb);
+    } else {
+        gotoOfficialGroupChat1(webviewName);
+    }
+};
+
+const gotoOfficialGroupChat1 = (webviewName: string) => {
     const item = getGameItem(webviewName);
     applyToGroup(item.groupId).then((r) => {
-        popNew('chat-client-app-view-chat-chat',{ id: r, chatType: GENERATOR_TYPE.GROUP,okCB:() => {
+        console.log(' applyToGroup success');
+        popNew3('chat-client-app-view-chat-chat',{ id: r, chatType: GENERATOR_TYPE.GROUP,okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
         } });
     });
-    minWebview1(webviewName);
 };

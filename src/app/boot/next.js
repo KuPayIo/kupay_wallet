@@ -235,8 +235,7 @@ winit.initNext = function () {
 	// 加载第一阶段必须文件 加载完成后即可获取数据
 	var firstStageLoaded = function(){
 		var sourceList = [
-			"app/postMessage/",
-			"app/viewLogic/"
+			"app/postMessage/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.log("firstStageLoaded success-----------------");
@@ -245,9 +244,9 @@ winit.initNext = function () {
 				if(stage === "firstStage"){    // 第一阶段完成  可以注册监听
 					// TODO 在回调中加载剩余代码 并且注册监听已经完成
 					var callGetHomePageEnterData = pi_modules.commonjs.exports.relativeGet("app/middleLayer/wrap").exports.callGetHomePageEnterData;
-					self.getDataStart = Date.now();
+					var getDataStart = Date.now();
 					callGetHomePageEnterData().then(function(res){
-						self.getDataEnd = Date.now();
+						self.getData = Date.now() - getDataStart;
 						fpFlags.homePageReady = true;
 						fpFlags.homePageData = res;
 						enterApp();
@@ -301,6 +300,8 @@ winit.initNext = function () {
 		}, function(){});
 	}
 
+
+	
 	
 	
 	// 加载钱包首页所需资源
@@ -308,6 +309,7 @@ winit.initNext = function () {
 		console.time("fp loadWalletFirstPageSource");
 		// var routerPathList = calcRouterPathList();
 		var sourceList = [
+			"app/viewLogic/",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",
 			"earn/xlsx/awardCfg.c.js",
@@ -418,8 +420,20 @@ winit.initNext = function () {
 			index.run(fpFlags.homePageData,function () {
 				// 关闭读取界面
 				document.body.removeChild(document.getElementById('rcmj_loading_log'));
+				var closeBg = new Date().getTime() - self.startTime1;
+				var timeArrStr = localStorage.getItem('timeArr');
+				var timeArr;
+				if (timeArrStr) {
+					timeArr = JSON.parse(timeArrStr);
+				} else {
+					timeArr = [];
+				}
+				timeArr.push({ homeEnter:self.homeEnter,getData:self.getData,closeBg });
+				localStorage.setItem('timeArr',JSON.stringify(timeArr));
+			   	loadLeftSource();
 			});
-			loadLeftSource();
+			
+			
 		}
 	}
 
