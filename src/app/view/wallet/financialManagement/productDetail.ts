@@ -70,7 +70,7 @@ export class ProductDetail extends Widget {
 
     // 购买记录改变
     public updatePurchaseRecord(purchaseRecord:PurchaseHistory[]) {
-        this.props.holdedAmout = fetchHoldedProductAmount(this.props.product.id);
+        // this.props.holdedAmout = fetchHoldedProductAmount(this.props.product.id);
     }
 
     // 页面滚动
