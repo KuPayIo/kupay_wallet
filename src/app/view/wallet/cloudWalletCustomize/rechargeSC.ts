@@ -86,7 +86,6 @@ export class RechargeSC extends Widget {
             PayType,
             inIOSApp:pi_update.inIOSApp
         };
-
         getCloudBalances().then(cloudBalances => {
             this.props.scBalance = cloudBalances.get(CloudCurrencyType.SC);
             this.paint();

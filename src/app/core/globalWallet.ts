@@ -5,8 +5,8 @@ import { btcNetwork, ERC20Tokens, lang, strength } from '../publicLib/config';
 import { AddrInfo, CurrencyRecord } from '../publicLib/interface';
 import { u8ArrayToHexstr } from '../publicLib/tools';
 import { encrypt, getMnemonic } from '../remote/wallet';
-import { BTCWallet } from './btc/wallet';
-import { EthWallet } from './eth/wallet';
+import { BTCWallet } from './btc/wallet_btc_rust';
+import { EthWallet } from './eth/wallet_eth_rust';
 import { generateRandomValues, getRandomValuesByMnemonic, toMnemonic } from './genmnemonic';
 
 /* tslint:disable: variable-name */

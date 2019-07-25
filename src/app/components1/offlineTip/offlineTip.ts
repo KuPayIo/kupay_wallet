@@ -37,6 +37,14 @@ export class OfflineTip extends Widget {
         chatRegister('isLogin', (isLogin:boolean) => {
             this.updateDate(OfflienType.CHAT,isLogin);
         });
+
+        if (this.state === null) {
+            forelet.paint('');
+            getStoreData('user/id').then(uid => {
+                forelet.paint(uid);
+            });
+        }
+        
     }
     public setProps(props:any,oldProps:any) {
         this.props = {
@@ -79,15 +87,16 @@ export class OfflineTip extends Widget {
     }
 
     public updateDate(offlienType:OfflienType,isLogin:boolean) {
-        getStoreData('user/id').then(uid => {
-            if (offlienType === OfflienType.WALLET || offlienType === this.props.offlienType) {  // 钱包重连
-                this.props.isLogin = uid ?  isLogin : true;
-                this.props.reconnecting = false;
-                this.paint();
-            }
-        });
+        if (offlienType === OfflienType.WALLET || offlienType === this.props.offlienType) {  // 钱包重连
+            this.props.isLogin = this.state ?  isLogin : true;
+            this.props.reconnecting = false;
+            this.paint();
+        }
         
     }
 }
 
 // ===========================================================
+// registerStoreData('user',(user:any) => {
+//     forelet.paint(user.id);
+// });

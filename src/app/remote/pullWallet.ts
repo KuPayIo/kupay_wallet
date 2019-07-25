@@ -5,9 +5,9 @@
 import { WebViewManager } from '../../pi/browser/webview';
 import { isNumber } from '../../pi/util/util';
 import { BtcApi } from '../core/btc/api';
-import { BTCWallet } from '../core/btc/wallet';
+import { BTCWallet } from '../core/btc/wallet_btc_rust';
 import { Api as EthApi } from '../core/eth/api';
-import { EthWallet, initWeb3, web3 } from '../core/eth/wallet';
+import { EthWallet, initWeb3, web3 } from '../core/eth/wallet_eth_rust';
 import { GlobalWallet } from '../core/globalWallet';
 import { erc20GasLimitRate, ERC20Tokens } from '../publicLib/config';
 import { MinerFeeLevel, TxHistory, TxPayload, TxStatus, TxType } from '../publicLib/interface';

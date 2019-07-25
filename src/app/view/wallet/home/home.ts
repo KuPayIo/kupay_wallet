@@ -151,7 +151,7 @@ registerStoreData('setting/changeColor', () => {
 });
 
 // 云端余额变化
-registerStoreData('cloud/cloudWallet',() => {
+registerStoreData('cloud/cloudWallets',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateCloudWalletAssetList();

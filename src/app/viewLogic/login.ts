@@ -91,7 +91,7 @@ interface LoginType {
 
 // 登录成功之后的回调列表
 const loginedCallbackList:LoginType[] = [];
-
+let walletLogin;  // 钱包是否登录
 /**
  * 登录钱包
  */
@@ -101,35 +101,31 @@ export const loginWallet = (appId:string,success:Function) => {
         success
     };
     loginedCallbackList.push(loginType);
+    if (walletLogin) {
+        loginWalletSuccess1(loginType);
+    }
+    
 };
 
 /**
  * 登录钱包并获取openId成功
  */
 const loginWalletSuccess = () => {
+    walletLogin = true;
     setStoreData('flags/hasLogined',true);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
 
     for (const loginType of loginedCallbackList) {
-        callGetOpenId(loginType.appId).then(res => {
-            loginType.success(res.openid);
-        }).catch(err => {
-            console.log(`appId ${loginType.appId} get openId failed`,err);
-            // popNewMessage('openid 获取失败');
-            openIdFail(loginType);
-        });
+        loginWalletSuccess1(loginType);
     }
 };
 
-/**
- * openid获取失败  尝试再次获取直到成功
- */
-const openIdFail = (loginType:any) => {
+const loginWalletSuccess1 = (loginType:LoginType) => {
     callGetOpenId(loginType.appId).then(res => {
         loginType.success(res.openid);
     }).catch(err => {
         console.log(`appId ${loginType.appId} get openId failed`,err);
         // popNewMessage('openid 获取失败');
-        openIdFail(loginType);
+        loginWalletSuccess1(loginType);  // openid获取失败  尝试再次获取直到成功
     });
 };
 

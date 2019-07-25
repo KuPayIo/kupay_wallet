@@ -83,6 +83,7 @@ export class WriteRedEnv extends Widget {
      * 更新余额
      */
     public updateBalance() {
+        console.log('vmRpcCall writeRedEnv');
         getCloudBalances().then(data => {
             const list = this.props.list;
             for (const i in list) {

@@ -48,7 +48,6 @@ export class CloudWalletHome extends Widget {
             currencyUnitSymbol:'￥',
             redUp: true
         };
-
         Promise.all([getCloudBalances(),callFetchBalanceValueOfCoin(currencyName,1)]).then(([cloudBalances,rate]) => {
             const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
             const balanceValue = formatBalanceValue(balance * rate);

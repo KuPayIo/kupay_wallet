@@ -38,9 +38,6 @@ export class CloudHome extends Widget {
         };
         super.setProps(this.props,oldProps);
         this.props.financialModulIsShow = getModulConfig('FINANCIAL_SERVICES'); // 优选理财模块配置
-        if (props.isActive) {
-            callGetServerCloudBalance();
-        }
     }
 
     // 条目点击

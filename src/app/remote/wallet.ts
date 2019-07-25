@@ -1,10 +1,9 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
-import { WebViewManager } from '../../pi/browser/webview';
 import { arrayBufferToBase64, base64ToArrayBuffer } from '../../pi/util/base64';
-import { BTCWallet } from '../core/btc/wallet';
+import { BTCWallet } from '../core/btc/wallet_btc_rust';
 import { Cipher } from '../core/crypto/cipher';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
-import { EthWallet } from '../core/eth/wallet';
+import { EthWallet } from '../core/eth/wallet_eth_rust';
 import { generateByHash, sha3, sign, toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 // tslint:disable-next-line:max-line-length

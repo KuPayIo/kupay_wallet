@@ -2,7 +2,7 @@
  * Generate the same mnemonics
  */
 
-import { LANGUAGE } from './btc/wallet';
+import { LANGUAGE } from './btc/wallet_btc_rust';
 import { Mnemonic } from './thirdparty/bip39';
 import { KJUR } from './thirdparty/sample-ecdsa';
 import { Web3 } from './thirdparty/web3.min';
