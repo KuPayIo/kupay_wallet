@@ -108,12 +108,13 @@ export class EthWallet {
             throw new Error('this language does not supported');
         }
         const res = api.eth.eth_from_mnemonic(mnemonic, language);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
         const gwlt = new EthWallet();
-        gwlt._address = res[0];
-        gwlt._privKey = res[1];
+        gwlt._address = res[1];
+        gwlt._privKey = res[2];
         gwlt._mnemonic = mnemonic;
-        gwlt._masterSeed = res[2];
+        gwlt._masterSeed = res[3];
 
         return gwlt;
     }
@@ -137,13 +138,14 @@ export class EthWallet {
         }
 
         const res = api.eth.eth_generate(strength, language);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
         const gwlt = new EthWallet();
-        gwlt._address = res[0];
-        gwlt._privKey = res[1];
-        gwlt._mnemonic = res[3];
+        gwlt._address = res[1];
+        gwlt._privKey = res[2];
+        gwlt._mnemonic = res[4];
         gwlt._balance = 0;
-        gwlt._masterSeed = res[2];
+        gwlt._masterSeed = res[3];
 
         return gwlt;
     }
@@ -187,8 +189,9 @@ export class EthWallet {
         }
 
         const res = api.eth.get_public_key_by_mnemonic(mnemonic, language);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
-        return res[0];
+        return res[1];
     }
 
     /**
@@ -231,8 +234,9 @@ export class EthWallet {
             res = api.eth.eth_sign_raw_transaction(4, txObj.nonce, txObj.to, txObj.value,
                 txObj.gasLimit, txObj.gasPrice, txObj.data, this._privKey);
         }
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
-        return res[1];
+        return res[2];
     }
 
     public signRawTransactionHash(txObj: Transaction) {
@@ -249,10 +253,12 @@ export class EthWallet {
                 txObj.gasLimit, txObj.gasPrice, txObj.data, this._privKey);
         }
 
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
+
         return {
             nonce: txObj.nonce,
-            hash: res[0],
-            signedTx: res[1]
+            hash: res[1],
+            signedTx: res[2]
         };
     }
 
@@ -282,8 +288,9 @@ export class EthWallet {
             throw new Error('This is not a HD wallet');
         }
         const res = api.eth.eth_select_wallet('english', this._masterSeed, index);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
-        return res[0];
+        return res[1];
     }
 
     /**
@@ -298,10 +305,11 @@ export class EthWallet {
             throw new Error('This is not a HD wallet');
         }
         const res = api.eth.eth_select_wallet('english', this._masterSeed, index);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
         const gwlt = new EthWallet();
-        gwlt._address = res[0];
-        gwlt._privKey = res[1];
+        gwlt._address = res[1];
+        gwlt._privKey = res[2];
         gwlt._balance = 0;
 
         return gwlt;

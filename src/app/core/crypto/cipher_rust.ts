@@ -1,9 +1,25 @@
-import { u8ArrayToHexstr } from '../../publicLib/tools';
 
 /**
  * cipher
  */
 declare var api;    // 底层挂到window上的对象
+
+/**
+ * u8数组转十六进制字符串
+ * 
+ * @param u8Array 输入数组
+ */
+const u8ArrayToHexstr = (u8Array: Uint8Array) => {
+    let str = '';
+    for (let i = 0; i < u8Array.length; i++) {
+        str += Math.floor(u8Array[i] / 16).toString(16);
+        str += (u8Array[i] % 16).toString(16);
+        // str += u8Array[i].toString(16);
+    }
+    if (str[0] === '0') str = str.slice(1);
+
+    return str;
+};
 
 // tslint:disable-next-line:no-unnecessary-class
 export class Cipher {
@@ -16,12 +32,14 @@ export class Cipher {
      */
     public static encrypt(passwd: string, plainText: string): string {
         const nonce = new Uint8Array(12);
-        const key = api.cipher.rust_sha256(passwd).slice(32);
+        const key = api.cipher.rust_sha256(passwd);
+        if (key[0] !== 0) throw new Error(`err code ${key[0]}`);  // 所有的res[0]不等于0表示有异常
         crypto.getRandomValues(nonce);
 
-        const res = api.cipher.rust_encrypt(key, u8ArrayToHexstr(nonce), '', plainText);
+        const res = api.cipher.rust_encrypt(key[1].slice(32), u8ArrayToHexstr(nonce), '', plainText);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常
 
-        return res[0] + u8ArrayToHexstr(nonce);
+        return res[1] + u8ArrayToHexstr(nonce);
     }
 
     /**
@@ -33,11 +51,13 @@ export class Cipher {
      */
     public static decrypt(passwd: string, cipherText: string): string {
         const nonce = cipherText.slice(cipherText.length - 12, cipherText.length);
-        const key = api.cipher.rust_sha256(passwd).slice(32);
+        const key = api.cipher.rust_sha256(passwd);
+        if (key[0] !== 0) throw new Error(`err code ${key[0]}`);  // 所有的res[0]不等于0表示有异常 
         
-        const res = api.cipher.rust_decrypt(key, nonce, '', cipherText.slice(cipherText.length - 12));
+        const res = api.cipher.rust_decrypt(key[1].slice(32), nonce, '', cipherText.slice(cipherText.length - 12));
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
-        return res[0];
+        return res[1];
     }
 
     /**
@@ -45,13 +65,15 @@ export class Cipher {
      */
     public static sha256(data: string) {
         const res = api.cipher.rust_sha256(data);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
         return res[0];
     }
 
     public static sign(msg: string, privKey: string): string {
-        const res = api.cipher.sign(msg, privKey);
+        const res = api.cipher.rust_sign(msg, privKey);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
-        return res[0];
+        return res[1];
     }
 }

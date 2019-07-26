@@ -461,12 +461,6 @@ export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string) => {
 };
 
 /**
- * 签名
- */
-export const callGenmnemonicSign = (random:string, privateKey:string) => {
-    return vmRpcCall('callGenmnemonicSign',[random,privateKey]);
-};
-/**
  * 导出ETH第一个地址私钥
  */
 export const callExportPrivateKeyByMnemonic = (mnemonic:string) => {

@@ -3,15 +3,16 @@
  */
 import { goshare, ImageNameType } from '../../pi/browser/vm';
 import { WebViewManager } from '../../pi/browser/webview';
+import { sign } from '../core/genmnemonic';
 import { SCPrecision } from '../publicLib/config';
 import { CloudCurrencyType, ThirdCmd } from '../publicLib/interface';
-import { getCloudBalances, getStore, setStore } from '../store/memstore';
+import { getCloudBalances, setStore } from '../store/memstore';
 import { getOpenId, requestAsync } from './login';
 import { postThirdPushMessage } from './postWalletMessage';
 import { getOneUserInfo } from './pull';
 import { goRecharge } from './recharge';
 import { addWebviewReloadListener } from './reload';
-import { exportPrivateKeyByMnemonic, genmnemonicSign, getMnemonicByHash, VerifyIdentidy } from './wallet';
+import { exportPrivateKeyByMnemonic, getMnemonicByHash, VerifyIdentidy } from './wallet';
 
 export enum resCode {
     SUCCESS = undefined,   // 成功
@@ -334,7 +335,7 @@ const getSign = async (json:any,secretHash:string) => {
     const mnemonic = await getMnemonicByHash(secretHash);
     const privateKey = await exportPrivateKeyByMnemonic(mnemonic);
 
-    return genmnemonicSign(jsonUriSort(json), privateKey);
+    return sign(jsonUriSort(json), privateKey);
 };
 
 /**

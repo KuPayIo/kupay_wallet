@@ -73,9 +73,10 @@ export class BTCWallet {
     */
     public static generate(strength: number, network: NETWORK, lang: LANGUAGE, passphrase?: string): BTCWallet {
         const res = api.btc.btc_generate(strength, network, passphrase);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
         const btcwallet = new BTCWallet();
-        btcwallet.rootXpriv = res[0];
-        btcwallet.mnemonics = res[1];
+        btcwallet.rootXpriv = res[1];
+        btcwallet.mnemonics = res[2];
 
         return btcwallet;
     }
@@ -94,11 +95,12 @@ export class BTCWallet {
     public static fromMnemonic(mnemonic: string, network: NETWORK, lang: LANGUAGE, passphrase?: string): BTCWallet {
         passphrase = passphrase || '';
         const res = api.btc.btc_from_mnemonic(mnemonic, network, lang, passphrase);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
         const btcwallt = new BTCWallet();
 
-        btcwallt.rootXpriv = res[0];
+        btcwallt.rootXpriv = res[1];
         btcwallt.mnemonics = mnemonic;
-        btcwallt.rootSeed = res[1];
+        btcwallt.rootSeed = res[2];
         btcwallt.network = network;
         btcwallt.language = lang;
 
@@ -109,10 +111,10 @@ export class BTCWallet {
 
     public static fromSeed(seed: string, network: NETWORK, lang: LANGUAGE): BTCWallet {
         const res = api.btc.btc_from_seed(seed, network, lang);
-
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
         const btcwallt = new BTCWallet();
 
-        btcwallt.rootXpriv = res[0];
+        btcwallt.rootXpriv = res[1];
         btcwallt.rootSeed = seed;
         btcwallt.network = network;
         btcwallt.language = lang;
@@ -190,8 +192,9 @@ export class BTCWallet {
      */
     public derive(index: number): string {
         const res = api.btc.btc_to_address(this.network, this.privateKeyOf(index));
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
-        return res[0];
+        return res[1];
     }
 
     public async coinSelector(address: string, amount: number): Promise<any> {
@@ -247,9 +250,13 @@ export class BTCWallet {
 
         console.log('assembledInputs: ', assembledInputs);
 
-        const toAddrScript = `${api.btc.btc_build_pay_to_pub_key_hash(output.toAddr)[0]}${':'}${output.amount * 1e8}`;
-        const changeAddrScript = 
-                    `${api.btc.btc_build_pay_to_pub_key_hash(output.chgAddr)[0]}${':'}${totalAmount - output.amount * 1e8 - minerFee}`;
+        const res0 = api.btc.btc_build_pay_to_pub_key_hash(output.toAddr);
+        if (res0[0] !== 0) throw new Error(`err code ${res0[0]}`);  // 所有的res[0]不等于0表示有异常
+        const toAddrScript = `${res0[1]}${':'}${output.amount * 1e8}`;
+        
+        const res1 = api.btc.btc_build_pay_to_pub_key_hash(output.chgAddr);
+        if (res1[0] !== 0) throw new Error(`err code ${res1[0]}`);  // 所有的res[0]不等于0表示有异常
+        const changeAddrScript = `${res1[1]}${':'}${totalAmount - output.amount * 1e8 - minerFee}`;
 
         console.log('toAddrScript: ', toAddrScript);
         console.log('changeAddrScript: ', changeAddrScript);
@@ -260,10 +267,12 @@ export class BTCWallet {
             assembledInputs,
             `${toAddrScript}${';'}${changeAddrScript}`);
 
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
+
         return {
-            rawTx: res[0],
+            rawTx: res[1],
             fee: minerFee,
-            hash: res[1]
+            hash: res[2]
         };
     }
 
@@ -308,7 +317,10 @@ export class BTCWallet {
             const address = vin[i].addr;
             fromAddr = address;
             const satoshis = vin[i].valueSat;
-            const scriptPubkey = api.btc.btc_to_address(this.network, address)[0];
+             
+            const res = api.btc.btc_to_address(this.network, address);
+            if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
+            const scriptPubkey = res[1];
 
             utxos.push({
                 txid: vin[i].txid,
@@ -328,10 +340,12 @@ export class BTCWallet {
         for (let i = 0; i < vout.length; i++) {
             const value = vout[i].satoshis;
             const address = vout[i].scriptPubKey.addresses[0];
+            const res = api.btc.btc_to_address(this.network, address);
+            if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
             if (address !== fromAddr) {
-                outputs.push(`${api.btc.btc_to_address(this.network, address)[0]}${':'}${value}`);
+                outputs.push(`${res[1]}${':'}${value}`);
             } else {
-                outputs.push(`${api.btc.btc_to_address(this.network, address)[0]}${':'}${value - minerFee}}`);
+                outputs.push(`${res[1]}${':'}${value - minerFee}}`);
             }
         }
 
@@ -343,11 +357,12 @@ export class BTCWallet {
             privateKey,
             assembledInputs,
             outputScripts);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
         return {
-            rawTx: res[0],
+            rawTx: res[1],
             originTxid: originTxid,
-            newTxid: res[1],
+            newTxid: res[2],
             fee: minerFee
         };
     }
@@ -416,7 +431,8 @@ export class BTCWallet {
         }
 
         const res = api.btc.btc_private_key_of(index, this.rootXpriv);
+        if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
-        return res[0];
+        return res[1];
     }
 }

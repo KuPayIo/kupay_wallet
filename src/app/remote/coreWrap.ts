@@ -18,7 +18,7 @@ import { emitWebviewReload } from './reload';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList,getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from './tools';
 // tslint:disable-next-line:max-line-length
-import { backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, exportPrivateKeyByMnemonic, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, genmnemonicSign, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, preCalAhashToArgon2Hash, rpcTimeingTest, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
+import { backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, exportPrivateKeyByMnemonic, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, preCalAhashToArgon2Hash, rpcTimeingTest, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
 
 export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 
@@ -553,13 +553,6 @@ export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string,callb
     }).catch(err => {
         callback([handleError(err)]);
     });
-};
-
-/**
- * 签名
- */
-export const callGenmnemonicSign = (random:string, privateKey:string,callback:Function) => {
-    callback([undefined,genmnemonicSign(random,privateKey)]);
 };
 
 /**
