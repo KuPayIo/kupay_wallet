@@ -112,8 +112,6 @@ export const loginWallet = (appId:string,success:Function) => {
  */
 const loginWalletSuccess = () => {
     walletLogin = true;
-    setStoreData('flags/hasLogined',true);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
-
     for (const loginType of loginedCallbackList) {
         loginWalletSuccess1(loginType);
     }

@@ -173,6 +173,7 @@ export const autoLogin = async (conRandom:string) => {
     requestAsync(msg).then(res => {
         setStore('user/isLogin', true);
         setStore('flags/doLoginSuccess',true);
+        setStore('flags/hasLogined',true,false);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
         console.log('自动登录成功-----------',res);
     }).catch((res) => {
         setStore('user/isLogin', false);
@@ -216,6 +217,7 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
         applyAutoLogin();
         setStore('user/isLogin', true);
         setStore('flags/doLoginSuccess',true);
+        setStore('flags/hasLogined',true,false);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
     }).catch(err => {
         setStore('user/isLogin', false);
         if (err.error !== -69) {

@@ -141,10 +141,10 @@ registerStoreData('setting/language',(r) => {
     setLang(r);
 });
 
-registerStoreData('user/info',() => {
+registerStoreData('user/info',(userInfo1:any) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        getUserInfo().then(userInfo => {
+        getUserInfo(userInfo1).then(userInfo => {
             w.props.userInfo = userInfo;
             w.paint();
         });

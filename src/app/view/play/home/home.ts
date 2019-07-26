@@ -68,10 +68,6 @@ export class PlayHome extends Widget {
         this.props.gameList = gameList;
         this.props.activityList = activityList;
         this.props.loaded = false;
-        callGetInviteCode().then(inviteCodeInfo => {
-            this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
-            this.paint();
-        });
     }
 
     public attach() {
@@ -157,7 +153,9 @@ export class PlayHome extends Widget {
             const gameTitle = gameList[num].title.zh_Hans;
             const gameUrl =   gameList[num].url;
             const webviewName = gameList[num].webviewName;
-            const [addrInfo,baseUrl] = await Promise.all([callGetCurrentAddrInfo('ETH'),callGetEthApiBaseUrl()]);
+            // tslint:disable-next-line:max-line-length
+            const [addrInfo,baseUrl,inviteCodeInfo] = await Promise.all([callGetCurrentAddrInfo('ETH'),callGetEthApiBaseUrl(),callGetInviteCode()]);
+            const inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`; 
             const pi3Config:any = getPi3Config();
             pi3Config.web3EthDefaultAccount = addrInfo.addr;
             pi3Config.web3ProviderNetWork = baseUrl;
@@ -167,7 +165,7 @@ export class PlayHome extends Widget {
             pi3Config.apkDownloadUrl = gameList[num].apkDownloadUrl;
             pi3Config.userInfo = {
                 nickName:this.props.nickName,
-                inviteCode:this.props.inviteCode
+                inviteCode
             };
 
             const pi3ConfigStr = `

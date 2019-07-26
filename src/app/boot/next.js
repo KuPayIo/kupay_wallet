@@ -316,20 +316,19 @@ winit.initNext = function () {
 			"earn/xlsx/awardCfg.s.js",
 			"earn/xlsx/item.c.js",
 			"earn/xlsx/item.s.js",
-			"pi/ui/lang.js",
-			"pi/ui/lang.tpl",
 			"app/view/base/",
 			"app/components1/",
 			"app/res/css/",
 			"app/res/js/",
 			"app/view/play/home/",
-			"app/view/chat/home/",
 			"app/view/wallet/home/",
 			"earn/client/app/res/css/",
 			"pi/ui/root.js",
 			"pi/ui/root.tpl",
 			"pi/ui/html.js",
-			"pi/ui/html.tpl"
+			"pi/ui/html.tpl",
+			"pi/ui/lang.js",
+			"pi/ui/lang.tpl"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);

@@ -23,8 +23,15 @@ import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './cons
 /**
  * 获取用户基本信息
  */
-export const getUserInfo = () => {
-    return getStoreData('user/info').then(userInfo => {
+export const getUserInfo = (userInfo1?:any) => {
+    let promise;
+    if (userInfo1) {
+        promise = Promise.resolve(userInfo1);
+    } else {
+        promise = getStoreData('user/info');
+    }
+    
+    return promise.then(userInfo => {
         const nickName = userInfo.nickName;
         const phoneNumber = userInfo.phoneNumber;
         const isRealUser = userInfo.isRealUser;

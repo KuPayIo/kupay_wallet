@@ -1,7 +1,7 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { arrayBufferToBase64, base64ToArrayBuffer } from '../../pi/util/base64';
 import { BTCWallet } from '../core/btc/wallet_btc_rust';
-import { Cipher } from '../core/crypto/cipher';
+import { Cipher } from '../core/crypto/cipher_rust';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
 import { EthWallet } from '../core/eth/wallet_eth_rust';
 import { generateByHash, sha3, sign, toMnemonic } from '../core/genmnemonic';
@@ -21,9 +21,7 @@ import { getCurrentAddrInfo } from './tools';
  * @param plainText 需要加密的文本
  */
 export const encrypt = (plainText: string, salt: string) => {
-    const cipher = new Cipher();
-
-    return cipher.encrypt(salt, plainText);
+    return Cipher.encrypt(salt, plainText);
 };
 
 /**
@@ -31,16 +29,12 @@ export const encrypt = (plainText: string, salt: string) => {
  * @param cipherText 需要解密的文本
  */
 export const decrypt = (cipherText: string, salt: string) => {
-    const cipher = new Cipher();
-
-    return cipher.decrypt(salt, cipherText);
+    return Cipher.decrypt(salt, cipherText);
 };
 
 // hash256;
 export const sha256 = (data: string) => {
-    const cipher = new Cipher();
-
-    return cipher.sha256(data);
+    return Cipher.sha256(data);
 };
 
 /**
