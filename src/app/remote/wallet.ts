@@ -21,6 +21,10 @@ import { getCurrentAddrInfo } from './tools';
  * @param plainText 需要加密的文本
  */
 export const encrypt = (plainText: string, salt: string) => {
+    // const cipher = new Cipher();
+
+    // return cipher.encrypt(salt, plainText);
+
     return Cipher.encrypt(salt, plainText);
 };
 
@@ -29,11 +33,19 @@ export const encrypt = (plainText: string, salt: string) => {
  * @param cipherText 需要解密的文本
  */
 export const decrypt = (cipherText: string, salt: string) => {
+    // const cipher = new Cipher();
+    
+    // return cipher.decrypt(salt, cipherText);
+
     return Cipher.decrypt(salt, cipherText);
 };
 
 // hash256;
 export const sha256 = (data: string) => {
+    // const cipher = new Cipher();
+    
+    // return cipher.sha256(data);
+
     return Cipher.sha256(data);
 };
 
@@ -120,6 +132,7 @@ export const createWalletRandom = async (option: CreateWalletOption,tourist?:boo
     const user = getStore('user');
     user.id = gwlt.glwtId;
     user.publicKey = gwlt.publicKey;
+    console.log('publicKey =======',gwlt.publicKey);
     user.info = {
         ...user.info,
         nickName: option.nickName

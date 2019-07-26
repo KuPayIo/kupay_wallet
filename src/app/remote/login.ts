@@ -219,6 +219,7 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
         setStore('flags/doLoginSuccess',true);
         setStore('flags/hasLogined',true,false);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
     }).catch(err => {
+        console.log('defaultLogin err',JSON.stringify(err));
         setStore('user/isLogin', false);
         if (err.error !== -69) {
             setStore('flags/doLoginFailed',true);

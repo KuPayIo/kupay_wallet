@@ -100,6 +100,18 @@ export const unicodeArray2Str = (arr) => {
 };
 
 /**
+ * str转u8Array
+ */
+export const str2U8Array = (str:string) => {
+    const u8Array = new Uint8Array(str.length);
+    for (let i = 0;i < str.length;i++) {
+        u8Array[i] = str.charCodeAt(i);
+    }
+
+    return u8Array;
+};
+
+/**
  * 数字前边加0
  */
 const addPerZero = (num: number, len: number) => {

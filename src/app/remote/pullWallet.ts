@@ -11,7 +11,7 @@ import { EthWallet, initWeb3, web3 } from '../core/eth/wallet_eth_rust';
 import { GlobalWallet } from '../core/globalWallet';
 import { erc20GasLimitRate, ERC20Tokens } from '../publicLib/config';
 import { MinerFeeLevel, TxHistory, TxPayload, TxStatus, TxType } from '../publicLib/interface';
-import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, wei2Eth } from '../publicLib/unitTools';
+import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, toHexStr, wei2Eth } from '../publicLib/unitTools';
 import { dataCenter } from './dataCenter';
 // tslint:disable-next-line:max-line-length
 import { btcRechargeToServer, btcWithdrawFromServer, getBankAddr, getBtcBankAddr, getWithdrawLogs, rechargeToServer, withdrawFromServer } from './pull';
@@ -133,10 +133,10 @@ export const transfer3 = async (psw:string,txPayload:TxPayload3) => {
             }
             const txObj = {
                 to: txPayload.toAddr,
-                nonce: newNonce,
-                gasPrice: fetchGasPrice(minerFeeLevel),
-                gasLimit: newGasLimit,
-                value: txPayload.pay,
+                nonce: toHexStr(newNonce),
+                gasPrice: toHexStr(fetchGasPrice(minerFeeLevel)),
+                gasLimit: toHexStr(newGasLimit),
+                value: eth2Wei(txPayload.pay),
                 data: txPayload.data
             };         
             const tx = wlt.signRawTransaction(txObj);
@@ -251,11 +251,11 @@ export const doEthTransfer = async (psw:string,addrIndex:number,txRecord:TxHisto
 
     const [wlt,chainNonce,gasLimit] = await Promise.all([wltPromise,chainNoncePromise,gasLimitPromise]);
     const newNonce = localNonce && localNonce >= chainNonce ? localNonce : chainNonce;
-    const txObj = {
+    const txObj = {  // 所有都是16进制字符串
         to: toAddr,
-        nonce: newNonce,
-        gasPrice: fetchGasPrice(minerFeeLevel),
-        gasLimit: gasLimit,
+        nonce: toHexStr(newNonce),
+        gasPrice: toHexStr(fetchGasPrice(minerFeeLevel)),
+        gasLimit: toHexStr(gasLimit),
         value: eth2Wei(pay),
         data: info
     };
@@ -289,9 +289,9 @@ export const signRawTransactionETH = async (psw:string,fromAddr:string,toAddr:st
         const gasLimit = await estimateGasETH(toAddr,info);
         const txObj = {
             to: toAddr,
-            nonce: nonce,
-            gasPrice: fetchGasPrice(minerFeeLevel),
-            gasLimit: gasLimit,
+            nonce: toHexStr(nonce),
+            gasPrice: toHexStr(fetchGasPrice(minerFeeLevel)),
+            gasLimit: toHexStr(gasLimit),
             value: eth2Wei(pay),
             data: info
         };
@@ -350,10 +350,10 @@ export const doERC20TokenTransfer = async (psw:string,addrIndex:number, txRecord
     
     const txObj = {
         to: ERC20Tokens[currencyName].contractAddr,
-        nonce: newNonce,
-        gasPrice: fetchGasPrice(minerFeeLevel),
-        gasLimit: newGasLimit,
-        value: 0,
+        nonce: toHexStr(newNonce),
+        gasPrice: toHexStr(fetchGasPrice(minerFeeLevel)),
+        gasLimit: toHexStr(newGasLimit),
+        value: eth2Wei(0),
         data: transferCode
     };
     console.log('txObj---------------',txObj);

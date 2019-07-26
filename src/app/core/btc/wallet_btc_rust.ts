@@ -203,7 +203,7 @@ export class BTCWallet {
 
         for (let i = 0; i < utxos.length; i++) {
             if (utxos[i].satoshis === amount) {
-                return utxos[i];
+                return [utxos[i]];
             }
         }
 
@@ -220,7 +220,7 @@ export class BTCWallet {
         if (sum < amount) {
             for (let i = 0; i < utxos.length; i++) {
                 if (utxos[i].satoshis > amount) {
-                    return utxos[i];
+                    return [utxos[i]];
                 }
             }
         }
@@ -236,12 +236,12 @@ export class BTCWallet {
             }
         }
 
-        return [];
+        throw new Error('not find utxo');
     }
 
     public async buildRawTransactionFromSingleAddress(address: string, output: Output, minerFee: number): Promise<any> {
         const utxos = await this.coinSelector(address, output.amount * 1e8 + minerFee);
-        let totalAmount;
+        let totalAmount = 0;
         const assembledInputs = [];
         for (const utxo of utxos) {
             assembledInputs.push(`${utxo.txid}${':'}${utxo.vout}`);

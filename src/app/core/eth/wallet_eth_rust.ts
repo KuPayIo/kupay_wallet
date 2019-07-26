@@ -222,6 +222,7 @@ export class EthWallet {
      * @memberof EthWallet
      */
     public signRawTransaction(txObj: Transaction) {
+        txObj = sliceHexPrefix(txObj);
         const network = getEthApiBaseUrl();
         let res;
         if (network.search('mainnet') > 0) {
@@ -240,6 +241,8 @@ export class EthWallet {
     }
 
     public signRawTransactionHash(txObj: Transaction) {
+        console.log('signRawTransactionHash = ',JSON.stringify(txObj));
+        txObj = sliceHexPrefix(txObj);
         const network = getEthApiBaseUrl();
         let res;
         if (network.search('mainnet') > 0) {
@@ -366,4 +369,20 @@ export const initWeb3 = () => {
     if (!web3) {
         web3 = new Web3(new Web3.providers.HttpProvider(getEthApiBaseUrl()));
     }
+};
+
+/**
+ * 去除16进制0x
+ */
+const sliceHexPrefix = (obj:any) => {
+    if (typeof obj === 'object') {
+        for (const key in obj) {
+            const value = obj[key];
+            if (value.indexOf('0x') === 0) {
+                obj[key] = value.replace('0x','');
+            }
+        }
+    }
+
+    return obj;
 };
