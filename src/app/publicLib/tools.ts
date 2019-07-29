@@ -168,6 +168,18 @@ export const hexstrToU8Array = (str: string) => {
 };
 
 /**
+ * u8Array 转字符
+ */
+export const u8Array2Str = (u8Array:Uint8Array) => {
+    let str = '';
+    for (let i = 0;i < u8Array.length;i++) {
+        str += String.fromCharCode(u8Array[i]);
+    }
+
+    return str;
+}; 
+
+/**
  * 获取异或值
  * @param first 前段
  * @param second 后段

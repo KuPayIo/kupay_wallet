@@ -1,6 +1,6 @@
 import { popNew } from '../../pi/ui/root';
 // tslint:disable-next-line:max-line-length
-import { callDefaultLogin, callGetOpenId, callGetRandom, callLogoutAccount,callVerifyIdentidy, getStoreData, openWSConnect, setStoreData } from '../middleLayer/wrap';
+import { callDefaultLogin, callGetOpenId, callGetRandom, callLogoutAccount,callVerifyIdentidy, getStoreData, openWSConnect } from '../middleLayer/wrap';
 import { getSourceLoaded } from '../postMessage/localLoaded';
 import { CMD } from '../publicLib/config';
 import { defaultPassword } from '../utils/constants';

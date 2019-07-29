@@ -132,7 +132,7 @@ export const createWalletRandom = async (option: CreateWalletOption,tourist?:boo
     const user = getStore('user');
     user.id = gwlt.glwtId;
     user.publicKey = gwlt.publicKey;
-    console.log('publicKey =======',gwlt.publicKey);
+    console.log('createWalletRandom vault =======',wallet.vault);
     user.info = {
         ...user.info,
         nickName: option.nickName
@@ -382,6 +382,7 @@ export const fetchMnemonicFragment = (hash) => {
 export const getMnemonicByHash = (hash:string) => {
     const wallet = getStore('wallet');
     try {
+        console.log(`getMnemonicByHash vault = ${wallet.vault}`);
         const r = decrypt(wallet.vault,hash);
 
         return toMnemonic(lang, hexstrToU8Array(r));

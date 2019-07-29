@@ -7,7 +7,7 @@ import { u8ArrayToHexstr } from '../publicLib/tools';
 import { encrypt, getMnemonic } from '../remote/wallet';
 import { BTCWallet } from './btc/wallet_btc_rust';
 import { EthWallet } from './eth/wallet_eth_rust';
-import { generateRandomValues, getRandomValuesByMnemonic, toMnemonic } from './genmnemonic';
+import { generateRandomValues, getRandomValuesByMnemonic, sign, toMnemonic } from './genmnemonic';
 
 /* tslint:disable: variable-name */
 export class GlobalWallet {
@@ -79,9 +79,11 @@ export class GlobalWallet {
         console.log('计算耗时 generateRandomValues = ',new Date().getTime() - start1);
         const start2 = new Date().getTime();
         gwlt._vault = encrypt(u8ArrayToHexstr(vault),secrectHash);
+        console.log(`generate vault = ${gwlt._vault}`);
         console.log('计算耗时 encrypt = ',new Date().getTime() - start2);
         const start3 = new Date().getTime();
         const mnemonic = toMnemonic(lang, vault);
+        console.log(`generate mnemonic = ${mnemonic}`);
         console.log('计算耗时 toMnemonic = ',new Date().getTime() - start3);
         const start4 = new Date().getTime();
         gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
@@ -89,7 +91,13 @@ export class GlobalWallet {
         const start5 = new Date().getTime();
         gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
         console.log('计算耗时 getPublicKeyByMnemonic = ',new Date().getTime() - start5);
-
+        const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+        const wlt = ethWallet.selectAddressWlt(0);
+        const privateKey = wlt.exportPrivateKey();
+        console.log(`generate publicKey = ${gwlt._publicKey},privateKey = ${privateKey}`);
+        // const ret = sign('123456',privateKey);
+        // console.log(`generate sign ret = ${ret}`);
+        
         return gwlt;
     }
     /**

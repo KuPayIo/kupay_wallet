@@ -190,6 +190,7 @@ export const autoLogin = async (conRandom:string) => {
 export const defaultLogin = async (hash:string,conRandom:string) => {
     const deviceDetail = await getDeviceAllDetail();
     const mnemonic = getMnemonicByHash(hash);
+    console.log(`defaultLogin mnemonic = ${mnemonic}`);
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
     const start1 = new Date().getTime();
     const privateKey = wlt.exportPrivateKey();
@@ -248,10 +249,11 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     const deviceDetail = await getDeviceAllDetail();
     const param:any = {
         account: getStore('user/id').slice(2), 
-        pk: `04${getStore('user/publicKey')}`,
+        pk: `${getStore('user/publicKey')}`,
         device_id:deviceDetail.uuid,
         flag:1
     };
+    console.log('sign publicKet = ',param.pk);
     if (inAndroidApp) {
         param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
         param.os = `android ${deviceDetail.version}`;

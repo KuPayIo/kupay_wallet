@@ -1,4 +1,4 @@
-import { str2U8Array } from '../../publicLib/tools';
+import { hexstrToU8Array, str2U8Array, u8Array2Str } from '../../publicLib/tools';
 
 /**
  * cipher
@@ -32,18 +32,13 @@ export class Cipher {
      * @returns  JSON string
      */
     public static encrypt(passwd: string, plainText: string): string {
-        console.log('encryt passwd = ',passwd);
-        console.log('encryt plainText = ',plainText);
         const nonce = new Uint8Array(12);
         const key = api.cipher.rust_sha256(passwd);
         if (key[0] !== 0) throw new Error(`err code ${key[0]}`);  // 所有的res[0]不等于0表示有异常
         crypto.getRandomValues(nonce);
 
-        console.log('encryt passwd1 = ',key[1].slice(32));
         const res = api.cipher.rust_encrypt(key[1].slice(32), u8ArrayToHexstr(nonce), '', u8ArrayToHexstr(str2U8Array(plainText)));
         if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常
-
-        console.log('encryt cipherText = ',res[1] + u8ArrayToHexstr(nonce));
 
         return res[1] + u8ArrayToHexstr(nonce);
     }
@@ -56,16 +51,14 @@ export class Cipher {
      * @returns  Decrypted plain text
      */
     public static decrypt(passwd: string, cipherText: string): string {
-        console.log('decrypt passwd = ',passwd);
-        console.log('decrypt cipherText = ',cipherText);
         const nonce = cipherText.slice(cipherText.length - 24, cipherText.length);
         const key = api.cipher.rust_sha256(passwd);
         if (key[0] !== 0) throw new Error(`err code ${key[0]}`);  // 所有的res[0]不等于0表示有异常 
-        console.log('decrypt passwd1 = ',key[1].slice(32));
         const res = api.cipher.rust_decrypt(key[1].slice(32), nonce, '', cipherText.slice(0,cipherText.length - 24));
         if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
-        return res[1];
+        return u8Array2Str(hexstrToU8Array(res[1]));
+        // return res[1];
     }
 
     /**
