@@ -3,7 +3,6 @@
  */
 import { goshare, ImageNameType } from '../../pi/browser/vm';
 import { WebViewManager } from '../../pi/browser/webview';
-import { sign } from '../core/genmnemonic';
 import { SCPrecision } from '../publicLib/config';
 import { CloudCurrencyType, ThirdCmd } from '../publicLib/interface';
 import { getCloudBalances, setStore } from '../store/memstore';
@@ -12,7 +11,7 @@ import { postThirdPushMessage } from './postWalletMessage';
 import { getOneUserInfo } from './pull';
 import { goRecharge } from './recharge';
 import { addWebviewReloadListener } from './reload';
-import { exportPrivateKeyByMnemonic, getMnemonicByHash, VerifyIdentidy } from './wallet';
+import { exportPrivateKeyByMnemonic, getMnemonicByHash, sign, VerifyIdentidy } from './wallet';
 
 export enum resCode {
     SUCCESS = undefined,   // 成功

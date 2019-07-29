@@ -1,4 +1,4 @@
-_$define("app/core/thirdparty/sjcl", function (require, exports, module) {
+_$define("app/core_pc/thirdparty/sjcl", function (require, exports, module) {
     "use strict";var sjcl={cipher:{},hash:{},keyexchange:{},mode:{},misc:{},codec:{},exception:{corrupt:function(a){this.toString=function(){return"CORRUPT: "+this.message};this.message=a},invalid:function(a){this.toString=function(){return"INVALID: "+this.message};this.message=a},bug:function(a){this.toString=function(){return"BUG: "+this.message};this.message=a},notReady:function(a){this.toString=function(){return"NOT READY: "+this.message};this.message=a}}};
     sjcl.cipher.aes=function(a){this.I[0][0][0]||this.P();var b,d,c,e,f=this.I[0][4],g=this.I[1];b=a.length;var h=1;if(4!==b&&6!==b&&8!==b)throw new sjcl.exception.invalid("invalid aes key size");this.i=[c=a.slice(0),e=[]];for(a=b;a<4*b+28;a++){d=c[a-1];if(0===a%b||8===b&&4===a%b)d=f[d>>>24]<<24^f[d>>16&255]<<16^f[d>>8&255]<<8^f[d&255],0===a%b&&(d=d<<8^d>>>24^h<<24,h=h<<1^283*(h>>7));c[a]=c[a-b]^d}for(b=0;a;b++,a--)d=c[b&3?a:a-4],e[b]=4>=a||4>b?d:g[0][f[d>>>24]]^g[1][f[d>>16&255]]^g[2][f[d>>8&255]]^g[3][f[d&
     255]]};

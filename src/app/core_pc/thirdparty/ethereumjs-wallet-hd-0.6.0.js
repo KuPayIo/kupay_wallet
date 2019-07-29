@@ -1,5 +1,5 @@
 
-_$define("app/core/thirdparty/ethereumjs-wallet-hd-0.6.0", function (require, exports, module) {
+_$define("app/core_pc/thirdparty/ethereumjs-wallet-hd-0.6.0", function (require, exports, module) {
 
   (function (f) { if (typeof exp === "object" && typeof mod !== "undefined") { mod.exp = f() } else if (typeof define === "function" && define.amd) { define([], f) } else { var g; if (typeof window !== "undefined") { g = window } else if (typeof global !== "undefined") { g = global } else if (typeof self !== "undefined") { g = self } else { g = this } g.ethereumjs = f() } })(function () {
     var define, mod, exp; return (function e(t, n, r) { function s(o, u) { if (!n[o]) { if (!t[o]) { var a = typeof req == "function" && req; if (!u && a) return a(o, !0); if (i) return i(o, !0); var f = new Error("Cannot find mod '" + o + "'"); throw f.code = "MODULE_NOT_FOUND", f } var l = n[o] = { exp: {} }; t[o][0].call(l.exp, function (e) { var n = t[o][1][e]; return s(n ? n : e) }, l, l.exp, e, t, n, r) } return n[o].exp } var i = typeof req == "function" && req; for (var o = 0; o < r.length; o++)s(r[o]); return s })({

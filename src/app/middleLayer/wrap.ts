@@ -2,13 +2,12 @@
  * 中间件
  */
 import { WebViewManager } from '../../pi/browser/webview';
+import { LANGUAGE } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
 import { piLoadDir } from '../utils/commonjsTools';
 
 export const vmName = 'JSVM';   // 虚拟机rpc通信名称
 export const COREWRAPMODULENAME = 'app/remote/coreWrap';   // coreWrap moduleName
-
-export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 
 const inApp = navigator.userAgent.indexOf('YINENG') >= 0;     // 是否是移动端
 

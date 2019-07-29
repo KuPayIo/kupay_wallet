@@ -71,7 +71,6 @@ export class Cipher {
 
     public static sign(msg: string, privKey: string): string {
         const hash = this.sha256(msg);
-        console.log(`cipher_rust msg = ${msg}, privateKey = ${privKey} , hash = ${hash}`);
         const res = api.cipher.rust_sign(privKey, hash);
         if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 

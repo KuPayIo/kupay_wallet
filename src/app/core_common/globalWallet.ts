@@ -5,9 +5,8 @@ import { btcNetwork, ERC20Tokens, lang, strength } from '../publicLib/config';
 import { AddrInfo, CurrencyRecord } from '../publicLib/interface';
 import { u8ArrayToHexstr } from '../publicLib/tools';
 import { encrypt, getMnemonic } from '../remote/wallet';
-import { BTCWallet } from './btc/wallet_btc_rust';
-import { EthWallet } from './eth/wallet_eth_rust';
-import { generateRandomValues, getRandomValuesByMnemonic, sign, toMnemonic } from './genmnemonic';
+import { importBTCWallet, importEthWallet } from './commonjs';
+import { generateRandomValues, getRandomValuesByMnemonic, toMnemonic } from './genmnemonic';
 
 /* tslint:disable: variable-name */
 export class GlobalWallet {
@@ -53,15 +52,15 @@ export class GlobalWallet {
     /**
      * 通过助记词导入钱包
      */
-    public static fromMnemonic(secrectHash:string,mnemonic: string) {
+    public static async fromMnemonic(secrectHash:string,mnemonic: string) {
         const gwlt = new GlobalWallet();
         const vault = getRandomValuesByMnemonic(lang, mnemonic);
-        
-        gwlt._vault = encrypt(u8ArrayToHexstr(vault),secrectHash);
 
-        gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
-
-        gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
+        // tslint:disable-next-line:max-line-length
+        const [_vault,_glwtId,EthWallet] = await Promise.all([encrypt(u8ArrayToHexstr(vault),secrectHash),this.initGwlt(gwlt, mnemonic),importEthWallet()]);
+        gwlt._vault = _vault;
+        gwlt._glwtId = _glwtId;
+        gwlt._publicKey = EthWallet.EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
 
         return gwlt;
     }
@@ -72,30 +71,24 @@ export class GlobalWallet {
      * @param walletName  wallet name
      * @param passphrase passphrase
      */
-    public static generate(secrectHash:string, vault?: Uint8Array) {
+    public static async generate(secrectHash:string, vault?: Uint8Array) {
         const gwlt = new GlobalWallet();
         const start1 = new Date().getTime();
         vault = vault || generateRandomValues(strength);
         console.log('计算耗时 generateRandomValues = ',new Date().getTime() - start1);
         const start2 = new Date().getTime();
-        gwlt._vault = encrypt(u8ArrayToHexstr(vault),secrectHash);
+        gwlt._vault = await encrypt(u8ArrayToHexstr(vault),secrectHash);
         console.log('计算耗时 encrypt = ',new Date().getTime() - start2);
         const start3 = new Date().getTime();
         const mnemonic = toMnemonic(lang, vault);
-        console.log(`generate mnemonic = ${mnemonic}`);
         console.log('计算耗时 toMnemonic = ',new Date().getTime() - start3);
         const start4 = new Date().getTime();
-        gwlt._glwtId = this.initGwlt(gwlt, mnemonic);
+        gwlt._glwtId = await this.initGwlt(gwlt, mnemonic);
         console.log('计算耗时 initGwlt = ',new Date().getTime() - start4);
         const start5 = new Date().getTime();
-        gwlt._publicKey = EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
+        const EthWallet = await importEthWallet();
+        gwlt._publicKey = EthWallet.EthWallet.getPublicKeyByMnemonic(mnemonic, lang);
         console.log('计算耗时 getPublicKeyByMnemonic = ',new Date().getTime() - start5);
-        const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
-        const wlt = ethWallet.selectAddressWlt(0);
-        const privateKey = wlt.exportPrivateKey();
-        console.log(`generate mnemonic = ${mnemonic} , publicKey = ${gwlt._publicKey},privateKey = ${privateKey}`);
-        const ret = sign('123456',privateKey);
-        console.log(`generate sign ret = ${ret}`);
         
         return gwlt;
     }
@@ -112,15 +105,18 @@ export class GlobalWallet {
     /**
      * 通过助记词创建对应钱包对象
      */
-    public static createWltByMnemonic(mnemonic: string, currencyName: string, i: number) {
+    public static async createWltByMnemonic(mnemonic: string, currencyName: string, i: number) {
         let wlt;
         if (currencyName === 'ETH') {
-            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            const EthWallet = await importEthWallet();
+            const ethWallet = EthWallet.EthWallet.fromMnemonic(mnemonic, lang);
             wlt = ethWallet.selectAddressWlt(i);
         } else if (currencyName === 'BTC') {
+            const BTCWallet = await importBTCWallet();
             wlt = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
         } else if (ERC20Tokens[currencyName]) {
-            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            const EthWallet = await importEthWallet();
+            const ethWallet = EthWallet.EthWallet.fromMnemonic(mnemonic, lang);
             wlt = ethWallet.selectAddressWlt(i);
         }
 
@@ -131,18 +127,21 @@ export class GlobalWallet {
      * 
      * 通过助记词获得指定位置的钱包地址
      */
-    public static getWltAddrByMnemonic(mnemonic: string, currencyName: string, i: number) {
+    public static async getWltAddrByMnemonic(mnemonic: string, currencyName: string, i: number) {
         let addr;
         if (currencyName === 'ETH') {
-            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            const EthWallet = await importEthWallet();
+            const ethWallet = EthWallet.EthWallet.fromMnemonic(mnemonic, lang);
             addr = ethWallet.selectAddress(i);
         } else if (currencyName === 'BTC') {
+            const BTCWallet = await importBTCWallet();
             const wlt = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
             wlt.unlock();
             addr = wlt.derive(i);
             wlt.lock();
         } else if (ERC20Tokens[currencyName]) {
-            const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+            const EthWallet = await importEthWallet();
+            const ethWallet = EthWallet.EthWallet.fromMnemonic(mnemonic, lang);
             addr = ethWallet.selectAddress(i);
         }
 
@@ -159,13 +158,11 @@ export class GlobalWallet {
      * @param walletName  wallet name
      * @param passphrase passphrase
      */
-    private static initGwlt(gwlt: GlobalWallet, mnemonic: string) {
+    private static async initGwlt(gwlt: GlobalWallet, mnemonic: string) {
         // 创建ETH钱包
-        const ethCurrencyRecord = this.createEthGwlt(mnemonic);
-        gwlt._currencyRecords.push(ethCurrencyRecord);
-
         // 创建BTC钱包
-        const btcCurrencyRecord = this.createBtcGwlt(mnemonic);
+        const [ethCurrencyRecord,btcCurrencyRecord] = await Promise.all([this.createEthGwlt(mnemonic),this.createBtcGwlt(mnemonic)]);
+        gwlt._currencyRecords.push(ethCurrencyRecord);
         gwlt._currencyRecords.push(btcCurrencyRecord);
 
         const ethTokenList = [];
@@ -194,9 +191,10 @@ export class GlobalWallet {
         return ethCurrencyRecord.currentAddr;
     }
 
-    private static createEthGwlt(mnemonic: string) {
+    private static async createEthGwlt(mnemonic: string) {
         const start1 = new Date().getTime();
-        const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+        const EthWallet = await importEthWallet();
+        const ethWallet = EthWallet.EthWallet.fromMnemonic(mnemonic, lang);
         console.log('计算耗时 EthWallet.fromMnemonic = ',new Date().getTime() - start1);
         const start2 = new Date().getTime();
         const address = ethWallet.selectAddress(0);
@@ -218,8 +216,9 @@ export class GlobalWallet {
         return currencyRecord;
     }
 
-    private static createBtcGwlt(mnemonic: string) {
+    private static async createBtcGwlt(mnemonic: string) {
         const start1 = new Date().getTime();
+        const BTCWallet = await importBTCWallet();
         const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
         console.log('计算耗时 BTCWallet.fromMnemonic = ',new Date().getTime() - start1);
         const start2 = new Date().getTime();

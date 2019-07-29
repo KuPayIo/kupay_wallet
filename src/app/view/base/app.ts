@@ -7,7 +7,6 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callRpcTimeingTest } from '../../middleLayer/wrap';
 import { changellyGetCurrencies } from '../../net/changellyPull';
 import { setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { getModulConfig } from '../../publicLib/modulConfig';
@@ -89,7 +88,7 @@ export class App extends Widget {
         this.old[identfy] = true;
         this.paint();
         console.log(JSON.parse(localStorage.getItem('timeArr')));
-        callRpcTimeingTest();
+        // callRpcTimeingTest();
     }
 
     public switchToEarn() {

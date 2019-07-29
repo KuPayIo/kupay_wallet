@@ -1,13 +1,13 @@
 /**
  * ETH wallet implementation
  */
+import { getEthApiBaseUrl } from '../../core_common/config';
+import { Api } from '../../core_common/eth/api';
+import { minABI } from '../../core_common/eth/tokens';
+import { Mnemonic } from '../../core_common/thirdparty/bip39';
+import { Web3 } from '../../core_common/thirdparty/web3.min';
 import { ERC20Tokens } from '../../publicLib/config';
-import { getEthApiBaseUrl } from '../config';
-import { Mnemonic } from '../thirdparty/bip39';
 import { ethereumjs } from '../thirdparty/ethereumjs-wallet-hd-0.6.0';
-import { Web3 } from '../thirdparty/web3.min';
-import { Api } from './api';
-import { minABI } from './tokens';
 
 /* tslint:disable:prefer-template */
 /* tslint:disable: no-redundant-jsdoc*/

@@ -4,8 +4,7 @@
 
 import { closeCon, open, reopen, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { sign } from '../core/genmnemonic';
-import { GlobalWallet } from '../core/globalWallet';
+import { GlobalWallet } from '../core_common/globalWallet';
 import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
 import { Account, getAllAccount, getStore,initCloudWallets, LocalCloudWallet, register, setStore } from '../store/memstore';
@@ -13,7 +12,7 @@ import { addFirstRegisterListener } from '../store/vmRegister';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';
 import { getDeviceAllDetail } from './tools';
-import { decrypt, encrypt, getMnemonicByHash } from './wallet';
+import { decrypt, encrypt, getMnemonicByHash, sign } from './wallet';
 
  // 设置重登录回调
 setReloginCallback((res) => {
@@ -188,15 +187,13 @@ export const autoLogin = async (conRandom:string) => {
  * 创建钱包后默认登录
  */
 export const defaultLogin = async (hash:string,conRandom:string) => {
-    const deviceDetail = await getDeviceAllDetail();
-    const mnemonic = getMnemonicByHash(hash);
-    console.log(`defaultLogin mnemonic = ${mnemonic}`);
-    const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
+    const [deviceDetail,mnemonic] = await Promise.all([getDeviceAllDetail(),getMnemonicByHash(hash)]);
+    const wlt = await GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
     const start1 = new Date().getTime();
     const privateKey = wlt.exportPrivateKey();
     console.log('计算耗时 exportPrivateKey = ',new Date().getTime() - start1);
     const start2 = new Date().getTime();
-    const signStr = sign(conRandom, privateKey);
+    const signStr = await sign(conRandom, privateKey);
     console.log('计算耗时 sign = ',new Date().getTime() - start2);
     const param:any = { sign: signStr };
     if (inAndroidApp || inIOSApp) {
@@ -247,13 +244,18 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     const wallet = getStore('wallet');
     if (!wallet) return;
     const deviceDetail = await getDeviceAllDetail();
+    let publicKey;
+    if (inIOSApp || inAndroidApp) {
+        publicKey = getStore('user/publicKey');
+    } else {
+        publicKey = `04${getStore('user/publicKey')}`;
+    }
     const param:any = {
         account: getStore('user/id').slice(2), 
-        pk: `${getStore('user/publicKey')}`,
+        pk: publicKey,
         device_id:deviceDetail.uuid,
         flag:1
     };
-    console.log('sign publicKet = ',param.pk);
     if (inAndroidApp) {
         param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
         param.os = `android ${deviceDetail.version}`;
