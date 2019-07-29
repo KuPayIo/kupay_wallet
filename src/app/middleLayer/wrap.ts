@@ -12,20 +12,32 @@ export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' 
 
 const inApp = navigator.userAgent.indexOf('YINENG') >= 0;     // 是否是移动端
 
+const obj = {};
+let count = 0;
+
 /**
  * vm rpc 调用
  * rpc调用有两种模式 callback放在rpc函数调用最后面实现对同步函数的rpc调用  放置rpcData 下params参数最后面实现对异步函数的rpc调用
  * @param data 参数 
  */
 const vmRpcCall = (methodName:string,params: any[]):Promise<any> => {
-    // return Promise.reject();
+    count++;
+    // if (count > 0) {
+    //     return Promise.resolve();
+    // }
+   
     return loadMod().then(() => {
         return new Promise((resolve,reject) => {
+            let count = obj[methodName] || 0;
+            obj[methodName] = ++count;
+            console.log(`vmRpcCall ${methodName} params = `,params);
             // 在params后面加入callback函数  实现对异步函数的rpc调用
             params.push(([error,res]) => { 
                 if (error) reject(error);
+                // console.log(`vmRpcCall method ${methodName} end = `,new Date().getTime());
                 resolve(res);
             });
+            // console.log(`vmRpcCall method ${methodName} start = `,new Date().getTime());
             WebViewManager.rpc(vmName,{ moduleName:COREWRAPMODULENAME,methodName,params });
         });
 
@@ -94,6 +106,12 @@ export const callDeleteAccount = (id: string) => {
     return vmRpcCall('callDeleteAccount',[id]);
 };
 
+/**
+ * 获取首页登录所需数据
+ */
+export const callGetHomePageEnterData = () => {
+    return vmRpcCall('callGetHomePageEnterData',[]);
+};
 // ===========================================memstroe相关===================================================================
 
 // ===========================================tools相关===================================================================
@@ -232,16 +250,10 @@ export const callWalletManualReconnect = () => {
 /**
  * 注销账户保留数据
  */
-export const callLogoutAccount = () => {
-    return vmRpcCall('callLogoutAccount',[]);
+export const callLogoutAccount = (save:boolean = true) => {
+    return vmRpcCall('callLogoutAccount',[save]);
 };
 
-/**
- * 注销账户并删除数据
- */
-export const callLogoutAccountDel = () => {
-    return vmRpcCall('callLogoutAccountDel',[]);
-};
 /**
  * 登录某个账号成功
  */
@@ -383,6 +395,11 @@ export const callGetOneUserInfo = (uids: number[], isOpenid: number = 0) => {
 export const callGetInviteCode = () => {
     return vmRpcCall('callGetInviteCode',[]);
 };
+
+// 获取好友嗨豆排名
+export const callGetFriendsKTTops = (arr:any) => {
+    return vmRpcCall('callGetFriendsKTTops',[arr]);
+};
 // ===========================================net相关===================================================================
 
 // ===========================================wallet相关===================================================================
@@ -443,12 +460,6 @@ export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string) => {
     return vmRpcCall('callVerifyIdentidy1',[passwd,vault,salt]);
 };
 
-/**
- * 签名
- */
-export const callGenmnemonicSign = (random:string, privateKey:string) => {
-    return vmRpcCall('callGenmnemonicSign',[random,privateKey]);
-};
 /**
  * 导出ETH第一个地址私钥
  */
@@ -656,16 +667,20 @@ export const callGoRecharge = (balance:number,muchNeed:number) => {
 
 // ==================================recharge相关=========================================
 
+// ==================================reload相关=========================================
+
+/**
+ * reload success
+ */
+export const callEmitWebviewReload = () => {
+    return vmRpcCall('callEmitWebviewReload',[]);
+};
+
+// ==================================reload相关=========================================
+
 /**
  * rpc通信耗时测试
  */
 export const callRpcTimeingTest = () => {
     return vmRpcCall('callRpcTimeingTest',[]);
-};
-
-/**
- * jsc加密性能测试
- */
-export const callJscPerformanceTest = () => {
-    return vmRpcCall('callJscPerformanceTest',[]);
 };

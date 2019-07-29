@@ -8,7 +8,7 @@ import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
-import { Account, getStore, initCloudWallets,LocalCloudWallet, register, setStore } from '../store/memstore';
+import { Account, getAllAccount, getStore,initCloudWallets, LocalCloudWallet, register, setStore } from '../store/memstore';
 import { addFirstRegisterListener } from '../store/vmRegister';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';
@@ -173,6 +173,7 @@ export const autoLogin = async (conRandom:string) => {
     requestAsync(msg).then(res => {
         setStore('user/isLogin', true);
         setStore('flags/doLoginSuccess',true);
+        setStore('flags/hasLogined',true,false);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
         console.log('自动登录成功-----------',res);
     }).catch((res) => {
         setStore('user/isLogin', false);
@@ -189,10 +190,14 @@ export const autoLogin = async (conRandom:string) => {
 export const defaultLogin = async (hash:string,conRandom:string) => {
     const deviceDetail = await getDeviceAllDetail();
     const mnemonic = getMnemonicByHash(hash);
+    console.log(`defaultLogin mnemonic = ${mnemonic}`);
     const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
-    console.log('================',wlt.exportPrivateKey());
-    // const sign = genmnemonicMod.sign;
-    const signStr = sign(conRandom, wlt.exportPrivateKey());
+    const start1 = new Date().getTime();
+    const privateKey = wlt.exportPrivateKey();
+    console.log('计算耗时 exportPrivateKey = ',new Date().getTime() - start1);
+    const start2 = new Date().getTime();
+    const signStr = sign(conRandom, privateKey);
+    console.log('计算耗时 sign = ',new Date().getTime() - start2);
     const param:any = { sign: signStr };
     if (inAndroidApp || inIOSApp) {
         param.operator = deviceDetail.operator;
@@ -213,7 +218,9 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
         applyAutoLogin();
         setStore('user/isLogin', true);
         setStore('flags/doLoginSuccess',true);
+        setStore('flags/hasLogined',true,false);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
     }).catch(err => {
+        console.log('defaultLogin err',JSON.stringify(err));
         setStore('user/isLogin', false);
         if (err.error !== -69) {
             setStore('flags/doLoginFailed',true);
@@ -242,10 +249,11 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     const deviceDetail = await getDeviceAllDetail();
     const param:any = {
         account: getStore('user/id').slice(2), 
-        pk: `04${getStore('user/publicKey')}`,
+        pk: `${getStore('user/publicKey')}`,
         device_id:deviceDetail.uuid,
         flag:1
     };
+    console.log('sign publicKet = ',param.pk);
     if (inAndroidApp) {
         param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
         param.os = `android ${deviceDetail.version}`;
@@ -288,9 +296,9 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
                 setStore('flags/doLoginFailed',true);
             }
         }
-        setStore('user/conUid', resp.uid);
+        setStore('user/conUid', resp.uid,false);
         console.log('uid =',resp.uid);
-        setStore('user/conRandom', conRandom);
+        setStore('user/conRandom', conRandom,false);
     } catch (res) {
         console.log('getRandom endTime= ',new Date().getTime());
         resp = res;
@@ -304,10 +312,17 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
 };
 
 /**
- * 注销账户并删除数据
+ * 注销账户
  */
-export const logoutAccountDel = () => {
+export const logoutAccount = (save:boolean = true) => {
+    const wallet = getStore('wallet');
+    setStore('flags/saveAccount', false , false); // 重置saveAccount
+    if (save && wallet.setPsw) {
+        setStore('flags/saveAccount', true);
+    }
+    
     setStore('user/token','');
+    const uid = getStore('user/id');
     const user = {
         id: '',                      // 该账号的id
         isLogin: false,              // 登录状态
@@ -370,18 +385,20 @@ export const logoutAccountDel = () => {
     setTimeout(() => {
         openConnect();
     },100);
-};
+    
+    return getAllAccount().then(accounts => {
+        const flags = getStore('flags');
+        const saveAccount = flags.saveAccount;
+        if (saveAccount) {
+            return accounts;
+        } else {
+            accounts = accounts.filter(account => {
+                return account.user.id !== uid;
+            });
 
-/**
- * 注销账户保留数据
- */
-export const logoutAccount = () => {
-    const wallet = getStore('wallet');
-    setStore('flags/saveAccount', false , false); // 重置saveAccount
-    if (wallet.setPsw) {
-        setStore('flags/saveAccount', true);
-    }
-    logoutAccountDel();
+            return accounts;
+        }
+    });
 };
 
 /**
@@ -480,5 +497,3 @@ const registerStore = () => {
 registerStore();
 
 addFirstRegisterListener(openConnect);  // 在第一次注册成功后才连接服务器
-
-console.log('更新测试1');

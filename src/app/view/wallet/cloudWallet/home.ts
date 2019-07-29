@@ -58,6 +58,7 @@ export class CloudWalletHome extends Widget {
             this.props.gain = gain;
             this.paint();
         });
+        console.log('vmRpc cloudWallet/home');
         Promise.all([getCloudBalances(),callFetchBalanceValueOfCoin(currencyName,1)]).then(([cloudBalances,rate]) => {
             const balance = formatBalance(cloudBalances.get(CloudCurrencyType[currencyName]));
             const balanceValue = formatBalanceValue(balance * rate);

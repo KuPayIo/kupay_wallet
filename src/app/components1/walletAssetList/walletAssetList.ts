@@ -27,15 +27,10 @@ export class WalletAssetList extends Widget {
         this.props = {
             ...this.props,
             ktShow,
-            scShow,
-            currencyUnitSymbol:''
+            scShow
         };
         this.props.assetList.map(item => {
             item.logo = calCurrencyLogoUrl(item.currencyName);
-        });
-        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
-            this.props.currencyUnitSymbol = currencyUnitSymbol;
-            this.paint();
         });
     }
     public itemClick(e:any,index:number) {

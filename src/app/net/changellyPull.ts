@@ -7,7 +7,6 @@ import { changellySign } from './pull';
 // changelly api url
 const changellyApiUrl = 'https://api.changelly.com';
 const changellyPostId = 'kuplay';
-// TODO 先向服务器签名
 const changellyFetchPost = (data) => {
     return changellySign(data).then(res => {
         const apiKey = res.key;

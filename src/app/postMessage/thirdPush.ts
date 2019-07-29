@@ -1,5 +1,5 @@
 import { HandlerMap } from '../../pi/util/event';
-import { ThirdCmd, ThirdPushArgs } from '../publicLib/interface';
+import { ThirdPushArgs } from '../publicLib/interface';
 
 /**
  * 三方推送

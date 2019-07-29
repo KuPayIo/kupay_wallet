@@ -1,10 +1,9 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { arrayBufferToBase64, base64ToArrayBuffer } from '../../pi/util/base64';
-import { cryptoRandomInt } from '../../pi/util/math';
-import { BTCWallet } from '../core/btc/wallet';
-import { Cipher } from '../core/crypto/cipher';
+import { BTCWallet } from '../core/btc/wallet_btc_rust';
+import { Cipher } from '../core/crypto/cipher_rust';
 import { ibanToAddress, isValidIban } from '../core/eth/helper';
-import { EthWallet } from '../core/eth/wallet';
+import { EthWallet } from '../core/eth/wallet_eth_rust';
 import { generateByHash, sha3, sign, toMnemonic } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
 // tslint:disable-next-line:max-line-length
@@ -22,9 +21,11 @@ import { getCurrentAddrInfo } from './tools';
  * @param plainText 需要加密的文本
  */
 export const encrypt = (plainText: string, salt: string) => {
-    const cipher = new Cipher();
+    // const cipher = new Cipher();
 
-    return cipher.encrypt(salt, plainText);
+    // return cipher.encrypt(salt, plainText);
+
+    return Cipher.encrypt(salt, plainText);
 };
 
 /**
@@ -32,16 +33,20 @@ export const encrypt = (plainText: string, salt: string) => {
  * @param cipherText 需要解密的文本
  */
 export const decrypt = (cipherText: string, salt: string) => {
-    const cipher = new Cipher();
+    // const cipher = new Cipher();
+    
+    // return cipher.decrypt(salt, cipherText);
 
-    return cipher.decrypt(salt, cipherText);
+    return Cipher.decrypt(salt, cipherText);
 };
 
 // hash256;
 export const sha256 = (data: string) => {
-    const cipher = new Cipher();
+    // const cipher = new Cipher();
+    
+    // return cipher.sha256(data);
 
-    return cipher.sha256(data);
+    return Cipher.sha256(data);
 };
 
 /**
@@ -127,6 +132,7 @@ export const createWalletRandom = async (option: CreateWalletOption,tourist?:boo
     const user = getStore('user');
     user.id = gwlt.glwtId;
     user.publicKey = gwlt.publicKey;
+    console.log('createWalletRandom vault =======',wallet.vault);
     user.info = {
         ...user.info,
         nickName: option.nickName
@@ -376,6 +382,7 @@ export const fetchMnemonicFragment = (hash) => {
 export const getMnemonicByHash = (hash:string) => {
     const wallet = getStore('wallet');
     try {
+        console.log(`getMnemonicByHash vault = ${wallet.vault}`);
         const r = decrypt(wallet.vault,hash);
 
         return toMnemonic(lang, hexstrToU8Array(r));
@@ -587,14 +594,7 @@ export const exportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],cur
 
 // rpc耗时测试
 export const rpcTimeingTest = () => {
-    return 12345; 
-};
-
-// 加密测试
-export const jscPerformanceTest = () => {
-    const start = new Date().getTime();
-    const ret = encrypt('123456789',cryptoRandomInt().toString());
-    console.log('计算加密耗时 =',new Date().getTime() - start);  
+    // WebViewManager.reloadDefault();
     
-    return 12345678;
+    return 12345; 
 };

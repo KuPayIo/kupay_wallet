@@ -6,9 +6,10 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callBackupMnemonic, getStoreData, setStoreData } from '../../../middleLayer/wrap';
-import { popPswBox, rippleShow } from '../../../utils/tools';
+import { getStoreData, setStoreData } from '../../../middleLayer/wrap';
+import { deepCopy, popPswBox, rippleShow } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
+import { exportMnemonic } from '../../../viewLogic/localWallet';
 import { logoutAccount } from '../../../viewLogic/login';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -125,9 +126,9 @@ export class Setting extends Widget {
     public async backUp() {
         const psw = await popPswBox();
         if (!psw) return;
-        const ret = await callBackupMnemonic(psw);
+        const ret = await exportMnemonic(psw);
         if (ret) {
-            popNew('app-view-wallet-backup-index', { ...ret,pi_norouter:true });
+            popNew('app-view-wallet-backup-index', { ...ret });
             this.ok && this.ok();
         }
     }
@@ -138,10 +139,11 @@ export class Setting extends Widget {
     public async logOut() {
         const wallet = await getStoreData('wallet');
         const setPsw = wallet.setPsw;
+        const modalBox2 = deepCopy(this.language.modalBox2);
         if (!setPsw) {
-            this.language.modalBox2.sureText = this.language.modalBox2.sureText1;
+            modalBox2.sureText = this.language.modalBox2.sureText1;
         }
-        popNew('app-components-modalBox-modalBox', this.language.modalBox2 , () => {  
+        popNew('app-components-modalBox-modalBox', modalBox2 , () => {  
             if (!setPsw) {
                 this.ok && this.ok();
             } else {
@@ -151,8 +153,10 @@ export class Setting extends Widget {
             console.log('取消1');
         }, () => {
             console.log(1);
-            logoutAccount();
-            this.backPrePage();
+            logoutAccount().then(() => {
+                this.backPrePage();
+            });
+            
         }
         );
     }
@@ -162,10 +166,11 @@ export class Setting extends Widget {
      */
     public async logOutDel() {
         const setPsw = await getStoreData('wallet/setPsw');
+        const modalBox3 = deepCopy(this.language.modalBox3);
         if (!setPsw) {
-            this.language.modalBox3.sureText = this.language.modalBox3.sureText1;
+            modalBox3.sureText = this.language.modalBox3.sureText1;
         }
-        popNew('app-components-modalBox-modalBox', this.language.modalBox3 , () => {
+        popNew('app-components-modalBox-modalBox', modalBox3 , () => {
             if (!setPsw) {
                 this.ok && this.ok();
             } else {
@@ -174,8 +179,10 @@ export class Setting extends Widget {
             console.log('取消2');
         }, () => {
             popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
-                logoutAccount(true);
-                this.backPrePage();
+                logoutAccount(true).then(() => {
+                    this.backPrePage();
+                });
+                
             });
         });
     }

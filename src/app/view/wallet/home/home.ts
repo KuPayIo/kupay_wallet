@@ -6,9 +6,9 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 // tslint:disable-next-line:max-line-length
-import { callDcUpdateBalance,callFetchCloudTotalAssets,callFetchLocalTotalAssets, callGetServerCloudBalance,getStoreData } from '../../../middleLayer/wrap';
+import { callFetchCloudTotalAssets,callFetchCloudWalletAssetList, callFetchLocalTotalAssets,callFetchWalletAssetList, getStoreData } from '../../../middleLayer/wrap';
 import { formatBalanceValue } from '../../../publicLib/tools';
-import { getCurrencyUnitSymbol, getUserInfo } from '../../../utils/tools';
+import { getCurrencyUnitSymbol } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
 // ============================导出
 
@@ -30,11 +30,15 @@ export class Home extends Widget {
             }],
             activeNum:0,
             refreshing:false,
-            avatar:'',
-            totalAsset:'',
-            currencyUnitSymbol:''
+            localTotalAssets:0,
+            localWalletAssetList:[],
+            cloudTotalAssets:0,
+            cloudWalletAssetList:[],
+            totalAsset:'0.00',
+            currencyUnitSymbol:'￥',
+            redUp:true
         };
-
+        this.dataInit();
     }
     public setProps(props:any,oldProps:any) {
         this.props = {
@@ -42,22 +46,13 @@ export class Home extends Widget {
             ...props
         };
         super.setProps(this.props,oldProps);
-        this.dataInit();
     }
 
     public dataInit() {
-        getCurrencyUnitSymbol().then(currencyUnitSymbol => {
-            this.props.currencyUnitSymbol = currencyUnitSymbol; 
-            this.paint();
-        });
-        getUserInfo().then(userInfo => {
-            this.props.avatar = userInfo && userInfo.avatar;
-            this.paint();
-        });
-        Promise.all([callFetchLocalTotalAssets(),callFetchCloudTotalAssets()]).then(([localTotalAssets,cloudTotalAssets]) => {
-            this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
-            this.paint();
-        });
+        this.updateCloudWalletAssetList();
+        this.updateLocalWalletAssetList();
+        this.changeColor();
+        this.updateCurrencyUnitSymbol();
     }
 
     public tabsChangeClick(event: any, value: number) {
@@ -65,98 +60,72 @@ export class Home extends Widget {
         this.paint();
     }
 
-    public userInfoChange() {
-        getUserInfo().then(userInfo => {
-            this.props.avatar = userInfo.avatar || '';
-            this.paint();
-        });
-    }
-
+    // 更新余额
     public updateTotalAsset() {
-        Promise.all([callFetchLocalTotalAssets(),callFetchCloudTotalAssets()]).then(([localTotalAssets,cloudTotalAssets]) => {
-            this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
+        callFetchCloudTotalAssets().then(cloudTotalAssets => {
+            this.props.totalAsset = formatBalanceValue(this.props.localTotalAssets + cloudTotalAssets);
+            this.props.cloudTotalAssets = cloudTotalAssets;
+            this.paint();
+        });
+        callFetchLocalTotalAssets().then(localTotalAssets => {
+            this.props.totalAsset = formatBalanceValue(localTotalAssets + this.props.cloudTotalAssets);
+            this.props.localTotalAssets = localTotalAssets;
             this.paint();
         });
     }
 
+    // 更新云端资产
+    public updateCloudWalletAssetList() {
+        callFetchCloudTotalAssets().then(cloudTotalAssets => {
+            this.props.totalAsset = formatBalanceValue(this.props.localTotalAssets + cloudTotalAssets);
+            this.props.cloudTotalAssets = cloudTotalAssets;
+            this.paint();
+        });
+        callFetchCloudWalletAssetList().then(assetList => {
+            this.props.cloudWalletAssetList = assetList;
+            this.paint();
+        });
+    }
+
+    // 更新本地资产
+    public updateLocalWalletAssetList() {
+        callFetchLocalTotalAssets().then(localTotalAssets => {
+            this.props.totalAsset = formatBalanceValue(localTotalAssets + this.props.cloudTotalAssets);
+            this.props.localTotalAssets = localTotalAssets;
+            this.paint();
+        });
+        callFetchWalletAssetList().then(assetList => {
+            this.props.localWalletAssetList = assetList;
+            this.paint();
+        });
+    }
+
+    // 涨跌幅颜色改变
+    public changeColor() {
+        getStoreData('setting/changeColor','redUp').then(color => {
+            this.props.redUp = color === 'redUp';
+            this.paint();
+        });
+    }
+
+    // 货币单位改变
     public currencyUnitChange() {
+        this.updateCurrencyUnitSymbol();
+        this.updateTotalAsset();
+        
+    }
+
+    // 货币符号改变
+    public updateCurrencyUnitSymbol() {
         getCurrencyUnitSymbol().then(currencyUnitSymbol => {
             this.props.currencyUnitSymbol = currencyUnitSymbol; 
             this.paint();
         });
-        Promise.all([callFetchLocalTotalAssets(),callFetchCloudTotalAssets()]).then(([localTotalAssets,cloudTotalAssets]) => {
-            this.props.totalAsset = formatBalanceValue(localTotalAssets + cloudTotalAssets);
-            this.paint();
-        });
     }
     
-    /**
-     * 刷新页面
-     */
-    public loaded() {
-        // toDo 更新数据 完成之后将loaded变成true 刷新页面
-        setTimeout(() => {
-            // 加载数据完成
-            this.props.loaded = true;
-            this.paint();
-        },2000);
-
-    }
-    /**
-     * 刷新前的准备
-     */
-    public beforeLoad() {
-        // '通知刷新状态---'
-        this.props.loaded = false;
-        this.paint();
-    }
-
-    public refreshClick() {
-        if (this.props.refreshing) {
-            return;
-        }
-        this.props.refreshing = true;
-        this.paint();
-        setTimeout(() => {
-            this.props.refreshing = false;
-            this.paint();
-        },1000);
-        callGetServerCloudBalance();
-        getStoreData('wallet').then(wallet => {
-            if (!wallet) return;
-            const list = [];
-            wallet.currencyRecords.forEach(v => {
-                if (wallet.showCurrencys.indexOf(v.currencyName) >= 0) {
-                    v.addrs.forEach(addrInfo => {
-                        list.push({ addr: addrInfo.addr, currencyName: v.currencyName });
-                    });
-                    
-                }
-            });
-           
-            list.forEach(v => {
-                callDcUpdateBalance(v.addr, v.currencyName);
-            });
-        });
-    }
-
 }
 
 // ==========================本地
-registerStoreData('user/info',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.userInfoChange();
-    }
-});
-
-// 云端余额变化
-registerStoreData('cloud/cloudWallet',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateTotalAsset();
-    }
-});
 
 // 货币涨跌幅度变化
 registerStoreData('third/currency2USDTMap',() => {
@@ -170,5 +139,29 @@ registerStoreData('setting/currencyUnit',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.currencyUnitChange();
+    }
+});
+
+// 涨跌幅颜色变化
+registerStoreData('setting/changeColor', () => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.changeColor();
+    }
+});
+
+// 云端余额变化
+registerStoreData('cloud/cloudWallets',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateCloudWalletAssetList();
+    }
+});
+
+// 钱包记录变化
+registerStoreData('wallet',() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.updateLocalWalletAssetList();
     }
 });

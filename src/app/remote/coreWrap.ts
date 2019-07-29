@@ -5,18 +5,20 @@ import { getEthApiBaseUrl } from '../core/config';
 import { isValidMnemonic } from '../core/genmnemonic';
 import { AddrInfo, CloudCurrencyType, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
 import { deleteAccount, getAllAccount, getCloudBalances1, getStore, setStore } from '../store/memstore';
+import { getHomePageEnterData } from '../store/vmRegister';
 import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, dcUpdateBalance } from './dataCenter';
 // tslint:disable-next-line:max-line-length
-import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, logoutAccountDel, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from './login';
+import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from './login';
 // tslint:disable-next-line:max-line-length
-import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getHighTop, getInviteCode, getMineDetail, getMining, getOneUserInfo, getProductList, getPurchaseRecord, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
+import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getFriendsKTTops, getHighTop, getInviteCode, getMineDetail, getMining, getOneUserInfo, getProductList, getPurchaseRecord, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
 // tslint:disable-next-line:max-line-length
 import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from './pullWallet';
 import { goRecharge } from './recharge';
+import { emitWebviewReload } from './reload';
 // tslint:disable-next-line:max-line-length
 import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList,getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from './tools';
 // tslint:disable-next-line:max-line-length
-import { backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, exportPrivateKeyByMnemonic, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, genmnemonicSign, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, jscPerformanceTest, lockScreenHash, lockScreenVerify, passwordChange, preCalAhashToArgon2Hash, rpcTimeingTest, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
+import { backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, exportPrivateKeyByMnemonic, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, preCalAhashToArgon2Hash, rpcTimeingTest, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
 
 export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 
@@ -75,6 +77,17 @@ export const callGetCloudWallets = (callback:Function) => {
  */
 export const callDeleteAccount = (id: string,callback:Function) => {
     deleteAccount(id).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([err]);
+    });
+};
+
+/**
+ * 获取首页登录所需数据
+ */
+export const callGetHomePageEnterData = (callback:Function) => {
+    getHomePageEnterData().then(res => {
         callback([undefined,res]);
     }).catch(err => {
         callback([err]);
@@ -238,18 +251,16 @@ export const callWalletManualReconnect = (callback:Function) => {
 };
 
 /**
- * 注销账户保留数据
+ * 注销账户
  */
-export const callLogoutAccount = (callback:Function) => {
-    callback([undefined,logoutAccount()]);
+export const callLogoutAccount = (save:boolean = true,callback:Function) => {
+    logoutAccount(save).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([err]);
+    });
 };
 
-/**
- * 注销账户并删除数据
- */
-export const callLogoutAccountDel = (callback:Function) => {
-    callback([undefined,logoutAccountDel()]);
-};
 /**
  * 登录某个账号成功
  */
@@ -467,6 +478,15 @@ export const callGetInviteCode = (callback:Function) => {
         callback([err]);
     });
 };
+
+// 获取好友嗨豆排名
+export const callGetFriendsKTTops = (arr:any,callback:Function) => {
+    getFriendsKTTops(arr).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([err]);
+    });
+};
 // ===========================================net相关===================================================================
 
 // ===========================================wallet相关===================================================================
@@ -533,13 +553,6 @@ export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string,callb
     }).catch(err => {
         callback([handleError(err)]);
     });
-};
-
-/**
- * 签名
- */
-export const callGenmnemonicSign = (random:string, privateKey:string,callback:Function) => {
-    callback([undefined,genmnemonicSign(random,privateKey)]);
 };
 
 /**
@@ -817,16 +830,20 @@ export const callGoRecharge = (balance:number,muchNeed:number,callback:Function)
 
 // ==================================recharge相关=========================================
 
+// ==================================reload相关=========================================
+
+/**
+ * reload success
+ */
+export const callEmitWebviewReload = (callback:Function) => {
+    callback([undefined,emitWebviewReload()]);
+};
+
+// ==================================reload相关=========================================
+
 /**
  * rpc通信测试
  */
 export const callRpcTimeingTest = (callback:Function) => {
     callback([undefined,rpcTimeingTest()]);
-};
-
-/**
- * jsc加密性能测试
- */
-export const callJscPerformanceTest = (callback:Function) => {
-    callback([undefined,jscPerformanceTest()]);
 };

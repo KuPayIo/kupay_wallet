@@ -100,6 +100,18 @@ export const unicodeArray2Str = (arr) => {
 };
 
 /**
+ * str转u8Array
+ */
+export const str2U8Array = (str:string) => {
+    const u8Array = new Uint8Array(str.length);
+    for (let i = 0;i < str.length;i++) {
+        u8Array[i] = str.charCodeAt(i);
+    }
+
+    return u8Array;
+};
+
+/**
  * 数字前边加0
  */
 const addPerZero = (num: number, len: number) => {
@@ -154,6 +166,18 @@ export const hexstrToU8Array = (str: string) => {
 
     return r;
 };
+
+/**
+ * u8Array 转字符
+ */
+export const u8Array2Str = (u8Array:Uint8Array) => {
+    let str = '';
+    for (let i = 0;i < u8Array.length;i++) {
+        str += String.fromCharCode(u8Array[i]);
+    }
+
+    return str;
+}; 
 
 /**
  * 获取异或值

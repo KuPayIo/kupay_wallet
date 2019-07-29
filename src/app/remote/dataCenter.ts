@@ -2,9 +2,9 @@
  * 数据更新中心
  */
 import { BtcApi } from '../core/btc/api';
-import { BTCWallet } from '../core/btc/wallet';
+import { BTCWallet } from '../core/btc/wallet_btc_rust';
 import { Api as EthApi } from '../core/eth/api';
-import { EthWallet } from '../core/eth/wallet';
+import { EthWallet } from '../core/eth/wallet_eth_rust';
 import { BigNumber } from '../publicLib/bignumber';
 // tslint:disable-next-line:max-line-length
 import { btcNetwork, defaultEthToAddr, erc20GasLimitRate, ERC20Tokens, ethTokenTransferCode, lang, MainChainCoin } from '../publicLib/config';
@@ -21,7 +21,7 @@ import { fetchLocalTxByHash, fetchTransactionList, getMnemonicByHash } from './w
  * 创建事件处理器表
  * @example
  */
-class DataCenter {
+class DataCenter { 
     public timerRef: number = 0;
     public timerRef1: number = 0;
     public updateList: any[] = [];

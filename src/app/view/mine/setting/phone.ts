@@ -41,7 +41,6 @@ export class BindPhone extends Widget {
         this.ok && this.ok();
     }
     public jumpClick() {
-        setStoreData('flags/bindPhone',false);
         this.ok && this.ok();
     }
     
@@ -67,7 +66,6 @@ export class BindPhone extends Widget {
                 setStoreData('user/info',userinfo);
                 delPopPhoneTips();
                 this.ok && this.ok();
-                setStoreData('flags/bindPhone',false);
                 popNewMessage('绑定成功');
             } else {
                 this.props.code = [];

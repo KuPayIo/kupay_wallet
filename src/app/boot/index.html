@@ -402,10 +402,8 @@
 	</style>
 	<!-- <script src="http://soeasysdk.com/soeasysr/zm_engine_v2.js"></script> -->
 	<script type="text/javascript">
-		// alert("index.html");
+		self.startTime1 = new Date().getTime();
 		self.startTime = Date.now();
-		console.time('webview ready ok');
-		console.time('home enter');
 		var LOG_TIME = Date.now()
 		var PRE_TIME = LOG_TIME;
 		var TIME_STR = ""
@@ -488,6 +486,9 @@
 			} else {
 				defaultDomains = winit.domains = remoteDomains;
 			}
+
+
+			
 
 			var jsInterceptID = 0;
 			var jsInterceptMap = {};
@@ -725,110 +726,7 @@
 				}, 1);
 			else
 				winit.start();
-
 			
-
-
-
-			// ======================================支付============================================================
-			var sdk = [["http://soeasysdk.com"], "/soeasysr/zm_engine_v2.js"];
-			// sdk 加载完毕回调
-			window.zmInitSucc = function () {
-				alert('sdk loaded');
-				//获取 传入的 参数 必传 game_id
-				var body = location.search.replace(/\?/, "");
-				var arr = body.split(/=|&/);
-				var i;
-				for (i = arr.length - 2; i >= 0; i -= 2) {
-					obj[arr[i]] = arr[i + 1];
-				}
-				//TODO 必须在这里或者该方法调用之后进行 sdk调用
-				ZmSdk.getInstance().init(function (data) {
-					//初始化成功之后调用其他 sdk能力 如 获取用户信息、支付、角色上报、设置分享信息、分享等等...
-					//示例
-					if (data.retcode === "0") {
-						var userinfo = ZmSdk.getInstance().getUserInfo();
-						//绑定渠道角色信息上传接口
-						winit.ptUpload = function (roleInfoJSON) {
-							roleInfo = roleInfoJSON;
-							// {"datatype":"必填1.选择服务器2.创建角色3.进入游戏4.等级提升5.退出游戏","serverid":"服务器id","servername":"服务器名称","roleid":"角色id","rolename":"游戏角色昵称","rolelevel":"角色等级","fightvalue":"战力",(以上字段为必填字段)"moneynum":"游戏币","partyname":"工会","rolecreatetime":"角色创建时间","rolelevelmtime":"角色升级时间","gender":"角色性别,可传'男'、'女'","professionid":"职业id","profession":"职业名称”,"vip":“vip等级”,"partyid":"所在帮派id","partyname":"所在帮派名称","partyroleid":"帮派称号id","partyrolename":"帮派称号名称","friendlist":[{"roleid":"关系角色id","intimacy":"亲密度","nexusid":"关系id,可填数字1:夫妻2:结拜3:情侣4:师徒5:仇人6:其它"},...]}
-							ZmSdk.getInstance().reportRoleStatus(roleInfo);
-						}
-						winit.piPay = function (param) {
-							function fromCharCode(arr) {
-								if (isArray(arr)) {
-									var str = "";
-									for (var k = 0, len = arr.length; k < len; k++) {
-										str += String.fromCharCode(arr[k]);
-									}
-									return str;
-								} else return arr;
-							}
-
-							function isArray(o) {
-								return Object.prototype.toString.call(o) == '[object Array]';
-							}
-
-							var orderInfo = new Object();
-							orderInfo.check = param.check;
-							orderInfo.feeid = param.feeid;
-							orderInfo.fee = param.fee;
-							orderInfo.feename = fromCharCode(param.feename);
-							orderInfo.extradata = param.extradata;
-							orderInfo.serverid = param.serverid;
-							orderInfo.rolename = param.roleName;
-							orderInfo.roleid = param.roleid;
-							orderInfo.servername = fromCharCode(param.servername);
-
-							ZmSdk.getInstance().pay(orderInfo, function (data) {
-								if (data.retcode == 0)
-									console.log("充值成功");
-							});
-						}
-						var localDomain = location.protocol + "//" + document.domain;
-						if (userinfo.userdata) {
-							requestSend(localDomain + "/pt/get_ptid?uid=" + userinfo.userdata.uid + userinfo.common.sdkindx + "&channer=" + channel + "&game=" + obj.game_id, function (res) {
-								if (res.ok.ptid) {
-									obj.ptid = res.ok.ptid;
-									obj.uid = res.ok.ptid;
-									obj.sign = res.ok.sign;
-									gcStorage.ptFrom = JSON.stringify(obj);
-									if(document.hidden === true)
-											setTimeout(function(){
-												var div = document.createElement('div');
-												div.onclick = function() {
-													div.remove();
-													winit.start();
-												};
-												div.setAttribute("style", "position:absolute;width: 100%;height: 100%;");
-												div.innerHTML ='<div style="position:absolute;width: 100%;top:50%;text-align:center;color:white;">页面暂停，按下可继续</div>';
-												document.body.appendChild(div);
-											}, 1);
-										else{
-											winit.start();
-										} 
-								}
-							});
-						}
-
-						if (ZmSdk.getInstance().isSupportMethod("spChangeAccount")) {
-							ZmSdk.getInstance().spChangeAccount();
-							roleInfo.datatype = 5;
-							var upRoleInfo = {};
-							for (var i = 0; i < roleDataList.length; i++) {
-								upRoleInfo[roleDataList[i][0]] = roleInfo[roleDataList[i][1]];
-							}
-							ZmSdk.getInstance().reportRoleStatus(upRoleInfo);
-							location.reload();
-						}
-
-					} else if (data.retcode === "1") {
-						//初始化失败处理
-					}
-				})
-			}
-			// winit.loadJS(["http://soeasysdk.com"], "/soeasysr/zm_engine_v2.js","utf8", winit.initFail,"load zm_engine_v2 error");
-
 		})();
 	</script>
 </head>

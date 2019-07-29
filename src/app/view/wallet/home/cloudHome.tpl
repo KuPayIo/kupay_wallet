@@ -1,10 +1,10 @@
 <div w-class="asset-container">
     <div w-class="total-asset-container">
-        <div w-class="total-asset"><pi-ui-lang>{"zh_Hans":"云资产：≈","zh_Hant":"雲資產：≈","en":""}</pi-ui-lang>{{it.currencyUnitSymbol}}{{it.totalAsset}}</div>
+        <div w-class="total-asset"><pi-ui-lang>{"zh_Hans":"云资产：≈","zh_Hant":"雲資產：≈","en":""}</pi-ui-lang>{{it.currencyUnitSymbol}}{{it.cloudTotalAssets}}</div>
     </div>
     <div w-class="container">
         <div w-class="asset-list" ev-item-click="itemClick">
-            <app-components1-walletAssetList-walletAssetList>{ assetList:{{it.assetList}},redUp:{{it.redUp}},currencyUnitSymbol:{{it.currencyUnitSymbol}} }</app-components1-walletAssetList-walletAssetList>
+            <app-components1-walletAssetList-walletAssetList>{ assetList:{{it.cloudWalletAssetList}},redUp:{{it.redUp}},currencyUnitSymbol:{{it.currencyUnitSymbol}} }</app-components1-walletAssetList-walletAssetList>
         </div>
         {{if it.financialModulIsShow}}
         <div w-class="space"></div>

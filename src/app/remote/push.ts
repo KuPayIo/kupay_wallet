@@ -3,9 +3,9 @@
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { CMD } from '../publicLib/config';
-import { CloudCurrencyType, ServerPushArgs, ServerPushKey } from '../publicLib/interface';
+import { ServerPushArgs, ServerPushKey } from '../publicLib/interface';
 import { getStore, setStore } from '../store/memstore';
-import { logoutAccount, logoutAccountDel } from './login';
+import { logoutAccount } from './login';
 import { postServerPushMessage } from './postWalletMessage';
 import { getServerCloudBalance } from './pull';
 
@@ -25,7 +25,7 @@ export const initPush = () => {
         if (cmd === CMD.FORCELOGOUT) {
             logoutAccount();
         } else if (cmd === CMD.FORCELOGOUTDEL) {
-            logoutAccountDel();
+            logoutAccount(false);
         }
         const args:ServerPushArgs = {
             key:ServerPushKey.CMD,
@@ -82,14 +82,6 @@ export const initPush = () => {
     setMsgHandler(ServerPushKey.ALTERBALANCEOK,(res) => {
         console.log('alter_balance_ok服务器推送成功===========调用排名===============',res);
         getServerCloudBalance();
-        if (res.cointype === CloudCurrencyType.KT) {
-            // TODO 界面层实现
-            // getHighTop(100).then((data) => {
-            //     const mine = gameGetStore('mine',{});
-            //     mine.miningRank = data.miningRank || 0;
-            //     gameSetStore('mine',mine);  
-            // });
-        }
         const wallet = getStore('wallet');
         const userInfo = getStore('user/info');
         let popType = -1;           // 弹框类型 -1 无弹框 0 密码弹框   1 绑定手机弹框

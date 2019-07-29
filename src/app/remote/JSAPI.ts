@@ -3,14 +3,16 @@
  */
 import { goshare, ImageNameType } from '../../pi/browser/vm';
 import { WebViewManager } from '../../pi/browser/webview';
+import { sign } from '../core/genmnemonic';
 import { SCPrecision } from '../publicLib/config';
 import { CloudCurrencyType, ThirdCmd } from '../publicLib/interface';
-import { getCloudBalances } from '../store/memstore';
+import { getCloudBalances, setStore } from '../store/memstore';
 import { getOpenId, requestAsync } from './login';
 import { postThirdPushMessage } from './postWalletMessage';
 import { getOneUserInfo } from './pull';
 import { goRecharge } from './recharge';
-import { exportPrivateKeyByMnemonic, genmnemonicSign, getMnemonicByHash, VerifyIdentidy } from './wallet';
+import { addWebviewReloadListener } from './reload';
+import { exportPrivateKeyByMnemonic, getMnemonicByHash, VerifyIdentidy } from './wallet';
 
 export enum resCode {
     SUCCESS = undefined,   // 成功
@@ -161,7 +163,6 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
                 return [undefined,{ result:PayCode.EXCEEDLIMIT }]; 
             }
         } else { // 余额不够
-            // TODO 跳转充值页面
             // minWebview1(webviewName);
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
             console.log(`商户信息 ========== mch_id = ${order.mch_id}  mchInfo = ${mchInfo}`);
@@ -334,7 +335,7 @@ const getSign = async (json:any,secretHash:string) => {
     const mnemonic = await getMnemonicByHash(secretHash);
     const privateKey = await exportPrivateKeyByMnemonic(mnemonic);
 
-    return genmnemonicSign(jsonUriSort(json), privateKey);
+    return sign(jsonUriSort(json), privateKey);
 };
 
 /**
@@ -362,6 +363,7 @@ const jsonUriSort = (json) => {
 export const closeWebview = (webviewName: string) => {
     console.log('wallet closeWebview called');
     WebViewManager.close(webviewName);
+    openDefaultWebview();
 };
 
 /**
@@ -370,6 +372,9 @@ export const closeWebview = (webviewName: string) => {
 export const minWebview = (payload:{webviewName: string;popFloatBox:boolean}) => {
     console.log('wallet minWebview called');
     minWebview1(payload.webviewName);
+    openDefaultWebview(() => {
+        postThirdPushMessage(ThirdCmd.MIN,payload);
+    });
 };
 
 /**
@@ -412,8 +417,10 @@ export const gotoRecharge = (webviewName: string) => {
 export const gotoGameService = (webviewName: string) => {
     console.log('wallet gotoGameService called');
     minWebview1(webviewName);
-    // TODO 此处判断default webview是否活跃
-    postThirdPushMessage(ThirdCmd.GAMESERVICE,webviewName);
+    openDefaultWebview(() => {
+        postThirdPushMessage(ThirdCmd.GAMESERVICE,webviewName);
+    });
+    
 };
 
 /**
@@ -422,6 +429,26 @@ export const gotoGameService = (webviewName: string) => {
 export const gotoOfficialGroupChat = (webviewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
     minWebview1(webviewName);
-    // TODO 此处判断default webview是否活跃
-    postThirdPushMessage(ThirdCmd.OFFICIALGROUPCHAT,webviewName);
+    openDefaultWebview(() => {
+        postThirdPushMessage(ThirdCmd.OFFICIALGROUPCHAT,webviewName);
+    });
+};
+
+/**
+ * 打开默认webview
+ * @param cb 成功回调
+ */
+const openDefaultWebview = (cb?:Function) => {
+    WebViewManager.isDefaultKilled((killed:boolean) => {
+        if (killed) {
+            addWebviewReloadListener(() => {     // 通知已经登录成功
+                setStore('user/isLogin',true);
+                setStore('flags/doLoginSuccess',true);
+            });
+            addWebviewReloadListener(cb);
+            WebViewManager.reloadDefault();
+        } else {
+            cb && cb();
+        }
+    });
 };

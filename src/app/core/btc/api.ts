@@ -25,9 +25,9 @@ const sendRequest = async (endpoint: string, opt: Options = { method: 'GET' }): 
     opt.method = opt.method || 'GET';
     let response: any;
     if (opt.method === 'GET') {
-        response = await piFetch(endpoint);
+        response = piFetch(endpoint);
     } else if (opt.method === 'POST') {
-        response = await piFetch(endpoint, {
+        response = piFetch(endpoint, {
             method: opt.method,
             body: JSON.stringify({ rawtx:opt.body }),
             headers: {
@@ -40,43 +40,43 @@ const sendRequest = async (endpoint: string, opt: Options = { method: 'GET' }): 
 };
 
 export const BtcApi = {
-    getAddrUnspent: async (addr: string): Promise<any> => {
+    getAddrUnspent: (addr: string): Promise<any> => {
         const endpoint = `${BTC_API_BASE_URL}/addr/${addr}/utxo`;
 
         return sendRequest(endpoint);
     },
 
-    getBalance: async (addr: string, option: BlanceType = 'balance'): Promise<any> => {
+    getBalance:  (addr: string, option: BlanceType = 'balance'): Promise<any> => {
         const endpoint: string = `${BTC_API_BASE_URL}/addr/${addr}/${option}`;
 
         return sendRequest(endpoint);
     },
 
-    getAddrInfo: async (addr: string): Promise<any> => {
+    getAddrInfo:  (addr: string): Promise<any> => {
         const endpoint = `${BTC_API_BASE_URL}/addr/${addr}`;
 
         return sendRequest(endpoint);
     },
 
-    getAddrTxHistory: async (addr: string): Promise<any> => {
+    getAddrTxHistory:  (addr: string): Promise<any> => {
         const endpoint = `${BTC_API_BASE_URL}/txs/?address=${addr}`;
 
         return sendRequest(endpoint);
     },
 
-    sendRawTransaction: async (rawTx: string): Promise<any> => {
+    sendRawTransaction:  (rawTx: string): Promise<any> => {
         const endpoint = `${BTC_API_BASE_URL}/tx/send`;
 
         return sendRequest(endpoint, { method: 'POST', body: rawTx });
     },
 
-    getTxInfo: async (txHash: string): Promise<any> => {
+    getTxInfo:  (txHash: string): Promise<any> => {
         const endpoint = `${BTC_API_BASE_URL}/tx/${txHash}`;
 
         return sendRequest(endpoint);
     },
 
-    estimateFee: async (nbBlocks: number = 2): Promise<any> => {
+    estimateFee:  (nbBlocks: number = 2): Promise<any> => {
         const endpoint = `${BTC_API_BASE_URL}/utils/estimatefee?nbBlocks=${nbBlocks}`;
 
         return sendRequest(endpoint);

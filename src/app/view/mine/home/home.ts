@@ -8,10 +8,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
-import { callBackupMnemonic,getStoreData } from '../../../middleLayer/wrap';
+import { getStoreData } from '../../../middleLayer/wrap';
 import { getModulConfig } from '../../../publicLib/modulConfig';
 import { copyToClipboard, getUserInfo, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
+import { exportMnemonic } from '../../../viewLogic/localWallet';
 import { doScanQrCode } from '../../../viewLogic/native';
 
 // ================================ 导出
@@ -153,7 +154,7 @@ export class Home extends Widget {
     public async backUp() {
         const psw = await popPswBox();
         if (!psw) return;
-        const ret = await callBackupMnemonic(psw);
+        const ret = await exportMnemonic(psw);
         if (ret) {
             popNew('app-view-wallet-backup-index',{ ...ret });
         }

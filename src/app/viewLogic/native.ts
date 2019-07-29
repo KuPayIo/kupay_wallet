@@ -14,9 +14,9 @@ import { popNewLoading } from '../utils/tools';
 export const getScreenModify = () => {
     WebViewManager.getScreenModify((high,low) => {
         const calHigh = high / window.devicePixelRatio * 2;
-        const calLow = low / window.devicePixelRatio * 2;
+        // const calLow = low / window.devicePixelRatio * 2;
         setStoreData('setting/topHeight',calHigh);
-        setStoreData('setting/bottomHeight',calLow);
+        // setStoreData('setting/bottomHeight',calLow);
     });
 };
 

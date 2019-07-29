@@ -23,8 +23,15 @@ import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './cons
 /**
  * 获取用户基本信息
  */
-export const getUserInfo = () => {
-    return getStoreData('user/info').then(userInfo => {
+export const getUserInfo = (userInfo1?:any) => {
+    let promise;
+    if (userInfo1) {
+        promise = Promise.resolve(userInfo1);
+    } else {
+        promise = getStoreData('user/info');
+    }
+    
+    return promise.then(userInfo => {
         const nickName = userInfo.nickName;
         const phoneNumber = userInfo.phoneNumber;
         const isRealUser = userInfo.isRealUser;
@@ -494,44 +501,43 @@ export const calCurrencyLogoUrl = (currencyName:string) => {
  * 弹出三级页面
  */
 export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
-    getStoreData('flags').then(flags => {
-        if (getSourceLoaded()) {
+    if (getSourceLoaded()) {
+        popNew(name,props,ok,cancel);
+    } else {
+        const loading = popNew('app-components1-loading-loading1');
+        const level3SourceList = [
+            'app/middleLayer/',
+            'app/publicLib/',
+            'app/viewLogic/',
+            'app/components/',
+            'app/res/',
+            'app/view/',
+            'chat/client/app/view/',
+            'chat/client/app/widget/',
+            'chat/client/app/res/',
+            'earn/client/app/view/',
+            'earn/client/app/test/',
+            'earn/client/app/components/',
+            'earn/client/app/res/',
+            'earn/client/app/xls/',
+            'earn/xlsx/'
+        ];
+        piLoadDir(level3SourceList).then(() => {
+            console.log('popNew3 ------ all resource loaded');
             popNew(name,props,ok,cancel);
-        } else {
-            const loading = popNew('app-components1-loading-loading1');
-            const level3SourceList = [
-                'app/middleLayer/',
-                'app/publicLib/',
-                'app/viewLogic/',
-                'app/components/',
-                'app/res/',
-                'app/view/',
-                'chat/client/app/view/',
-                'chat/client/app/widget/',
-                'chat/client/app/res/',
-                'earn/client/app/view/',
-                'earn/client/app/test/',
-                'earn/client/app/components/',
-                'earn/client/app/res/',
-                'earn/client/app/xls/',
-                'earn/xlsx/'
-            ];
-            piLoadDir(level3SourceList).then(() => {
-                console.log('popNew3 ------ all resource loaded');
-                popNew(name,props,ok,cancel);
-                loading.callback(loading.widget);
-            });
-        }
-    });
-    
+            loading.callback(loading.widget);
+        });
+    }
 };
 
 /**
  * 关掉所有页面 （不包括首页面）
  */
 export const closeAllPage = () => {
-    for (let i = backList.length;i > 1;i--) {
-        backCall();
+    for (const v of backList) {
+        if (v.widget.name !== 'app-view-base-app') {
+            backCall();
+        }
     }
 };
 
@@ -749,4 +755,29 @@ export const goRecharge = () => {
             callGetAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
         });
     });
+};
+
+/**
+ * 简单数据深拷贝
+ */
+export const deepCopy = (v: any): any => {
+    if (typeof v !== 'object') return v;
+    
+    return JSON.parse(JSON.stringify(v));
+};
+
+/**
+ * 函数节流
+ */
+export const throttle = (func) => {
+    const intervel = 100;
+    let lastTime = 0;
+
+    return  () => {
+        const nowTime = new Date().getTime();
+        if (nowTime - lastTime > intervel) {
+            func();
+            lastTime = nowTime;
+        }
+    };
 };

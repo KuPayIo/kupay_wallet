@@ -10,7 +10,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { changellyGetCurrencies } from '../../net/changellyPull';
 import { setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { getModulConfig } from '../../publicLib/modulConfig';
-import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
+import { checkPopPhoneTips, getUserInfo, rippleShow } from '../../utils/tools';
 import { registerStoreData } from '../../viewLogic/common';
 import { kickOffline } from '../../viewLogic/login';
 
@@ -62,14 +62,22 @@ export class App extends Widget {
                     components: 'app-view-wallet-home-home'
                 }
             ],
-            tabBarAnimateClasss:''
+            tabBarAnimateClasss:'',
+            userInfo:{
+                avatar:'',
+                nickName:''
+            }
         };
         
         this.props.tabBarList = this.props.tabBarList.filter(item => {
             return getModulConfig(item.modulName);
-        });
+        });  
         // 币币兑换可用货币获取
         changellyGetCurrencies();
+        getUserInfo().then(userInfo => {
+            this.props.userInfo = userInfo;
+            this.paint();
+        });
     }
 
     public tabBarChangeListener(event: any, index: number) {
@@ -79,15 +87,8 @@ export class App extends Widget {
         this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
-        // performanceTest();
-        // const start = new Date().getTime();
-        // callRpcTimeingTest().then(res => {
-        //     console.log('rpc耗时',new Date().getTime() - start);
-        //     console.log('更新测试 ===',res);
-        // });
-        // callJscPerformanceTest().then(res => {
-        //     console.log('jsc加密性能耗时',new Date().getTime() - start);
-        // });
+        console.log(JSON.parse(localStorage.getItem('timeArr')));
+        // callRpcTimeingTest();
     }
 
     public switchToEarn() {
@@ -138,6 +139,16 @@ export const SettingLanguage = 'language';
 registerStoreData('setting/language',(r) => {
     localStorage.setItem(SettingLanguage,r);
     setLang(r);
+});
+
+registerStoreData('user/info',(userInfo1:any) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        getUserInfo(userInfo1).then(userInfo => {
+            w.props.userInfo = userInfo;
+            w.paint();
+        });
+    }
 });
 
 // 创建钱包成功

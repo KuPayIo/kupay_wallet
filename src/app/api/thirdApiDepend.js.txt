@@ -317,7 +317,7 @@ pi_tools.dragDom = function(element, callback) {
         params.currentX = event.changedTouches[0].clientX;
         params.currentY = event.changedTouches[0].clientY;
     };
-    document.ontouchend = function(){
+    element.ontouchend = function(){
         console.log("onmouseup");
         params.flag = false;    
         if(getCss(element, "left") !== "auto"){
@@ -328,7 +328,7 @@ pi_tools.dragDom = function(element, callback) {
         }
         callback();
     };
-    document.ontouchmove = function(event){
+    document.body.addEventListener('touchmove',function(event) {
         console.log("onmousemove");
         event = event || window.event;
         if(params.flag){
@@ -340,7 +340,8 @@ pi_tools.dragDom = function(element, callback) {
             element.style.left =  nowLeft + "px";
             element.style.top =  nowTop + "px";
         }
-    }    
+        event.preventDefault();
+    },{ passive:false });    // 这个必须要,ios默认passive = true
 };
 /**
  * 自适应

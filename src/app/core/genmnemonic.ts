@@ -2,7 +2,8 @@
  * Generate the same mnemonics
  */
 
-import { LANGUAGE } from './btc/wallet';
+import { LANGUAGE } from './btc/wallet_btc_rust';
+import { Cipher } from './crypto/cipher_rust';
 import { Mnemonic } from './thirdparty/bip39';
 import { KJUR } from './thirdparty/sample-ecdsa';
 import { Web3 } from './thirdparty/web3.min';
@@ -116,13 +117,19 @@ export const getRandomValuesByMnemonic = (language: LANGUAGE, mnemonic: string):
 /**
  * 签名
  */
-export const sign = (random, privateKey) => {
-    console.log(KJUR, KJUR.jws.JWS.jwsalg2sigalg);
-    const sig = new KJUR.crypto.Signature({ alg: KJUR.jws.JWS.jwsalg2sigalg.ES256 });
-    sig.init({ d: privateKey, curve: 'secp256k1' });
-    sig.updateString(random);
+export const sign = (msg, privateKey) => {
+    // console.log(KJUR, KJUR.jws.JWS.jwsalg2sigalg);
+    // const sig = new KJUR.crypto.Signature({ alg: KJUR.jws.JWS.jwsalg2sigalg.ES256 });
+    // sig.init({ d: privateKey, curve: 'secp256k1' });
+    // sig.updateString(msg);
 
-    return sig.sign();
+    // const sig1 = sig.sign();
+    // console.log('==========================================: ', sig1);
+    // return sig.sign();
+
+    console.log(`sign msg = ${msg},privateKey = ${privateKey},result ${Cipher.sign(msg, privateKey)}`);
+
+    return Cipher.sign(msg, privateKey);
 };
 
 /**

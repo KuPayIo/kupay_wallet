@@ -53,11 +53,28 @@ export const largeUnit2SmallUnit = (currencyName: string, amount: number | strin
  */
 export const eth2Wei = (amount:number|string):string => {
     const decimals = new BigNumber('1000000000000000000');
-    const balance = decimals.times(amount);
 
-    return  `0x${balance.toString(16)}`;
+    return  toHexStr(decimals.times(amount));
 };
 
+/**
+ * 转16进制
+ */
+export const toHexStr = (amount:number|string|BigNumber):string => {
+    let balanceStr;
+    if (amount instanceof BigNumber) {
+        balanceStr = amount.toString(16);
+    } else {
+        const decimals = new BigNumber(amount);
+        balanceStr = decimals.toString(16);
+    }
+   
+    if (balanceStr.length % 2 === 0) {
+        return `${balanceStr}`; 
+    } else {   // 奇数补0
+        return `0${balanceStr}`; 
+    }
+};
 /**
  * wei 2 eth
  */

@@ -185,6 +185,8 @@ export const getAllAccount = () => {
         return accounts.sort((item1,item2) => {
             return item2.wallet.logoutTimestamp - item1.wallet.logoutTimestamp;
         });
+    }).catch(err => {
+        return getAllAccount();   // 递归  直到读取到数据
     });
     
 };
@@ -484,7 +486,6 @@ const accountChange = () => {
                 delete localAccounts.accounts[localAccounts.currenctId];
                 localAccounts.currenctId = '';
                 setLocalStorage('accounts', localAccounts);
-    
             }
     
             return;

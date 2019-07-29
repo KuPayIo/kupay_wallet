@@ -25,7 +25,7 @@ export class StandardImport extends Widget {
     }
     public inputChange(r:any) {
         const mnemonic = r.value;
-        this.props.mnemonic = mnemonic;
+        this.props.mnemonic = mnemonic.trim();
     }
     public async nextClick(e:any) {
         if (this.props.mnemonic.length <= 0) {

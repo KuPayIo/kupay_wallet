@@ -78,7 +78,6 @@ export class SettingPsw extends Widget {
         await callPasswordChange(secretHash, this.props.walletPsw);
         loading.callback(loading.widget);
         popNewMessage('设置成功');
-        setStoreData('flags/setPsw',false);
         this.ok && this.ok();
         const userInfo = await getUserInfo();
         if (!userInfo.phoneNumber) {

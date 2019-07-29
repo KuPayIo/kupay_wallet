@@ -51,30 +51,35 @@ export class RedEnvDetail extends Widget {
             greatUser:-1
         };
         this.initData();
+        getUserInfo().then(user => {
+            if (user) {
+                this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
+                this.props.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
+                this.paint();
+            }
+        });
+       
     }
 
     public async initData() {
         const uid = await getStoreData('user/conUid');
         const value = await callQueryDetailLog(uid,this.props.rid);
-        if (!value) return;
-        this.props.redBagList = value[0];        
-        this.props.message = value[1];
-
-        const user = await getUserInfo();
-        if (!user) return;
-        this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
-        this.props.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
-
+        if (value) {
+            this.props.redBagList = value[0];        
+            this.props.message = value[1];
+        }
         const redBagList = value[0];
         for (const i in redBagList) {
-            const user = await callGetOneUserInfo([redBagList[i].cuid]);
-            this.props.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
-            // tslint:disable-next-line:max-line-length
-            this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../res/image/default_avater_big.png'; 
-            if (this.props.rtype === 1 && redBagList.length === this.props.totalNum && this.props.greatAmount < redBagList[i].amount) {
-                this.props.greatAmount = redBagList.amount;
-                this.props.greatUser = i;
-            }
+            callGetOneUserInfo([redBagList[i].cuid]).then(user => {
+                this.props.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
+                // tslint:disable-next-line:max-line-length
+                this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../res/image/default_avater_big.png'; 
+                if (this.props.rtype === 1 && redBagList.length === this.props.totalNum && this.props.greatAmount < redBagList[i].amount) {
+                    this.props.greatAmount = redBagList.amount;
+                    this.props.greatUser = i;
+                }
+                this.paint();
+            });
         }
         this.paint();
     }

@@ -13,7 +13,7 @@ import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,callGetInviteCode, getStoreData } from '../../../middleLayer/wrap';
 import { LuckyMoneyType } from '../../../publicLib/interface';
-import { getUserInfo, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
+import { popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
 import { activityList, gameList } from './gameConfig';
 
@@ -68,17 +68,6 @@ export class PlayHome extends Widget {
         this.props.gameList = gameList;
         this.props.activityList = activityList;
         this.props.loaded = false;
-        getUserInfo().then(userInfo => {
-            if (userInfo) {
-                this.props.avatar = userInfo.avatar;
-                this.props.nickName = userInfo.nickName;
-                this.paint();
-            }
-        });
-        callGetInviteCode().then(inviteCodeInfo => {
-            this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
-            this.paint();
-        });
     }
 
     public attach() {
@@ -164,7 +153,9 @@ export class PlayHome extends Widget {
             const gameTitle = gameList[num].title.zh_Hans;
             const gameUrl =   gameList[num].url;
             const webviewName = gameList[num].webviewName;
-            const [addrInfo,baseUrl] = await Promise.all([callGetCurrentAddrInfo('ETH'),callGetEthApiBaseUrl()]);
+            // tslint:disable-next-line:max-line-length
+            const [addrInfo,baseUrl,inviteCodeInfo] = await Promise.all([callGetCurrentAddrInfo('ETH'),callGetEthApiBaseUrl(),callGetInviteCode()]);
+            const inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`; 
             const pi3Config:any = getPi3Config();
             pi3Config.web3EthDefaultAccount = addrInfo.addr;
             pi3Config.web3ProviderNetWork = baseUrl;
@@ -174,7 +165,7 @@ export class PlayHome extends Widget {
             pi3Config.apkDownloadUrl = gameList[num].apkDownloadUrl;
             pi3Config.userInfo = {
                 nickName:this.props.nickName,
-                inviteCode:this.props.inviteCode
+                inviteCode
             };
 
             const pi3ConfigStr = `
@@ -205,8 +196,8 @@ export class PlayHome extends Widget {
         // TODO  暂时屏蔽默认进入游戏
         return;
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
-        Promise.all([getUserInfo(),getStoreData('user/isLogin')]).then(([userInfo,isLogin]) => {
-            const phoneNumber = userInfo.phoneNumber;    
+        Promise.all([getStoreData('user/isLogin')]).then(([isLogin]) => {
+            const phoneNumber = this.props.userInfo.phoneNumber;    
             console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
             if (!firstEnterGame || phoneNumber) {
                 if (!isLogin  || !this.props.isActive || hasEnterGame) {
@@ -225,17 +216,6 @@ export class PlayHome extends Widget {
 }
 let hasEnterGame = false;
 // ========================================
-registerStoreData('user/info',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        getUserInfo().then(userInfo => {
-            if (userInfo) {
-                w.props.avatar = userInfo.avatar ? userInfo.avatar : '../../res/image1/default_avatar.png';
-                w.paint();
-            }
-        });
-    }
-});
 
 registerStoreData('user/isLogin', (isLogin:boolean) => {
     setTimeout(() => {

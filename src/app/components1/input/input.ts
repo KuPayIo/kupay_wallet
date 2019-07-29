@@ -52,6 +52,7 @@ export class Input extends Widget {
             inputLock: false,
             showClearType:true
         };
+        console.log('input props',this.props);
     }
     /**
      * 绘制方法

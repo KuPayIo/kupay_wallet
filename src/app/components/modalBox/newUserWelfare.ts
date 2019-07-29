@@ -15,7 +15,7 @@ export class NewUserWelfare extends Widget {
         this.ok && this.ok();
         callGetAllAccount().then(accounts => {
             if (accounts.length > 0) {
-                popNew('app-view-base-entrance1');
+                popNew('app-view-base-entrance1',{ accounts });
             } else {
                 popNew('app-view-base-entrance');
             }
