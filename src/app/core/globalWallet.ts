@@ -79,7 +79,6 @@ export class GlobalWallet {
         console.log('计算耗时 generateRandomValues = ',new Date().getTime() - start1);
         const start2 = new Date().getTime();
         gwlt._vault = encrypt(u8ArrayToHexstr(vault),secrectHash);
-        console.log(`generate vault = ${gwlt._vault}`);
         console.log('计算耗时 encrypt = ',new Date().getTime() - start2);
         const start3 = new Date().getTime();
         const mnemonic = toMnemonic(lang, vault);
@@ -94,9 +93,9 @@ export class GlobalWallet {
         const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
         const wlt = ethWallet.selectAddressWlt(0);
         const privateKey = wlt.exportPrivateKey();
-        console.log(`generate publicKey = ${gwlt._publicKey},privateKey = ${privateKey}`);
-        // const ret = sign('123456',privateKey);
-        // console.log(`generate sign ret = ${ret}`);
+        console.log(`generate mnemonic = ${mnemonic} , publicKey = ${gwlt._publicKey},privateKey = ${privateKey}`);
+        const ret = sign('123456',privateKey);
+        console.log(`generate sign ret = ${ret}`);
         
         return gwlt;
     }

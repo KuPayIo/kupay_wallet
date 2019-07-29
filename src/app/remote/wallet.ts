@@ -382,7 +382,6 @@ export const fetchMnemonicFragment = (hash) => {
 export const getMnemonicByHash = (hash:string) => {
     const wallet = getStore('wallet');
     try {
-        console.log(`getMnemonicByHash vault = ${wallet.vault}`);
         const r = decrypt(wallet.vault,hash);
 
         return toMnemonic(lang, hexstrToU8Array(r));
@@ -595,6 +594,7 @@ export const exportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],cur
 // rpc耗时测试
 export const rpcTimeingTest = () => {
     // WebViewManager.reloadDefault();
+    Cipher.sha256('123456');
     
     return 12345; 
 };

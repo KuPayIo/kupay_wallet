@@ -33,11 +33,10 @@ export class Cipher {
      */
     public static encrypt(passwd: string, plainText: string): string {
         const nonce = new Uint8Array(12);
-        const key = api.cipher.rust_sha256(passwd);
-        if (key[0] !== 0) throw new Error(`err code ${key[0]}`);  // 所有的res[0]不等于0表示有异常
+        const key = this.sha256(passwd);
         crypto.getRandomValues(nonce);
 
-        const res = api.cipher.rust_encrypt(key[1].slice(32), u8ArrayToHexstr(nonce), '', u8ArrayToHexstr(str2U8Array(plainText)));
+        const res = api.cipher.rust_encrypt(key.slice(32), u8ArrayToHexstr(nonce), '', u8ArrayToHexstr(str2U8Array(plainText)));
         if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常
 
         return res[1] + u8ArrayToHexstr(nonce);
@@ -52,9 +51,8 @@ export class Cipher {
      */
     public static decrypt(passwd: string, cipherText: string): string {
         const nonce = cipherText.slice(cipherText.length - 24, cipherText.length);
-        const key = api.cipher.rust_sha256(passwd);
-        if (key[0] !== 0) throw new Error(`err code ${key[0]}`);  // 所有的res[0]不等于0表示有异常 
-        const res = api.cipher.rust_decrypt(key[1].slice(32), nonce, '', cipherText.slice(0,cipherText.length - 24));
+        const key = this.sha256(passwd);
+        const res = api.cipher.rust_decrypt(key.slice(32), nonce, '', cipherText.slice(0,cipherText.length - 24));
         if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
         return u8Array2Str(hexstrToU8Array(res[1]));
@@ -65,14 +63,15 @@ export class Cipher {
      * sha256
      */
     public static sha256(data: string) {
-        const res = api.cipher.rust_sha256(data);
+        const res = api.cipher.rust_sha256(u8ArrayToHexstr(str2U8Array(data)));
         if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
-        return res[0];
+        return res[1];
     }
 
     public static sign(msg: string, privKey: string): string {
-        const hash = api.cipher.rust_sha256(msg)[1];
+        const hash = this.sha256(msg);
+        console.log(`cipher_rust msg = ${msg}, privateKey = ${privKey} , hash = ${hash}`);
         const res = api.cipher.rust_sign(privKey, hash);
         if (res[0] !== 0) throw new Error(`err code ${res[0]}`);  // 所有的res[0]不等于0表示有异常 
 
