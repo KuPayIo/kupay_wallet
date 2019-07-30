@@ -141,7 +141,7 @@ export const applyAutoLogin = async () => {
         }
     };
     requestAsync(msg).then(async (res) => {
-        const decryptToken = encrypt(res.token,deviceId);
+        const decryptToken = await encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
     });
 };
@@ -151,7 +151,7 @@ export const applyAutoLogin = async () => {
  */
 export const autoLogin = async (conRandom:string) => {
     const deviceDetail = await getDeviceAllDetail();
-    const token = decrypt(getStore('user/token'),deviceDetail.uuid.toString());
+    const token = await decrypt(getStore('user/token'),deviceDetail.uuid.toString());
     const param:any = {
         device_id: deviceDetail.uuid,
         token,

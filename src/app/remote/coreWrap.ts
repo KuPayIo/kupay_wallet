@@ -825,12 +825,20 @@ export const callPreCalAhashToArgon2Hash = (ahash: string, imagePsw: string,call
 
 // 锁屏密码hash算法
 export const callLockScreenHash = (psw:string,callback:Function) => {
-    callback([undefined,lockScreenHash(psw)]);
+    lockScreenHash(psw).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([handleError(err)]);
+    });
 };
 
 // 锁屏密码验证
 export const callLockScreenVerify = (psw:string,callback:Function) => {
-    callback([undefined,lockScreenVerify(psw)]);
+    lockScreenVerify(psw).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([handleError(err)]);
+    });
 };
 
 // ===========================================wallet相关===================================================================

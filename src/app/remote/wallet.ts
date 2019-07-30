@@ -93,7 +93,7 @@ export const VerifyIdentidy = async (passwd:string) => {
     const hash = await calcHashValue(passwd, getStore('user/salt'));
 
     try {
-        decrypt(wallet.vault,hash);
+        await decrypt(wallet.vault,hash);
         
         return hash;
     } catch (error) {
@@ -110,7 +110,7 @@ export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) =>
     const hash = await calcHashValue(passwd, salt);
 
     try {
-        decrypt(vault,hash);
+        await decrypt(vault,hash);
 
         return hash;
     } catch (error) {
@@ -345,10 +345,10 @@ export const getNewAddrInfo = async (currencyName, wallet) => {
 /**
  * 获取助记词16进制字符串
  */
-export const getMnemonicHexstr = (hash) => {
+export const getMnemonicHexstr = async (hash) => {
     const wallet = getStore('wallet');
     try {
-        return decrypt(wallet.vault,hash);
+        return await decrypt(wallet.vault,hash);
     } catch (error) {
         console.log(error);
 
@@ -390,8 +390,8 @@ export const fetchLocalTxByHash = (addr:string,currencyName:string,hash:string) 
 };
 
 // 获取助记词片段
-export const fetchMnemonicFragment = (hash) => {
-    const mnemonicHexstr =  getMnemonicHexstr(hash);
+export const fetchMnemonicFragment = async (hash) => {
+    const mnemonicHexstr =  await getMnemonicHexstr(hash);
     if (!mnemonicHexstr) return;
 
     return shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
@@ -476,8 +476,8 @@ export const fetchBtcMinerFee = (minerFeeLevel: MinerFeeLevel) => {
 };
 
 // 锁屏密码验证
-export const lockScreenVerify = (psw:string) => {
-    const hash256 = sha256(psw + getStore('user/salt'));
+export const lockScreenVerify = async (psw:string) => {
+    const hash256 = await sha256(psw + getStore('user/salt'));
     const localHash256 = getStore('setting/lockScreen').psw;
 
     return hash256 === localHash256;
@@ -532,7 +532,7 @@ export const backupMnemonic = async (passwd:string,needFragments:boolean = true)
     }
     let fragments = [];
     if (needFragments) {
-        fragments = fetchMnemonicFragment(hash);
+        fragments = await fetchMnemonicFragment(hash);
     }
     
     return {
