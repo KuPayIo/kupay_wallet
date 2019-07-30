@@ -350,11 +350,20 @@ winit.initNext = function () {
 			setStore('flags/level_3_page_loaded', true);
 			console.timeEnd('all resource loaded');
 			loadLeftImages();
+			loadPiSdk();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
 
+	var loadPiSdk = function(){
+		util.loadDir(["app/pi_sdk/"], flags, fm, undefined, function (fileMap) {
+			pi_sdk.setWebviewManager("pi/browser/webview");
+			pi_sdk.piSdkInit();
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
 
 	// 加载一些需要预加载的图片
 	var loadLeftImages = function () {
