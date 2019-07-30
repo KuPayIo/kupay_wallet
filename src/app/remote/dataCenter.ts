@@ -1,20 +1,20 @@
 /**
  * 数据更新中心
  */
-import { BtcApi } from '../core/btc/api';
-import { BTCWallet } from '../core/btc/wallet_btc_rust';
-import { Api as EthApi } from '../core/eth/api';
-import { EthWallet } from '../core/eth/wallet_eth_rust';
+import { BtcApi } from '../core_common/btc/api';
+import { importBTCWallet, importEthWallet } from '../core_common/commonjs';
+import { Api as EthApi } from '../core_common/eth/api';
 import { BigNumber } from '../publicLib/bignumber';
 // tslint:disable-next-line:max-line-length
 import { btcNetwork, defaultEthToAddr, erc20GasLimitRate, ERC20Tokens, ethTokenTransferCode, lang, MainChainCoin } from '../publicLib/config';
 import { AddrInfo,CurrencyRecord,TxHistory,TxStatus, TxType } from '../publicLib/interface';
 import { fetchCurrency2USDTRate, fetchUSD2CNYRate } from '../publicLib/pull3';
 import { formatBalance } from '../publicLib/tools';
-import { ethTokenDivideDecimals,ethTokenMultiplyDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../publicLib/unitTools';
+import { ethTokenDivideDecimals,sat2Btc,smallUnit2LargeUnit, wei2Eth } from '../publicLib/unitTools';
 import { getStore,setStore } from '../store/memstore';
 import { addSourceLoadedListener } from './postWalletMessage';
 import { getSilverPrice } from './pull';
+import { estimateGasERC20 } from './pullWallet';
 import { getAddrsAll, getConfirmBlockNumber, getCurrentAddrInfo, parseTransferExtraInfo, updateLocalTx } from './tools';
 import { fetchLocalTxByHash, fetchTransactionList, getMnemonicByHash } from './wallet';
 /**
@@ -185,9 +185,10 @@ class DataCenter {
     /**
      * 更新余额
      */
-    public updateBalance(addr: string, currencyName: string) {
+    public async updateBalance(addr: string, currencyName: string) {
         if (ERC20Tokens[currencyName]) {
-            const balanceOfCode = EthWallet.tokenOperations('balanceof',currencyName,addr);
+            const EthWallet = await importEthWallet();
+            const balanceOfCode = EthWallet.EthWallet.tokenOperations('balanceof',currencyName,addr);
             const api = new EthApi();
 
             return api.ethCall(ERC20Tokens[currencyName].contractAddr, balanceOfCode)
@@ -688,7 +689,8 @@ class DataCenter {
         const wallet = getStore('wallet');
         if (!wallet) return [];
         const mnemonic = getMnemonicByHash(secretHash);
-        const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+        const EthWallet = await importEthWallet();
+        const ethWallet = EthWallet.EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanUsedAddress();
         const addrs: AddrInfo[] = [];
 
@@ -714,6 +716,7 @@ class DataCenter {
         const wallet = getStore('wallet');
         if (!wallet) return [];
         const mnemonic = getMnemonicByHash(secretHash);
+        const BTCWallet = await importBTCWallet();
         const btcWallet = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
         btcWallet.unlock();
         const cnt = await btcWallet.scanUsedAddress();
@@ -743,7 +746,8 @@ class DataCenter {
         const wallet = getStore('wallet');
         if (!wallet) return [];
         const mnemonic = getMnemonicByHash(secretHash);
-        const ethWallet = EthWallet.fromMnemonic(mnemonic, lang);
+        const EthWallet = await importEthWallet();
+        const ethWallet = EthWallet.EthWallet.fromMnemonic(mnemonic, lang);
         const cnt = await ethWallet.scanTokenUsedAddress(ERC20Tokens[currencyName].contractAddr);
         const addrs: AddrInfo[] = [];
 
@@ -960,14 +964,6 @@ class DataCenter {
 }
 
 // =====================================================
-
-const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amount:number | string) => {
-    const api = new EthApi();
-
-    const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(amount, currencyName));
-
-    return api.estimateGas({ to: ERC20Tokens[currencyName].contractAddr,from:fromAddr, value:'0x0', data: transferCode });
-};
 
 // ============================================ 立即执行
 /**

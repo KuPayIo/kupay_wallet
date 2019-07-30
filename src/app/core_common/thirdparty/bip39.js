@@ -1,5 +1,5 @@
 
-_$define("app/core/thirdparty/bip39", function (require, exports, module) {
+_$define("app/core_common/thirdparty/bip39", function (require, exports, module) {
 // copy from jsbip39.js
 /*
  * Copyright (c) 2013 Pavol Rusnak

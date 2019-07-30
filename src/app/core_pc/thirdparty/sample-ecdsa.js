@@ -1,4 +1,4 @@
-_$define("app/core/thirdparty/sample-ecdsa", function (require, exports, module) {
+_$define("app/core_pc/thirdparty/sample-ecdsa", function (require, exports, module) {
 /*
  * jsrsasign(all) 8.0.12 (2018-04-22) (c) 2010-2018 Kenji Urushima | kjur.github.com/jsrsasign/license
  */

@@ -1,4 +1,4 @@
-_$define("app/core/thirdparty/wordlist", function (require, exports, module) {
+_$define("app/core_common/thirdparty/wordlist", function (require, exports, module) {
 
 WORDLISTS = typeof WORDLISTS == "undefined" ? {} : WORDLISTS;
 WORDLISTS["english"] = [

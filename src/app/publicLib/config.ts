@@ -921,3 +921,5 @@ export const defaultSetting = {
 
 // 默认顶部留出40px高度
 export const topHeight = 40;
+
+export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';

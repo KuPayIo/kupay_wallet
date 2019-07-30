@@ -2,11 +2,11 @@
 /**
  * BTC HD wallet implementaion
  */
-import { Mnemonic } from '../thirdparty/bip39';
+import { BtcApi } from '../../core_common/btc/api';
+import { Mnemonic } from '../../core_common/thirdparty/bip39';
+import { LANGUAGE } from '../../publicLib/config';
 import { bitcore } from '../thirdparty/bitcore-lib';
-import { BtcApi } from './api';
 
-export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 export type NETWORK = 'mainnet' | 'testnet';
 export type PRIORITY = 'high' | 'medium' | 'low';
 

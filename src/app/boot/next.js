@@ -261,7 +261,7 @@ winit.initNext = function () {
 			loadWalletFirstPageSource();  //钱包
 			loadImages(); // 预加载图片
 			if(!pi_update.inApp){
-				// vmLoaded();
+				vmLoaded();
 			}
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
@@ -282,7 +282,7 @@ winit.initNext = function () {
 						console.log("postStoreLoadedMessage start-----------------------");
 						postStoreLoadedMessage();
 						// 加载剩下资源
-						util.loadDir([ "app/remote/","app/core/","app/publicLib/"], flags, fm, undefined, function (fileMap) {
+						util.loadDir([ "app/remote/","app/core_common/","app/core_pc/","app/publicLib/"], flags, fm, undefined, function (fileMap) {
 							var postAllLoadedMessage = pi_modules.commonjs.exports.relativeGet("app/remote/postWalletMessage").exports.postAllLoadedMessage;
 							console.log("postAllLoadedMessage start-----------------------");
 							postAllLoadedMessage();

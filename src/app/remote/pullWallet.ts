@@ -4,11 +4,10 @@
 // ===================================================== 导入
 import { WebViewManager } from '../../pi/browser/webview';
 import { isNumber } from '../../pi/util/util';
-import { BtcApi } from '../core/btc/api';
-import { BTCWallet } from '../core/btc/wallet_btc_rust';
-import { Api as EthApi } from '../core/eth/api';
-import { EthWallet, initWeb3, web3 } from '../core/eth/wallet_eth_rust';
-import { GlobalWallet } from '../core/globalWallet';
+import { BtcApi } from '../core_common/btc/api';
+import { importEthWallet } from '../core_common/commonjs';
+import { Api as EthApi } from '../core_common/eth/api';
+import { GlobalWallet } from '../core_common/globalWallet';
 import { erc20GasLimitRate, ERC20Tokens } from '../publicLib/config';
 import { MinerFeeLevel, TxHistory, TxPayload, TxStatus, TxType } from '../publicLib/interface';
 import { btc2Sat, eth2Wei, ethTokenMultiplyDecimals, toHexStr, wei2Eth } from '../publicLib/unitTools';
@@ -30,49 +29,52 @@ export interface TxPayload3 {
 /**
  * 供其他的webview调用
  */
-export const rpcProviderSendAsync = (payload, callback) => {
-    initWeb3();    
-    if (payload.method === 'eth_accounts') {
-        let addr = getCurrentAddrInfo('ETH').addr;
-        addr = addr ? [addr] : [];
-        callback(null,{ jsonrpc: '2.0', result: addr, id: payload.id });
-    } else if (payload.method === 'eth_sendTransaction') {
-        // alert(`payload is ${JSON.stringify(payload)}`);
-        const ethPayload = {
-            fromAddr:payload.params[0].from,
-            toAddr:payload.params[0].to,
-            pay:payload.params[0].value,
-            currencyName:'ETH',
-            data:payload.params[0].data
-        };    
-        try {
-
-            const promise = transfer3(payload.passwd,ethPayload);
-
-            promise.then(([err, hash]) => {
-                console.log(`wallet rpcProviderSendAsync err is ${err}, hash is ${hash}`);
-                if (err) {
+export const rpcProviderSendAsync =  (payload, callback) => {
+    importEthWallet().then(EthWallet => {
+        EthWallet.initWeb3();    
+        if (payload.method === 'eth_accounts') {
+            let addr = getCurrentAddrInfo('ETH').addr;
+            addr = addr ? [addr] : [];
+            callback(null,{ jsonrpc: '2.0', result: addr, id: payload.id });
+        } else if (payload.method === 'eth_sendTransaction') {
+            // alert(`payload is ${JSON.stringify(payload)}`);
+            const ethPayload = {
+                fromAddr:payload.params[0].from,
+                toAddr:payload.params[0].to,
+                pay:payload.params[0].value,
+                currencyName:'ETH',
+                data:payload.params[0].data
+            };    
+            try {
+    
+                const promise = transfer3(payload.passwd,ethPayload);
+    
+                promise.then(([err, hash]) => {
+                    console.log(`wallet rpcProviderSendAsync err is ${err}, hash is ${hash}`);
+                    if (err) {
+                        callback(err);
+                    } else {
+                        callback(null, { jsonrpc: '2.0', result: hash, id: payload.id });
+                    }
+                }).catch((err) => {
+                    console.log(`wallet rpcProviderSendAsync err is catch`);
                     callback(err);
-                } else {
-                    callback(null, { jsonrpc: '2.0', result: hash, id: payload.id });
-                }
-            }).catch((err) => {
-                console.log(`wallet rpcProviderSendAsync err is catch`);
-                callback(err);
-            });
-        } catch (e) {
-            console.log(`transfer3 catch throw`);
-            callback(e);
+                });
+            } catch (e) {
+                console.log(`transfer3 catch throw`);
+                callback(e);
+            }
+            
+        } else {
+            const web3 = EthWallet.web3;
+            if (web3 && web3.currentProvider && web3.currentProvider.sendAsync) {
+                web3.currentProvider.sendAsync(payload, callback);
+            }
         }
-        
-    } else {
-        if (web3 && web3.currentProvider && web3.currentProvider.sendAsync) {
-            web3.currentProvider.sendAsync(payload, callback);
-        }
-    }
-
-    // 关闭webview定时器
-    WebViewManager.endTimer();
+    
+        // 关闭webview定时器
+        WebViewManager.endTimer();
+    });
 };
 
 /**
@@ -279,7 +281,7 @@ export const signRawTransactionETH = async (psw:string,fromAddr:string,toAddr:st
     pay:number,minerFeeLevel:MinerFeeLevel,info?:string,nonce?:number) => {
     const addrIndex = getWltAddrIndex(fromAddr, 'ETH');
     if (addrIndex >= 0) {
-        const wlt:EthWallet = await GlobalWallet.createWlt('ETH', psw, addrIndex);
+        const wlt = await GlobalWallet.createWlt('ETH', psw, addrIndex);
         const api = new EthApi();
         if (!nonce) {
             const localNonce = getEthNonce(fromAddr);
@@ -312,10 +314,11 @@ export const sendRawTransactionETH = async (signedTx) => {
 
 // ==============================================ERC20
 // 预估ETH ERC20Token的gas limit
-export const estimateGasERC20 = (currencyName:string,toAddr:string,fromAddr:string,amount:number | string) => {
+export const estimateGasERC20 = async (currencyName:string,toAddr:string,fromAddr:string,amount:number | string) => {
     const api = new EthApi();
-
-    const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(amount, currencyName));
+    const EthWallet = await importEthWallet();
+    // tslint:disable-next-line:max-line-length
+    const transferCode = EthWallet.EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(amount, currencyName));
 
     return api.estimateGas({ to: ERC20Tokens[currencyName].contractAddr,from:fromAddr, value:'0x0', data: transferCode });
 };
@@ -346,7 +349,8 @@ export const doERC20TokenTransfer = async (psw:string,addrIndex:number, txRecord
     // TODO  零时解决
     const newGasLimit = Math.floor(gasLimit * 4);
     console.log('newGasLimit-------------',newGasLimit);
-    const transferCode = EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(pay, currencyName));
+    const EthWallet = await importEthWallet();
+    const transferCode = EthWallet.EthWallet.tokenOperations('transfer', currencyName, toAddr, ethTokenMultiplyDecimals(pay, currencyName));
     
     const txObj = {
         to: ERC20Tokens[currencyName].contractAddr,
@@ -428,7 +432,7 @@ export const signRawTransactionBTC = async (psw:string,fromAddr:string,toAddr:st
     pay:number,minerFeeLevel:MinerFeeLevel) => {
     const addrIndex = getWltAddrIndex(fromAddr, 'BTC');
     if (addrIndex >= 0) {
-        const wlt:BTCWallet = await GlobalWallet.createWlt('BTC', psw, addrIndex);
+        const wlt = await GlobalWallet.createWlt('BTC', psw, addrIndex);
         const output = {
             toAddr,
             amount: pay,
@@ -452,7 +456,7 @@ export const signRawTransactionBTC = async (psw:string,fromAddr:string,toAddr:st
 export const resendSignRawTransactionBTC = async (hash:string,psw:string,fromAddr:string,minerFeeLevel:MinerFeeLevel) => {
     const addrIndex = getWltAddrIndex(fromAddr, 'BTC');
     if (addrIndex >= 0) {
-        const wlt:BTCWallet = await GlobalWallet.createWlt('BTC', psw, addrIndex);
+        const wlt = await GlobalWallet.createWlt('BTC', psw, addrIndex);
         wlt.unlock();
         await wlt.init();
         const retArr = await wlt.resendTx(hash, fetchBtcMinerFee(minerFeeLevel));

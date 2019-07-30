@@ -1,11 +1,9 @@
 import { ArgonHash } from '../../pi/browser/argonHash';
 import { arrayBufferToBase64, base64ToArrayBuffer } from '../../pi/util/base64';
-import { BTCWallet } from '../core/btc/wallet_btc_rust';
-import { Cipher } from '../core/crypto/cipher_rust';
-import { ibanToAddress, isValidIban } from '../core/eth/helper';
-import { EthWallet } from '../core/eth/wallet_eth_rust';
-import { generateByHash, sha3, sign, toMnemonic } from '../core/genmnemonic';
-import { GlobalWallet } from '../core/globalWallet';
+import { importBTCWallet, importCipher, importEthWallet, importKJUR, inApp } from '../core_common/commonjs';
+import { ibanToAddress, isValidIban } from '../core_common/eth/helper';
+import { generateByHash, sha3, toMnemonic } from '../core_common/genmnemonic';
+import { GlobalWallet } from '../core_common/globalWallet';
 // tslint:disable-next-line:max-line-length
 import { btcNetwork, defalutShowCurrencys, defaultGasLimit, ERC20Tokens, lang, MAX_SHARE_LEN, MIN_SHARE_LEN, timeOfArrival } from '../publicLib/config';
 import { AddrInfo, CreateWalletOption, MinerFeeLevel, Wallet } from '../publicLib/interface';
@@ -20,33 +18,61 @@ import { getCurrentAddrInfo } from './tools';
  * 密码加密
  * @param plainText 需要加密的文本
  */
-export const encrypt = (plainText: string, salt: string) => {
-    // const cipher = new Cipher();
+export const encrypt = async (plainText: string, salt: string) => {
+    const Cipher = await importCipher();
+    if (inApp) {
+        return Cipher.encrypt(salt, plainText);
+    } else {
+        const cipher = new Cipher();
 
-    // return cipher.encrypt(salt, plainText);
-
-    return Cipher.encrypt(salt, plainText);
+        return cipher.encrypt(salt, plainText);
+    }
 };
 
 /**
  * 密码解密
  * @param cipherText 需要解密的文本
  */
-export const decrypt = (cipherText: string, salt: string) => {
-    // const cipher = new Cipher();
-    
-    // return cipher.decrypt(salt, cipherText);
+export const decrypt = async (cipherText: string, salt: string) => {
+    const Cipher = await importCipher();
+    if (inApp) {
+        return  Cipher.decrypt(salt, cipherText);
+    } else {
+        const cipher = new Cipher();
 
-    return Cipher.decrypt(salt, cipherText);
+        return cipher.decrypt(salt, cipherText);
+    }
 };
 
 // hash256;
-export const sha256 = (data: string) => {
-    // const cipher = new Cipher();
-    
-    // return cipher.sha256(data);
+export const sha256 = async (data: string) => {
+    const Cipher = await importCipher();
+    if (inApp) {
+        return  Cipher.sha256(data);
+    } else {
+        const cipher = new Cipher();
 
-    return Cipher.sha256(data);
+        return cipher.sha256(data);
+    }
+};
+
+/**
+ * 签名
+ */
+export const sign = async (msg, privateKey) => {
+    if (inApp) {
+        const Cipher = await importCipher();
+
+        return  Cipher.sign(msg, privateKey);
+    } else {
+        const KJUR = await importKJUR();
+        const sig = new KJUR.crypto.Signature({ alg: KJUR.jws.JWS.jwsalg2sigalg.ES256 });
+        sig.init({ d: privateKey, curve: 'secp256k1' });
+        sig.updateString(msg);
+
+        return sig.sign();
+    }
+
 };
 
 /**
@@ -67,7 +93,7 @@ export const VerifyIdentidy = async (passwd:string) => {
     const hash = await calcHashValue(passwd, getStore('user/salt'));
 
     try {
-        decrypt(wallet.vault,hash);
+        await decrypt(wallet.vault,hash);
         
         return hash;
     } catch (error) {
@@ -84,7 +110,7 @@ export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) =>
     const hash = await calcHashValue(passwd, salt);
 
     try {
-        decrypt(vault,hash);
+        await decrypt(vault,hash);
 
         return hash;
     } catch (error) {
@@ -95,17 +121,10 @@ export const VerifyIdentidy1 = async (passwd:string,vault:string,salt:string) =>
 };
 
 /**
- * 签名
- */
-export const genmnemonicSign = (random:string, privateKey:string) => {
-    return sign(random,privateKey);
-};
-
-/**
  * 导出ETH第一个地址私钥
  */
-export const exportPrivateKeyByMnemonic = (mnemonic:string) => {
-    const wlt = GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
+export const exportPrivateKeyByMnemonic = async (mnemonic:string) => {
+    const wlt = await GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
 
     return wlt.exportPrivateKey();
 };
@@ -115,7 +134,7 @@ export const exportPrivateKeyByMnemonic = (mnemonic:string) => {
 export const createWalletRandom = async (option: CreateWalletOption,tourist?:boolean) => {
     const secrectHash = await calcHashValue(option.psw,getStore('user/salt'));
     const start = new Date().getTime();
-    const gwlt = GlobalWallet.generate(secrectHash);
+    const gwlt = await GlobalWallet.generate(secrectHash);
     console.log('计算钱包相关耗时 ==',new Date().getTime() - start);
     // 创建钱包基础数据
     const wallet: Wallet = {
@@ -151,7 +170,7 @@ export const createWalletByImage = async (option: CreateWalletOption) => {
     const secrectHashPromise = calcHashValue(option.psw,getStore('user/salt'));
     const imgArgon2HashPromise = getStore('flags').imgArgon2HashPromise;
     const [secrectHash,vault] = await Promise.all([secrectHashPromise,imgArgon2HashPromise]);
-    const gwlt = GlobalWallet.generate(secrectHash,vault);
+    const gwlt = await GlobalWallet.generate(secrectHash,vault);
     // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
@@ -182,7 +201,7 @@ export const createWalletByImage = async (option: CreateWalletOption) => {
  */
 export const importWalletByMnemonic = async (option: CreateWalletOption) => {
     const secrectHash = await calcHashValue(option.psw,getStore('user/salt'));
-    const gwlt = GlobalWallet.fromMnemonic(secrectHash, option.mnemonic);
+    const gwlt = await GlobalWallet.fromMnemonic(secrectHash, option.mnemonic);
   // 创建钱包基础数据
     const wallet: Wallet = {
         vault: gwlt.vault,
@@ -256,7 +275,7 @@ export const getMnemonic = async (passwd:string) => {
     const wallet = getStore('wallet');
     const hash = await calcHashValue(passwd, getStore('user/salt'));
     try {
-        const r = decrypt(wallet.vault,hash);
+        const r = await decrypt(wallet.vault,hash);
         
         return toMnemonic(lang, hexstrToU8Array(r));
     } catch (error) {
@@ -274,7 +293,7 @@ export const createNewAddr = async (passwd: string, currencyName: string) => {
     const mnemonic = await getMnemonic(passwd);
     if (mnemonic) {
         const record = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
-        const address = GlobalWallet.getWltAddrByMnemonic(mnemonic,currencyName,record.addrs.length);
+        const address = await GlobalWallet.getWltAddrByMnemonic(mnemonic,currencyName,record.addrs.length);
         const addrInfo:AddrInfo = {
             addr:address,
             balance: 0,             
@@ -299,7 +318,7 @@ export const createNewAddr = async (passwd: string, currencyName: string) => {
  * 获取新的地址信息
  * @param currencyName 货币类型
  */
-export const getNewAddrInfo = (currencyName, wallet) => {
+export const getNewAddrInfo = async (currencyName, wallet) => {
     const currencyRecord = wallet.currencyRecords.filter(v => v.currencyName === currencyName)[0];
     if (!currencyRecord) return;
     const addrs = getStore('addrs') || [];
@@ -307,10 +326,12 @@ export const getNewAddrInfo = (currencyName, wallet) => {
 
     let address;
     if (currencyName === 'ETH' || ERC20Tokens[currencyName]) {
-        const wlt = EthWallet.fromJSON(firstAddr.wlt);
+        const EthWallet = await importEthWallet();
+        const wlt = EthWallet.EthWallet.fromJSON(firstAddr.wlt);
         const newWlt = wlt.selectAddressWlt(currencyRecord.addrs.length);
         address = newWlt.address;
     } else if (currencyName === 'BTC') {
+        const BTCWallet = await importBTCWallet();
         const wlt = BTCWallet.fromJSON(firstAddr.wlt);
         wlt.unlock();
         address = wlt.derive(currencyRecord.addrs.length);
@@ -324,10 +345,10 @@ export const getNewAddrInfo = (currencyName, wallet) => {
 /**
  * 获取助记词16进制字符串
  */
-export const getMnemonicHexstr = (hash) => {
+export const getMnemonicHexstr = async (hash) => {
     const wallet = getStore('wallet');
     try {
-        return decrypt(wallet.vault,hash);
+        return await decrypt(wallet.vault,hash);
     } catch (error) {
         console.log(error);
 
@@ -369,8 +390,8 @@ export const fetchLocalTxByHash = (addr:string,currencyName:string,hash:string) 
 };
 
 // 获取助记词片段
-export const fetchMnemonicFragment = (hash) => {
-    const mnemonicHexstr =  getMnemonicHexstr(hash);
+export const fetchMnemonicFragment = async (hash) => {
+    const mnemonicHexstr =  await getMnemonicHexstr(hash);
     if (!mnemonicHexstr) return;
 
     return shareSecret(mnemonicHexstr, MAX_SHARE_LEN, MIN_SHARE_LEN)
@@ -379,11 +400,10 @@ export const fetchMnemonicFragment = (hash) => {
 };
 
 // 根据hash获取助记词
-export const getMnemonicByHash = (hash:string) => {
+export const getMnemonicByHash = async (hash:string) => {
     const wallet = getStore('wallet');
     try {
-        console.log(`getMnemonicByHash vault = ${wallet.vault}`);
-        const r = decrypt(wallet.vault,hash);
+        const r = await decrypt(wallet.vault,hash);
 
         return toMnemonic(lang, hexstrToU8Array(r));
     } catch (error) {
@@ -416,8 +436,8 @@ export const passwordChange = async (secretHash: string, newPsw: string) => {
     const salt = getStore('user/salt');
     const newHash = await calcHashValue(newPsw, salt);
     const wallet = getStore('wallet');
-    const oldVault = decrypt(wallet.vault, secretHash);
-    wallet.vault = encrypt(oldVault, newHash);
+    const oldVault = await decrypt(wallet.vault, secretHash);
+    wallet.vault = await encrypt(oldVault, newHash);
     wallet.setPsw = true;
     setStore('wallet',wallet);
 };
@@ -456,8 +476,8 @@ export const fetchBtcMinerFee = (minerFeeLevel: MinerFeeLevel) => {
 };
 
 // 锁屏密码验证
-export const lockScreenVerify = (psw:string) => {
-    const hash256 = sha256(psw + getStore('user/salt'));
+export const lockScreenVerify = async (psw:string) => {
+    const hash256 = await sha256(psw + getStore('user/salt'));
     const localHash256 = getStore('setting/lockScreen').psw;
 
     return hash256 === localHash256;
@@ -512,7 +532,7 @@ export const backupMnemonic = async (passwd:string,needFragments:boolean = true)
     }
     let fragments = [];
     if (needFragments) {
-        fragments = fetchMnemonicFragment(hash);
+        fragments = await fetchMnemonicFragment(hash);
     }
     
     return {
@@ -542,9 +562,10 @@ export const updateShowCurrencys = (currencyName:string,added:boolean) => {
 };
 
 // 导出以太坊私钥
-export const exportETHPrivateKey = (mnemonic:string,addrs: AddrInfo[]) => {
+export const exportETHPrivateKey = async (mnemonic:string,addrs: AddrInfo[]) => {
     const keys = [];
-    const firstWlt = EthWallet.fromMnemonic(mnemonic, lang);
+    const EthWallet = await importEthWallet();
+    const firstWlt = EthWallet.EthWallet.fromMnemonic(mnemonic, lang);
     const currencyRecords = getStore('wallet/currencyRecords');
     for (let j = 0; j < addrs.length; j++) {
         const wlt = firstWlt.selectAddressWlt(j);
@@ -559,9 +580,10 @@ export const exportETHPrivateKey = (mnemonic:string,addrs: AddrInfo[]) => {
 };
 
  // 导出BTC私钥
-export const exportBTCPrivateKey = (mnemonic:string,addrs: AddrInfo[]) => {
+export const exportBTCPrivateKey = async (mnemonic:string,addrs: AddrInfo[]) => {
     const keys = [];
     const currencyRecords = getStore('wallet/currencyRecords');
+    const BTCWallet = await importBTCWallet();
     const wlt = BTCWallet.fromMnemonic(mnemonic, btcNetwork, lang);
     wlt.unlock();
     for (let j = 0; j < addrs.length; j++) {
@@ -577,10 +599,11 @@ export const exportBTCPrivateKey = (mnemonic:string,addrs: AddrInfo[]) => {
 };
 
 // 导出ERC20私钥
-export const exportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],currencyName:string) => {
+export const exportERC20TokenPrivateKey = async (mnemonic:string,addrs: AddrInfo[],currencyName:string) => {
     const keys = [];
     const currencyRecords = getStore('wallet/currencyRecords');
-    const firstWlt = EthWallet.fromMnemonic(mnemonic, lang);
+    const EthWallet = await importEthWallet();
+    const firstWlt = EthWallet.EthWallet.fromMnemonic(mnemonic, lang);
     for (let j = 0; j < addrs.length; j++) {
         const wlt = firstWlt.selectAddressWlt(j);
         const privateKey = wlt.exportPrivateKey();

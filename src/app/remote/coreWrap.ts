@@ -1,8 +1,9 @@
 /**
  * 对rpc调用函数的封装  在所有的函数后面加上callback 所有函数返回值都为undefiend
  */
-import { getEthApiBaseUrl } from '../core/config';
-import { isValidMnemonic } from '../core/genmnemonic';
+import { getEthApiBaseUrl } from '../core_common/config';
+import { isValidMnemonic } from '../core_common/genmnemonic';
+import { LANGUAGE } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
 import { deleteAccount, getAllAccount, getCloudBalances1, getStore, setStore } from '../store/memstore';
 import { getHomePageEnterData } from '../store/vmRegister';
@@ -19,8 +20,6 @@ import { emitWebviewReload } from './reload';
 import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList,getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from './tools';
 // tslint:disable-next-line:max-line-length
 import { backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, exportPrivateKeyByMnemonic, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, preCalAhashToArgon2Hash, rpcTimeingTest, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
-
-export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 
 /**
  * 对所有的错误进行处理  rpc调用会对结果JOSN.stringify,如果是Error对象,stringify后为"{}"
@@ -559,8 +558,13 @@ export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string,callb
  * 导出ETH第一个地址私钥
  */
 export const callExportPrivateKeyByMnemonic = (mnemonic:string,callback:Function) => {
-    callback([undefined,exportPrivateKeyByMnemonic(mnemonic)]);
+    exportPrivateKeyByMnemonic(mnemonic).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([handleError(err)]);
+    });
 };
+
 /**
  * 随机创建钱包
  */
@@ -660,7 +664,11 @@ export const callFetchTransactionList = (addr:string,currencyName:string,callbac
 
 // 根据hash获取助记词
 export const callGetMnemonicByHash = (hash:string,callback:Function) => {
-    callback([undefined,getMnemonicByHash(hash)]);
+    getMnemonicByHash(hash).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([handleError(err)]);
+    });
 };
 
 /**
@@ -690,17 +698,29 @@ export const callisValidMnemonic = (language: LANGUAGE, mnemonic: string,callbac
 
 // 导出以太坊私钥
 export const callExportETHPrivateKey = (mnemonic:string,addrs: AddrInfo[],callback:Function) => {
-    callback([undefined,exportETHPrivateKey(mnemonic, addrs)]);
+    exportETHPrivateKey(mnemonic, addrs).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([handleError(err)]);
+    });
 };
 
  // 导出BTC私钥
 export const callExportBTCPrivateKey = (mnemonic:string,addrs: AddrInfo[],callback:Function) => {
-    callback([undefined,exportBTCPrivateKey(mnemonic, addrs)]);
+    exportBTCPrivateKey(mnemonic, addrs).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([handleError(err)]);
+    });
 };
 
 // 导出ERC20私钥
 export const callExportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],currencyName:string,callback:Function) => {
-    callback([undefined,exportERC20TokenPrivateKey(mnemonic, addrs,currencyName)]);
+    exportERC20TokenPrivateKey(mnemonic, addrs,currencyName).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([handleError(err)]);
+    });
 };
 
 /**
@@ -805,12 +825,20 @@ export const callPreCalAhashToArgon2Hash = (ahash: string, imagePsw: string,call
 
 // 锁屏密码hash算法
 export const callLockScreenHash = (psw:string,callback:Function) => {
-    callback([undefined,lockScreenHash(psw)]);
+    lockScreenHash(psw).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([handleError(err)]);
+    });
 };
 
 // 锁屏密码验证
 export const callLockScreenVerify = (psw:string,callback:Function) => {
-    callback([undefined,lockScreenVerify(psw)]);
+    lockScreenVerify(psw).then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([handleError(err)]);
+    });
 };
 
 // ===========================================wallet相关===================================================================

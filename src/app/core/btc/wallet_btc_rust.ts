@@ -1,12 +1,12 @@
+import { BtcApi } from '../../core_common/btc/api';
+import { LANGUAGE } from '../../publicLib/config';
 
 /**
  * BTC HD wallet implementaion
  */
-import { BtcApi } from './api';
 
 declare var api;    // 底层挂到window上的对象
 
-export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
 export type NETWORK = 'mainnet' | 'testnet';
 export type PRIORITY = 'high' | 'medium' | 'low';
 

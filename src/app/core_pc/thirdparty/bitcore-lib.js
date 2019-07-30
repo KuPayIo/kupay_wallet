@@ -1,4 +1,4 @@
-_$define("app/core/thirdparty/bitcore-lib", function (require, exports, module) {
+_$define("app/core_pc/thirdparty/bitcore-lib", function (require, exports, module) {
     var bitcoreReq = (function e(t, n, r) {
         function s(o, u) {
             if (!n[o]) {
