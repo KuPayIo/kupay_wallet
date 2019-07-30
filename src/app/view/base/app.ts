@@ -47,7 +47,7 @@ export class App extends Widget {
                     text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
-                    components: 'chat-client-app-view-chat-contact'
+                    components: 'chat-client-app-view-home-contact'
                 },{
                     modulName: 'APP_EARN',
                     text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },

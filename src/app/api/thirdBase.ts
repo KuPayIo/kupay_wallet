@@ -18,6 +18,22 @@ let popFloatBoxClose;
 // 当前打开的webviewName
 let curWebviewName;
 
+let hasEnterGame = false;   // 是否进入游戏  锁屏判断是否从游戏退出，是就不展示锁屏界面
+
+/**
+ * 设置hasEnterGame
+ */
+export const setHasEnterGame = (entered:boolean) => {
+    hasEnterGame = entered;
+};
+
+/**
+ * 获取hasEnterGame
+ */
+export const getHasEnterGame = () => {
+    return hasEnterGame;
+};
+
 // 退出钱包后关闭悬浮框和游戏
 logoutWallet(() => {
     closePopFloatBox();

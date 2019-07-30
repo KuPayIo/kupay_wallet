@@ -9,7 +9,7 @@ import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
-import { closePopFloatBox } from '../../../api/thirdBase';
+import { closePopFloatBox, setHasEnterGame } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,callGetInviteCode, getStoreData } from '../../../middleLayer/wrap';
 import { LuckyMoneyType } from '../../../publicLib/interface';
@@ -175,6 +175,7 @@ export class PlayHome extends Widget {
 
             const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
             allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
+                setHasEnterGame(true);
                 const content =  configContent + thirdApiDependContent + thirdApiContent;
                 WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
             });

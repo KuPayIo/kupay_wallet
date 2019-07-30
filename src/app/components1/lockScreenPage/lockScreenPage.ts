@@ -7,7 +7,6 @@ import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { callLockScreenHash, callLockScreenVerify, callVerifyIdentidy,getStoreData, setStoreData } from '../../middleLayer/wrap';
-import { getSourceLoaded, setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { LockScreen } from '../../publicLib/interface';
 import { popNewLoading, popNewMessage } from '../../utils/tools';
 import { logoutAccount } from '../../viewLogic/login';
@@ -98,6 +97,7 @@ export class LockScreenPage extends Widget {
         if (ls.locked || ind > 2) {
             ls.locked = true;
             await setStoreData('setting/lockScreen',ls);
+            this.close(false);
             this.verifyPsw();
         } else {
             const title = this.props.errorTips[ind === 0 ? 3 :ind];
@@ -125,46 +125,31 @@ export class LockScreenPage extends Widget {
                 return;
             }
             const close = popNewLoading(this.language.loading); 
-            if (this.props.loading) {
-                const fg = await callVerifyIdentidy(r);
-                close.callback(close.widget);
-                if (fg) {  // 三次密码错误但成功验证身份后重新设置密码
-                    let ls:LockScreen = await getStoreData('setting/lockScreen');
-                    ls = {
-                        psw:'',
-                        open:false,
-                        locked:false
-                    };
-                    setStoreData('setting/lockScreen',ls);
-                    this.setLockPsw();
-                    
-                } else {  // 进入APP验证身份失败后再次进入验证身份步骤
-                    popNewMessage(this.language.tips[2]);
-                    this.verifyPsw();
-                } 
-            }
-        },(fg) => {
-            if (fg) {  // 退出当前钱包，跳转到登录页面
-                logoutAccount();
-            }
+            const fg = await callVerifyIdentidy(r);
+            close.callback(close.widget);
+            if (fg) {  // 三次密码错误但成功验证身份后重新设置密码
+                const ls = {
+                    psw:'',
+                    open:false,
+                    locked:false
+                };
+                setStoreData('setting/lockScreen',ls);
+                this.setLockPsw();
+                this.close(false);
+            } else {  // 进入APP验证身份失败后再次进入验证身份步骤
+                popNewMessage(this.language.tips[2]);
+                this.verifyPsw();
+            } 
+        },() => {
+            // 退出当前钱包，跳转到登录页面
+            const ls = {
+                psw:'',
+                open:false,
+                locked:false
+            };
+            setStoreData('setting/lockScreen',ls);
+            logoutAccount();
         });
     }
 
-    /**
-     * 判断资源加载完成
-     */
-    public judgeLoading() {
-        const loaded = getSourceLoaded();
-        if (loaded) {
-            this.props.loading = true;
-            this.paint();
-        }
-    }
 }
-
-setSourceLoadedCallbackList(() => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.judgeLoading();
-    }
-});

@@ -351,15 +351,7 @@ winit.initNext = function () {
 	var loadChatSource = function () {
 		console.time("fp loadChatSource");
 		var sourceList = [
-			"chat/client/app/view/chat/contact.tpl",
-			"chat/client/app/view/chat/contact.js",
-			"chat/client/app/view/chat/contact.wcss",
-			"chat/client/app/view/chat/messageRecord.tpl",
-			"chat/client/app/view/chat/messageRecord.js",
-			"chat/client/app/view/chat/messageRecord.wcss",
-			"chat/client/app/view/chat/contactTop.tpl",
-			"chat/client/app/view/chat/contactTop.js",
-			"chat/client/app/view/chat/contactTop.wcss",
+			"chat/client/app/view/home/",
 			"chat/client/app/view/contactList/contactList.tpl",
 			"chat/client/app/view/contactList/contactList.js",
 			"chat/client/app/view/contactList/contactList.wcss",

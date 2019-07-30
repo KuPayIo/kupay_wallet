@@ -11,6 +11,7 @@ import { addAppBackPressed } from '../../../pi/browser/app_comon_event';
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
+import { getHasEnterGame, setHasEnterGame } from '../../api/thirdBase';
 import { callEmitWebviewReload, callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
 import { LockScreen } from '../../publicLib/interface';
 import { getScreenModify, preLoadAd } from '../../viewLogic/native';
@@ -52,6 +53,7 @@ const popNewPage = () => {
                 openApp: true
             });
         }
+        
     });
 };
 
@@ -76,13 +78,15 @@ const checkUpdate = () => {
  */
 const addAppEvent = () => {
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
+        console.log('visibilityState = ',document.visibilityState);
+        if (document.visibilityState === 'visible') {  // 这里有可能同时触发两次document.visibilityState === 'visible',导致会弹出两个锁屏页面
             ifNeedUnlockScreen().then(loccked => {
-                if (loccked) {
+                if (loccked && !getHasEnterGame()) {
                     popNew('app-components1-lockScreenPage-lockScreenPage', {
                         openApp: true
                     });
                 }
+                setHasEnterGame(false);
             });
 
             setTimeout(() => {

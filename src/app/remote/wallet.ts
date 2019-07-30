@@ -90,9 +90,8 @@ export const calcHashValue = (pwd, salt?) => {
  */
 export const VerifyIdentidy = async (passwd:string) => {
     const wallet = getStore('wallet');
-    const hash = await calcHashValue(passwd, getStore('user/salt'));
-
     try {
+        const hash = await calcHashValue(passwd, getStore('user/salt'));
         await decrypt(wallet.vault,hash);
         
         return hash;
@@ -526,7 +525,7 @@ export const effectiveAddr = (currencyName: string, addr: string): [boolean, str
 export const backupMnemonic = async (passwd:string,needFragments:boolean = true) => {
     const hash = await calcHashValue(passwd, getStore('user/salt'));
     console.log('hash!!!!!!!!!!!!',hash);
-    const mnemonic = getMnemonicByHash(hash);
+    const mnemonic = await getMnemonicByHash(hash);
     if (!mnemonic) {
         throw new Error('psw error');        
     }
