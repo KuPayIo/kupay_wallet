@@ -94,11 +94,9 @@ export class Home extends Widget {
      */
     public initData() {
         Promise.all([getUserInfo(),getStoreData('wallet')]).then(([userInfo,wallet]) => {
-            if (userInfo) {
-                this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
-                this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
-                this.props.userLevel = userInfo.level;
-            }
+            this.props.userName = userInfo.nickName ? userInfo.nickName :this.language.defaultUserName;
+            this.props.avatar = userInfo.avatar;
+            this.props.userLevel = userInfo.level;
             if (wallet) {
                 this.props.hasWallet = true;
                 this.props.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
@@ -256,7 +254,7 @@ registerStoreData('wallet', () => {
         w.initData();
     }
 });
-registerStoreData('user/info', () => {
+registerStoreData('user', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

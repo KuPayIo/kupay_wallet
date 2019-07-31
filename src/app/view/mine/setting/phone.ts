@@ -21,7 +21,8 @@ export class BindPhone extends Widget {
             areaCode:'',
             phone:'',
             code:[],
-            isSuccess:true
+            isSuccess:true,
+            hasSendCode:false
         };
         super.create();
     }
@@ -48,7 +49,7 @@ export class BindPhone extends Widget {
      * 输入完成后确认
      */
     public async doSure() {
-        if (!this.props.phone) {
+        if (!this.props.hasSendCode) {
             const tips = { zh_Hans:'请先获取验证码',zh_Hant:'請先獲取驗證碼',en:'' };
             popNewMessage(tips[getLang()]);
             this.props.code = [];
@@ -95,6 +96,7 @@ export class BindPhone extends Widget {
     public phoneChange(e: any) {
         this.props.phone = e.value;  
         this.props.areaCode = e.areaCode;
+        this.props.hasSendCode = e.hasSendCode;
     }
 
     /**

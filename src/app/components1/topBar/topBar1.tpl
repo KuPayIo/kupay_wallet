@@ -4,7 +4,7 @@
     <div w-class="topBar-content">
         <div style=" display: flex;align-items: center;">
             <div on-tap="showMine" on-down="onShow" >
-                <widget w-tag="app-components1-img-img" w-class="userHead" >{imgURL:{{it.avatar ? it.avatar : 'app/res/image/default_avater_big.png'}},width:"48px;"}</widget>
+                <widget w-tag="app-components1-img-img" w-class="userHead" >{imgURL:{{it.avatar}},width:"48px;"}</widget>
             </div>
             {{if it.text}}
             <div w-class="total-asset">{{it.text}}</div>

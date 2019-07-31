@@ -235,10 +235,18 @@ winit.initNext = function () {
 	// 加载第一阶段必须文件 加载完成后即可获取数据
 	var firstStageLoaded = function(){
 		var sourceList = [
-			"app/postMessage/"
+			"app/postMessage/",
+			"earn/client/app/net/login.js",
+			"chat/client/app/net/login.js",
+			"app/viewLogic/login.js"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.log("firstStageLoaded success-----------------");
+			// 聊天登录
+			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
+			// 活动注册
+			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
+
 			var WebViewManager = pi_modules.commonjs.exports.relativeGet("pi/browser/webview").exports.WebViewManager;
 			WebViewManager.addListenStage(function(stage){
 				if(stage === "firstStage"){    // 第一阶段完成  可以注册监听
@@ -307,15 +315,8 @@ winit.initNext = function () {
 	// 加载钱包首页所需资源
 	var loadWalletFirstPageSource = function () {
 		console.time("fp loadWalletFirstPageSource");
-		// var routerPathList = calcRouterPathList();
 		var sourceList = [
 			"app/viewLogic/",
-			"earn/client/app/net/login.js",
-			"chat/client/app/net/login.js",
-			"earn/xlsx/awardCfg.c.js",
-			"earn/xlsx/awardCfg.s.js",
-			"earn/xlsx/item.c.js",
-			"earn/xlsx/item.s.js",
 			"app/view/base/",
 			"app/components1/",
 			"app/res/css/",
@@ -335,10 +336,7 @@ winit.initNext = function () {
 			tab.timeout = 90000;
 			tab.release();
 			fpFlags.walletReady = true;
-			// 聊天登录
-			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
-			// 活动注册
-			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
+			
 
 			enterApp();
 			
@@ -358,7 +356,6 @@ winit.initNext = function () {
 			"chat/client/app/view/contactList/contactItem.tpl",
 			"chat/client/app/view/contactList/contactItem.js",
 			"chat/client/app/view/contactList/contactItem.wcss",
-			"chat/client/app/widget/utilList/",
 			"chat/client/app/widget/imgShow/",
 			"chat/client/app/widget/topBar/"
 		]; 
@@ -385,7 +382,11 @@ winit.initNext = function () {
 			"earn/client/app/components1/",
 			"earn/client/app/view/activity/miningHome.tpl",
 			"earn/client/app/view/activity/miningHome.js",
-			"earn/client/app/view/activity/miningHome.wcss"
+			"earn/client/app/view/activity/miningHome.wcss",
+			"earn/xlsx/awardCfg.c.js",
+			"earn/xlsx/awardCfg.s.js",
+			"earn/xlsx/item.c.js",
+			"earn/xlsx/item.s.js",
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadEarnSource");

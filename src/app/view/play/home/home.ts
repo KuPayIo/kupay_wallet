@@ -164,7 +164,7 @@ export class PlayHome extends Widget {
             pi3Config.webviewName = webviewName;
             pi3Config.apkDownloadUrl = gameList[num].apkDownloadUrl;
             pi3Config.userInfo = {
-                nickName:this.props.nickName,
+                nickName:this.props.userInfo.nickName,
                 inviteCode
             };
 

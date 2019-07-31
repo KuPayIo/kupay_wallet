@@ -22,9 +22,6 @@ import { fetchLocalTxByHash, fetchTransactionList, getMnemonicByHash } from './w
  * @example
  */
 class DataCenter { 
-    public timerRef: number = 0;
-    public timerRef1: number = 0;
-    public updateList: any[] = [];
     public currencyExchangeTimer: number;
   // 交易定时器列表
     private txTimerList:any[] = [];
@@ -44,6 +41,21 @@ class DataCenter {
         // this.updateCurrency2USDTRate();
         this.initErc20GasLimit();
         this.refreshAllTx();
+    }
+
+    // 清空定时器
+    public clearAllTimer() {
+        clearTimeout(this.checkAddrTimer);
+        for (let i = 0; i < this.balanceTimerList.length; i++) {
+            const timerItem = this.balanceTimerList[i];
+            clearTimeout(timerItem.timer);
+        }
+        this.balanceTimerList.length = 0;
+        for (let i = 0; i < this.txTimerList.length; i++) {
+            const timerItem = this.txTimerList[i];
+            clearTimeout(timerItem.timer);
+        }
+        this.txTimerList.length = 0;
     }
     /**
      * 刷新所有余额
@@ -250,7 +262,7 @@ class DataCenter {
    * 私有函数
    ******************************************************************************************/
 
-  // 币币交易记录定时器
+    // 币币交易记录定时器
     private currencyExchangeTimerStart() {
         // this.fetchCurrencyExchangeTx();
         this.currencyExchangeTimer = setTimeout(() => {
@@ -973,6 +985,19 @@ export const dataCenter: DataCenter = new DataCenter();
 addSourceLoadedListener(() => {
     dataCenter.init();
 });
+/**
+ * 清空所有定时器
+ */
+export const clearAllTimer = () => {
+    dataCenter.clearAllTimer();
+};
+
+/**
+ * 初始化dataCenter
+ */
+export const initDataCenter = () => {
+    dataCenter.init();
+};
 /**
  * 更新余额
  */

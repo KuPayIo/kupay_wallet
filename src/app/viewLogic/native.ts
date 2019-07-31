@@ -103,7 +103,8 @@ export const makeScreenShot = (okCB?,errCB?) => {
  * 预先下载广告
  */
 export const preLoadAd = (adType?: AdPlatform,cb?:(str1:string,str2:string) => void) => {
-    adType = adType ? adType : Math.random() > 0.5 ? AdPlatform.GDT : AdPlatform.CSJ;
+    // adType = adType ? adType : Math.random() > 0.5 ? AdPlatform.GDT : AdPlatform.CSJ;
+    adType = AdPlatform.CSJ;  // ios目前只接入了csj
     ADUnion.loadRewardVideoAD(adType,(str1,str2) => {
         cb && cb(str1,str2);
     });

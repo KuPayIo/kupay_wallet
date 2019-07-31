@@ -9,6 +9,7 @@ import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
 import { Account, getAllAccount, getStore,initCloudWallets, LocalCloudWallet, register, setStore } from '../store/memstore';
 import { addFirstRegisterListener } from '../store/vmRegister';
+import { clearAllTimer, initDataCenter } from './dataCenter';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';
 import { getDeviceAllDetail } from './tools';
@@ -376,8 +377,8 @@ export const logoutAccount = (save:boolean = true) => {
         psw:'',
         open:false
     };
-    setStore('wallet',null,false);
-    setStore('cloud',cloud,false);
+    setStore('wallet',null);
+    setStore('cloud',cloud);
     setStore('user',user);
     setStore('activity',activity);
     setStore('setting/lockScreen',lockScreen);
@@ -387,6 +388,7 @@ export const logoutAccount = (save:boolean = true) => {
     setTimeout(() => {
         openConnect();
     },100);
+    clearAllTimer();
     
     return getAllAccount().then(accounts => {
         const flags = getStore('flags');
@@ -460,10 +462,11 @@ export const loginSuccess = (account:Account,secretHash:string) => {
         cloudWallet.balance = localCloudWallets.get(key).balance;
     }
 
-    setStore('wallet',wallet,false);
-    setStore('cloud',cloud,false);
+    setStore('wallet',wallet);
+    setStore('cloud',cloud);
     setStore('user',user);
     openConnect(secretHash);
+    initDataCenter();
 };
 
 // 注册store

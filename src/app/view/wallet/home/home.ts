@@ -10,6 +10,7 @@ import { callFetchCloudTotalAssets,callFetchCloudWalletAssetList, callFetchLocal
 import { formatBalanceValue } from '../../../publicLib/tools';
 import { getCurrencyUnitSymbol } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
+import { logoutWallet } from '../../../viewLogic/login';
 // ============================导出
 
 // tslint:disable-next-line:no-reserved-keywords

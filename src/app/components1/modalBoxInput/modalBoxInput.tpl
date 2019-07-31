@@ -1,4 +1,4 @@
-<div w-class="modal-mask" class="new-page">
+<div w-class="modal-mask" class="new-page" id="{{it.lockScreen ? 'keyboard' : ''}}">
     <div w-class="body">
         <div w-class="title">
             {{if typeof(it.title) === 'string' }}

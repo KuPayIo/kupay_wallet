@@ -45,7 +45,7 @@ export class LockScreenPage extends Widget {
             this.setLockPsw();
         } else if (this.props.openApp) {  // true表示打开app解锁屏幕
             this.unLockScreen(0);
-        } 
+        }
     }
 
     /**
@@ -75,15 +75,17 @@ export class LockScreenPage extends Widget {
             if (this.props.lockScreenPsw !== r) {
                 popNewMessage(this.language.tips[0]);
                 this.reSetLockPsw();
+
+                this.close(false);
             } else {
-                await Promise.all([callLockScreenHash(r),getStoreData('setting/lockScreen')]).then(([hash256,ls]) => {
+                this.close(true);
+                Promise.all([callLockScreenHash(r),getStoreData('setting/lockScreen')]).then(([hash256,ls]) => {
                     ls.psw = hash256;
                     ls.open = true;
                     setStoreData('setting/lockScreen',ls);
                     popNewMessage(this.language.tips[1]);
                 });
             }
-            this.close(true);
         },() => {
             this.close(false);
         });
@@ -96,7 +98,7 @@ export class LockScreenPage extends Widget {
         const ls:LockScreen = await getStoreData('setting/lockScreen');
         if (ls.locked || ind > 2) {
             ls.locked = true;
-            await setStoreData('setting/lockScreen',ls);
+            setStoreData('setting/lockScreen',ls);
             this.close(false);
             this.verifyPsw();
         } else {
@@ -116,8 +118,15 @@ export class LockScreenPage extends Widget {
      * 进入APP三次解锁屏幕失败后验证身份
      */
     public verifyPsw() {
+        const pro = {
+            ...this.language.modalBoxInput2,
+            lockScreen:true,    // 
+            officialServiceCb:() => {   // 联系客服返回
+                this.verifyPsw();
+            }
+        };
         // tslint:disable-next-line:max-line-length
-        popNew('app-components-modalBoxInput-modalBoxInput',this.language.modalBoxInput2, async (r) => {
+        popNew('app-components1-modalBoxInput-modalBoxInput',pro, async (r) => {
             if (!r) {  // 未输入密码点击验证则重新打开验证
                 popNewMessage(this.language.tips[3]);
                 this.verifyPsw();
@@ -140,15 +149,18 @@ export class LockScreenPage extends Widget {
                 popNewMessage(this.language.tips[2]);
                 this.verifyPsw();
             } 
-        },() => {
-            // 退出当前钱包，跳转到登录页面
-            const ls = {
-                psw:'',
-                open:false,
-                locked:false
-            };
-            setStoreData('setting/lockScreen',ls);
-            logoutAccount();
+        },(r) => {
+            if (!r) {   // 点击取消按钮
+                // 退出当前钱包，跳转到登录页面
+                const ls = {
+                    psw:'',
+                    open:false,
+                    locked:false
+                };
+                setStoreData('setting/lockScreen',ls);
+                logoutAccount();
+            }
+            
         });
     }
 
