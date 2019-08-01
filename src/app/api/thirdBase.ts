@@ -97,7 +97,7 @@ export const inviteFriends = (webviewName: string) => {
  */
 export const gotoGameService = (webviewName: string) => {
     console.log('wallet gotoGameService called');
-    if (!chatGetStore('uid')) {
+    if (!chatGetStore('uid') || !chatGetStore('isLogin')) {
         const isLoginCb = (uid:number) => {
             gotoGameService1(webviewName);
             chatUnregister('uid',isLoginCb);
@@ -122,7 +122,7 @@ const gotoGameService1 = (webviewName: string) => {
  */
 export const gotoOfficialGroupChat = (webviewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
-    if (!chatGetStore('uid')) {
+    if (!chatGetStore('uid') || !chatGetStore('isLogin')) {
         const isLoginCb = (uid:number) => {
             gotoOfficialGroupChat1(webviewName);
             chatUnregister('uid',isLoginCb);

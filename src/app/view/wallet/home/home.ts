@@ -166,3 +166,11 @@ registerStoreData('wallet',() => {
         w.updateLocalWalletAssetList();
     }
 });
+
+logoutWallet(() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+        w.paint();
+    }
+});
