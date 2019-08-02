@@ -51,10 +51,10 @@ export interface Store {
  */
 export enum CloudCurrencyType {
     KT = 100,  // KT
-    ETH,       // ETH 
-    BTC,       // BTC
-    ST,         // ST
-    SC         // SC 银两
+    ETH = 101,       // ETH 
+    BTC = 102,       // BTC
+    ST = 103,         // ST
+    SC = 104        // SC 银两
 }
 
 /**

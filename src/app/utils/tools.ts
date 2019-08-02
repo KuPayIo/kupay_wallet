@@ -465,7 +465,7 @@ export const rippleShow = (e:any) => {
     
     setTimeout(() => {
         getRealNode(e.node).classList.remove('ripple');
-    }, 500);
+    }, 300);
 };
 
 /**
@@ -739,7 +739,7 @@ export const goRecharge = () => {
     getCloudBalances().then(cloudBalances => {
         const scBalance = cloudBalances.get(CloudCurrencyType.SC);
         callGoRecharge(scBalance,0).then(([err,res]) => {
-            if (err) {
+            if (err !== 'cancel recharge') {
                 popNewMessage('支付失败');
                 console.log('支付失败 err',err);
 

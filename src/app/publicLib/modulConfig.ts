@@ -11,6 +11,8 @@ const appModulConfig = {
     APP_PAY:false,             // 支付测试模块
     FINANCIAL_SERVICES: false,   // 优选理财
     GITHUB:true,                  // github显示
+    CLOUDASSETSHIDDEN:['ETH','BTC'],         // 云端资产隐藏
+    IOS:true,                     // 是否ios版本
 
     WALLET_NAME: '好嗨',                        // 钱包名字
     WALLET_WEBSITE:'http://www.highapp.cn',     // 官网地址

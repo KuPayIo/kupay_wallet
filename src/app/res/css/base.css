@@ -287,8 +287,8 @@ div{
 
 @keyframes popBoxZoomIn {
     from {
-      -webkit-transform: scale3d(0.3, 0.3, 0.3);
-      transform: scale3d(0.3, 0.3, 0.3);
+      -webkit-transform: scale(0.3);
+      transform: scale(0.3);
     }
   
     50% {

@@ -8,7 +8,7 @@
                 <div w-class="balance">{{it.balance%1===0?it.balance.toFixed(2):it.balance}}</div>
                 <div w-class="balance-value">{{it.currencyUnitSymbol}}{{it.balanceValue}}</div>
             </div>
-            {{if it.canConvert}}
+            {{if it.canConvert && !it.isIos}}
             <div w-class="btn-exchange" on-tap="convertCurrencyClick"><pi-ui-lang>{"zh_Hans":"换币","zh_Hant":"換幣","en":""}</pi-ui-lang></div>
             {{end}}
         </div>
@@ -50,6 +50,7 @@
             </div>
         </div>
     </div>
+    {{if !it.isIos}}
     <div w-class="operating">
         <div w-class="operating-item" on-tap="doTransferClick"><img src="../../../res/image/transfer.png" w-class="icon"/>
             <span><pi-ui-lang>{"zh_Hans":"转账","zh_Hant":"轉賬","en":""}</pi-ui-lang></span>
@@ -59,4 +60,5 @@
             <span><pi-ui-lang>{"zh_Hans":"收款","zh_Hant":"收款","en":""}</pi-ui-lang></span>
         </div>
     </div>
+    {{end}}
 </div>

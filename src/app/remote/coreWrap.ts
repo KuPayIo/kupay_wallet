@@ -24,7 +24,7 @@ import { backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom,
 /**
  * 对所有的错误进行处理  rpc调用会对结果JOSN.stringify,如果是Error对象,stringify后为"{}"
  */
-const handleError = (err:any) => {
+export const handleError = (err:any) => {
     if (err instanceof Error) return { message:err.message };
 
     return err;

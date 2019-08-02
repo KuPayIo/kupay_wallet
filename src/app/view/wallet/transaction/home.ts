@@ -7,6 +7,7 @@ import { Widget } from '../../../../pi/widget/widget';
 // tslint:disable-next-line:max-line-length
 import { callCurrencyExchangeAvailable, callDcUpdateAddrInfo, callFetchBalanceValueOfCoin,callFetchTransactionList, callGetCurrentAddrInfo,getStoreData } from '../../../middleLayer/wrap';
 import { CurrencyRecord, TxHistory, TxType } from '../../../publicLib/interface';
+import { getModulConfig } from '../../../publicLib/modulConfig';
 import { formatBalance, formatBalanceValue, timestampFormat } from '../../../publicLib/tools';
 import { calCurrencyLogoUrl, getCurrencyUnitSymbol, parseAccount, parseStatusShow, parseTxTypeShow } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
@@ -48,7 +49,8 @@ export class TransactionHome extends Widget {
                 list:[]
             }],
             activeNum:0,
-            address:''
+            address:'',
+            isIos:getModulConfig('IOS')
         };
     }
     public setProps(props:Props,oldProps:Props) {

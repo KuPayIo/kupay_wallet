@@ -52,7 +52,8 @@ export class Dividend extends Widget {
             ktBalance:0,  // KT持有量 
             hasMore:false,
             refresh:true,
-            start:''
+            start:'',
+            isIos:getModulConfig('IOS')
             
         };
 

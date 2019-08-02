@@ -3,6 +3,7 @@ import { cryptoRandomInt } from '../../pi/util/math';
 // tslint:disable-next-line:max-line-length
 import { Config, currencyConfirmBlockNumber, defalutShowCurrencys, ERC20Tokens, inAndroidApp, inIOSApp, MainChainCoin, USD2CNYRateDefault } from '../publicLib/config';
 import { CloudCurrencyType, Currency2USDT, TxHistory } from '../publicLib/interface';
+import { getModulConfig } from '../publicLib/modulConfig';
 import { fetchCloudGain, formatBalance, formatBalanceValue } from '../publicLib/tools';
 import { getCloudBalances, getStore, setStore } from '../store/memstore';
 
@@ -502,6 +503,8 @@ export const fetchCloudWalletAssetList = () => {
     };
     assetList.push(gtItem);
     for (const k in CloudCurrencyType) {
+        const hidden = getModulConfig('CLOUDASSETSHIDDEN');
+        if (hidden.indexOf(k) >= 0) continue;
         const item: any = {};
         if (MainChainCoin.hasOwnProperty(k)) {
             item.currencyName = k;

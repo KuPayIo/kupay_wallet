@@ -66,6 +66,12 @@ export class WriteRedEnv extends Widget {
         getUserInfo().then(userInfo => {
             this.props.realUser = userInfo.isRealUser || !!userInfo.phoneNumber;
         });
+        const isIos = getModulConfig('IOS');
+        if (isIos) {
+            this.props.list = [
+                { img: '../../res/image1/currency/KT.png', name: 'KT', num: 0 }
+            ];
+        }
     }
 
     public setProps(props:any) {
