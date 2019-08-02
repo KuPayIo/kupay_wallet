@@ -185,8 +185,6 @@ export const getAllAccount = () => {
         return accounts.sort((item1,item2) => {
             return item2.wallet.logoutTimestamp - item1.wallet.logoutTimestamp;
         });
-    }).catch(err => {
-        return getAllAccount();   // 递归  直到读取到数据
     });
     
 };
@@ -477,8 +475,8 @@ const accountChange = () => {
         if (!storeUser.id) {
             const flags = getStore('flags');
             const saveAccount = flags.saveAccount;
+            localAccounts.accounts[localAccounts.currenctId].wallet.logoutTimestamp = new Date().getTime();
             if (saveAccount) {
-                localAccounts.accounts[localAccounts.currenctId].wallet.logoutTimestamp = new Date().getTime();
                 localAccounts.currenctId = '';
                 setLocalStorage('accounts', localAccounts);
             } else {
@@ -539,7 +537,7 @@ const accountChange = () => {
                 currencyRecords: localCurrencyRecords,
                 changellyPayinAddress:wallet.changellyPayinAddress,
                 changellyTempTxs:wallet.changellyTempTxs,
-                logoutTimestamp:wallet.logoutTimestamp
+                logoutTimestamp:new Date().getTime()
             };
         }
     

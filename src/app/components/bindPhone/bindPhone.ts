@@ -51,8 +51,9 @@ export class BindPhone extends Widget {
 
             return;
         }
-        await sendCode(this.props.phone, this.props.oldCode,this.props.verify);
-        notify(event.node,'ev-getCode',{ value:this.props.phone,areaCode:this.props.oldCode });
+        const res = await sendCode(this.props.phone, this.props.oldCode,this.props.verify);
+        if (res === 1) return;   // 手机号已绑定
+        notify(event.node,'ev-getCode',{ value:this.props.phone,areaCode:this.props.oldCode,hasSendCode:true });
         this.props.countdown = this.props.limitTime;
         clearTimeout(this.timer);
         this.openTimer();

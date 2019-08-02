@@ -11,6 +11,7 @@ import { addAppBackPressed } from '../../../pi/browser/app_comon_event';
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
+import { getHasEnterGame, setHasEnterGame } from '../../api/thirdBase';
 import { callEmitWebviewReload, callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
 import { LockScreen } from '../../publicLib/interface';
 import { getScreenModify, preLoadAd } from '../../viewLogic/native';
@@ -52,6 +53,7 @@ const popNewPage = () => {
                 openApp: true
             });
         }
+        
     });
 };
 
@@ -70,36 +72,46 @@ const preFetchFromNative = () => {
 const checkUpdate = () => {
   // todo 
 };
-
+let lastVisibilityState;
 /**
  * 注册app event
  */
 const addAppEvent = () => {
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            ifNeedUnlockScreen().then(loccked => {
-                if (loccked) {
-                    popNew('app-components1-lockScreenPage-lockScreenPage', {
-                        openApp: true
-                    });
-                }
-            });
-
-            setTimeout(() => {
-                getStoreData('user/isLogin').then(isLogin => {
-                    if (!isLogin) {
-                        callWalletManualReconnect();
+        const curVisibilityState = document.visibilityState;
+        console.log('visibilityState = ',document.visibilityState);
+        // 这里有可能同时触发两次document.visibilityState === 'visible',导致会弹出两个锁屏页面
+        if (curVisibilityState !== lastVisibilityState) {
+            lastVisibilityState = curVisibilityState;
+            if (curVisibilityState === 'visible') {  
+                ifNeedUnlockScreen().then(loccked => {
+                    if (loccked && !getHasEnterGame()) {
+                        popNew('app-components1-lockScreenPage-lockScreenPage', {
+                            openApp: true
+                        });
                     }
+                    setHasEnterGame(false);
                 });
-                    
-                if (!chatGetStore('isLogin')) {
-                    chatManualReconnect();
-                }
-                if (!earnGetStore('userInfo/isLogin')) {
-                    earnManualReconnect();
-                }
-            },100);  // 检查是否已经退出登录
+    
+                setTimeout(() => {
+                    getStoreData('user/isLogin').then(isLogin => {
+                        if (!isLogin) {
+                            callWalletManualReconnect();
+                        }
+                    });
+                        
+                    if (!chatGetStore('isLogin')) {
+                        chatManualReconnect();
+                    }
+                    if (!earnGetStore('userInfo/isLogin')) {
+                        earnManualReconnect();
+                    }
+                },100);  // 检查是否已经退出登录
+            }
+        } else {
+            lastVisibilityState = undefined;
         }
+        
     });
 
     let startTime = 0;

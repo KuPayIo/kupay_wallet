@@ -25,7 +25,6 @@
                 </div>
             </div>
 
-            {{if it.wallet}}
             <div w-class="mode">
                 <div w-class="item" on-tap="logOut" on-down="onShow">
                     <span w-class="itemName"><pi-ui-lang>{{itemTitle[4]}}</pi-ui-lang></span>
@@ -34,7 +33,6 @@
                     <span w-class="itemName" style="color: #F5A264;"><pi-ui-lang>{{itemTitle[5]}}</pi-ui-lang></span>
                 </div>
             </div>
-            {{end}}
         </div>
         <div style="height: 128px;"></div>
     </div>

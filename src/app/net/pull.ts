@@ -28,9 +28,9 @@ export const getBalance = async (currencyType: CloudCurrencyType) => {
 export const inputInviteCdKey = async (code) => {
     const msg = { type: 'wallet/cloud@input_cd_key', param: { code: code } };
     try {
-        await callRequestAsync(msg);
+        const res = await callRequestAsync(msg);
 
-        return [];
+        return [res];
     } catch (err) {
         console.log('input_cd_key--------',err);
         showError(err && (err.result || err.type));
@@ -225,7 +225,7 @@ export const sendCode = async (phone: string, num: string,verify:boolean = true)
         if (v) {
             popNewMessage('手机号已绑定');
 
-            return;
+            return 1;
         }
     }
     const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: getModulConfig('WALLET_NAME') } };

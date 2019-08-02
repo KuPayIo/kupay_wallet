@@ -47,7 +47,7 @@ export class App extends Widget {
                     text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
-                    components: 'chat-client-app-view-chat-contact'
+                    components: 'chat-client-app-view-home-contact'
                 },{
                     modulName: 'APP_EARN',
                     text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
@@ -75,9 +75,11 @@ export class App extends Widget {
         // 币币兑换可用货币获取
         changellyGetCurrencies();
         getUserInfo().then(userInfo => {
+            console.log('app userInfo = ',userInfo);
             this.props.userInfo = userInfo;
             this.paint();
         });
+        
     }
 
     public tabBarChangeListener(event: any, index: number) {
@@ -141,10 +143,10 @@ registerStoreData('setting/language',(r) => {
     setLang(r);
 });
 
-registerStoreData('user/info',(userInfo1:any) => {
+registerStoreData('user',(user:any) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        getUserInfo(userInfo1).then(userInfo => {
+        getUserInfo(user.info).then(userInfo => {
             w.props.userInfo = userInfo;
             w.paint();
         });

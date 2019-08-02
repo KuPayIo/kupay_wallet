@@ -25,7 +25,7 @@ export class SelectBox extends Widget {
         super();
     }
 
-    public setProps(oldProps:Json,newProps:Json) {
+    public setProps(oldProps:Props,newProps:Json) {
         super.setProps(oldProps,newProps);
         this.props = {
             ...this.props,
@@ -53,6 +53,7 @@ export class SelectBox extends Widget {
      * 展示下拉列表
      */
     public showList() {
+        if (this.props.list.length <= 1) return;
         this.props.showList = true;
         this.paint();
     }

@@ -124,7 +124,6 @@ export class Exchange extends Widget {
             });
            
         } else {
-            alert(1);
             popNewMessage(this.language.errorList[1]);
 
             return null;

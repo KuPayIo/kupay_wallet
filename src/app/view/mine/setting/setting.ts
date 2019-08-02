@@ -31,25 +31,20 @@ export class Setting extends Widget {
 
     public init() {
         this.language = this.config.value[getLang()];
-        
         this.props = {
-            lockScreenPsw: '',  // 锁屏密码
             openLockScreen: false,  // 是否打开锁屏开关 
             lockScreenTitle: '',  // 锁屏密码页面标题
             numberOfErrors: 0,  // 锁屏密码输入错误次数
-            itemList: [],
-            wallet: null
+            itemList: []
         };
         this.initData();
     }
 
     public initData() {
-        Promise.all([getStoreData('wallet'),getStoreData('setting')]).then(([wallet,setting]) => {
-            this.props.wallet = wallet;
+        getStoreData('setting').then(setting => {
             const ls = setting.lockScreen;
             if (ls) {
-                this.props.lockScreenPsw = ls.psw;
-                this.props.openLockScreen = ls.psw && ls.open !== false;
+                this.props.openLockScreen = ls.open !== false;
             }
             const lan = setting.language || 'zh_Hans';
             const unit = setting.currencyUnit || 'CNY';
@@ -82,34 +77,17 @@ export class Setting extends Widget {
             ls.open = !ls.open;
             this.props.openLockScreen = false;
             setStoreData('setting/lockScreen', ls);
-        } else if (this.props.wallet) {
+        } else {
             popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
                 if (!r) {
-                    this.closeLockPsw();
                     this.props.openLockScreen = false;
                 } else {
                     this.props.openLockScreen = true;
                 }
             });
-        } else {
-            // tslint:disable-next-line:max-line-length
-            popNew('app-components-modalBox-toLoginBox', undefined, () => {
-                popNew('app-view-wallet-create-home');
-            }, () => {
-                this.closeLockPsw();
-            });
         }
 
         this.paint(true);
-    }
-
-    /**
-     * 关闭锁屏开关
-     */
-    public closeLockPsw() {
-        this.props.openLockScreen = false;
-        this.props.lockScreenPsw = '';
-        this.paint();
     }
 
     /**
@@ -193,28 +171,22 @@ registerStoreData('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.language = w.config.value[r];
-        w.init();
+        w.initData();
     }
 });
 registerStoreData('setting/currencyUnit', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
+        w.initData();
     }
 });
 registerStoreData('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.init();
-    }
-});
-registerStoreData('setting/lockScreen', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
         w.initData();
     }
 });
-registerStoreData('wallet', () => {
+registerStoreData('setting/lockScreen', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();

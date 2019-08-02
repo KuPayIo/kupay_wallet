@@ -66,6 +66,12 @@ export class WriteRedEnv extends Widget {
         getUserInfo().then(userInfo => {
             this.props.realUser = userInfo.isRealUser || !!userInfo.phoneNumber;
         });
+        const isIos = getModulConfig('IOS');
+        if (isIos) {
+            this.props.list = [
+                { img: '../../res/image1/currency/KT.png', name: 'KT', num: 0 }
+            ];
+        }
     }
 
     public setProps(props:any) {
@@ -221,7 +227,7 @@ export class WriteRedEnv extends Widget {
         const mess1 = `${this.language.phrase[0]}${this.props.totalAmount}${ctypeShow} / ${this.props.totalNum} ${this.language.phrase[1]}`;
         // tslint:disable-next-line:max-line-length
         const mess2 = this.language.phrase[2] + (this.props.showPin ? this.language.redEnvType[1] : this.language.redEnvType[0]);
-        popNew('app-components-modalBoxInput-modalBoxInput', {
+        popNew('app-components1-modalBoxInput-modalBoxInput', {
             title: ctypeShow + this.language.phrase[3],
             content: [mess1, mess2],
             placeholder: this.language.phrase[4],

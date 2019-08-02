@@ -9,7 +9,8 @@
 
             <div w-class="groupcard">
                 <div w-class="dividend-title">
-                    <pi-ui-lang>{zh_Hans:"累计分红(ETH)",zh_Hant:"累計分紅(ETH)",en:""}</pi-ui-lang>
+                    {{: pTitle = it.isIos ?  {zh_Hans:"累计分红",zh_Hant:"累計分紅",en:""} : {zh_Hans:"累计分红(ETH)",zh_Hant:"累計分紅(ETH)",en:""} }}
+                    <pi-ui-lang>{{pTitle}}</pi-ui-lang>
                 </div>
                 <div w-class="dividend-money">{{it.totalDivid}}</div>
                 <div w-class="dividLine"></div>

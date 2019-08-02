@@ -7,9 +7,11 @@ import { Widget } from '../../../../pi/widget/widget';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 // tslint:disable-next-line:max-line-length
 import { callFetchCloudTotalAssets,callFetchCloudWalletAssetList, callFetchLocalTotalAssets,callFetchWalletAssetList, getStoreData } from '../../../middleLayer/wrap';
+import { getModulConfig } from '../../../publicLib/modulConfig';
 import { formatBalanceValue } from '../../../publicLib/tools';
 import { getCurrencyUnitSymbol } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
+import { logoutWallet } from '../../../viewLogic/login';
 // ============================导出
 
 // tslint:disable-next-line:no-reserved-keywords
@@ -19,15 +21,28 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Home extends Widget {
     public create() {
         super.create();
-        this.props = {
-            offlienType:OfflienType.WALLET,
-            tabs:[{
+        const isIos = getModulConfig('IOS');
+        let tabs;
+        if (isIos) {
+            tabs = [{
+                tab:{ zh_Hans:'账户',zh_Hant:'賬戶',en:'' },
+                components:'app-view-wallet-home-cloudHome'
+            },{
+                tab:{ zh_Hans:'行情',zh_Hant:'行情',en:'' },
+                components:'app-view-wallet-home-walletHome'
+            }];
+        } else {
+            tabs = [{
                 tab:{ zh_Hans:'云账户',zh_Hant:'雲賬戶',en:'' },
                 components:'app-view-wallet-home-cloudHome'
             },{
                 tab:{ zh_Hans:'本地钱包',zh_Hant:'本地錢包',en:'' },
                 components:'app-view-wallet-home-walletHome'
-            }],
+            }];
+        }
+        this.props = {
+            offlienType:OfflienType.WALLET,
+            tabs,
             activeNum:0,
             refreshing:false,
             localTotalAssets:0,
@@ -163,5 +178,13 @@ registerStoreData('wallet',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateLocalWalletAssetList();
+    }
+});
+
+logoutWallet(() => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.init();
+        w.paint();
     }
 });

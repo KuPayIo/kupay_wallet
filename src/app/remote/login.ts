@@ -9,6 +9,7 @@ import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
 import { Account, getAllAccount, getStore,initCloudWallets, LocalCloudWallet, register, setStore } from '../store/memstore';
 import { addFirstRegisterListener } from '../store/vmRegister';
+import { clearAllTimer, initDataCenter } from './dataCenter';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';
 import { getDeviceAllDetail } from './tools';
@@ -170,8 +171,8 @@ export const autoLogin = async (conRandom:string) => {
     };
     console.log('autoLogin = ',msg);
     requestAsync(msg).then(res => {
-        setStore('user/isLogin', true);
         setStore('flags/doLoginSuccess',true);
+        setStore('user/isLogin', true);
         setStore('flags/hasLogined',true,false);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
         console.log('自动登录成功-----------',res);
     }).catch((res) => {
@@ -213,8 +214,8 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
         console.log('============================好嗨号acc_id:',r.acc_id);
         setStore('user/info/acc_id',r.acc_id,false);
         applyAutoLogin();
-        setStore('user/isLogin', true);
         setStore('flags/doLoginSuccess',true);
+        setStore('user/isLogin', true);
         setStore('flags/hasLogined',true,false);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
     }).catch(err => {
         console.log('defaultLogin err',JSON.stringify(err));
@@ -316,14 +317,16 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
 /**
  * 注销账户
  */
-export const logoutAccount = (save:boolean = true) => {
+// tslint:disable-next-line:max-func-body-length
+export const logoutAccount = async (save:boolean = true) => {
+    let accounts = await getAllAccount();
     const wallet = getStore('wallet');
     setStore('flags/saveAccount', false , false); // 重置saveAccount
     if (save && wallet.setPsw) {
-        setStore('flags/saveAccount', true);
+        setStore('flags/saveAccount', true,false);
     }
     
-    setStore('user/token','');
+    setStore('user/token','',false);
     const uid = getStore('user/id');
     const user = {
         id: '',                      // 该账号的id
@@ -376,10 +379,10 @@ export const logoutAccount = (save:boolean = true) => {
         psw:'',
         open:false
     };
+    setStore('user',user);
     setStore('wallet',null,false);
     setStore('cloud',cloud,false);
-    setStore('user',user);
-    setStore('activity',activity);
+    setStore('activity',activity,false);
     setStore('setting/lockScreen',lockScreen);
     setStore('flags/doLogoutSuccess',true);  // 登出钱包
     setBottomLayerReloginMsg('','','');
@@ -387,20 +390,32 @@ export const logoutAccount = (save:boolean = true) => {
     setTimeout(() => {
         openConnect();
     },100);
+    clearAllTimer();
+    console.log('logoutAccount uid1 = ',uid);
     
-    return getAllAccount().then(accounts => {
-        const flags = getStore('flags');
-        const saveAccount = flags.saveAccount;
-        if (saveAccount) {
-            return accounts;
-        } else {
-            accounts = accounts.filter(account => {
-                return account.user.id !== uid;
-            });
-
-            return accounts;
-        }
+    const uids = [];
+    accounts.forEach(item => {
+        uids.push(item.user.id);
     });
+    console.log('logoutAccount uids = ',JSON.stringify(uids));
+    const flags = getStore('flags');
+    const saveAccount = flags.saveAccount;
+    if (saveAccount) {
+        return accounts;
+    } else {
+        accounts = accounts.filter(account => {
+            return account.user.id !== uid;
+        });
+
+        const filterUids = [];
+        accounts.forEach(item => {
+            filterUids.push(item.user.id);
+        });
+        console.log('logoutAccount uid2 = ',uid);
+        console.log('logoutAccount filterUids = ',JSON.stringify(filterUids));
+
+        return accounts;
+    }
 };
 
 /**
@@ -460,10 +475,11 @@ export const loginSuccess = (account:Account,secretHash:string) => {
         cloudWallet.balance = localCloudWallets.get(key).balance;
     }
 
-    setStore('wallet',wallet,false);
-    setStore('cloud',cloud,false);
+    setStore('wallet',wallet);
+    setStore('cloud',cloud);
     setStore('user',user);
     openConnect(secretHash);
+    initDataCenter();
 };
 
 // 注册store

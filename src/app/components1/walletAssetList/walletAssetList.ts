@@ -5,7 +5,7 @@ import { notify } from '../../../pi/widget/event';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { getModulConfig } from '../../publicLib/modulConfig';
-import { calCurrencyLogoUrl, getCurrencyUnitSymbol, rippleShow } from '../../utils/tools';
+import { calCurrencyLogoUrl, rippleShow } from '../../utils/tools';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

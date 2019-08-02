@@ -32,6 +32,7 @@ export const getUserInfo = (userInfo1?:any) => {
     }
     
     return promise.then(userInfo => {
+        console.log('getUserInfo userInfo = ',userInfo);
         const nickName = userInfo.nickName;
         const phoneNumber = userInfo.phoneNumber;
         const isRealUser = userInfo.isRealUser;
@@ -138,14 +139,8 @@ export const copyToClipboard = (copyText) => {
  */
 export const popPswBox = (content = [],onlyOk:boolean = false,cancelDel:boolean = false):Promise<string> => {
     return new Promise(async (resolve) => {
-        const name = 'app-components-modalBoxInput-modalBoxInput';
-        if (!lookup(name)) {
-            const name1 = name.replace(/-/g,'/');
-            const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
-            await piLoadDir(sourceList);
-        }
         const BoxInputTitle = Config[getLang()].userInfo.PswBoxInputTitle;
-        popNew('app-components-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content,onlyOk }, (r: string) => {
+        popNew('app-components1-modalBoxInput-modalBoxInput', { itype: 'password', title: BoxInputTitle, content,onlyOk }, (r: string) => {
             resolve(r);
             if (!r && cancelDel) popPswBox(content,onlyOk,cancelDel);
         }, (forgetPsw:boolean) => {
@@ -467,10 +462,10 @@ export const judgeAddressAvailable = (ctype: string, addr: string) => {
  // 水波纹动画效果展示
 export const rippleShow = (e:any) => {
     getRealNode(e.node).classList.add('ripple');
-
+    
     setTimeout(() => {
         getRealNode(e.node).classList.remove('ripple');
-    }, 500);
+    }, 300);
 };
 
 /**
@@ -744,7 +739,7 @@ export const goRecharge = () => {
     getCloudBalances().then(cloudBalances => {
         const scBalance = cloudBalances.get(CloudCurrencyType.SC);
         callGoRecharge(scBalance,0).then(([err,res]) => {
-            if (err) {
+            if (err !== 'cancel recharge') {
                 popNewMessage('支付失败');
                 console.log('支付失败 err',err);
 

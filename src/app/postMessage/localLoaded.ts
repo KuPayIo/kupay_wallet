@@ -8,7 +8,12 @@ const sourceLoadedCallbackList = [];   // 资源加载完成回调
 
 // 设置回调
 export const setSourceLoadedCallbackList = (cb:Function) => {
-    sourceLoadedCallbackList.push(cb);
+    if (sourceLoaded) {
+        cb();
+    } else {
+        sourceLoadedCallbackList.push(cb);
+    }
+   
 };
 
 // 获取sourceLoaded

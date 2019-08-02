@@ -18,6 +18,22 @@ let popFloatBoxClose;
 // 当前打开的webviewName
 let curWebviewName;
 
+let hasEnterGame = false;   // 是否进入游戏  锁屏判断是否从游戏退出，是就不展示锁屏界面
+
+/**
+ * 设置hasEnterGame
+ */
+export const setHasEnterGame = (entered:boolean) => {
+    hasEnterGame = entered;
+};
+
+/**
+ * 获取hasEnterGame
+ */
+export const getHasEnterGame = () => {
+    return hasEnterGame;
+};
+
 // 退出钱包后关闭悬浮框和游戏
 logoutWallet(() => {
     closePopFloatBox();
@@ -81,7 +97,7 @@ export const inviteFriends = (webviewName: string) => {
  */
 export const gotoGameService = (webviewName: string) => {
     console.log('wallet gotoGameService called');
-    if (!chatGetStore('uid')) {
+    if (!chatGetStore('uid') || !chatGetStore('isLogin')) {
         const isLoginCb = (uid:number) => {
             gotoGameService1(webviewName);
             chatUnregister('uid',isLoginCb);
@@ -106,7 +122,7 @@ const gotoGameService1 = (webviewName: string) => {
  */
 export const gotoOfficialGroupChat = (webviewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
-    if (!chatGetStore('uid')) {
+    if (!chatGetStore('uid') || !chatGetStore('isLogin')) {
         const isLoginCb = (uid:number) => {
             gotoOfficialGroupChat1(webviewName);
             chatUnregister('uid',isLoginCb);

@@ -55,7 +55,7 @@ export class ModalBoxInput extends Widget {
      * 忘记密码
      */
     public foegetPsw() {
-        this.cancel && this.cancel(true);
+        this.cancel && this.cancel(true); 
         const modalBox = { 
             zh_Hans:{
                 title:'忘记密码？',
@@ -78,7 +78,9 @@ export class ModalBoxInput extends Widget {
         },() => {   // 取消删除钱包
             console.log('联系客服');
             getChatUid(getLocalStorage('officialService').HAOHAI_SERVANT).then((r) => {
-                popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER });
+                popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER },() => {
+                    this.props.officialServiceCb && this.props.officialServiceCb();
+                });
             });
         });      
     }
