@@ -67,8 +67,10 @@ winit.initNext = function () {
 	console.time("update check");
 	var h5UpdateMod = pi_modules.update.exports;
 	var appUpdateMod = pi_modules.appUpdate.exports;
+	var start = new Date().getTime();
 	appUpdateMod.init(function () {
 		appUpdateMod.needUpdate(function (isNeedUpdate) {
+			 self.checkUpdateTime = new Date().getTime() - start;
 			if (isNeedUpdate > 0) {
 				var updateContent = [];
 				if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) { // android
@@ -160,8 +162,7 @@ winit.initNext = function () {
 				version:updateVersion
 			};
 			pi_update.modifyContent(option);
-			var start = new Date().getTime();
-			var total;
+			
 			h5UpdateMod.update(function (e) {
 				//{type: "saveFile", total: 4, count: 1}
 				console.log("update progress: ", e);
@@ -173,17 +174,6 @@ winit.initNext = function () {
 					// 重启
 					h5UpdateMod.reload();
 				},200);
-				var updateTime = new Date().getTime() - start;
-				self.updateMsg = { total,updateTime };
-				var timeArrStr = localStorage.getItem('timeArr');
-				let timeArr;
-				if (timeArrStr) {
-					timeArr = JSON.parse(timeArrStr);
-				} else {
-					timeArr = [];
-				}
-				timeArr.push({ updateMsg });
-				localStorage.setItem('timeArr',JSON.stringify(timeArr));
 			});
 		} else {
 			// 这里是项目加载的开始
@@ -420,7 +410,7 @@ winit.initNext = function () {
 				} else {
 					timeArr = [];
 				}
-				timeArr.push({ homeEnter:self.homeEnter,getData:self.getData,closeBg });
+				timeArr.push({ homeEnter:self.homeEnter,getData:self.getData,closeBg,checkUpdateTime:self.checkUpdateTime });
 				localStorage.setItem('timeArr',JSON.stringify(timeArr));
 			   	loadLeftSource();
 			});

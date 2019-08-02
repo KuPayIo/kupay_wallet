@@ -21,26 +21,27 @@ export class ExchangeDetail extends Widget {
     public language:any;
 
     public setProps(props: Json, oldProps?: Json)  {
-        super.setProps(props,oldProps);
         this.language = this.config.value[getLang()];
         this.props = {
-            ...this.props,
-            message:this.props.message ? this.props.message :this.language.defaultMess,
+            ...props,
+            userHead:props.userHead ? props.userHead : '',
+            userName:props.userName ? props.userName : '',
+            message:props.message ? props.message :this.language.defaultMess,
             redBagList:[
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' },
                 // { cuid:111,amount:1,timeShow:'04-30 14:32:00' }                    
             ],
             scroll:false,
-            showPin:this.props.rtype === 1,  // 0 等额红包  1 拼手气红包
-            userName:'',
-            userHead:'',
+            showPin:props.rtype === 1,  // 0 等额红包  1 拼手气红包
             curNum:0,
             totalNum:0,
             totalAmount:0,
             greatUser:-1,
             greatAmount:0
+            
         };
+        super.setProps(this.props,oldProps);
         this.initData();
     }
 

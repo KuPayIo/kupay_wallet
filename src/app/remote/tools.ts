@@ -503,7 +503,10 @@ export const fetchCloudWalletAssetList = () => {
     };
     assetList.push(gtItem);
     for (const k in CloudCurrencyType) {
-        const hidden = getModulConfig('CLOUDASSETSHIDDEN');
+        let hidden = [];
+        if (getModulConfig('IOS')) {
+            hidden = getModulConfig('IOSCLOUDASSETSHIDDEN');
+        }
         if (hidden.indexOf(k) >= 0) continue;
         const item: any = {};
         if (MainChainCoin.hasOwnProperty(k)) {
