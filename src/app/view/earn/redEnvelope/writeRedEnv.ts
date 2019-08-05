@@ -34,6 +34,7 @@ interface Props {
     ktBalance:number;    // KT余额
     inFlag?:string;  // 从哪里进入 chat
     ktShow:string;  // KT名称
+    acc_id:string;
 }
 
 export class WriteRedEnv extends Widget {
@@ -56,7 +57,8 @@ export class WriteRedEnv extends Widget {
         realUser: false,
         forceHide:false,
         ktBalance:0,
-        inFlag:''
+        inFlag:'',
+        acc_id:""
     };
 
     public create() {
@@ -65,6 +67,7 @@ export class WriteRedEnv extends Widget {
         this.updateBalance();
         getUserInfo().then(userInfo => {
             this.props.realUser = userInfo.isRealUser || !!userInfo.phoneNumber;
+            this.props.acc_id = userInfo.acc_id;
         });
         const isIos = getModulConfig('IOS');
         if (isIos) {
@@ -273,7 +276,8 @@ export class WriteRedEnv extends Widget {
             console.log('发红包成功了');
             this.ok({
                 message: lm,
-                rid: rtype + rid  // 红包的ID
+                rid: rtype + rid,  // 红包的ID
+                acc_id:this.props.acc_id
             });
         } else {
             popNew('app-view-earn-redEnvelope-sendRedEnv', {

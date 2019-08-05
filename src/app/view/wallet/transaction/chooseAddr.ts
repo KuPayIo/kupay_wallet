@@ -2,8 +2,8 @@
  * choose addr
  */
 import { Widget } from '../../../../pi/widget/widget';
+import { defaultPassword } from '../../../config';
 import { callGetAddrsInfoByCurrencyName, callGetCurrentAddrInfo,getStoreData, setStoreData } from '../../../middleLayer/wrap';
-import { defaultPassword } from '../../../utils/constants';
 import { parseAccount, popPswBox } from '../../../utils/tools';
 import { createNewAddr } from '../../../viewLogic/localWallet';
 

@@ -67,8 +67,10 @@ winit.initNext = function () {
 	console.time("update check");
 	var h5UpdateMod = pi_modules.update.exports;
 	var appUpdateMod = pi_modules.appUpdate.exports;
+	var start = new Date().getTime();
 	appUpdateMod.init(function () {
 		appUpdateMod.needUpdate(function (isNeedUpdate) {
+			 self.checkUpdateTime = new Date().getTime() - start;
 			if (isNeedUpdate > 0) {
 				var updateContent = [];
 				if (navigator.userAgent.indexOf('YINENG_ANDROID') >= 0) { // android
@@ -160,8 +162,7 @@ winit.initNext = function () {
 				version:updateVersion
 			};
 			pi_update.modifyContent(option);
-			var start = new Date().getTime();
-			var total;
+			
 			h5UpdateMod.update(function (e) {
 				//{type: "saveFile", total: 4, count: 1}
 				console.log("update progress: ", e);
@@ -173,17 +174,6 @@ winit.initNext = function () {
 					// 重启
 					h5UpdateMod.reload();
 				},200);
-				var updateTime = new Date().getTime() - start;
-				self.updateMsg = { total,updateTime };
-				var timeArrStr = localStorage.getItem('timeArr');
-				let timeArr;
-				if (timeArrStr) {
-					timeArr = JSON.parse(timeArrStr);
-				} else {
-					timeArr = [];
-				}
-				timeArr.push({ updateMsg });
-				localStorage.setItem('timeArr',JSON.stringify(timeArr));
 			});
 		} else {
 			// 这里是项目加载的开始
@@ -264,9 +254,9 @@ winit.initNext = function () {
 			console.log("stage webview goReady");
 			WebViewManager.getReady("firstStage");   // 通知一阶段准备完毕
 			// 继续加载首页所需
+			loadWalletFirstPageSource();  //钱包
 			loadChatSource();  // 聊天
 			loadEarnSource();  // 活动
-			loadWalletFirstPageSource();  //钱包
 			loadImages(); // 预加载图片
 			if(!pi_update.inApp){
 				vmLoaded();
@@ -320,7 +310,6 @@ winit.initNext = function () {
 			"app/view/base/",
 			"app/components1/",
 			"app/res/css/",
-			"app/res/js/",
 			"app/view/play/home/",
 			"app/view/wallet/home/",
 			"earn/client/app/res/css/",
@@ -336,7 +325,6 @@ winit.initNext = function () {
 			tab.timeout = 90000;
 			tab.release();
 			fpFlags.walletReady = true;
-			
 
 			enterApp();
 			
@@ -356,8 +344,7 @@ winit.initNext = function () {
 			"chat/client/app/view/contactList/contactItem.tpl",
 			"chat/client/app/view/contactList/contactItem.js",
 			"chat/client/app/view/contactList/contactItem.wcss",
-			"chat/client/app/widget/imgShow/",
-			"chat/client/app/widget/topBar/"
+			"chat/client/app/widget/imgShow/"
 		]; 
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.timeEnd("fp loadChatSource");
@@ -368,7 +355,6 @@ winit.initNext = function () {
 			tab.release();
 			fpFlags.chatReady = true;
 			enterApp();
-			
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		},dirProcess.handler);
@@ -396,7 +382,6 @@ winit.initNext = function () {
 			console.log("load loadEarnSource-----------------");
 			fpFlags.earnReady = true;
 			enterApp();
-			
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -420,7 +405,7 @@ winit.initNext = function () {
 				} else {
 					timeArr = [];
 				}
-				timeArr.push({ homeEnter:self.homeEnter,getData:self.getData,closeBg });
+				timeArr.push({ homeEnter:self.homeEnter,getData:self.getData,closeBg,checkUpdateTime:self.checkUpdateTime });
 				localStorage.setItem('timeArr',JSON.stringify(timeArr));
 			   	loadLeftSource();
 			});

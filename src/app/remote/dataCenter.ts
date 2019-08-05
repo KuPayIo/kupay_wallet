@@ -74,7 +74,10 @@ class DataCenter {
             }
         });
         list.forEach(v => {
-            this.timerUpdateBalance(v.addr, v.currencyName);
+            setTimeout(() => {
+                this.timerUpdateBalance(v.addr, v.currencyName);
+            },0);
+            
             neededRefreshCount++;
         });
 
@@ -94,7 +97,9 @@ class DataCenter {
             }
         });
         list.forEach(v => {
-            this.updateAddrInfo(v.addr, v.currencyName);
+            setTimeout(() => {
+                this.updateAddrInfo(v.addr, v.currencyName);
+            },0);
             neededRefreshCount++;
         });
 
@@ -117,7 +122,9 @@ class DataCenter {
         if (!wallet) return;
         wallet.showCurrencys.forEach(currencyName => {
             if (ERC20Tokens[currencyName]) {
-                this.fetchErc20GasLimit(currencyName);
+                setTimeout(() => {
+                    this.fetchErc20GasLimit(currencyName);
+                },0);
             }
         });
     }

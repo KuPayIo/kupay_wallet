@@ -1,7 +1,7 @@
 import { Widget } from '../../../pi/widget/widget';
+import { defaultPassword } from '../../config';
 import { openWSConnect } from '../../middleLayer/wrap';
 import { CreateWalletOption } from '../../publicLib/interface';
-import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewMessage } from '../../utils/tools';
 import { CreateWalletType, touristLogin } from '../../viewLogic/localWallet';
 

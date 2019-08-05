@@ -1,9 +1,9 @@
 import { popNew } from '../../pi/ui/root';
+import { defaultPassword } from '../config';
 // tslint:disable-next-line:max-line-length
 import { callDefaultLogin, callGetOpenId, callGetRandom, callLogoutAccount,callVerifyIdentidy, getStoreData, openWSConnect } from '../middleLayer/wrap';
 import { getSourceLoaded } from '../postMessage/localLoaded';
 import { CMD } from '../publicLib/config';
-import { defaultPassword } from '../utils/constants';
 import { closeAllPage, delPopPhoneTips, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
 import { registerStoreData } from './common';
 

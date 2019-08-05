@@ -3,11 +3,11 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
+import { defaultPassword } from '../../config';
 import { callDeleteAccount, callLoginSuccess,callVerifyIdentidy1, openWSConnect } from '../../middleLayer/wrap';
 import { uploadFileUrlPrefix } from '../../publicLib/config';
 import { CreateWalletOption } from '../../publicLib/interface';
 import { getModulConfig } from '../../publicLib/modulConfig';
-import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewLoading, popNewMessage } from '../../utils/tools';
 import { CreateWalletType, touristLogin } from '../../viewLogic/localWallet';
 
