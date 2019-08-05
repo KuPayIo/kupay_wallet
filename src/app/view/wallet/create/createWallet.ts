@@ -5,8 +5,7 @@ import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { openWSConnect,setStoreData } from '../../../middleLayer/wrap';
 import { uploadFile } from '../../../net/pull';
-import { pswEqualed, walletNameAvailable } from '../../../utils/account';
-import { imgResize, playerName, popNew3, popNewMessage } from '../../../utils/tools';
+import { imgResize, playerName, popNew3, popNewMessage, pswEqualed, walletNameAvailable } from '../../../utils/tools';
 import { createWallet, CreateWalletType } from '../../../viewLogic/localWallet';
 import { selectImage } from '../../../viewLogic/native';
 interface Props {

@@ -10,6 +10,7 @@ import { Callback } from '../../pi/util/util';
 import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
+import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from '../config';
 import { callGetAccountDetail, callGoRecharge, getStoreData, setStoreData } from '../middleLayer/wrap';
 import { getSourceLoaded } from '../postMessage/localLoaded';
 import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../publicLib/config';
@@ -19,7 +20,6 @@ import { SettingLanguage } from '../view/base/app';
 import { getCloudBalances } from '../viewLogic/common';
 import { logoutAccount } from '../viewLogic/login';
 import { piLoadDir, piRequire } from './commonjsTools';
-import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from './constants';
 /**
  * 获取用户基本信息
  */
@@ -164,6 +164,7 @@ export const popNewMessage = (content: any) => {
         popNew(name, { content });
     }
 };
+
 // 弹出loading
 export const popNewLoading = (text: any) => {
     return popNew('app-components1-loading-loading', { text });
@@ -405,27 +406,6 @@ export const mnemonicFragmentDecrypt = (fragment: string) => {
     };
 };
 
-/**
- * 判断是否是有效的货币地址
- */
-export const isValidAddress = (addr: string, currencyName: string) => {
-    if (currencyName === 'BTC') {
-        // todo
-    } else {
-        return isETHValidAddress(addr);
-    }
-};
-
-/**
- * 判断是否是有效的ETH地址
- */
-const isETHValidAddress = (addr: string) => {
-    if (!addr || !addr.startsWith('0x') || addr.length !== 42) return false;
-    if (isNaN(Number(addr))) return false;
-
-    return true;
-};
-
 declare var pi_modules;
 
 // 获取本地版本号
@@ -558,6 +538,7 @@ export const getPopPhoneTips = () => {
 
     return modalBox[getLang()];
 };
+
 // 检查手机弹框提示
 export const checkPopPhoneTips = () => {
     return Promise.all([getStoreData('user/info/phoneNumber'),getStoreData('user/id')]).then(([phoneNumber,uid]) => {
@@ -775,4 +756,62 @@ export const throttle = (func) => {
             lastTime = nowTime;
         }
     };
+};
+
+// ======================================================================================================================
+
+/**
+ * 钱包名称是否合法
+ * @param walletName wallet name
+ */
+export const walletNameAvailable = (walletName) => {
+    
+    return getStrLen(walletName.trim()) >= 1 && getStrLen(walletName.trim()) <= 20;
+};
+
+/**
+ * 修改钱包名称
+ * @param walletName wallet name
+ */
+export const changeWalletName = (walletName:string) => {
+    return getStoreData('user/info').then(userInfo => {
+        userInfo.nickName = walletName;
+        setStoreData('user/info', userInfo);
+    });
+    
+};
+
+/**
+ * 钱包密码是否合乎规则
+ * @param walletPsw  wallet password
+ */
+export const walletPswAvailable = (walletPsw:string) => {
+    const reg = /^[.@$&*#a-zA-Z0-9]{8,}$/;
+
+    return reg.test(walletPsw.trim());
+};
+
+/**
+ * 判断密码是否相等
+ * @param psw1 password one
+ * @param psw2 password two
+ */
+export const pswEqualed = (psw1, psw2) => {
+    if (!psw1 || !psw2) return false;
+    
+    return psw1.trim() === psw2.trim();
+};
+
+/**
+ * 名字显示截取
+ */
+export const nickNameInterception = (name: string): string => {
+    let ret = '';
+    if (name.length > 6) {
+        ret = `${name.slice(0, 6)}...`;
+    } else {
+        ret = name;
+    }
+
+    return ret;
 };

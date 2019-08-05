@@ -5,11 +5,11 @@
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
+import { defaultPassword } from '../../../config';
 // tslint:disable-next-line:max-line-length
 import { callDcInitErc20GasLimit, callDcRefreshAllTx, callDeleteAccount, callGetAllAccount,callGetRandom,getStoreData, setStoreData } from '../../../middleLayer/wrap';
 import { regPhone, verifyPhone } from '../../../net/pull';
 import { CreateWalletOption } from '../../../publicLib/interface';
-import { defaultPassword } from '../../../utils/constants';
 import { delPopPhoneTips, playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { phoneImport } from '../../../viewLogic/localWallet';
 import { logoutAccount } from '../../../viewLogic/login';

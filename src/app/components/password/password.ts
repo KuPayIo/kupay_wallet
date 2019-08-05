@@ -37,7 +37,7 @@ export class ImgRankItem extends Widget {
         super();
     }
 
-    public setProps(props: Json, oldProps: Json) {
+    public setProps(props: Props, oldProps: Json) {
         super.setProps(props,oldProps);
         this.props = {
             ...this.props,

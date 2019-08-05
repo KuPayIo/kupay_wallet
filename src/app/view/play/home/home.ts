@@ -30,31 +30,36 @@ export class PlayHome extends Widget {
     
     constructor() {
         super();
-        this.thirdApiPromise = new Promise((resolve) => {
-            const path = 'app/api/thirdApi.js.txt';
-            loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
-                const arr = new Uint8Array(fileMap[path]);
-                const content = new TextDecoder().decode(arr);
-                resolve(content);
-            }, () => {
-                //
-            }, () => {
-                //
+        setTimeout(() => {
+            this.thirdApiPromise = new Promise((resolve) => {
+                const path = 'app/api/thirdApi.js.txt';
+                loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
+                    const arr = new Uint8Array(fileMap[path]);
+                    const content = new TextDecoder().decode(arr);
+                    resolve(content);
+                }, () => {
+                    //
+                }, () => {
+                    //
+                });
             });
-        });
+        },0);
 
-        this.thirdApiDependPromise = new Promise((resolve) => {
-            const path = 'app/api/thirdApiDepend.js.txt';
-            loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
-                const arr = new Uint8Array(fileMap[path]);
-                const content = new TextDecoder().decode(arr);
-                resolve(content);
-            }, () => {
-                //
-            }, () => {
-                //
+        setTimeout(() => {
+            this.thirdApiDependPromise = new Promise((resolve) => {
+                const path = 'app/api/thirdApiDepend.js.txt';
+                loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
+                    const arr = new Uint8Array(fileMap[path]);
+                    const content = new TextDecoder().decode(arr);
+                    resolve(content);
+                }, () => {
+                    //
+                }, () => {
+                    //
+                });
             });
-        });
+        },0);
+       
     }
     
     public setProps(props:Json) {

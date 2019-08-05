@@ -475,7 +475,9 @@ const accountChange = () => {
         if (!storeUser.id) {
             const flags = getStore('flags');
             const saveAccount = flags.saveAccount;
-            localAccounts.accounts[localAccounts.currenctId].wallet.logoutTimestamp = new Date().getTime();
+            const account = localAccounts.accounts[localAccounts.currenctId];
+            if (!account) return;
+            account.wallet.logoutTimestamp = new Date().getTime();
             if (saveAccount) {
                 localAccounts.currenctId = '';
                 setLocalStorage('accounts', localAccounts);

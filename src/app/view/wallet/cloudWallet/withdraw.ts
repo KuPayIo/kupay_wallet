@@ -4,11 +4,10 @@
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
-import { withdrawMinerFee } from '../../../config';
+import { withdrawLimit, withdrawMinerFee } from '../../../config';
 import { callGetAddrsInfoByCurrencyName,callGetCurrentAddrInfo, getStoreData } from '../../../middleLayer/wrap';
 import { CloudCurrencyType } from '../../../publicLib/interface';
 import { getModulConfig } from '../../../publicLib/modulConfig';
-import { withdrawLimit } from '../../../utils/constants';
 import { parseAccount, popNewMessage, popPswBox } from '../../../utils/tools';
 import { getCloudBalances } from '../../../viewLogic/common';
 import { withdraw } from '../../../viewLogic/localWallet';
