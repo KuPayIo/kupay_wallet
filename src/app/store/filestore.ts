@@ -27,8 +27,8 @@ export const initFileStore = () => {
 
 /**
  * 往indexdb写数据
- */
-export const writeFile = (key: string,data:any,okCB?,errCB?) => {
+ */ 
+export const writeFile = (key: string,data:any,okCB?,errCB?) => {  
     if (!initSuccess) return;
     mod.write(impl,key,JSON.stringify(data),() => {
         // console.log(`写入indexDB成功 key = ${key},value = ${JSON.stringify(data)}`);

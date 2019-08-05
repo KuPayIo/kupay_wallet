@@ -453,6 +453,11 @@
 				winit.severIp = "192.168.31.10";
 				winit.severPort = "80";		
 			}
+			if(inApp){   // 移动端文件夹名
+				winit.walletName = "browser";
+			}else{       // pc端文件夹名
+				winit.walletName = "wallet";
+			}
 
 			// if(!winit.isLoc){ // 浏览器版本自动识别
 			// 	winit.severIp = main;
@@ -705,11 +710,11 @@
 			winit.startImpl = function () {
 				if (winit.debug) {
 					winit.loadJS(winit.getLoadDomain("hotfix.js"),
-						"/wallet_browser/app/boot/hotfix.js", "utf8", winit.initFail, "load hotupdate error");
+						"/"+ winit.walletName + "/app/boot/hotfix.js", "utf8", winit.initFail, "load hotupdate error");
 				}
-
 				winit.loadJS(winit.getLoadDomain("index.js"),
-					"/wallet_browser/app/boot/index.js?" + Math.random(), "utf8", winit.initFail, "load index error");
+				    "/"+ winit.walletName + "/app/boot/index.js?" + Math.random(), "utf8", winit.initFail, "load index error");
+				
 			}
 
 			if (document.hidden === true)
