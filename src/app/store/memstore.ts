@@ -18,7 +18,7 @@ import { deleteFile, getFile, getLocalStorage, initFileStore, initLocalStorageFi
  * 初始化store
  */
 export const initStore = () => {
-    registerFileStore();    // 注册监听
+    registerFileStore();    // 注册监听 
         
     return initFile().then(() => {
         initSettings();         // 设置初始化

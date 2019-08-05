@@ -167,7 +167,6 @@ winit.initNext = function () {
 				//{type: "saveFile", total: 4, count: 1}
 				console.log("update progress: ", e);
 				pi_update.updateProgress(e);
-				total = e.total;
 			}, function () {
 				setTimeout(()=>{
 					pi_update.closePop();
