@@ -1,3 +1,4 @@
+import { sourceIp } from '../publicLib/config';
 
 /**
  * 第三方注入配置
@@ -14,6 +15,6 @@ export const getPi3Config = () => {
         buttonMods:ButtonMods,   // 所有按钮模式
         buttonMod:ButtonMods.FLOATBUTTON2,   // 当前按钮模式
         jsApi:'app/remote/JSAPI',
-        imgUrlPre:'http://192.168.31.10/wallet/app/res/image/third/'
+        imgUrlPre:`http://${sourceIp}/browser/app/res/image/third/`
     };
 };
