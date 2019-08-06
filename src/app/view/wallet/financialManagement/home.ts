@@ -48,10 +48,10 @@ export class Home extends Widget {
             totalAsset:formatBalanceValue(0),
             refreshing:false
         };
-        Promise.all([callFetchCloudTotalAssets(),callFetchLocalTotalAssets()]).then(([cloudTotal,localTotal]) => {
-            this.props.totalAsset = formatBalanceValue(cloudTotal + localTotal);
-            this.paint();
-        });
+        // Promise.all([callFetchCloudTotalAssets(),callFetchLocalTotalAssets()]).then(([cloudTotal,localTotal]) => {
+        //     this.props.totalAsset = formatBalanceValue(cloudTotal + localTotal);
+        //     this.paint();
+        // });
     }
     public tabsChangeClick(event: any, value: number) {
         this.props.activeNum = value;

@@ -125,13 +125,13 @@ export class ExchangeHistory extends Widget {
         const data = await getData('convertRedEnvelope');
         if (data.value && data.value !== '$nil') {
             this.props.inviteObj = {
-                suid: 0,
+                suid: data.value[0],
                 rid: '-1',
                 rtype: '99',
                 rtypeShow: parseRtype(99,localStorage.getItem(SettingLanguage) || appLanguageList[appLanguageList.zh_Hans]),
                 ctypeShow: '银锄',
                 amount: 1,
-                time: data.value,
+                time: data.value[1],
                 timeShow: timestampFormat(Number(data.value)),
                 userName:this.language.inviteRedEnv
             };

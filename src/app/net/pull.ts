@@ -30,7 +30,7 @@ export const inputInviteCdKey = async (code) => {
     try {
         const res = await callRequestAsync(msg);
 
-        return [res];
+        return [res.fuid];
     } catch (err) {
         console.log('input_cd_key--------',err);
         showError(err && (err.result || err.type));
