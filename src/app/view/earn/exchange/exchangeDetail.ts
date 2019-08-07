@@ -63,14 +63,6 @@ export class ExchangeDetail extends Widget {
     }
 
     public async initData() {
-        const value = await callQueryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);
-        if (!value) return;
-        this.props.redBagList = value[0];        
-        this.props.message = value[1];
-        this.props.curNum = value[2];
-        this.props.totalNum = value[3];
-        this.props.totalAmount = value[4];
-
         if (this.props.suid) {
             const user = await callGetOneUserInfo([this.props.suid]);
             console.log('exchange detail user',user);
@@ -78,7 +70,14 @@ export class ExchangeDetail extends Widget {
             this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
             this.props.userHead = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../../res/image/default_avater_big.png';
         }
-
+        
+        const value = await callQueryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);
+        if (!value) return;
+        this.props.redBagList = value[0];        
+        this.props.message = value[1];
+        this.props.curNum = value[2];
+        this.props.totalNum = value[3];
+        this.props.totalAmount = value[4];
         const redBagList = value[0];
         if (!this.props.ctypeShow) {
             this.props.ctypeShow = currencyType(CloudCurrencyType[redBagList[0].ctype]);
