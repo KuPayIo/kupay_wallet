@@ -951,7 +951,10 @@ class DataCenter {
         const delay = delaySeconds * 1000;
 
         const wallet = getStore('wallet');
-        const currencyList = wallet.showCurrencys;
+        let currencyList = [];
+        if (wallet) {
+            currencyList = wallet.showCurrencys;
+        }
         // for (const k in MainChainCoin) {
         //     currencyList.push(k);
         // }
