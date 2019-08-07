@@ -22,8 +22,8 @@ const appModulConfig = {
     WECHAT_ACCOUNT:'app/res/image/wechat_pn.jpg',  // 微信公众号二维码
     QQ_CODE:'1598787032',                               // qq号
     PAY_DOMAIN:'https://app.herominer.net',   // 支付注册域名
-    CONTACTUSDESC:'好玩又赚钱',                  // 联系我们文字描述
-    ABOUTUSDESC:'好玩又赚钱',                   // 关于我们文字描述
+    CONTACTUSDESC:'',                  // 联系我们文字描述
+    ABOUTUSDESC:'',                   // 关于我们文字描述
     KT_SHOW : '嗨豆',                    // KT界面显示文字
     ST_SHOW : '碎银',                    // ST界面显示文字
     SC_SHOW : '银两'                     // SC界面显示文字

@@ -64,12 +64,13 @@ export class ExchangeDetail extends Widget {
 
     public async initData() {
         if (this.props.suid) {
-            const user = await callGetOneUserInfo([this.props.suid]);
-            console.log('exchange detail user',user);
-            if (!user) return;
-            this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
-            this.props.userHead = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../../res/image/default_avater_big.png';
-            this.paint();
+            callGetOneUserInfo([this.props.suid]).then(user => {
+                console.log('exchange detail user',user);
+                if (!user) return;
+                this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
+                this.props.userHead = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../../res/image/default_avater_big.png';
+                this.paint();
+            });
         }
         
         const value = await callQueryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);
