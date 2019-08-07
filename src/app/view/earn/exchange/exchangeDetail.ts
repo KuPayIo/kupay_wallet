@@ -69,6 +69,7 @@ export class ExchangeDetail extends Widget {
             if (!user) return;
             this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
             this.props.userHead = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../../res/image/default_avater_big.png';
+            this.paint();
         }
         
         const value = await callQueryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);

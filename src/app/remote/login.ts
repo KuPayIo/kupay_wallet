@@ -446,7 +446,7 @@ export const loginSuccess = (account:Account,secretHash:string) => {
                 balance:info.balance,
                 txHistory:[]
             };
-            addrs.push(addrInfo);
+            addrs.push(addrInfo); 
         }
         const record:CurrencyRecord = {
             currencyName: localRecord.currencyName,           
