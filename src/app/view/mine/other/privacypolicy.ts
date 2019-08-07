@@ -2,7 +2,8 @@
  * privacy policy
  */
 import { Widget } from '../../../../pi/widget/widget';
-import { getPrivacyPolicy } from './privacyPolicyText';
+import { getModulConfig } from '../../../publicLib/modulConfig';
+import { getIosPrivacyPolicy, getPrivacyPolicy } from './privacyPolicyText';
 
 export class PrivacyPolicy extends Widget {
     public ok: () => void;
@@ -12,8 +13,9 @@ export class PrivacyPolicy extends Widget {
 
     public create() {
         super.create();
+        const isIos = getModulConfig('IOS');
         this.props = { 
-            privacyPolicy: getPrivacyPolicy() 
+            privacyPolicy: isIos ? getIosPrivacyPolicy() : getPrivacyPolicy() 
         };
     }
 
