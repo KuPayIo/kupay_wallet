@@ -143,6 +143,9 @@ export class PlayHome extends Widget {
         closePopFloatBox();
         const id = await getStoreData('user/id');
         if (!id) return;
+        popNew3('earn-client-app-view-openBox-openBox');
+        
+        return;
         const isLogin = await getStoreData('user/isLogin');
         if (!isLogin) {
             popNewMessage('登录中,请稍后再试');
@@ -199,6 +202,7 @@ export class PlayHome extends Widget {
      * 默认进入游戏
      */
     public defaultEnterGame() {
+        return;
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
         getStoreData('user/isLogin').then(isLogin => {
             const phoneNumber = this.props.userInfo.phoneNumber;    
@@ -224,6 +228,6 @@ let hasEnterGame = false;
 registerStoreData('user/isLogin', (isLogin:boolean) => {
     setTimeout(() => {
         const w:any = forelet.getWidget(WIDGET_NAME);
-        w && w.defaultEnterGame();
+        w && w.defaultEnterGame();   
     },400);
 });
