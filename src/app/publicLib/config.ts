@@ -89,7 +89,7 @@ export enum DevMode {
 export const dev_mode:any = DevMode.Ropsten; 
 
 // btc网络
-export const btcNetwork = dev_mode === DevMode.Prod ? 'mainnet' : 'testnet';
+export const btcNetwork = dev_mode === DevMode.Prod ? 'livenet' : 'testnet';
 
 // 主网erc20
 const ERC20TokensMainnet = {
