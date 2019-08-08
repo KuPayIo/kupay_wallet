@@ -122,17 +122,27 @@ export class ExchangeHistory extends Widget {
 
             return;
         }
-        const data = await getData('convertRedEnvelope');
+        let data = await getData('convertRedEnvelope');
         if (data.value && data.value !== '$nil') {
+            data = JSON.parse(data.value);
+            let suid = 0;
+            let timestamp;
+            // 兼容原来的数据
+            if (typeof data === 'object') {   // 存储的是数组
+                suid = data[0];
+                timestamp = Number(data[1]);
+            } else {                           // 存储时间戳
+                timestamp = Number(data.value);
+            }
             this.props.inviteObj = {
-                suid: 0,
+                suid,
                 rid: '-1',
                 rtype: '99',
                 rtypeShow: parseRtype(99,localStorage.getItem(SettingLanguage) || appLanguageList[appLanguageList.zh_Hans]),
                 ctypeShow: '银锄',
                 amount: 1,
-                time: data.value,
-                timeShow: timestampFormat(Number(data.value)),
+                time: timestamp,
+                timeShow: timestampFormat(timestamp),
                 userName:this.language.inviteRedEnv
             };
             setStoreData('activity/luckyMoney/invite',this.props.inviteObj);

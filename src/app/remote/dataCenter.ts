@@ -36,9 +36,9 @@ class DataCenter {
         // 更新黄金价格
         // this.updateGoldPrice();
         // 更新人民币美元汇率
-        // this.updateUSDRate();
+        this.updateUSDRate();
         // 更新货币对比USDT的比率
-        // this.updateCurrency2USDTRate();
+        this.updateCurrency2USDTRate();
         this.initErc20GasLimit();
         this.refreshAllTx();
     }
@@ -950,32 +950,40 @@ class DataCenter {
         const delaySeconds = seconds < 30 ? 30 - seconds : 60 - seconds;
         const delay = delaySeconds * 1000;
 
-        const currencyList = [];
-        for (const k in MainChainCoin) {
-            currencyList.push(k);
+        const wallet = getStore('wallet');
+        let currencyList = [];
+        if (wallet) {
+            currencyList = wallet.showCurrencys;
         }
-        for (const k in ERC20Tokens) {
-            currencyList.push(k);
-        }
+        // for (const k in MainChainCoin) {
+        //     currencyList.push(k);
+        // }
+        // for (const k in ERC20Tokens) {
+        //     currencyList.push(k);
+        // }
         currencyList.forEach(currencyName => {
-            fetchCurrency2USDTRate(currencyName)
-        .then((res: any) => {
-            // okey
-            if (!res.error_code) {
-                const currency2USDTMap = getStore('third/currency2USDTMap');
-                const open = Number(res[0][1]);
-                const close = Number(res[0][4]);
-                currency2USDTMap.set(currencyName, {
-                    open,
-                    close
+            setTimeout(() => {
+                fetchCurrency2USDTRate(currencyName).then((res: any) => {
+                    // okey
+                    if (!res.error_code) {
+                        const currency2USDTMap = getStore('third/currency2USDTMap');
+                        const open = Number(res[0][1]);
+                        const close = Number(res[0][4]);
+                        currency2USDTMap.set(currencyName, {
+                            open,
+                            close
+                        });
+                        setStore('third/currency2USDTMap', currency2USDTMap,false);
+                    }
+                }).catch(res => {
+                        // console.log('fetchCurrency2USDTRate err');
                 });
-                setStore('third/currency2USDTMap', currency2USDTMap);
-            }
-        })
-        .catch(res => {
-          // console.log('fetchCurrency2USDTRate err');
+            },0);
         });
-        });
+        setTimeout(() => {   // 5秒后统一更新  防止rpc调用过多
+            const currency2USDTMap = getStore('third/currency2USDTMap');
+            setStore('third/currency2USDTMap', currency2USDTMap);
+        },5 * 1000);
         setTimeout(() => {
             this.updateCurrency2USDTRate();
         },delay);

@@ -8,13 +8,13 @@ import { getModulConfig } from './publicLib/modulConfig';
 const walletName = getModulConfig('WALLET_NAME');
 
 // 分享链接前缀
-export const sharePerUrl = `http://${sourceIp}/wallet/phoneRedEnvelope/openRedEnvelope.html`;
+export const sharePerUrl = `http://${sourceIp}/browser/phoneRedEnvelope/openRedEnvelope.html`;
 
 // 分享下载链接
-export const shareDownload = `http://${sourceIp}/wallet/phoneRedEnvelope/download.html?${Math.random()}`;
+export const shareDownload = `http://${sourceIp}/browser/phoneRedEnvelope/download.html?${Math.random()}`;
 
 // 邀请好友下载链接
-export const inviteFriends = `http://${sourceIp}/wallet/phoneRedEnvelope/download.html?walletName=${walletName}`;
+export const inviteFriends = `http://${sourceIp}/browser/phoneRedEnvelope/download.html?walletName=${walletName}`;
 
 // 上传图片url
 export const uploadFileUrl = `http://${sourceIp}/service/upload`;

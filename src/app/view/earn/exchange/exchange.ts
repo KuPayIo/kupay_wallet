@@ -100,13 +100,15 @@ export class Exchange extends Widget {
 
                 return;
             }
+            
             value = await inputInviteCdKey(validCode);  // 兑换邀请码
             if (!value) {
                 
                 return;
             }
+            const fuid = value[0];
             value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
-            setData({ key: 'convertRedEnvelope', value: new Date().getTime() });
+            setData({ key: 'convertRedEnvelope', value: JSON.stringify([fuid,new Date().getTime()]) });
             convertAwards(validCode).then((res:any) => {  // 兑换邀请码获得奖励
                 if (res && res.award.length > 0) {
                     const awa = res.award[0];
