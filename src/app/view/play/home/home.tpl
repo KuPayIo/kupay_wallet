@@ -4,6 +4,8 @@
     </div>
     <app-components1-offlineTip-offlineTip>{ offlienType:{{it.offlienType}} }</app-components1-offlineTip-offlineTip>
     <div w-class="body">
-        <div  w-class="game-item" style="background-image: url({{it.gameList[0].img[0]}});" on-tap="gameClick(0)"></div>
+        {{for i,v of it.gameList}}
+        <div  w-class="game-item" style="background-image: url({{it.gameList[0].img[0]}});" on-tap="gameClick({{i}})"></div>
+        {{end}}
     </div>
 </div>

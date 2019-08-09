@@ -3,9 +3,11 @@ import { applyToGroup, getChatUid } from '../../chat/client/app/net/rpc';
 import { GENERATOR_TYPE } from '../../chat/server/data/db/user.s';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
+import { loadDir1 } from '../utils/commonjsTools';
 import { popNew3 } from '../utils/tools';
 import { getGameItem } from '../view/play/home/gameConfig';
 import { logoutWallet } from '../viewLogic/login';
+import { getPi3Config } from './pi3Config';
 
 /**
  * 第三方应用调用的基础功能
@@ -141,4 +143,81 @@ const gotoOfficialGroupChat1 = (webviewName: string) => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
         } });
     });
+};
+
+/**
+ * 打开一个新的webview
+ */
+export const openNewWebview = (payload:{ webviewName: string;url:string;args:Object}) => {
+    const gameItem = getGameItem(payload.webviewName);
+    const pi3Config:any = getPi3Config();
+    pi3Config.appid = gameItem.appid;
+    pi3Config.gameName = gameItem.title.zh_Hans;
+    pi3Config.webviewName = payload.webviewName;
+    pi3Config.buttonMod = gameItem.buttonMod;
+    pi3Config.apkDownloadUrl = gameItem.apkDownloadUrl;
+    pi3Config.fromWallet = true;
+
+    // tslint:disable-next-line:variable-name
+    const pi_sdk = {
+        config:pi3Config
+    };
+    const pi3ConfigStr = `
+        window.pi_sdk = ${JSON.stringify(pi_sdk)};
+    `;
+    const configPromise = Promise.resolve(pi3ConfigStr);
+    if (gameItem.usePi) {
+        configPromise.then((configContent) => {
+            const search = [];
+            if (typeof payload.args === 'object') {
+                for (const k in payload.args) {
+                    search.push(`${k}=${payload.args[k]}`);
+                }
+            }
+            const gameUrl = `${payload.url}?${search.join('&')}`;
+            WebViewManager.open(payload.webviewName, gameUrl, pi3Config.gameName, configContent);
+        });
+    } else {
+        const injectStartPromise = new Promise((resolve) => {
+            const path = 'app/api/injectStart.js.txt';
+            loadDir1([path], fileMap => {
+                const arr = new Uint8Array(fileMap[path]);
+                const content = new TextDecoder().decode(arr);
+                resolve(content);
+            });
+        });
+        const injectEndPromise = new Promise((resolve) => {
+            const path = 'app/api/injectEnd.js.txt';
+            loadDir1([path], fileMap => {
+                const arr = new Uint8Array(fileMap[path]);
+                const content = new TextDecoder().decode(arr);
+                resolve(content);
+            });
+        });
+
+        const piSdkPromise = new Promise((resolve) => {
+            const sdkToolsPath = 'app/pi_sdk/sdkTools.js';
+            const sdkApiPath = 'app/pi_sdk/sdkApi.js';
+            const sdkMainPath = 'app/pi_sdk/sdkMain.js';
+            loadDir1([sdkToolsPath,sdkApiPath,sdkMainPath], fileMap => {
+                // tslint:disable-next-line:max-line-length
+                const arrs = [new Uint8Array(fileMap[sdkToolsPath]),new Uint8Array(fileMap[sdkApiPath]),new Uint8Array(fileMap[sdkMainPath])];
+                const content = new TextDecoder().decode(arrs[0]) + new TextDecoder().decode(arrs[1]) + new TextDecoder().decode(arrs[2]);
+                resolve(content);
+            });
+        });
+        const allPromise = Promise.all([injectStartPromise,configPromise,piSdkPromise,injectEndPromise]);
+        WebViewManager.close(payload.webviewName);
+        allPromise.then(([injectStartContent,configContent,piSdkContent,injectEndContent]) => {
+            const content =  injectStartContent + configContent + piSdkContent + injectEndContent;
+            const search = [];
+            if (typeof payload.args === 'object') {
+                for (const k in payload.args) {
+                    search.push(`${k}=${payload.args[k]}`);
+                }
+            }
+            const gameUrl = `${payload.url}?${search.join('&')}`;
+            WebViewManager.open(payload.webviewName, gameUrl, pi3Config.gameName, content);
+        });
+    }
 };

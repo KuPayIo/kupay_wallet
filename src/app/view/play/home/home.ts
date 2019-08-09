@@ -13,6 +13,7 @@ import { closePopFloatBox, setHasEnterGame } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,callGetInviteCode, getStoreData } from '../../../middleLayer/wrap';
 import { LuckyMoneyType } from '../../../publicLib/interface';
+import { loadDir1 } from '../../../utils/commonjsTools';
 import { popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
 import { activityList, gameList } from './gameConfig';
@@ -25,41 +26,50 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class PlayHome extends Widget {
     public ok: () => void;
     public configPromise:Promise<string>;
-    public thirdApiDependPromise:Promise<string>;
-    public thirdApiPromise:Promise<string>;
+    public piSdkPromise:Promise<string>;
+    public injectStartPromise:Promise<string>;
+    public injectEndPromise:Promise<string>;
     
     constructor() {
         super();
         setTimeout(() => {
-            this.thirdApiPromise = new Promise((resolve) => {
-                const path = 'app/api/thirdApi.js.txt';
-                loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
+            this.injectStartPromise = new Promise((resolve) => {
+                const path = 'app/api/injectStart.js.txt';
+                loadDir1([path,'app/api/thirdBase.js'], fileMap => {
                     const arr = new Uint8Array(fileMap[path]);
                     const content = new TextDecoder().decode(arr);
                     resolve(content);
-                }, () => {
-                    //
-                }, () => {
-                    //
-                });
-            });
-        },0);
-
-        setTimeout(() => {
-            this.thirdApiDependPromise = new Promise((resolve) => {
-                const path = 'app/api/thirdApiDepend.js.txt';
-                loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
-                    const arr = new Uint8Array(fileMap[path]);
-                    const content = new TextDecoder().decode(arr);
-                    resolve(content);
-                }, () => {
-                    //
-                }, () => {
-                    //
                 });
             });
         },0);
        
+        setTimeout(() => {
+            this.injectEndPromise = new Promise((resolve) => {
+                const path = 'app/api/injectEnd.js.txt';
+                loadDir1([path], fileMap => {
+                    const arr = new Uint8Array(fileMap[path]);
+                    const content = new TextDecoder().decode(arr);
+                    console.timeEnd('loginMod thirdApiDependPromise');
+                    resolve(content);
+                });
+            });
+        },0);
+       
+        setTimeout(() => {
+            this.piSdkPromise = new Promise((resolve) => {
+                const sdkToolsPath = 'app/pi_sdk/sdkTools.js';
+                const sdkApiPath = 'app/pi_sdk/sdkApi.js';
+                const sdkMainPath = 'app/pi_sdk/sdkMain.js';
+                loadDir1([sdkToolsPath,sdkApiPath,sdkMainPath], fileMap => {
+                    // tslint:disable-next-line:max-line-length
+                    const arrs = [new Uint8Array(fileMap[sdkToolsPath]),new Uint8Array(fileMap[sdkApiPath]),new Uint8Array(fileMap[sdkMainPath])];
+                    // tslint:disable-next-line:max-line-length
+                    const content = new TextDecoder().decode(arrs[0]) + new TextDecoder().decode(arrs[1]) + new TextDecoder().decode(arrs[2]);
+                    resolve(content);
+                });
+            });
+        },0);
+        
     }
     
     public setProps(props:Json) {
@@ -143,9 +153,9 @@ export class PlayHome extends Widget {
         closePopFloatBox();
         const id = await getStoreData('user/id');
         if (!id) return;
-        popNew3('earn-client-app-view-openBox-openBox');
+        // popNew3('earn-client-app-view-openBox-openBox');
         
-        return;
+        // return;
         const isLogin = await getStoreData('user/isLogin');
         if (!isLogin) {
             popNewMessage('登录中,请稍后再试');
@@ -158,35 +168,45 @@ export class PlayHome extends Widget {
         } else {
             setPopPhoneTips();
             hasEnterGame = true;
-            const gameTitle = gameList[num].title.zh_Hans;
-            const gameUrl =   gameList[num].url;
-            const webviewName = gameList[num].webviewName;
+            const gameItem = gameList[num];
+            const gameTitle = gameItem.title.zh_Hans;
+            const gameUrl =   gameItem.url;
+            const webviewName = gameItem.webviewName;
             // tslint:disable-next-line:max-line-length
             const [addrInfo,baseUrl,inviteCodeInfo] = await Promise.all([callGetCurrentAddrInfo('ETH'),callGetEthApiBaseUrl(),callGetInviteCode()]);
             const inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`; 
             const pi3Config:any = getPi3Config();
             pi3Config.web3EthDefaultAccount = addrInfo.addr;
             pi3Config.web3ProviderNetWork = baseUrl;
-            pi3Config.appid = gameList[num].appid;
+            pi3Config.appid = gameItem.appid;
+            pi3Config.buttonMod = gameItem.buttonMod;
             pi3Config.gameName = gameTitle;
             pi3Config.webviewName = webviewName;
-            pi3Config.apkDownloadUrl = gameList[num].apkDownloadUrl;
+            pi3Config.apkDownloadUrl = gameItem.apkDownloadUrl;
+            pi3Config.fromWallet = true;
             pi3Config.userInfo = {
                 nickName:this.props.userInfo.nickName,
                 inviteCode
             };
-
+            // tslint:disable-next-line:variable-name
+            const pi_sdk = {
+                config:pi3Config
+            };
             const pi3ConfigStr = `
-                window.pi_config = ${JSON.stringify(pi3Config)};
+                window.pi_sdk = ${JSON.stringify(pi_sdk)};
             `;
             this.configPromise = Promise.resolve(pi3ConfigStr);
-
-            const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
-            allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
-                setHasEnterGame(true);
-                const content =  configContent + thirdApiDependContent + thirdApiContent;
-                WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
-            });
+            if (gameItem.usePi) { // 有pi的项目
+                this.configPromise.then(configContent => {
+                    WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent);
+                });
+            } else {
+                const allPromise = Promise.all([this.injectStartPromise,this.configPromise,this.piSdkPromise,this.injectEndPromise]);
+                allPromise.then(([injectStartContent,configContent,piSdkContent,injectEndContent]) => {
+                    const content =  injectStartContent + configContent + piSdkContent + injectEndContent;
+                    WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
+                });
+            }
         }
     }
 

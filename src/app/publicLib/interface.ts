@@ -616,7 +616,8 @@ export enum ThirdCmd {
     INVITE,             // 邀请好友
     RECHARGE,         // 充值
     GAMESERVICE,       // 游戏客服
-    OFFICIALGROUPCHAT   // 官方群聊
+    OFFICIALGROUPCHAT,   // 官方群聊
+    OPENNEWWEBVIEW     // 打开新webview
 }
 
 export interface ThirdPushArgs {

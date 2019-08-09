@@ -5,7 +5,7 @@ import { goshare, ImageNameType } from '../../pi/browser/vm';
 import { WebViewManager } from '../../pi/browser/webview';
 import { SCPrecision } from '../publicLib/config';
 import { CloudCurrencyType, ThirdCmd } from '../publicLib/interface';
-import { getCloudBalances, setStore } from '../store/memstore';
+import { getCloudBalances, getStore, setStore } from '../store/memstore';
 import { getOpenId, requestAsync } from './login';
 import { postThirdPushMessage } from './postWalletMessage';
 import { getOneUserInfo } from './pull';
@@ -35,12 +35,15 @@ export const authorize = (payload, callback) => {
     getOpenId(payload.appId).then((resData) => {
         const ret:any = {};
         ret.openId = resData.openid;
-        // if (payload.avatar) {
-        //     ret.avatar = userInfo.avatar;
-        // }
-        // if (payload.nickName) {
-        //     ret.nickName = userInfo.nickName;
-        // }
+        const userInfo = getStore('user/info');
+        if (payload.avatar) {
+            ret.avatar = userInfo.avatar;
+        }
+        if (payload.nickName) {
+            ret.nickName = userInfo.nickName;
+        }
+        // ret.timeStamp = resData.timestamp.value;
+        // ret.sign = resData.sign;
         callback(undefined,ret);
     }).catch(err => {
         callback(err);
@@ -449,5 +452,14 @@ const openDefaultWebview = (cb?:Function) => {
         } else {
             cb && cb();
         }
+    });
+};
+
+/**
+ * 打开新webview
+ */
+export const openNewWebview = (payload:{ webviewName: string;url:string;args:Object}) => {
+    openDefaultWebview(() => {
+        postThirdPushMessage(ThirdCmd.OPENNEWWEBVIEW,payload);
     });
 };

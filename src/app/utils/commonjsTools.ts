@@ -1,3 +1,4 @@
+import { listDirFile } from '../../pi/widget/util';
 
 /**
  * commonjs 动态加载文件
@@ -80,4 +81,21 @@ export const loadJS = (roots, url, charset, callback, errText, i, afterCallback)
     n.crossorigin = true;
     n.src = roots[i || 0] + url;
     head.appendChild(n);
+};
+
+/**
+ * 通过load模块加载资源  获取资源原始数据
+ */
+export const loadDir1 = (dirs:string[],successCb:Function) => {
+    let fileList = [];
+    const suffixMap = new Map();
+    listDirFile(dirs, undefined, fileList, suffixMap, undefined, undefined,undefined);
+    fileList = fileList.concat(suffixMap.get('js'));
+    const load = pi_modules.load.exports;
+    const down = load.create(fileList, successCb, (err) => {
+        console.error('load fileList err = ',err);
+    }, (res) => {
+        // console.log(res);
+    });
+    load.start(down);
 };

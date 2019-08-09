@@ -7,6 +7,7 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { openNewWebview } from '../../api/thirdBase';
 import { changellyGetCurrencies } from '../../net/changellyPull';
 import { setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { getModulConfig } from '../../publicLib/modulConfig';
@@ -91,6 +92,7 @@ export class App extends Widget {
         this.paint();
         console.log(JSON.parse(localStorage.getItem('timeArr')));
         // callRpcTimeingTest();
+        // openNewWebview({ webviewName:'fairyChivalry',url:'http://192.168.31.10:3003/index.html' });
     }
 
     public switchToEarn() {

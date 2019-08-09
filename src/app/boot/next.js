@@ -215,6 +215,7 @@ winit.initNext = function () {
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
 				firstStageLoaded();
+				// loadPiSdk();
 			});
 		}, function (result) {
 			alert("加载基础模块失败, " + result.error + ":" + result.reason);
@@ -297,7 +298,14 @@ winit.initNext = function () {
 		}, function(){});
 	}
 
-
+	var loadPiSdk = function(){
+		util.loadDir(["app/pi_sdk/"], flags, fm, undefined, function (fileMap) {
+			pi_sdk.setWebviewManager("pi/browser/webview");
+			pi_sdk.piSdkInit();
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
 	
 	
 	

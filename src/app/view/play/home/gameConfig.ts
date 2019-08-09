@@ -1,3 +1,4 @@
+import { ButtonMods } from '../../../api/pi3Config';
 import { shareDownload } from '../../../config';
 
 /**
@@ -11,13 +12,28 @@ import { shareDownload } from '../../../config';
   */
 export const gameList = [
     {
+        usePi:false,
         title:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
         desc:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
         // img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
         img:['app/res/image1/open_box1.png','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
-        url:'http://xzxd.cocolandgame.com/dst/boot/yineng/yineng.html',
+        url:'http://192.168.31.10:3003/index.html',
         apkDownloadUrl:shareDownload,
         webviewName:'fairyChivalry',
+        buttonMod:ButtonMods.FLOATBUTTON2,   // 当前按钮模式
+        accId:'268828',
+        groupId:10001,
+        appid:'102'
+    },{
+        usePi:true,
+        title:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
+        desc:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
+        // img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
+        img:['app/res/image1/open_box1.png','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
+        url:'http://192.168.31.10/wallet/app/boot/index.html',
+        apkDownloadUrl:shareDownload,
+        webviewName:'fairyChivalry1',
+        buttonMod:ButtonMods.WXBUTTON,   // 当前按钮模式
         accId:'268828',
         groupId:10001,
         appid:'102'
