@@ -15,6 +15,8 @@ import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloud
 import { getDeviceAllDetail } from './tools';
 import { decrypt, encrypt, getMnemonicByHash, sign } from './wallet';
 
+declare var pi_modules;
+
  // 设置重登录回调
 setReloginCallback((res) => {
     const rtype = res.type;
@@ -161,9 +163,7 @@ export const autoLogin = async (conRandom:string) => {
     if (inAndroidApp || inIOSApp) {
         param.operator = deviceDetail.operator;
         param.network = deviceDetail.netWorkStatus;
-        // TODO
-        // param.app_version = pi_update.updateJson.version;
-        param.app_version = '1.0.0';
+        param.app_version = pi_modules.appVersion;
     }
     const msg = { 
         type: 'wallet/user@auto_login', 
@@ -200,9 +200,7 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
     if (inAndroidApp || inIOSApp) {
         param.operator = deviceDetail.operator;
         param.network = deviceDetail.netWorkStatus;
-        // TODO
-        // param.app_version = pi_update.updateJson.version;
-        param.app_version = '1.0.0';
+        param.app_version = pi_modules.appVersion;
     }
     const msgLogin = { 
         type: 'login', 
