@@ -617,7 +617,8 @@ const store: Store = {
             phoneNumber: '',        // 手机号
             areaCode:'86',          // 区域码
             isRealUser: false,       // 是否是真实用户
-            acc_id:''                // 好嗨号
+            acc_id:'',                // 好嗨号
+            sex:0                    // 性别
         }
     },
     wallet: null,

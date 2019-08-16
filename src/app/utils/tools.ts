@@ -38,6 +38,7 @@ export const getUserInfo = (userInfo1?:any) => {
         const isRealUser = userInfo.isRealUser;
         const areaCode = userInfo.areaCode;
         const acc_id = userInfo.acc_id;
+        const sex = userInfo.sex;
         let avatar = userInfo.avatar;
         if (avatar && avatar.indexOf('data:image') < 0) {
             avatar = `${uploadFileUrlPrefix}${avatar}`;
@@ -53,7 +54,8 @@ export const getUserInfo = (userInfo1?:any) => {
             areaCode,
             isRealUser,
             acc_id,
-            level
+            level,
+            sex
         };
     });
 };
