@@ -33,12 +33,6 @@ export const getUserInfo = (userInfo1?:any) => {
     
     return promise.then(userInfo => {
         console.log('getUserInfo userInfo = ',userInfo);
-        const nickName = userInfo.nickName;
-        const phoneNumber = userInfo.phoneNumber;
-        const isRealUser = userInfo.isRealUser;
-        const areaCode = userInfo.areaCode;
-        const acc_id = userInfo.acc_id;
-        const sex = userInfo.sex;
         let avatar = userInfo.avatar;
         if (avatar && avatar.indexOf('data:image') < 0) {
             avatar = `${uploadFileUrlPrefix}${avatar}`;
@@ -48,14 +42,13 @@ export const getUserInfo = (userInfo1?:any) => {
         const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
 
         return {
-            nickName,
+            nickName: userInfo.nickName,
+            phoneNumber: userInfo.phoneNumber,
+            areaCode: userInfo.areaCode,
+            isRealUser: userInfo.isRealUser,
+            acc_id: userInfo.acc_id,
             avatar,
-            phoneNumber,
-            areaCode,
-            isRealUser,
-            acc_id,
-            level,
-            sex
+            level
         };
     });
 };

@@ -271,6 +271,7 @@ const initAccount = () => {
             store.user.publicKey = fileUser.publicKey;
             store.user.salt = fileUser.salt;
             store.user.info = {
+                ...store.user.info,
                 ...fileUser.info
             };
     

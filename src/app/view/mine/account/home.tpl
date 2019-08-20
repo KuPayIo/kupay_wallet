@@ -21,6 +21,8 @@
         <div w-class="other">
             <div on-tap="changePhone" on-down="onShow">
                 {{: itemTitle = [{"zh_Hans":"手机号","zh_Hant":"手機號","en":""},
+                {"zh_Hans":"性别","zh_Hant":"性別","en":""},
+                {"zh_Hans":"个性签名","zh_Hant":"個性簽名","en":""},
                 {"zh_Hans":"修改密码","zh_Hant":"修改密碼","en":""},
                 {"zh_Hans":"备份助记词","zh_Hant":"備份助記詞","en":""},
                 {"zh_Hans":"未备份","zh_Hant":"未備份","en":""},
@@ -38,11 +40,13 @@
                     </span>
                 </div>
                 {{else}}
-                <app-components-basicItem-basicItem>{name:{{itemTitle[0]}},describe:{{bindPhone}}}</app-components-basicItem-basicItem>
+                <app-components-basicItem-basicItem>{name:{{itemTitle[0]}},describe:{{bindPhone}} }</app-components-basicItem-basicItem>
                 {{end}}
+                <app-components-basicItem-basicItem>{name:{{itemTitle[1]}},describe:{{bindPhone}} }</app-components-basicItem-basicItem>
+                <app-components-basicItem-basicItem>{name:{{itemTitle[2]}},describe:{{bindPhone}} }</app-components-basicItem-basicItem>
             </div>
             <div on-tap="changePsw" on-down="onShow">
-                {{: pswTitle = it.isTourist ? itemTitle[5] : itemTitle[1]}}
+                {{: pswTitle = it.isTourist ? itemTitle[7] : itemTitle[3]}}
                 <app-components-basicItem-basicItem>{name:{{pswTitle}},style:"margin:0;border:none;"}</app-components-basicItem-basicItem>
             </div>
         </div>
@@ -50,14 +54,14 @@
         <div w-class="other">
             {{if !it.isTourist}}
             <div w-class="other-item" on-tap="backupWalletClick" on-down="onShow">
-                <div w-class="item-title"><pi-ui-lang>{{itemTitle[2]}}</pi-ui-lang></div>
+                <div w-class="item-title"><pi-ui-lang>{{itemTitle[4]}}</pi-ui-lang></div>
                 {{if !it.backup}}
-                <div w-class="tag"><pi-ui-lang>{{itemTitle[3]}}</pi-ui-lang></div>
+                <div w-class="tag"><pi-ui-lang>{{itemTitle[5]}}</pi-ui-lang></div>
                 {{end}}
                 <img src="app/res/image/right_arrow2_gray.png" height="40px" w-class="rightArrow"/>
             </div>
             <div w-class="other-item" on-tap="exportPrivateKeyClick" style="border-bottom: none;" on-down="onShow">
-                <div w-class="item-title"><pi-ui-lang>{{itemTitle[4]}}</pi-ui-lang></div>
+                <div w-class="item-title"><pi-ui-lang>{{itemTitle[6]}}</pi-ui-lang></div>
                 <img src="app/res/image/right_arrow2_gray.png" height="40px" w-class="rightArrow"/>
             </div>
             {{end}}
