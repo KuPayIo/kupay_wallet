@@ -13,5 +13,17 @@
             </span>
         {{end}}
     {{end}}
+    {{if it.img}}
+    <div style="margin-right:10px;height:80px;">
+        {{if !it.chooseImage}}
+            <widget w-tag="app-components1-img-img" on-tap="uploadAvatar">{imgURL:{{it.avatar}},width:"80px;"}</widget>
+        {{else}}
+            <widget w-tag="pi-ui-html" on-tap="uploadAvatar" w-class="ui-html">{{it.avatarHtml}}</widget>
+        {{end}}
+    </div>
+    {{end}}
+    {{if it.showStr.length}}
+        <div w-class="showStr"></div>
+    {{end}}
     <img src="app/res/image/right_arrow2_gray.png" w-class="itemImg"/>
 </div>
