@@ -271,6 +271,7 @@ const initAccount = () => {
             store.user.publicKey = fileUser.publicKey;
             store.user.salt = fileUser.salt;
             store.user.info = {
+                ...store.user.info,
                 ...fileUser.info
             };
     
@@ -617,7 +618,9 @@ const store: Store = {
             phoneNumber: '',        // 手机号
             areaCode:'86',          // 区域码
             isRealUser: false,       // 是否是真实用户
-            acc_id:''                // 好嗨号
+            acc_id:'',                // 好嗨号
+            sex:2,                    // 性别  0男 1女 2中性
+            note:''                   // 个性签名
         }
     },
     wallet: null,

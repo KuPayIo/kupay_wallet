@@ -4,13 +4,13 @@
     </span>
     {{if it.describe}}
         {{if typeof(it.describe) === 'string'}}
-            <span w-class="itemDesc">
+            <div w-class="itemDesc">
                 {{it.describe}}
-            </span>
+            </div>
         {{else}}
-            <span w-class="itemDesc">
+            <div w-class="itemDesc">
                 <pi-ui-lang>{{it.describe}}</pi-ui-lang>
-            </span>
+            </div>
         {{end}}
     {{end}}
     {{if it.img}}
@@ -21,9 +21,6 @@
             <widget w-tag="pi-ui-html" on-tap="uploadAvatar" w-class="ui-html">{{it.avatarHtml}}</widget>
         {{end}}
     </div>
-    {{end}}
-    {{if it.showStr.length}}
-        <div w-class="showStr"></div>
     {{end}}
     <img src="app/res/image/right_arrow2_gray.png" w-class="itemImg"/>
 </div>

@@ -33,11 +33,6 @@ export const getUserInfo = (userInfo1?:any) => {
     
     return promise.then(userInfo => {
         console.log('getUserInfo userInfo = ',userInfo);
-        const nickName = userInfo.nickName;
-        const phoneNumber = userInfo.phoneNumber;
-        const isRealUser = userInfo.isRealUser;
-        const areaCode = userInfo.areaCode;
-        const acc_id = userInfo.acc_id;
         let avatar = userInfo.avatar;
         if (avatar && avatar.indexOf('data:image') < 0) {
             avatar = `${uploadFileUrlPrefix}${avatar}`;
@@ -45,15 +40,16 @@ export const getUserInfo = (userInfo1?:any) => {
             avatar = 'app/res/image/default_avater_big.png';
         }
         const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
-
         return {
-            nickName,
+            nickName: userInfo.nickName,
+            phoneNumber: userInfo.phoneNumber,
+            areaCode: userInfo.areaCode,
+            isRealUser: userInfo.isRealUser,
+            acc_id: userInfo.acc_id,
             avatar,
-            phoneNumber,
-            areaCode,
-            isRealUser,
-            acc_id,
-            level
+            level,
+            sex:userInfo.sex,
+            note:userInfo.note
         };
     });
 };
@@ -814,4 +810,28 @@ export const nickNameInterception = (name: string): string => {
     }
 
     return ret;
+};
+
+/**
+ * 修改钱包个性签名
+ * @param walletNote wallet note
+ */
+export const changeWalletNote = (walletNote:string) => {
+    return getStoreData('user/info').then(userInfo => {
+        userInfo.note = walletNote;
+        setStoreData('user/info', userInfo);
+    });
+    
+};
+
+/**
+ * 修改钱包性别
+ * @param walletSex wallet sex
+ */
+export const changeWalletSex = (walletSex:number) => {
+    return getStoreData('user/info').then(userInfo => {
+        userInfo.sex = walletSex;
+        setStoreData('user/info', userInfo);
+    });
+    
 };
