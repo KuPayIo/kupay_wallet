@@ -396,3 +396,27 @@ export const getAppleGoods = () => {
 
     return callRequestAsync(msg);
 };
+
+/**
+ * 获取用户最近玩的游戏
+ */
+export const getUserRecentGame = (accid:number,count:number) => {
+    const msg = {
+        type:'wallet/oAuth@get_recent_login',
+        param:{
+            acc_id:accid,
+            count
+        }
+    };
+
+    return callRequestAsync(msg).then(r => {
+        if (r.list) {
+            const list = [];
+            r.list.forEach(v => {  // appid
+                list.push([]);
+            });
+
+            return list;
+        }
+    });
+};
