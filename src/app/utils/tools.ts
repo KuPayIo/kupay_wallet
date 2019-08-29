@@ -40,7 +40,6 @@ export const getUserInfo = (userInfo1?:any) => {
             avatar = 'app/res/image/default_avater_big.png';
         }
         const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
-
         return {
             nickName: userInfo.nickName,
             phoneNumber: userInfo.phoneNumber,
@@ -48,7 +47,9 @@ export const getUserInfo = (userInfo1?:any) => {
             isRealUser: userInfo.isRealUser,
             acc_id: userInfo.acc_id,
             avatar,
-            level
+            level,
+            sex:userInfo.sex,
+            note:userInfo.note
         };
     });
 };
@@ -809,4 +810,28 @@ export const nickNameInterception = (name: string): string => {
     }
 
     return ret;
+};
+
+/**
+ * 修改钱包个性签名
+ * @param walletNote wallet note
+ */
+export const changeWalletNote = (walletNote:string) => {
+    return getStoreData('user/info').then(userInfo => {
+        userInfo.note = walletNote;
+        setStoreData('user/info', userInfo);
+    });
+    
+};
+
+/**
+ * 修改钱包性别
+ * @param walletSex wallet sex
+ */
+export const changeWalletSex = (walletSex:number) => {
+    return getStoreData('user/info').then(userInfo => {
+        userInfo.sex = walletSex;
+        setStoreData('user/info', userInfo);
+    });
+    
 };

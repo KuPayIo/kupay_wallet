@@ -619,7 +619,8 @@ const store: Store = {
             areaCode:'86',          // 区域码
             isRealUser: false,       // 是否是真实用户
             acc_id:'',                // 好嗨号
-            sex:0                    // 性别
+            sex:2,                    // 性别  0男 1女 2中性
+            note:''                   // 个性签名
         }
     },
     wallet: null,

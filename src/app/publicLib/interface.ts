@@ -247,6 +247,7 @@ export interface UserInfo {
     isRealUser: boolean;    // 是否是真实用户
     acc_id:string;  // 账户ID 钱包，聊天，活动统一账号
     sex:number;      // 性别
+    note:string;// 个性签名
 }
 
 /**
