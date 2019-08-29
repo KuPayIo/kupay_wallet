@@ -40,6 +40,7 @@ export const getUserInfo = (userInfo1?:any) => {
             avatar = 'app/res/image/default_avater_big.png';
         }
         const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
+    
         return {
             nickName: userInfo.nickName,
             phoneNumber: userInfo.phoneNumber,

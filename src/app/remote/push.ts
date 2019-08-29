@@ -1,6 +1,7 @@
 /**
  * 后端主动推消息给后端
  */
+import { GENERATORTYPE } from '../../chat/client/app/data/store';
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { CMD } from '../publicLib/config';
 import { ServerPushArgs, ServerPushKey } from '../publicLib/interface';
@@ -57,7 +58,7 @@ export const initPush = () => {
         
         if (res.accId) {
             const index = invite.indexOf(res.accId);
-            index === -1 && invite.push(res.accId);
+            index === -1 && invite.push([res.accId,(new Date().getTime()),GENERATORTYPE.NOTICE_1]);
         }
         setStore('inviteUsers/invite_success',invite);
     });
@@ -67,7 +68,7 @@ export const initPush = () => {
         console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
         let invite = [];
         if (res.accId) {
-            invite = [res.accId];
+            invite = [res.accId,(new Date().getTime()),GENERATORTYPE.NOTICE_2];
         }
         setStore('inviteUsers/convert_invite',invite);
     });
