@@ -6,7 +6,6 @@ import { WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
-import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox, setHasEnterGame } from '../../../api/thirdBase';
@@ -72,13 +71,12 @@ export class PlayHome extends Widget {
         
     }
     
-    public setProps(props:Json) {
+    public setProps(props:Json,oldProps:any) {
         this.props = {
             ...props,
             offlienType:OfflienType.WALLET
         };
         super.setProps(this.props);
-        console.log(props);
         this.props.refresh = false;
         this.props.gameList = gameList;
         this.props.activityList = activityList;

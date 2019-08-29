@@ -22,9 +22,9 @@ export const run = (homePageData,cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查  
     checkUpdate();  
-    popNew('app-view-base-app');
     const id = homePageData[0];
     const accounts = homePageData[1];
+    popNew('app-view-base-app');
     if (!id) {
         if (accounts.length > 0) {
             popNew('app-view-base-entrance1',{ accounts });

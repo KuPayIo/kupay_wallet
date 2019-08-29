@@ -17,7 +17,7 @@ export const gameList = [
         desc:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
         // img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
         img:['app/res/image1/open_box1.png','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
-        url:'http://192.168.31.10:3003/index.html',
+        url:'http://xzxd.cocolandgame.com/dst/boot/yineng/yineng.html',
         apkDownloadUrl:shareDownload,
         webviewName:'fairyChivalry',
         buttonMod:ButtonMods.FLOATBUTTON2,   // 当前按钮模式

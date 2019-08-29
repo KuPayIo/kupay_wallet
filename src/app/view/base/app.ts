@@ -4,10 +4,10 @@
 // ================================ 导入
 import { register as ChatRegister } from '../../../chat/client/app/data/store';
 import { register as earnRegister } from '../../../earn/client/app/store/memstore';
+import { collect, pageRoutersCollection } from '../../../pi/collection/collection';
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { openNewWebview } from '../../api/thirdBase';
 import { changellyGetCurrencies } from '../../net/changellyPull';
 import { setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { getModulConfig } from '../../publicLib/modulConfig';
@@ -33,6 +33,7 @@ export class App extends Widget {
         const isActive = 'APP_WALLET';
         this.old[isActive] = true;
         this.props = {
+            inTime:Date.now(),
             type: 2, // 用户可以单击选项，来切换卡片。支持3种模式，惰性加载0-隐藏显示切换，切换采用加载1-销毁模式，一次性加载2-隐藏显示切换。
             isActive:'APP_PLAY',
             old: this.old,
@@ -82,15 +83,26 @@ export class App extends Widget {
         });
         
     }
-
+    public findPage(isActive:string) {
+        return this.props.tabBarList.filter(item => {
+            return item.modulName === isActive;
+        })[0].components;
+    }
     public tabBarChangeListener(event: any, index: number) {
         rippleShow(event);
         const identfy = this.props.tabBarList[index].modulName;
         if (this.props.isActive === identfy) return;
+        const fromPage = this.findPage(this.props.isActive);
+        const toPage = this.findPage(identfy);
+        if (collect) {
+            const now = Date.now();
+            pageRoutersCollection({ page:fromPage,to:toPage,stay_time:now - this.props.inTime });
+            this.props.inTime = now;
+        }
         this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
-        console.log(JSON.parse(localStorage.getItem('timeArr')));
+        // console.log(JSON.parse(localStorage.getItem('timeArr')));
         // callRpcTimeingTest();
         // openNewWebview({ webviewName:'fairyChivalry',url:'http://192.168.31.10:3003/index.html' });
     }

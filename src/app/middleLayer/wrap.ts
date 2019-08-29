@@ -29,7 +29,7 @@ const vmRpcCall = (methodName:string,params: any[]):Promise<any> => {
         return new Promise((resolve,reject) => {
             let count = obj[methodName] || 0;
             obj[methodName] = ++count;
-            console.log(`vmRpcCall ${methodName} params = `,params);
+            // console.log(`vmRpcCall ${methodName} params = `,params);
             // 在params后面加入callback函数  实现对异步函数的rpc调用
             params.push(([error,res]) => { 
                 if (error) reject(error);

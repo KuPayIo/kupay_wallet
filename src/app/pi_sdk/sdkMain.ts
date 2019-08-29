@@ -120,7 +120,12 @@ const showButtons = [{
     clickedClose:true,
     clickCb:() => {
         console.log('click 退出游戏');
-        pi_RPC_Method(pi_config.jsApi, 'closeWebview', pi_config.webviewName, (error, result) => {
+        const payload = {
+            webviewName:pi_config.webviewName,
+            appId:pi_config.appid,
+            openId:pi_config.openId
+        };
+        pi_RPC_Method(pi_config.jsApi, 'closeWebview', payload, (error, result) => {
             console.log('closeWebview call success');
         });
     }

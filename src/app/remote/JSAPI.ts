@@ -3,6 +3,7 @@
  */
 import { goshare, ImageNameType } from '../../pi/browser/vm';
 import { WebViewManager } from '../../pi/browser/webview';
+import { reportSubAppQuit, reportSubAppUse } from '../../pi/collection/collection';
 import { SCPrecision } from '../publicLib/config';
 import { CloudCurrencyType, ThirdCmd } from '../publicLib/interface';
 import { getCloudBalances, getStore, setStore } from '../store/memstore';
@@ -45,6 +46,7 @@ export const authorize = (payload, callback) => {
         // ret.timeStamp = resData.timestamp.value;
         // ret.sign = resData.sign;
         callback(undefined,ret);
+        reportSubAppUse(payload.appId,resData.openid,Date.now());    // 子应用使用埋点
     }).catch(err => {
         callback(err);
     });
@@ -362,10 +364,11 @@ const jsonUriSort = (json) => {
  /**
   * 关闭打开的webview
   */
-export const closeWebview = (webviewName: string) => {
+export const closeWebview = (payload:{webviewName: string;appId:string;openId:string}) => {
     console.log('wallet closeWebview called');
-    WebViewManager.close(webviewName);
+    WebViewManager.close(payload.webviewName);
     openDefaultWebview();
+    reportSubAppQuit(payload.appId,payload.openId,Date.now());   // 子应用退出埋点
 };
 
 /**

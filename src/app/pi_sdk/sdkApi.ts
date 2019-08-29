@@ -48,6 +48,7 @@ const authorize = (payload, callBack) => {
     pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'authorize', payload,  (error, result) => {
         console.log('getOpenId call success', error);
         console.log('getOpenId call success', result);
+        pi_sdk.config.openId = result && result.openId;   // 记录当前登录的openid
         callBack(error, result);
     });
 };

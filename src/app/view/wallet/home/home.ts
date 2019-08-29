@@ -61,6 +61,7 @@ export class Home extends Widget {
             ...props
         };
         super.setProps(this.props,oldProps);
+        
     }
 
     public dataInit() {

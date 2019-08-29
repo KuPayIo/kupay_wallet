@@ -5,6 +5,9 @@
 }
 .body{
     padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
 }
 .create-tips{
     margin-top: 10%;
@@ -48,7 +51,7 @@
 }
 .textarea-father{
     position: relative;
-    height: 80vh;
+    flex: 1 0 0;
     border: 1px solid #888;
     border-radius: 2px;
 }
@@ -57,7 +60,6 @@
 }
 .other-btns{
     display: flex;
-    height: 100%;
     justify-content: space-between;
     align-items: center;
     font-size:28px;
@@ -65,7 +67,7 @@
     font-weight:400;
     color:rgba(136,136,136,1);
     line-height:40px;
-    margin: 0 70px;
+    margin: 50px 70px;
 }
 .other-btn{
     border-bottom: 1px solid rgba(136,136,136,1);
