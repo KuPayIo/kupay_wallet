@@ -229,7 +229,7 @@ export class Home extends Widget {
      */
     public login() {
         if (this.props.hasWallet) {
-            popNew('app-view-mine-account-home');
+            popNew('chat-client-app-view-info-userDetail',{});
         } else {
             popNew('app-view-wallet-create-home');
         }

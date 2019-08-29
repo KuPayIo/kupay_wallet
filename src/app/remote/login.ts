@@ -341,9 +341,12 @@ export const logoutAccount = async (save:boolean = true) => {
         secretHash: '',             // 密码hash缓存   
         info: {                      // 用户基本信息
             nickName: '',           // 昵称
-            avatar: '',            // 头像
-            phoneNumber: '',       // 手机号
-            isRealUser: false    // 是否是真实用户
+            avatar: '',             // 头像
+            phoneNumber: '',        // 手机号
+            areaCode:'86',          // 区域码
+            isRealUser: false,       // 是否是真实用户
+            acc_id:'',                // 好嗨号
+            sex:0                    // 性别
         }
     };
     const cloud = {
