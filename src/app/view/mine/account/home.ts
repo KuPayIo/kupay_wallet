@@ -1,23 +1,25 @@
-/**
- * account home
- */
+
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/wrap';
 import { uploadFile } from '../../../net/pull';
-import { changeWalletName, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow, walletNameAvailable, changeWalletNote, deepCopy, changeWalletSex } from '../../../utils/tools';
+// tslint:disable-next-line:max-line-length
+import { changeWalletName, changeWalletNote, changeWalletSex, deepCopy, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow, walletNameAvailable } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
 import { exportMnemonic } from '../../../viewLogic/localWallet';
-import { selectImage } from '../../../viewLogic/native';
 import { logoutAccount } from '../../../viewLogic/login';
+import { selectImage } from '../../../viewLogic/native';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords 
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+/**
+ * account home
+ */
 export class AccountHome extends Widget {
     public ok: () => void;
     public language: any;
@@ -52,7 +54,7 @@ export class AccountHome extends Widget {
             this.props.backup = wallet.isBackup;
             this.props.isTourist = !wallet.setPsw;
             this.props.sex = userInfo.sex;
-            this.props.note = userInfo.note?userInfo.note:'';
+            this.props.note = userInfo.note ? userInfo.note :'';
             this.paint();
         });
     }
@@ -193,21 +195,23 @@ export class AccountHome extends Widget {
 
     /**
      * 修改名称
-    */
-    public changeName(){
+     */
+    public changeName() {
         popNew('chat-client-app-widget-pageEdit-pageEdit',{ title:'修改昵称', contentInput:this.props.nickName,maxLength:10 },(res:any) => {
             changeWalletName(res.content);
-            this.props.nickName=res.content;
+            this.props.nickName = res.content;
             popNewMessage('修改昵称成功');
             this.paint();
         });
     }
 
-    /**修改个性签名 */
-    public changeSignature(){
+    /**
+     * 修改个性签名
+     */
+    public changeSignature() {
         popNew('chat-client-app-widget-pageEdit-pageEdit',{ title:'修改个性签名', contentInput:this.props.note,maxLength:100 },(res:any) => {
             changeWalletNote(res.content);
-            this.props.note=res.content;
+            this.props.note = res.content;
             popNewMessage('修改个性签名成功');
             this.paint();
         });
@@ -280,11 +284,13 @@ export class AccountHome extends Widget {
         });
     }
 
-    /** 选择性别 */
-    public changeSex(){
-        popNew('app-components1-checkSex-checkSex', { title:"选择性别",active:this.props.sex}, (r: any) => {
+    /** 
+     * 选择性别
+     */
+    public changeSex() {
+        popNew('app-components1-checkSex-checkSex', { title:'选择性别',active:this.props.sex }, (r: any) => {
             changeWalletSex(r);
-            this.props.sex=r;
+            this.props.sex = r;
             popNewMessage('修改性别成功');
             this.paint();
         });
