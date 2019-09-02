@@ -295,6 +295,11 @@ export class AccountHome extends Widget {
             this.paint();
         });
     }
+
+    // 黑名单管理
+    public blacklist() {
+        popNew('chat-client-app-view-contactList-blacklist',{ title:'黑名单管理' });
+    }
 }
 
 registerStoreData('user/info', () => {
