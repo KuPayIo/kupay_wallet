@@ -17,8 +17,8 @@ export class CheckSex extends Widget {
         title:'',
         active:2,
         sexList:[
-            { sex:'男',src:'../../res/image/10.png' },
-            { sex:'女',src:'../../res/image/10.png' }
+            { sex:'男',src:'../../res/image/male.png' },
+            { sex:'女',src:'../../res/image/female.png' }
         ]
     };
 
