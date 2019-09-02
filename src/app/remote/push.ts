@@ -2,6 +2,8 @@
  * 后端主动推消息给后端
  */
 import { GENERATORTYPE } from '../../chat/client/app/data/store';
+import { getUsersBasicInfo } from '../../chat/client/app/net/rpc';
+import { UserArray } from '../../chat/server/data/rpc/basic.s';
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { CMD } from '../publicLib/config';
 import { ServerPushArgs, ServerPushKey } from '../publicLib/interface';
@@ -57,10 +59,25 @@ export const initPush = () => {
         const invite = getStore('inviteUsers').invite_success || [];
         
         if (res.accId) {
-            const index = invite.indexOf(res.accId);
-            index === -1 && invite.push([res.accId,(new Date().getTime()),GENERATORTYPE.NOTICE_1]);
+            // const index = invite.indexOf(res.accId);
+            // index === -1 && invite.push([res.accId,(new Date().getTime()),GENERATORTYPE.NOTICE_1]);
+            let index = -1;
+            invite.forEach((v,i) => {
+                if (v[0] === res.accId) {
+                    index = i;
+                }
+            });
+            if (index === -1) {
+                getUsersBasicInfo([],[res.accId]).then((r:UserArray) => {
+                    const name = r.arr[0].name;
+                    invite.push([res.accId,(new Date().getTime()),GENERATORTYPE.NOTICE_1,name]);
+                    setStore('inviteUsers/invite_success',invite);
+                });
+            } else {
+                setStore('inviteUsers/invite_success',invite);
+            }
         }
-        setStore('inviteUsers/invite_success',invite);
+        
     });
 
     // 监听兑换邀请码成功事件
@@ -68,9 +85,16 @@ export const initPush = () => {
         console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
         let invite = [];
         if (res.accId) {
-            invite = [res.accId,(new Date().getTime()),GENERATORTYPE.NOTICE_2];
+            getUsersBasicInfo([],[res.accId]).then((r:UserArray) => {
+                const name = r.arr[0].name;
+                invite = [res.accId,(new Date().getTime()),GENERATORTYPE.NOTICE_2,name];
+                setStore('inviteUsers/convert_invite',invite);
+            });
+            
+        } else {
+            setStore('inviteUsers/convert_invite',invite);
         }
-        setStore('inviteUsers/convert_invite',invite);
+        
     });
 
     // 监听邀请好友并成为真实用户事件
