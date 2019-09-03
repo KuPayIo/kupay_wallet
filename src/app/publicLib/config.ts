@@ -30,16 +30,16 @@ export const erlangLogicPort = '2081';
 export const erlangLogicPayPort = 8099;
 
 // 活动逻辑服务器ip
-export const activeLogicIp = '39.98.214.100';
-// export const activeLogicIp = sourceIp;
+// export const activeLogicIp = '39.98.214.100';
+export const activeLogicIp = sourceIp;
 
 // 活动逻辑服务器port
 export const activeLogicPort = 2234;
 
 // 聊天逻辑服务器ip 
 // 外网正式 39.104.203.151
-export const chatLogicIp = '39.98.214.100';
-// export const chatLogicIp = sourceIp;
+// export const chatLogicIp = '39.98.214.100';
+export const chatLogicIp = sourceIp;
 
 // 聊天逻辑服务器port
 // 外网正式 9080
@@ -945,4 +945,3 @@ export const defaultSetting = {
 export const topHeight = 40;
 
 export type LANGUAGE = 'english' | 'chinese_simplified' | 'chinese_traditional' | 'japanese';
-
