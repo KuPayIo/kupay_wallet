@@ -275,7 +275,7 @@ export class AccountHome extends Widget {
             }
             console.log('取消2');
         }, () => {
-            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[2], style: 'color:#F7931A;' }, () => {
+            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[3], style: 'color:#F7931A;' }, () => {
                 logoutAccount(true).then(() => {
                     this.backPrePage();
                 });

@@ -70,14 +70,14 @@
         </div>
 
         <div w-class="other" style="margin: 20px 0;">
+            <div on-tap="blacklist" on-down="onShow">
+                <app-components-basicItem-basicItem>{name:{{itemTitle[12]}} }</app-components-basicItem-basicItem>
+            </div>
             <div on-tap="logOut" on-down="onShow">
                 <app-components-basicItem-basicItem>{name:{{itemTitle[10]}} }</app-components-basicItem-basicItem>
             </div>
             <div on-tap="logOutDel" on-down="onShow">
                 <app-components-basicItem-basicItem>{name:{{itemTitle[11]}} }</app-components-basicItem-basicItem>
-            </div>
-            <div on-tap="blacklist" on-down="onShow">
-                <app-components-basicItem-basicItem>{name:{{itemTitle[12]}} }</app-components-basicItem-basicItem>
             </div>
         </div>
     </div>
