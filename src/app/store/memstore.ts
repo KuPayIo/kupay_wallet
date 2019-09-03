@@ -177,6 +177,7 @@ export const getAllAccount = () => {
         currenctId: '',
         accounts: {}
     }).then(localAcccounts => {
+        console.log('getAllAccount',localAcccounts)
         const accounts = [];
         for (const key in localAcccounts.accounts) {
             accounts.push(localAcccounts.accounts[key]);

@@ -110,12 +110,12 @@ export const getLocalStorage = (key: string, defaultValue = undefined):Promise<a
                 return;
             }
             const result = JSON.parse(res);
-            // console.log('读取数据成功',key);
-            // console.log('读取成功数据',res);
+            console.log('读取数据成功',key);
+            console.log('读取成功数据',res);
             resolve(result);
         },(err) => {
-            // console.log('读取数据失败',key);
-            // console.log('读取失败原因',JSON.stringify(err));
+            console.log('读取数据失败',key);
+            console.log('读取失败原因',JSON.stringify(err));
             resolve(defaultValue);
         });
     });

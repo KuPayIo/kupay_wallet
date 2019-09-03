@@ -243,6 +243,7 @@ winit.initNext = function () {
 					var callGetHomePageEnterData = pi_modules.commonjs.exports.relativeGet("app/middleLayer/wrap").exports.callGetHomePageEnterData;
 					var getDataStart = Date.now();
 					callGetHomePageEnterData().then(function(res){
+						console.log('callGetHomePageEnterData--------------------------')
 						self.getData = Date.now() - getDataStart;
 						fpFlags.homePageReady = true;
 						fpFlags.homePageData = res;
@@ -388,6 +389,7 @@ winit.initNext = function () {
 
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
+		console.log('enterApp',fpFlags)
 		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady && fpFlags.homePageReady){
 			// 加载根组件
 			var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
