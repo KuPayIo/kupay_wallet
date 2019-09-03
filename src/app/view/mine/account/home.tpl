@@ -15,7 +15,8 @@
                 {"zh_Hans":"头像","zh_Hant":"頭像","en":""},
                 {"zh_Hans":"昵称","zh_Hant":"暱稱","en":""},                
                 {"zh_Hans":"退出账户","zh_Hant":"退出賬戶","en":""},
-                {"zh_Hans":"退出并清除信息","zh_Hant":"退出並清除信息","en":""}
+                {"zh_Hans":"退出并清除信息","zh_Hant":"退出並清除信息","en":""},
+                {"zh_Hans":"黑名单管理","zh_Hant":"黑名單管理","en":""}
                 ] }}
                 
                 {{: phone = {"zh_Hans":it.phone,"zh_Hant":it.phone,"en":""} }}
@@ -69,6 +70,9 @@
         </div>
 
         <div w-class="other" style="margin: 20px 0;">
+            <div on-tap="blacklist" on-down="onShow">
+                <app-components-basicItem-basicItem>{name:{{itemTitle[12]}} }</app-components-basicItem-basicItem>
+            </div>
             <div on-tap="logOut" on-down="onShow">
                 <app-components-basicItem-basicItem>{name:{{itemTitle[10]}} }</app-components-basicItem-basicItem>
             </div>

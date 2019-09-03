@@ -5,7 +5,9 @@
 .body{
     padding: 0 20px;
     flex: 1;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 .head-container{
     position:relative;
