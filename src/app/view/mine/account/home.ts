@@ -298,7 +298,7 @@ export class AccountHome extends Widget {
 
     // 黑名单管理
     public blacklist() {
-        popNew('chat-client-app-view-contactList-blacklist',{ title:'黑名单管理' });
+        popNew('chat-client-app-view-contactList-blacklist',{ title:'黑名单管理' ,addType:'放出' });
     }
 }
 
