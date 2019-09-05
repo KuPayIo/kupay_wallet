@@ -65,17 +65,11 @@ export const initPush = () => {
                 }
             });
             if (index === -1) {
-                // getUsersBasicInfo([],[res.accId]).then((r:UserArray) => {
-                //     const name = r.arr[0].name;
-                //     invite.push([res.accId,(new Date().getTime()),GENERATORTYPE.NOTICE_1,name]);
-                //     setStore('inviteUsers/invite_success',invite);
-                // });
-                setStore('inviteUsers/invite_success',invite);
-            } else {
-                setStore('inviteUsers/invite_success',invite);
-            }
+                invite.push([res.accId,(new Date().getTime()),'invite']);  
+            } 
+            setStore('inviteUsers/invite_success',invite);
         }
-        
+  
     });
 
     // 监听兑换邀请码成功事件
@@ -83,16 +77,10 @@ export const initPush = () => {
         console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
         let invite = [];
         if (res.accId) {
-            // getUsersBasicInfo([],[res.accId]).then((r:UserArray) => {
-            //     const name = r.arr[0].name;
-            //     invite = [res.accId,(new Date().getTime()),GENERATORTYPE.NOTICE_2,name];
-            //     setStore('inviteUsers/convert_invite',invite);
-            // });
-            setStore('inviteUsers/convert_invite',invite);
-        } else {
-            setStore('inviteUsers/convert_invite',invite);
-        }
-        
+            invite = [res.accId,(new Date().getTime()),'beInvited'];
+        } 
+        setStore('inviteUsers/convert_invite',invite);
+
     });
 
     // 监听邀请好友并成为真实用户事件
