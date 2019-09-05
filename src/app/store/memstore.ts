@@ -19,18 +19,18 @@ import { deleteFile, getFile, getLocalStorage, initFileStore, initLocalStorageFi
  */
 export const initStore = () => {
     registerFileStore();    // 注册监听 
-        
+
     return initFile().then(() => {
         initSettings();         // 设置初始化
         initThird();            // 三方数据初始化
         initInviteUsers();      // 邀请好友数据初始化
-        
+
         return initAccount().then(() => { // 账户初始化
             initFileStore().then(() => {  // indexDb数据初始化
                 initTxHistory();         // 历史记录初始化
             });
-        });          
-    });            
+        });
+    });
 };
 
 /**
@@ -165,7 +165,7 @@ export const initCloudWallets = () => {
             cloudWallets.set(CloudCurrencyType[CloudCurrencyType[key]], cloudWallet);
         }
     }
-    
+
     return cloudWallets;
 };
 
@@ -173,21 +173,23 @@ export const initCloudWallets = () => {
  * 获取所有的账户列表
  */
 export const getAllAccount = () => {
+    console.log('getAllAccount start----------')
     return getLocalStorage('accounts', {
         currenctId: '',
         accounts: {}
     }).then(localAcccounts => {
-        console.log('getAllAccount',localAcccounts)
+        console.log('getAllAccount', localAcccounts)
         const accounts = [];
         for (const key in localAcccounts.accounts) {
             accounts.push(localAcccounts.accounts[key]);
         }
-    
-        return accounts.sort((item1,item2) => {
+
+        return accounts.sort((item1, item2) => {
             return item2.wallet.logoutTimestamp - item1.wallet.logoutTimestamp;
         });
+    }).catch(e => {
+        console.log("getAllAcount failed, e = ", e);
     });
-    
 };
 
 /**
@@ -202,7 +204,7 @@ export const deleteAccount = (id: string) => {
         delete localAcccounts.accounts[id];
         setLocalStorage('accounts', localAcccounts);
     });
-   
+
 };
 
 // ===================================================本地
@@ -222,7 +224,7 @@ const initTxHistory = () => {
     return new Promise(resolve => {
         if (!store.user.id) {
             resolve();
-            
+
             return;
         }
         getFile(store.user.id, (value, key) => {
@@ -240,7 +242,7 @@ const initTxHistory = () => {
             console.log('read error');
         });
     });
-    
+
 };
 
 /**
@@ -265,7 +267,7 @@ const initAccount = () => {
         const curAccount = localAcccounts.accounts[localAcccounts.currenctId];
         if (curAccount) {
             const fileUser = curAccount.user;
-    
+
             // store.user init
             store.user.id = fileUser.id;
             store.user.token = fileUser.token;
@@ -275,15 +277,15 @@ const initAccount = () => {
                 ...store.user.info,
                 ...fileUser.info
             };
-    
+
             // store.cloud init
             const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>(curAccount.cloud.cloudWallets);
             for (const [key, value] of localCloudWallets) {
                 const cloudWallet = store.cloud.cloudWallets.get(key);
                 cloudWallet.balance = localCloudWallets.get(key).balance;
-    
+
             }
-    
+
             // store.wallet init
             const localWallet = curAccount.wallet;
             const currencyRecords = [];
@@ -305,25 +307,25 @@ const initAccount = () => {
                 };
                 currencyRecords.push(record);
             }
-            
+
             const wallet: Wallet = {
                 vault: localWallet.vault,
-                setPsw:localWallet.setPsw,
+                setPsw: localWallet.setPsw,
                 isBackup: localWallet.isBackup,
-                sharePart:false,
-                helpWord:false,
+                sharePart: false,
+                helpWord: false,
                 showCurrencys: localWallet.showCurrencys,
                 currencyRecords,
-                changellyPayinAddress:localWallet.changellyPayinAddress || [],
-                changellyTempTxs:localWallet.changellyTempTxs || [],
-                logoutTimestamp:localWallet.logoutTimestamp || 0
+                changellyPayinAddress: localWallet.changellyPayinAddress || [],
+                changellyTempTxs: localWallet.changellyTempTxs || [],
+                logoutTimestamp: localWallet.logoutTimestamp || 0
             };
             store.wallet = wallet;
         } else {
             store.user.salt = cryptoRandomInt().toString();
         }
     });
-    
+
 };
 
 /**
@@ -349,7 +351,7 @@ const initSettings = () => {
                     }
                 }
             });
-            
+
         },
         fail: (result) => {
             console.log(result);
@@ -365,7 +367,7 @@ const initSettings = () => {
         },
         deviceId: '',
         topHeight,
-        bottomHeight:0
+        bottomHeight: 0
     }).then(setting => {
         store.setting = {
             ...store.setting,
@@ -373,7 +375,7 @@ const initSettings = () => {
         };
         setLang(setting.language);
     });
-    
+
 };
 
 /**
@@ -389,7 +391,7 @@ const initThird = () => {
         store.third.gasLimitMap = new Map<string, number>(third.gasLimitMap);
         store.third.currency2USDTMap = new Map<string, Currency2USDT>(third.currency2USDTMap);
     });
-   
+
 };
 
 /**
@@ -457,11 +459,11 @@ const inviteUsersChange = () => {
 const initInviteUsers = () => {
     getLocalStorage('inviteUsers').then(data => {
         if (!data) return;
-        console.log('===========================邀请好友数据初始',data);
-        setStore('inviteUsers/invite_success',data.invite_success);
-        setStore('inviteUsers/convert_invite',data.convert_invite);
+        console.log('===========================邀请好友数据初始', data);
+        setStore('inviteUsers/invite_success', data.invite_success);
+        setStore('inviteUsers/convert_invite', data.convert_invite);
     });
-    
+
 };
 
 /**
@@ -469,7 +471,7 @@ const initInviteUsers = () => {
  */
 const accountChange = () => {
     const storeUser = getStore('user');
-    
+
     return getLocalStorage('accounts', {
         currenctId: '',
         accounts: {}
@@ -489,7 +491,7 @@ const accountChange = () => {
                 localAccounts.currenctId = '';
                 setLocalStorage('accounts', localAccounts);
             }
-    
+
             return;
         }
         const localUser: LocalUser = {
@@ -499,15 +501,15 @@ const accountChange = () => {
             salt: storeUser.salt,
             info: storeUser.info
         };
-    
+
         const storeCloudWallets: Map<CloudCurrencyType, LocalCloudWallet> = getStore('cloud/cloudWallets');
         const localCloudWallets = new Map<CloudCurrencyType, LocalCloudWallet>();
-    
+
         for (const [k, v] of storeCloudWallets) {
             const cloudWallet: LocalCloudWallet = { balance: v.balance };
             localCloudWallets.set(k, cloudWallet);
         }
-    
+
         const wallet = getStore('wallet');
         const fileTxHistorys = [];
         let localWallet: LocalWallet = null;
@@ -520,40 +522,40 @@ const accountChange = () => {
                         txHistory: info.txHistory
                     };
                     fileTxHistorys.push(fileTxHistory);
-    
+
                     return {
                         addr: info.addr,
                         balance: info.balance
                     };
                 });
-    
+
                 return {
                     ...record,
                     addrs
                 };
             });
-    
+
             localWallet = {
                 vault: wallet.vault,
-                setPsw:wallet.setPsw,
+                setPsw: wallet.setPsw,
                 isBackup: wallet.isBackup,
                 showCurrencys: wallet.showCurrencys,
                 currencyRecords: localCurrencyRecords,
-                changellyPayinAddress:wallet.changellyPayinAddress,
-                changellyTempTxs:wallet.changellyTempTxs,
-                logoutTimestamp:new Date().getTime()
+                changellyPayinAddress: wallet.changellyPayinAddress,
+                changellyTempTxs: wallet.changellyTempTxs,
+                logoutTimestamp: new Date().getTime()
             };
         }
-    
+
         const newAccount: Account = {
             user: localUser,
             wallet: localWallet,
             cloud: { cloudWallets: <any>[...localCloudWallets] }
         };
-    
+
         localAccounts.currenctId = storeUser.id;
         localAccounts.accounts[storeUser.id] = newAccount;
-    
+
         setLocalStorage('accounts', localAccounts);
         writeFile(storeUser.id, fileTxHistorys);
     });
@@ -585,9 +587,9 @@ const settingChange = () => {
         currencyUnit: getStore('setting/currencyUnit'),
         lockScreen: getStore('setting/lockScreen'),
         deviceId: getStore('setting/deviceId'),
-        deviceInfo:getStore('setting/deviceInfo'),
+        deviceInfo: getStore('setting/deviceInfo'),
         topHeight: getStore('setting/topHeight'),
-        bottomHeight:getStore('setting/bottomHeight')
+        bottomHeight: getStore('setting/bottomHeight')
     };
     setLocalStorage('setting', localSetting);
 };
@@ -607,7 +609,7 @@ const store: Store = {
         id: '',                      // 该账号的id
         offline: false,               // 连接状态
         isLogin: false,              // 登录状态
-        allIsLogin:false,            // 所有服务登录状态  (钱包  活动  聊天)
+        allIsLogin: false,            // 所有服务登录状态  (钱包  活动  聊天)
         token: '',                   // 自动登录token
         conRandom: '',               // 连接随机数
         conUid: '',                   // 服务器连接uid
@@ -617,11 +619,11 @@ const store: Store = {
             nickName: '',           // 昵称
             avatar: '',             // 头像
             phoneNumber: '',        // 手机号
-            areaCode:'86',          // 区域码
+            areaCode: '86',          // 区域码
             isRealUser: false,       // 是否是真实用户
-            acc_id:'',                // 好嗨号
-            sex:2,                    // 性别  0男 1女 2中性
-            note:''                   // 个性签名
+            acc_id: '',                // 好嗨号
+            sex: 2,                    // 性别  0男 1女 2中性
+            note: ''                   // 个性签名
         }
     },
     wallet: null,
@@ -661,9 +663,9 @@ const store: Store = {
         changeColor: '',          // 涨跌颜色设置，默认：红跌绿张
         currencyUnit: '',         // 显示哪个国家的货币
         deviceId: '',             // 设备唯一ID
-        deviceInfo:null,           // 设备信息
+        deviceInfo: null,           // 设备信息
         topHeight,              // 设备头部应空出来的高度
-        bottomHeight:0            // 设备底部应空出来的高度
+        bottomHeight: 0            // 设备底部应空出来的高度
     },
     third: {
         gasPrice: null,                             // gasPrice分档次
@@ -680,7 +682,7 @@ const store: Store = {
         currency2USDTMap: new Map<string, Currency2USDT>()  // k线  --> 计算涨跌幅
     },
     flags: {},
-    inviteUsers:{
+    inviteUsers: {
         invite_success: null,  // 我邀请的所有好友的accid
         convert_invite: null   // 邀请我的好友的accid
     }
@@ -752,13 +754,13 @@ export interface LocalCloudWallet {
  */
 export interface LocalWallet {
     vault: string;                      // 钱包核心
-    setPsw:boolean;                     // 是否已经设置密码
+    setPsw: boolean;                     // 是否已经设置密码
     isBackup: boolean;                  // 备份助记词与否
     showCurrencys: string[];            // 显示的货币列表
     currencyRecords: LocalCurrencyRecord[];  // 支持的所有货币记录
-    changellyPayinAddress:ChangellyPayinAddr[]; // changelly payinAddress
-    changellyTempTxs:ChangellyTempTxs[]; // changelly临时交易记录
-    logoutTimestamp?:number;      // 登出时间戳
+    changellyPayinAddress: ChangellyPayinAddr[]; // changelly payinAddress
+    changellyTempTxs: ChangellyTempTxs[]; // changelly临时交易记录
+    logoutTimestamp?: number;      // 登出时间戳
 }
 
 /**
@@ -767,7 +769,7 @@ export interface LocalWallet {
 export interface LocalThird {
     gasPrice: GasPrice; // gasPrice分档次
     btcMinerFee: BtcMinerFee; // btc minerfee 分档次
-    gasLimitMap: [string,number][]; // 各种货币转账需要的gasLimit
+    gasLimitMap: [string, number][]; // 各种货币转账需要的gasLimit
     rate: number; // 货币的美元汇率
     silver: Silver; // 白银价格
     currency2USDTMap: [string, Currency2USDT][]; // k线  --> 计算涨跌幅
