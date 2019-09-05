@@ -1,7 +1,6 @@
 /**
  * 后端主动推消息给后端
  */
-
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { CMD } from '../publicLib/config';
 import { ServerPushArgs, ServerPushKey } from '../publicLib/interface';
@@ -70,7 +69,7 @@ export const initPush = () => {
             } 
             setStore('inviteUsers/invite_success',invite);
         }
-        
+  
     });
 
     // 监听兑换邀请码成功事件
@@ -81,7 +80,7 @@ export const initPush = () => {
             invite = [res.accId,(new Date().getTime()),'beInvited'];
         } 
         setStore('inviteUsers/convert_invite',invite);
-        
+
     });
 
     // 监听邀请好友并成为真实用户事件
