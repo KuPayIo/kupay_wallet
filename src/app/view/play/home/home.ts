@@ -1,8 +1,5 @@
-/**
- * play home 
- */
  // ================================ 导入
-import { WebViewManager } from '../../../../pi/browser/webview';
+import { WebViewManager, screenMode } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -20,6 +17,10 @@ import { activityList, gameList } from './gameConfig';
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
+/**
+ * play home 
+ */
 export class PlayHome extends Widget {
     public ok: () => void;
     public configPromise:Promise<string>;
@@ -173,11 +174,13 @@ export class PlayHome extends Widget {
             const gameTitle = gameItem.title.zh_Hans;
             const gameUrl =   gameItem.url;
             const webviewName = gameItem.webviewName;
+            const screen = gameItem.screenMode;
             const pi3Config:any = getPi3Config();
             pi3Config.appid = gameItem.appid;
             pi3Config.gameName = gameTitle;
             pi3Config.webviewName = webviewName;
             pi3Config.fromWallet = true;
+            pi3Config.isHorizontal = screen === screenMode.landscape;  // 是否横屏
             
             // tslint:disable-next-line:variable-name
             const pi_sdk = {
@@ -189,13 +192,21 @@ export class PlayHome extends Widget {
             this.configPromise = Promise.resolve(pi3ConfigStr);
             if (gameItem.usePi) { // 有pi的项目
                 this.configPromise.then(configContent => {
-                    WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent);
+                    if (gameUrl.indexOf('http') >= 0) {
+                        WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent, screen);
+                    } else {
+                        WebViewManager.open(webviewName, `${gameUrl}`, gameTitle, configContent, screen);
+                    }
                 });
             } else {
                 const allPromise = Promise.all([this.injectStartPromise,this.configPromise,this.piSdkPromise,this.injectEndPromise]);
                 allPromise.then(([injectStartContent,configContent,piSdkContent,injectEndContent]) => {
                     const content =  injectStartContent + configContent + piSdkContent + injectEndContent;
-                    WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
+                    if (gameUrl.indexOf('http') >= 0) {
+                        WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content, screen);
+                    } else {
+                        WebViewManager.open(webviewName, `${gameUrl}`, gameTitle, content, screen);
+                    }
                 });
             }
         }
@@ -214,7 +225,6 @@ export class PlayHome extends Widget {
      * 默认进入游戏
      */
     public defaultEnterGame() {
-        return;
         console.log(`getStore('user/isLogin') = ${getStore('user/isLogin')},isActive = ${this.props.isActive}`);
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
         const phoneNumber = getUserInfo().phoneNumber;    

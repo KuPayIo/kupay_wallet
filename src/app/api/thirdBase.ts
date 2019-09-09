@@ -1,6 +1,6 @@
 import { applyToGroup, getChatUid } from '../../chat/client/app/net/rpc';
 import { GENERATOR_TYPE } from '../../chat/server/data/db/user.s';
-import { WebViewManager } from '../../pi/browser/webview';
+import { screenMode, WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { logoutWallet } from '../net/login';
 import { getGameItem } from '../view/play/home/gameConfig';
@@ -72,7 +72,7 @@ export const inviteFriends = (webviewName: string) => {
         bgImg:gameItem.img[2],
         shareUrl:gameItem.apkDownloadUrl,
         okCB:() => {
-            WebViewManager.open(webviewName, `${gameItem.url}?${Math.random()}`, webviewName,'');
+            WebViewManager.open(webviewName, `${gameItem.url}?${Math.random()}`, webviewName,'', screenMode.landscape);
         }
     });
     minWebview1(webviewName);
@@ -85,7 +85,7 @@ export const gotoRecharge = (webviewName: string) => {
     console.log('wallet gotoRecharge called');
     popNew('app-view-wallet-cloudWalletCustomize-rechargeSC',{
         okCB:() => {
-            WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
+            WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'', screenMode.landscape);
         }
     });
     minWebview1(webviewName);
@@ -99,7 +99,7 @@ export const gotoGameService = (webviewName: string) => {
     const item:any = getGameItem(webviewName);
     getChatUid(item.accId).then((r) => {
         popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER,okCB:() => {
-            WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
+            WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'', screenMode.landscape);
         } });
     });
     minWebview1(webviewName);
@@ -113,7 +113,7 @@ export const gotoOfficialGroupChat = (webviewName: string) => {
     const item:any = getGameItem(webviewName);
     applyToGroup(item.groupId).then((r) => {
         popNew('chat-client-app-view-chat-chat',{ id: r, chatType: GENERATOR_TYPE.GROUP,okCB:() => {
-            WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
+            WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'', screenMode.landscape);
         } });
     });
     minWebview1(webviewName);

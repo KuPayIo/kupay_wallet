@@ -189,7 +189,7 @@ winit.initNext = function () {
 
 	// app下载入口函数
 	var appLoadEntrance = function(){
-		pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang"], {}, function (mods, tmpfm) {
+		pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang","pi/render3d/babylon/babylon"], {}, function (mods, tmpfm) {
 			html = mods[0],
 			util = mods[1],
 			lang = mods[2];

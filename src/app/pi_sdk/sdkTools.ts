@@ -74,85 +74,86 @@ export const createThirdBaseStyle = () => {
       display: inline-flex;
       align-items: center;
       z-index:99999;
-  }
-  .pi-wx-dots{
-      display: flex;
-      align-items: center;
-      width: 25px;
-      height: 25px;
-      justify-content: center;
-  }
-  .pi-wx-dot1{
-      width:3.5px;
-      height:3.5px;
-      background-color: #fff;
-      border-radius: 50%;
-  }
-  .pi-wx-dot2{
-      width:6.5px;
-      height:6.5px;
-      background-color: #fff;
-      border-radius: 50%;
-      margin: 0 2.5px;
-  }
-  .pi-wx-circle{
-      width:25px;
-      height:25px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-left: 17px;
-  }
-  .pi-wx-circle1{
-      background-color:rgba(0,0,0,0);
-      width:17px;
-      height:17px;
-      border: 2px solid #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-      box-sizing: border-box;
-  }
-  .pi-wx-circle2{
-      width:5px;
-      height:5px;
-      background-color: #fff;
-      border-radius: 50%;
-  }
+    }
+    .pi-wx-dots{
+        display: flex;
+        align-items: center;
+        width: 25px;
+        height: 25px;
+        justify-content: center;
+    }
+    .pi-wx-dot1{
+        width:3.5px;
+        height:3.5px;
+        background-color: #fff;
+        border-radius: 50%;
+    }
+    .pi-wx-dot2{
+        width:6.5px;
+        height:6.5px;
+        background-color: #fff;
+        border-radius: 50%;
+        margin: 0 2.5px;
+    }
+    .pi-wx-circle{
+        width:25px;
+        height:25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 17px;
+    }
+    .pi-wx-circle1{
+        background-color:rgba(0,0,0,0);
+        width:17px;
+        height:17px;
+        border: 2px solid #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        box-sizing: border-box;
+    }
+    .pi-wx-circle2{
+        width:5px;
+        height:5px;
+        background-color: #fff;
+        border-radius: 50%;
+    }
     .pi-bottom-box{
-    background:#fff;
-    border-radius:20px 20px 0px 0px;
-    position: absolute;
-    bottom: -400px;
-    left: 0;
-    right: 0;
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0 60px 30px;
-    transition: all .3s ease-in-out;
+        background:#fff;
+        border-radius:20px 20px 0px 0px;
+        position: absolute;
+        bottom: -400px;
+        left: 20px;
+        right: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        padding-bottom: 30px;
+        transition: all .3s ease-in-out;
     }
     .pi-bottom-item{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 25%;
-    margin-top: 40px;
+        display: flex;
+        width:25%;
+        width:160px;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
     }
     .pi-img-box{
-    width: 100px;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     .pi-text{
-    font-size:24px;
-    font-family:"PingFangSC-Regular";
-    font-weight:400;
-    color:rgba(136,136,136,1);
-    line-height:33px;
-    margin-top: 10px;
+        font-size:24px;
+        font-family:"PingFangSC-Regular";
+        font-weight:400;
+        color:rgba(136,136,136,1);
+        line-height:33px;
+        margin-top: 10px;
     }
     `;
     // tslint:disable-next-line:variable-name
@@ -692,6 +693,7 @@ const floatButtonInit = () => {
    * 微信小程序按钮样式初始化
    */
 const WxButtionInit = () => {
+    console.log('~!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!WxButtionInit')
     const $wxBtns = document.createElement('div');
     $wxBtns.setAttribute('class','pi-wx-btns button-mod');
       
@@ -758,6 +760,9 @@ const popNewPanel = () => {
             if (!item.show) return;
             const $bottomItem = document.createElement('div');
             $bottomItem.setAttribute('class','pi-bottom-item');
+            if(pi_config.isHorizontal) {  // 横屏游戏
+                $bottomItem.style.flex = "1";
+            }
             $bottomItem.setAttribute('id',item.id);
             let imgUrl = item.img;
             let text = item.text;
@@ -803,6 +808,10 @@ const browserAdaptive =  () => {
     const cfg = {
         width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
     };
+    if(pi_config.isHorizontal) {  // 横屏游戏
+        cfg.width = 1334;
+        cfg.height = 750;
+    }
     const clientWidth = document.documentElement.clientWidth;
     const clientHeight = document.documentElement.clientHeight;
     let rootWidth = cfg.width;

@@ -4,7 +4,7 @@
 import { AdPlatform, ADUnion, PlayEvent } from '../../pi/browser/ad_unoin';
 import { DeviceIdProvider } from '../../pi/browser/device';
 import { ImagePicker } from '../../pi/browser/imagePicker';
-import { WebViewManager } from '../../pi/browser/webview';
+import { screenMode, WebViewManager } from '../../pi/browser/webview';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { getStore, setStore } from '../store/memstore';
 import { piRequire } from '../utils/commonjsTools';
@@ -65,7 +65,7 @@ export const doScanQrCode = (ok?,cancel?) => {
  * 打开新网页
  */
 export const openNewActivity = (url:string,title:string= '') => {
-    WebViewManager.open(title, `${url}?${Math.random()}`, title, '');
+    WebViewManager.open(title, `${url}?${Math.random()}`, title, '', screenMode.landscape);
 };
 
 /**

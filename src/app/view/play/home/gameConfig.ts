@@ -1,5 +1,6 @@
 import { shareDownload } from '../../../config';
 import { getLocalStorage } from '../../../store/filestore';
+import { screenMode } from '../../../../pi/browser/webview';
 
 /**
  * 第三方游戏相关配置
@@ -9,36 +10,39 @@ import { getLocalStorage } from '../../../store/filestore';
   * 游戏列表
   * http://xzxd.cocolandgame.com/dst/boot/yineng/yineng.html
   * http://192.168.35.202/dst/boot/yineng/yineng.html?debug
+  http://gcydzm.17youx.cn:9888/client/boot/index.html
   */
 export const gameList = [
     {
         usePi:false,
-        title:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
-        desc:{ zh_Hans:'仙之侠道',zh_Hant:'仙之侠道',en:'' },
+        title:{ zh_Hans:'一代掌门',zh_Hant:'一代掌门',en:'' },
+        desc:{ zh_Hans:'一代掌门',zh_Hant:'一代掌门',en:'' },
         img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
-        url:'http://xzxd.cocolandgame.com/dst/boot/yineng/yineng.html',
+        url:'http://gcydzm.17youx.cn:9888/client/boot/index.html',
         apkDownloadUrl:shareDownload,
         webviewName:'fairyChivalry',
-        appid:'102'
-    },{ // http://192.168.31.10:3003/index.html
-        usePi:true,
-        title:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
-        desc:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
-        img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
-        url: 'http://192.168.31.10/wallet/app/boot/index.html',  //     http://192.168.34.72/tuishu/client/boot/index.html
-        apkDownloadUrl:shareDownload,
-        webviewName:'tuishu',
-        appid:'102'
-    },{ // http://192.168.31.10:3003/index.html
-        usePi:true,
-        title:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
-        desc:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
-        img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
-        url:'http://192.168.34.72:5432/index.html', // http://192.168.34.72:5432/index.html
-        apkDownloadUrl:shareDownload,
-        webviewName:'reader',
-        appid:'102'
+        appid:'102',
+        screenMode:screenMode.landscape // 横竖屏
     }
+    // { // http://192.168.31.10:3003/index.html
+    //     usePi:true,
+    //     title:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
+    //     desc:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
+    //     img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
+    //     url: 'http://192.168.31.226/wallet/app/boot/index.html',  //     http://192.168.34.72/tuishu/client/boot/index.html
+    //     apkDownloadUrl:shareDownload,
+    //     webviewName:'tuishu',
+    //     appid:'102'
+    // },{ // http://192.168.31.10:3003/index.html
+    //     usePi:true,
+    //     title:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
+    //     desc:{ zh_Hans:'书城',zh_Hant:'书城',en:'' },
+    //     img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
+    //     url:'http://192.168.34.72:5432/index.html', // http://192.168.34.72:5432/index.html
+    //     apkDownloadUrl:shareDownload,
+    //     webviewName:'reader',
+    //     appid:'102'
+    // }
 ];
 
 export const activityList = [
