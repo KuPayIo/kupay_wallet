@@ -448,7 +448,7 @@ function updateUiInit(){
 	window.pi_update = window.pi_update || {};
 
 	var cfg = {
-    	width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+    	width: 1334, height: 750, wscale: 0.25, hscale: 0, full: false
 	};
 
 	var browserAdaptive = function() {

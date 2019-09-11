@@ -8,9 +8,11 @@ import { Widget } from '../../../../pi/widget/widget';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { getStore, register } from '../../../store/memstore';
+import { getStore, register, setStore } from '../../../store/memstore';
 import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
+import { notify } from '../../../../pi/widget/event_gui';
+import { getRealNode } from '../../../../pi/widget/painter';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -192,21 +194,17 @@ export class PlayHome extends Widget {
             this.configPromise = Promise.resolve(pi3ConfigStr);
             if (gameItem.usePi) { // 有pi的项目
                 this.configPromise.then(configContent => {
-                    if (gameUrl.indexOf('http') >= 0) {
-                        WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent, screen);
-                    } else {
-                        WebViewManager.open(webviewName, `${gameUrl}`, gameTitle, configContent, screen);
-                    }
+                    WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent, screen);
+                    setStore('flags/EnterGame',true); 
+                    hasEnterGame = false;                       
                 });
             } else {
                 const allPromise = Promise.all([this.injectStartPromise,this.configPromise,this.piSdkPromise,this.injectEndPromise]);
                 allPromise.then(([injectStartContent,configContent,piSdkContent,injectEndContent]) => {
                     const content =  injectStartContent + configContent + piSdkContent + injectEndContent;
-                    if (gameUrl.indexOf('http') >= 0) {
-                        WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content, screen);
-                    } else {
-                        WebViewManager.open(webviewName, `${gameUrl}`, gameTitle, content, screen);
-                    }
+                    WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content, screen);
+                    setStore('flags/EnterGame',true);
+                    hasEnterGame = false;                    
                 });
             }
         }
@@ -224,22 +222,22 @@ export class PlayHome extends Widget {
     /**
      * 默认进入游戏
      */
-    public defaultEnterGame() {
+    public defaultEnterGame() { 
         console.log(`getStore('user/isLogin') = ${getStore('user/isLogin')},isActive = ${this.props.isActive}`);
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
         const phoneNumber = getUserInfo().phoneNumber;    
         console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
-        if (!firstEnterGame || phoneNumber) {
+        // if (!firstEnterGame || phoneNumber) {
             if (!getStore('user/isLogin')  || !this.props.isActive || hasEnterGame) {
                 console.log('defaultEnterGame failed');
     
                 return;
             } else {
                 console.log('defaultEnterGame success');
-                this.gameClick(1);
-                localStorage.setItem('firstEnterGame','true');
+                this.gameClick(0);
+                // localStorage.setItem('firstEnterGame','true');
             }
-        }
+        // }
     }
 
 }

@@ -1,9 +1,9 @@
-import { applyToGroup, getChatUid } from '../../chat/client/app/net/rpc';
 import { GENERATOR_TYPE } from '../../chat/server/data/db/user.s';
 import { screenMode, WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { logoutWallet } from '../net/login';
 import { getGameItem } from '../view/play/home/gameConfig';
+import { getChatUid, applyToGroup } from '../../chat/client/app/net/rpc';
 
 /**
  * 第三方应用调用的基础功能
@@ -70,10 +70,9 @@ export const inviteFriends = (webviewName: string) => {
     const gameItem = getGameItem(webviewName);
     popNew('earn-client-app-view-activity-inviteFriend',{
         bgImg:gameItem.img[2],
-        shareUrl:gameItem.apkDownloadUrl,
-        okCB:() => {
-            WebViewManager.open(webviewName, `${gameItem.url}?${Math.random()}`, webviewName,'', screenMode.landscape);
-        }
+        shareUrl:gameItem.apkDownloadUrl
+    },() => {
+        WebViewManager.open(webviewName, `${gameItem.url}?${Math.random()}`, webviewName,'', screenMode.landscape);
     });
     minWebview1(webviewName);
 };
@@ -83,10 +82,8 @@ export const inviteFriends = (webviewName: string) => {
  */
 export const gotoRecharge = (webviewName: string) => {
     console.log('wallet gotoRecharge called');
-    popNew('app-view-wallet-cloudWalletCustomize-rechargeSC',{
-        okCB:() => {
-            WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'', screenMode.landscape);
-        }
+    popNew('app-view-wallet-cloudWalletCustomize-rechargeSC',null,() => {
+        WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'', screenMode.landscape);
     });
     minWebview1(webviewName);
 };
@@ -97,11 +94,11 @@ export const gotoRecharge = (webviewName: string) => {
 export const gotoGameService = (webviewName: string) => {
     console.log('wallet gotoGameService called');
     const item:any = getGameItem(webviewName);
-    getChatUid(item.accId).then((r) => {
-        popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER,okCB:() => {
+    // getChatUid(item.accId).then((r) => {
+        popNew('chat-client-app-view-chat-chat',{ accId:item.accId,chatType: GENERATOR_TYPE.USER,name:`${item.title.zh_Hans}官方客服`,okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'', screenMode.landscape);
         } });
-    });
+    // });
     minWebview1(webviewName);
 };
 
@@ -111,10 +108,10 @@ export const gotoGameService = (webviewName: string) => {
 export const gotoOfficialGroupChat = (webviewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
     const item:any = getGameItem(webviewName);
-    applyToGroup(item.groupId).then((r) => {
-        popNew('chat-client-app-view-chat-chat',{ id: r, chatType: GENERATOR_TYPE.GROUP,okCB:() => {
+    // applyToGroup(item.groupId).then((r) => {
+        popNew('chat-client-app-view-chat-chat',{ gid:item.groupId, chatType: GENERATOR_TYPE.GROUP,name:`${item.title.zh_Hans}官方群`,okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'', screenMode.landscape);
-        } });
-    });
+        } });    
+    // });
     minWebview1(webviewName);
 };

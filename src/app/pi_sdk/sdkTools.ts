@@ -135,7 +135,6 @@ export const createThirdBaseStyle = () => {
     .pi-bottom-item{
         display: flex;
         width:25%;
-        width:160px;
         flex-direction: column;
         align-items: center;
         margin-top: 10px;
@@ -761,7 +760,8 @@ const popNewPanel = () => {
             const $bottomItem = document.createElement('div');
             $bottomItem.setAttribute('class','pi-bottom-item');
             if(pi_config.isHorizontal) {  // 横屏游戏
-                $bottomItem.style.flex = "1";
+                $bottomItem.style.flex = "1 0 0";
+                $bottomItem.style.width = "160px";
             }
             $bottomItem.setAttribute('id',item.id);
             let imgUrl = item.img;
@@ -805,12 +805,13 @@ const popNewPanel = () => {
  * 自适应
  */
 const browserAdaptive =  () => {
-    const cfg = {
+    let cfg = {
         width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
     };
     if(pi_config.isHorizontal) {  // 横屏游戏
-        cfg.width = 1334;
-        cfg.height = 750;
+        cfg = {
+            width: 1334, height: 750, wscale: 0, hscale: 0, full: false
+        };
     }
     const clientWidth = document.documentElement.clientWidth;
     const clientHeight = document.documentElement.clientHeight;

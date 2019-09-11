@@ -3,6 +3,7 @@ import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet'
 import { getLoginMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewMessage } from '../../utils/tools';
+import { setStore } from '../../store/memstore';
 
 /**
  * 登录注册
@@ -23,6 +24,7 @@ export class Entrance extends Widget {
                 return;
             }
             getLoginMod().then(mod => {
+                setStore('flags/createWallet',true);   // 创建钱包成功
                 mod.openConnect(secrectHash);
             });
             
@@ -51,6 +53,11 @@ export class Entrance extends Widget {
         popNew3('app-view-wallet-import-phoneImport',{},() => {
             this.ok && this.ok();
         });
+    }
+
+    // 微信登陆
+    public wechatLoginClick(){
+        this.touristLoginClick();
     }
 
 }

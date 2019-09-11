@@ -9,6 +9,7 @@ import { cryptoRandomInt } from '../../pi/util/math';
 import { getStore, setStore } from '../store/memstore';
 import { piRequire } from '../utils/commonjsTools';
 import { popNewLoading } from '../utils/tools';
+import { WeChatLogin } from '../../pi/browser/wxlogin';
 
 export const selectImage = (ok?,cancel?) => {
     console.log('选择图片');
@@ -279,5 +280,24 @@ export const chooseAdType = (cb:Function) => {
         const index = Math.floor(Math.random() * 100) % len;
         const adType = ads[index] || (Math.random() > 0.5 ? AdPlatform.GDT : AdPlatform.CSJ);
         cb && cb(adType);
+    });
+};
+
+/**
+ * 将APP注册到微信
+ */
+export const registerToWx = (appId:string) => {
+    console.log('registerToWx!!!!!!',appId);
+    WeChatLogin.regToWx(appId);
+};
+registerToWx('wx3d86fc2e76c0af41');   // 加载就立即调用
+
+/**
+ * 从微信APP获取临时凭证Code
+ */
+export const getWXCode = (ok?:any) => {
+    WeChatLogin.getCodeFromWX('snsapi_userinfo','',(res,code,state) => {
+        console.log('getWXCode!!!!!!',res,code,state);
+        ok && ok(code);
     });
 };

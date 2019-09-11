@@ -141,14 +141,14 @@ export class RechargeSC extends Widget {
      * 返回上一页
      */
     public backPrePage() {
-        if (this.props.okCB) {
-            this.props.okCB && this.props.okCB();
-            setTimeout(() => {
-                this.ok && this.ok();
-            },500);
-        } else {
+        // if (this.props.okCB) {
+        //     this.props.okCB && this.props.okCB();
+        //     setTimeout(() => {
+        //         this.ok && this.ok();
+        //     },500);
+        // } else {
             this.ok && this.ok();
-        }
+        // }
     }
 }
 

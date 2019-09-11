@@ -8,7 +8,7 @@ import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { getModulConfig } from '../../modulConfig';
-import { register } from '../../store/memstore';
+import { register, getStore } from '../../store/memstore';
 import { checkPopPhoneTips, rippleShow } from '../../utils/tools';
 
 // ================================ 导出
@@ -24,6 +24,7 @@ export class App extends Widget {
     public create() {
         super.create();
         this.init();
+        this.props.showGameImg = !!getStore('user/id','');
     }
 
     public init(): void {
@@ -88,10 +89,12 @@ export class App extends Widget {
     }
 
     public switchToPlay() {
+        this.props.showGameImg = true;  // 创建钱包成功后展示游戏大图
         this.props.isActive = 'APP_PLAY';
         this.paint();
     }
 
+    // 切换聊天图标小红点
     public changeChatIcon(fg:boolean) {
         if (fg) {
             this.props.tabBarList[1].iconActive = 'chat_active_unRead.png';
@@ -102,6 +105,15 @@ export class App extends Widget {
         }
         this.paint();
     }
+
+    // 关闭游戏大图
+    public closeGameImg(){
+        setTimeout(() => {
+            this.props.showGameImg = false;
+            this.paint();    
+        }, 500);
+    }
+
 }
 
 // ===================================================== 本地
@@ -111,7 +123,7 @@ export class App extends Widget {
 register('flags/level_3_page_loaded', (loaded: boolean) => {
     const dataCenter = pi_modules.commonjs.exports.relativeGet('app/logic/dataCenter').exports.dataCenter;
     dataCenter.init();
-    checkPopPhoneTips();
+    // checkPopPhoneTips();  // 检测是否绑定了手机号
     if (localStorage.getItem('kickOffline')) {
         const kickOffline = pi_modules.commonjs.exports.relativeGet('app/net/login').exports.kickOffline;
         localStorage.removeItem('kickOffline');
@@ -128,6 +140,12 @@ register('setting/language',(r) => {
 register('flags/createWallet',(createWallet:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.switchToPlay();
+});
+
+// 进入游戏后关闭游戏大图
+register('flags/EnterGame',()=>{
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.closeGameImg();
 });
 
 // 监听活动页面

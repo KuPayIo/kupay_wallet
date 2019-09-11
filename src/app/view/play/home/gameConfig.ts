@@ -14,14 +14,14 @@ import { screenMode } from '../../../../pi/browser/webview';
   */
 export const gameList = [
     {
-        usePi:false,
+        usePi:true,
         title:{ zh_Hans:'一代掌门',zh_Hant:'一代掌门',en:'' },
         desc:{ zh_Hans:'一代掌门',zh_Hant:'一代掌门',en:'' },
-        img:['app/res/image1/fairyChivalry1.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
-        url:'http://gcydzm.17youx.cn:9888/client/boot/index.html',
+        img:['app/res/image1/chairMan.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
+        url:'http://gcydzm.17youx.cn:8555/client/boot/haohai.html',
         apkDownloadUrl:shareDownload,
         webviewName:'fairyChivalry',
-        appid:'102',
+        appid:'103',
         screenMode:screenMode.landscape // 横竖屏
     }
     // { // http://192.168.31.10:3003/index.html

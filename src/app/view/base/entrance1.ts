@@ -7,7 +7,7 @@ import { uploadFileUrlPrefix } from '../../config';
 import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
 import { getModulConfig } from '../../modulConfig';
 import { loginSuccess } from '../../net/login';
-import { deleteAccount, getAllAccount } from '../../store/memstore';
+import { deleteAccount, getAllAccount, setStore } from '../../store/memstore';
 import { getLoginMod, getWalletToolsMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewLoading, popNewMessage } from '../../utils/tools';
@@ -160,6 +160,7 @@ export class Entrance1 extends Widget {
                 return;
             }
             getLoginMod().then(mod => {
+                setStore('flags/createWallet',true);   // 创建钱包成功
                 mod.openConnect(secrectHash);
             });
             
