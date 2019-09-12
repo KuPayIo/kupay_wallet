@@ -1,9 +1,9 @@
 import { Widget } from '../../../pi/widget/widget';
 import { CreateWalletType, Option, touristLogin } from '../../logic/localWallet';
+import { setStore } from '../../store/memstore';
 import { getLoginMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewMessage } from '../../utils/tools';
-import { setStore } from '../../store/memstore';
 
 /**
  * 登录注册
@@ -50,13 +50,16 @@ export class Entrance extends Widget {
 
     // 手机登录
     public phoneLoginClick() {
-        popNew3('app-view-wallet-import-phoneImport',{},() => {
+        // popNew3('app-view-wallet-import-phoneImport',{},() => {
+        //     this.ok && this.ok();
+        // });
+        popNew3('app-view-wallet-import-rowPhoneLogin',{},() => {
             this.ok && this.ok();
         });
     }
 
     // 微信登陆
-    public wechatLoginClick(){
+    public wechatLoginClick() {
         this.touristLoginClick();
     }
 

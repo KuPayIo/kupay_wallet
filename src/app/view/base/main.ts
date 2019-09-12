@@ -26,7 +26,8 @@ export const run = (cb): void =>  {
         if (getAllAccount().length > 0) {
             popNew('app-view-base-entrance1');
         } else {
-            popNew('app-view-base-entrance');
+            // popNew('app-view-base-entrance');
+            popNew('app-view-base-rowEntrance');
         }
     }
     // 锁屏页面
