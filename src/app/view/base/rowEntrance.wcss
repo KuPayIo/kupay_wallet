@@ -1,0 +1,32 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.logo{
+    width: 200px;
+    height: 200px;
+    margin-top: 167px;
+}
+.loginTyoe{
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 98px;
+}
+.phoneLogin{
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.loginTitle{
+    font-size:24px;
+    font-family:PingFangSC;
+    font-weight:400;
+    color:rgba(136,136,136,1);
+}
+.loginImg{
+    width: 100px;
+    height: 100px;
+}

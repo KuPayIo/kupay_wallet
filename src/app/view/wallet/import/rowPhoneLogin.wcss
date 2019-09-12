@@ -1,0 +1,48 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.phoneInput{
+    width: 500px;
+    height: 80px;
+    margin-top: 87px;
+    background:rgba(242,242,242,1);
+}
+.codeBox{
+    margin-top: 30px;
+    display: flex;
+    width: 500px;
+    justify-content: space-around;
+}
+.codeInput{
+    width: 300px;
+    height: 80px;
+    background:rgba(242,242,242,1);
+}
+.time{
+    width: 190px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    font-size:24px;
+    font-family:PingFangSC;
+    font-weight:400;
+    color:rgba(34,34,34,1);
+    background:rgba(242,242,242,1);
+    border-radius:6px;
+    border:1px solid rgba(151,151,151,1);
+}
+.btn{
+    margin-top: 30px;
+    width:500px;
+    height:80px;
+    background:linear-gradient(270deg,rgba(68,206,237,1) 0%,rgba(62,179,241,1) 100%);
+    border-radius:6px;
+    text-align: center;
+    line-height: 80px;
+    font-size:28px;
+    font-family:PingFangSC;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+}
