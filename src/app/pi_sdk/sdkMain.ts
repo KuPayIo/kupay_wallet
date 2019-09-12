@@ -1,4 +1,4 @@
-import { buttonModInit, createThirdApiStyleTag, createThirdBaseStyle } from './sdkTools';
+import { createThirdApiStyleTag, createThirdBaseStyle } from './sdkTools';
 
 /**
  * pi sdk 入口文件
@@ -152,7 +152,7 @@ const piSdkInit = () => {
     if (!pi_config.fromWallet) return;   // 只有从钱包打开的渠道才初始化
     createThirdBaseStyle();
     createThirdApiStyleTag();
-    buttonModInit()();
+    // buttonModInit()();
     // getFreeSecret();
 };
 

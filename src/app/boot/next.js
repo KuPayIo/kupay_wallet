@@ -310,6 +310,10 @@ winit.initNext = function () {
 				// 加载根组件
 				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
 				root.cfg.full = false; //PC模式
+				// root.cfg.width = 1334;
+				// root.cfg.height = 750;
+				// root.cfg.wscale = 0.25;
+				// root.cfg.hscale = 0;
 				var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
 				index.run(function () {
 					// 关闭读取界面
@@ -482,6 +486,7 @@ function updateUiInit(){
 		var cssText = 'z-index:99999;position: absolute;overflow: hidden;left: ' + rootX + 'px;top: ' + rootY + 'px;width:' + rootWidth + 'px;height: ' + rootHeight + 'px;-webkit-transform:scale(' + scaleW + ',' + scaleH + ');-moz-transform:scale(' + scaleW + ',' + scaleH + ');-ms-transform:scale(' + scaleW + ',' + scaleH + ');transform:scale(' + scaleW + ',' + scaleH + ');';
 		// var rootUpdate = document.querySelector('#update-root');
 		// rootUpdate.style.cssText = cssText;
+		console.log(cssText);
 
 		return cssText;
 	};

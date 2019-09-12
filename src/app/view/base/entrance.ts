@@ -4,6 +4,9 @@ import { getLoginMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewMessage } from '../../utils/tools';
 import { setStore } from '../../store/memstore';
+import { getWXCode } from '../../logic/native';
+import { sourceIp, sourcePort } from '../../ipConfig';
+import { loadDir } from '../../../pi/widget/util';
 
 /**
  * 登录注册
@@ -57,7 +60,15 @@ export class Entrance extends Widget {
 
     // 微信登陆
     public wechatLoginClick(){
-        this.touristLoginClick();
+        getWXCode(code => {
+            fetch(`http://${sourceIp}:${sourcePort}/pt/wx/app/oauth2?code=${code}&state=_${encodeURIComponent(window.location.href)}`).then(res=>{
+                res.json().then(r=>{
+                    console.log(r);
+                    loadDir(r,undefined, undefined, undefined,undefined,undefined);
+                });
+            });
+        });
+
     }
 
 }
