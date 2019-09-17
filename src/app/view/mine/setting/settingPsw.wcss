@@ -1,5 +1,7 @@
 .new-page{
     background-color: #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .body{
     padding: 0 30px 30px;

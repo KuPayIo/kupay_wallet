@@ -3,7 +3,6 @@ import { screenMode, WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
 import { logoutWallet } from '../net/login';
 import { getGameItem } from '../view/play/home/gameConfig';
-import { getChatUid, applyToGroup } from '../../chat/client/app/net/rpc';
 
 /**
  * 第三方应用调用的基础功能
@@ -59,7 +58,7 @@ export const minWebview = (payload:{webviewName: string;popFloatBox:boolean}) =>
 export const minWebview1 = (webviewName: string) => {
     console.log('wallet minWebview called');
     curWebviewName = webviewName;
-    WebViewManager.minWebView(webviewName);
+    WebViewManager.minWebView(webviewName,screenMode.portrait);
 };
 
 /**
@@ -95,9 +94,9 @@ export const gotoGameService = (webviewName: string) => {
     console.log('wallet gotoGameService called');
     const item:any = getGameItem(webviewName);
     // getChatUid(item.accId).then((r) => {
-        popNew('chat-client-app-view-chat-chat',{ accId:item.accId,chatType: GENERATOR_TYPE.USER,name:`${item.title.zh_Hans}官方客服`,okCB:() => {
-            WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'', screenMode.landscape);
-        } });
+    popNew('chat-client-app-view-chat-chat',{ accId:item.accId,chatType: GENERATOR_TYPE.USER,name:`${item.title.zh_Hans}官方客服`,okCB:() => {
+        WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'', screenMode.landscape);
+    } });
     // });
     minWebview1(webviewName);
 };
@@ -109,9 +108,9 @@ export const gotoOfficialGroupChat = (webviewName: string) => {
     console.log('wallet gotoOfficialGroupChat called');
     const item:any = getGameItem(webviewName);
     // applyToGroup(item.groupId).then((r) => {
-        popNew('chat-client-app-view-chat-chat',{ gid:item.groupId, chatType: GENERATOR_TYPE.GROUP,name:`${item.title.zh_Hans}官方群`,okCB:() => {
-            WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'', screenMode.landscape);
-        } });    
+    popNew('chat-client-app-view-chat-chat',{ gid:item.groupId, chatType: GENERATOR_TYPE.GROUP,name:`${item.title.zh_Hans}官方群`,okCB:() => {
+        WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'', screenMode.landscape);
+    } });    
     // });
     minWebview1(webviewName);
 };

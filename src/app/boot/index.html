@@ -435,7 +435,7 @@
 					winit.win[k] = 1;
 			}
 			winit.startTime = Date.now();
-			var name = "wallet"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
+			var name = "chairMan"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
 			// debugger;
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
@@ -453,6 +453,7 @@
 			}else{// 本地包需要配置服务器ip和port
 				// 外网 39.98.200.23   high.herominer.net 
 				winit.severIp = "192.168.31.226";
+				// winit.severIp = "39.98.48.66";
 				winit.severPort = "80";		
 			}
 
@@ -466,7 +467,7 @@
 			// }
 
 			// app更新配置的URL地址
-			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
+			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/chairMan/appversion";
 			// winit.appURL = "https://" + winit.severIp + ":" + winit.severPort + "/wallet/appversion";
 			// console.log("winit.appURL = ",winit.appURL);
 
@@ -704,11 +705,11 @@
 			winit.startImpl = function () {
 				if (winit.debug) {
 					winit.loadJS(winit.getLoadDomain("hotfix.js"),
-						"/wallet/app/boot/hotfix.js", "utf8", winit.initFail, "load hotupdate error");
+						"/chairMan/app/boot/hotfix.js", "utf8", winit.initFail, "load hotupdate error");
 				}
 
 				winit.loadJS(winit.getLoadDomain("index.js"),
-					"/wallet/app/boot/index.js?" + Math.random(), "utf8", winit.initFail, "load index error");
+					"/chairMan/app/boot/index.js?" + Math.random(), "utf8", winit.initFail, "load index error");
 			}
 
 			if (document.hidden === true)

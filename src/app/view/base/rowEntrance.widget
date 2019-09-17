@@ -1,0 +1,5 @@
+{
+    "tpl":"./rowEntrance.tpl",
+    "css":"./rowEntrance.wcss",
+    "js":"./entrance.ts"
+}

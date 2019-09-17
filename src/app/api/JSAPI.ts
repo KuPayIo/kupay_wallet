@@ -1,8 +1,8 @@
 /**
  * 授权、支付等API
  */
-import { WebViewManager } from '../../pi/browser/webview';
-import { popNew } from '../../pi/ui/root';
+import { WebViewManager, screenMode } from '../../pi/browser/webview';
+import { popNew, cfg } from '../../pi/ui/root';
 import { loadDir } from '../../pi/widget/util';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
@@ -81,7 +81,7 @@ export const openNewWebview = (payload:{ webviewName: string;url:string;args:Obj
                 }
             }
             const gameUrl = `${payload.url}?${search.join('&')}`;
-            WebViewManager.open(payload.webviewName, gameUrl, pi3Config.gameName, configContent);
+            WebViewManager.open(payload.webviewName, gameUrl, pi3Config.gameName, configContent,screenMode.landscape);
         });
     } else {
         const injectStartPromise = new Promise((resolve) => {
@@ -136,7 +136,7 @@ export const openNewWebview = (payload:{ webviewName: string;url:string;args:Obj
                 }
             }
             const gameUrl = `${payload.url}?${search.join('&')}`;
-            WebViewManager.open(payload.webviewName, gameUrl, pi3Config.gameName, content);
+            WebViewManager.open(payload.webviewName, gameUrl, pi3Config.gameName, content,screenMode.landscape);
         });
     }
     
@@ -259,10 +259,11 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
         } else { // 余额不够
             // TODO 跳转充值页面
             minWebview1(webviewName);
+            
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
             console.log(`商户信息 ========== mch_id = ${order.mch_id}  mchInfo = ${mchInfo}`);
             const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName,() => {
-                WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
+                WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'',screenMode.landscape);
             });
             if (rechargeSuccess) {  // 充值成功   直接购买
                 if (setNoPassword === SetNoPassword.SETED) {// 余额足够并且免密开启   直接购买
@@ -291,6 +292,12 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
  * 跳转充值页面
  */
 const gotoRecharge = (order:ThirdOrder,beneficiary:string = '好嗨游戏',okCB:Function) => {
+            cfg.full = false; //PC模式
+            cfg.width = 750;
+            cfg.height =  1334;
+            cfg.wscale = 0.25;
+            cfg.hscale = 0;
+            window.onresize();
     return new Promise(resolve => {
         popNew('app-view-wallet-cloudWalletCustomize-thirdRechargeSC',{ order,beneficiary,okCB },(rechargeSuccess:boolean) => {
             resolve(rechargeSuccess);

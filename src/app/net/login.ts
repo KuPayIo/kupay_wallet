@@ -78,7 +78,7 @@ const conSuccess = (secretHash:string) => {
     return () => {
         console.log('con success');
         setStore('user/offline',false);
-        getRandom(secretHash);
+        getRandom(secretHash,0);
     };
 };
 
@@ -223,8 +223,9 @@ export const getOpenId = (appId:string) => {
 /**
  * 获取随机数
  * flag:0 普通用户注册，1注册即为真实用户
+ * login_type 0 钱包登陆 1 手机号登陆 2 微信登陆
  */
-export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code?:number,num?:string) => {
+export const getRandom = async (secretHash:string,login_type:number,cmd?:number,phone?:string,code?:string,num?:string,user?:string,password?:string) => {
     console.time('loginMod getRandom');
     const wallet = getStore('wallet');
     if (!wallet) return;
@@ -235,7 +236,8 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
         account: getStore('user/id').slice(2), 
         pk: `04${getStore('user/publicKey')}`,
         device_id:deviceDetail.uuid,
-        flag:1
+        flag:1,
+        login_type
     };
     if (pi_update.inAndroidApp) {
         param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
@@ -258,6 +260,12 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
     }
     if (num) {
         param.num = num;
+    }
+    if (user) {
+        param.user = user;
+    }
+    if (password) {
+        param.password = password;
     }
     const msg = { 
         type: 'get_random', 
@@ -372,11 +380,12 @@ export const logoutAccountDel = (noLogin?:boolean) => {
     },100);
     if (!noLogin) {
         closeAllPage();
-        if (getAllAccount().length > 0) {
-            popNew('app-view-base-entrance1');
-        } else {
-            popNew('app-view-base-entrance');
-        }
+        // if (getAllAccount().length > 0) {
+        //     popNew('app-view-base-entrance1');
+        // } else {
+        //     popNew('app-view-base-entrance');
+        // }
+        popNew('app-view-base-rowEntrance');
     }
     delPopPhoneTips();
 };
@@ -484,12 +493,12 @@ export const kickOffline = (secretHash:string = '',phone?:number,code?:number,nu
         content:'清除其它设备账户信息' 
     },(deleteAccount:boolean) => {
         if (deleteAccount) {
-            getRandom(secretHash,CMD.FORCELOGOUTDEL,phone,code,num);
+            getRandom(secretHash,0,CMD.FORCELOGOUTDEL,phone,code,num);
         } else {
-            getRandom(secretHash,CMD.FORCELOGOUT,phone,code,num);
+            getRandom(secretHash,0,CMD.FORCELOGOUT,phone,code,num);
         }
     },() => {
-        getRandom(secretHash,CMD.FORCELOGOUT);
+        getRandom(secretHash,0,CMD.FORCELOGOUT);
     });
 };
 

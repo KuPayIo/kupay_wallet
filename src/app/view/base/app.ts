@@ -24,7 +24,7 @@ export class App extends Widget {
     public create() {
         super.create();
         this.init();
-        this.props.showGameImg = !!getStore('user/id','');
+        this.props.showGameImg = true;
     }
 
     public init(): void {
@@ -111,7 +111,7 @@ export class App extends Widget {
         setTimeout(() => {
             this.props.showGameImg = false;
             this.paint();    
-        }, 500);
+        }, 1000);
     }
 
 }
@@ -145,7 +145,7 @@ register('flags/createWallet',(createWallet:boolean) => {
 // 进入游戏后关闭游戏大图
 register('flags/EnterGame',()=>{
     const w: any = forelet.getWidget(WIDGET_NAME);
-    w && w.closeGameImg();
+    w && w.closeGameImg(); 
 });
 
 // 监听活动页面

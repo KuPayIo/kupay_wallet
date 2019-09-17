@@ -108,6 +108,7 @@ export const phoneImport = async (option: Option) => {
 
     return secrectHash;
 };
+
 /**
  * 随机创建钱包
  */

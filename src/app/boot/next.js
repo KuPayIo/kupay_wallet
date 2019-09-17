@@ -310,10 +310,10 @@ winit.initNext = function () {
 				// 加载根组件
 				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
 				root.cfg.full = false; //PC模式
-				// root.cfg.width = 1334;
-				// root.cfg.height = 750;
-				// root.cfg.wscale = 0.25;
-				// root.cfg.hscale = 0;
+				root.cfg.width = 1334;
+				root.cfg.height = 750;
+				root.cfg.wscale = 0.25;
+				root.cfg.hscale = 0;
 				var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
 				index.run(function () {
 					// 关闭读取界面

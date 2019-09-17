@@ -82,8 +82,8 @@ export const jumpWxpay = (order) => {
                 cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
             }, () => {
                 WebViewManager.freeView('payWebView');
-                const firstRecharge = earnGetStore('flags').firstRecharge;
-                if (!firstRecharge) earnSetStore('flags/firstRecharge',true);
+                // const firstRecharge = earnGetStore('flags').firstRecharge;
+                // if (!firstRecharge) earnSetStore('flags/firstRecharge',true);
                 resolve(order);
             }, () => {
                 WebViewManager.freeView('payWebView');

@@ -114,6 +114,7 @@ export const initPush = () => {
             });
         }
         
+        return;
         const wallet = getStore('wallet');
         const userInfo = getUserInfo();
         if (!wallet.setPsw) {

@@ -70,7 +70,7 @@ export class PhoneImport extends Widget {
             return;
         }
         if (verify) {  // 已经注册过
-            const itype = await getRandom(secretHash,undefined,phoneNum,this.props.code.join(''),this.props.areaCode);
+            const itype = await getRandom(secretHash,1,undefined,phoneNum,this.props.code.join(''),this.props.areaCode);
             console.log('getRandom itype = ',itype);
             close.callback(close.widget);
             if (itype === -301) {
@@ -83,7 +83,7 @@ export class PhoneImport extends Widget {
                 this.phoneImportError('出错啦');
             }
         } else {
-            const itype = await getRandom(secretHash);
+            const itype = await getRandom(secretHash,0);
             console.log('getRandom itype = ',itype);
             if (itype === 1) {
                 const data = await regPhone(this.props.phone, this.props.areaCode,this.props.code.join(''));
@@ -95,7 +95,10 @@ export class PhoneImport extends Widget {
                     setStore('user/info',userinfo,false);
                     delPopPhoneTips();
                     this.ok && this.ok();
-                } else {
+                } else if(data && data.result === -300){
+                    this.phoneImportError('验证码超时');
+                }else{
+                    popNewMessage('啦啦啦啦啦啦')
                     this.phoneImportError('出错啦');
                 }
             } else {

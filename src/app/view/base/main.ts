@@ -23,11 +23,12 @@ export const run = (cb): void =>  {
     // 打开首页面
     popNew('app-view-base-app');
     if (!getStore('user/id')) {
-        if (getAllAccount().length > 0) {
-            popNew('app-view-base-entrance1');
-        } else {
-            popNew('app-view-base-entrance');
-        }
+        // if (getAllAccount().length > 0) {
+        //     popNew('app-view-base-entrance1');
+        // } else {
+        //     popNew('app-view-base-entrance');
+        // }
+        popNew('app-view-base-rowEntrance');
     }
     // 锁屏页面
     popNewPage();
