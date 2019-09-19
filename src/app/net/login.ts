@@ -125,6 +125,9 @@ export const applyAutoLogin = async () => {
         const cipherToolsMod = await getCipherToolsMod();
         const decryptToken = cipherToolsMod.encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
+        console.log(`1: ${getStore('user/token')}, 2: ${deviceDetail.uuid.toString()},4:${res.token}`);
+        const token = cipherToolsMod.decrypt(getStore('user/token'),deviceDetail.uuid.toString());
+        console.log(`,3:${JSON.stringify(token)}`);
     });
 };
 
@@ -133,10 +136,12 @@ export const applyAutoLogin = async () => {
  */
 export const autoLogin = async (conRandom:string) => {
     console.time('loginMod autoLogin');
-    console.time('loginMod getCipherToolsMod');
+    console.time('loginMod getCipherToolsMod');    
     const [deviceDetail,cipherToolsMod] = await Promise.all([getDeviceAllDetail(),getCipherToolsMod()]);
-    console.timeEnd('loginMod getCipherToolsMod');
+    console.timeEnd('loginMod getCipherToolsMod');       
+    console.log(`1: ${getStore('user/token')}, 2: ${deviceDetail.uuid.toString()}`);
     const token = cipherToolsMod.decrypt(getStore('user/token'),deviceDetail.uuid.toString());
+    
     const param:any = {
         device_id: deviceDetail.uuid,
         token,
@@ -161,6 +166,7 @@ export const autoLogin = async (conRandom:string) => {
     }).catch((res) => {
         setStore('user/isLogin', false);
         if (res.error !== -69) {
+            alert("fail to auto login");
             setStore('user/token','');
             loginWalletFailed();
         }

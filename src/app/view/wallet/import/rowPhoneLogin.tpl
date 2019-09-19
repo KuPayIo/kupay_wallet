@@ -1,5 +1,5 @@
 <div class="new-page" ev-back-click="backPrePage" w-class="new-page">
-    <app-components-topBar-topBar>{"title":"手机号码" }</app-components-topBar-topBar>
+    <app-components1-topBar-topBar>{"title":"手机号码" }</app-components1-topBar-topBar>
     {{: phone = {"zh_Hans":"手机号","zh_Hant":"手機號","en":""} }}
     {{: code = {"zh_Hans":"验证码","zh_Hant":"驗證碼","en":""} }}
     <div w-class="phoneInput" ev-input-change="phoneChange"><app-components1-input-input>{input:{{it.phone}},placeHolder:{{phone}},itype:"number"}</app-components1-input-input></div>

@@ -96,7 +96,7 @@ export class PlayHome extends Widget {
 
     public attach() {
         super.attach();
-        this.defaultEnterGame();
+        // this.defaultEnterGame();
     }
     /**
      * 刷新页面
@@ -194,7 +194,12 @@ export class PlayHome extends Widget {
             this.configPromise = Promise.resolve(pi3ConfigStr);
             if (gameItem.usePi) { // 有pi的项目
                 this.configPromise.then(configContent => {
-                    WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent, screen);
+                    if(gameUrl.indexOf('http') > -1){
+                        WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent, screen);
+                        setStore('flags/EnterGame',true); 
+                    }else{
+                        WebViewManager.open(webviewName, gameUrl, gameTitle, configContent, screen);
+                    }
                     setStore('flags/EnterGame',true); 
                     hasEnterGame = false;                       
                 });

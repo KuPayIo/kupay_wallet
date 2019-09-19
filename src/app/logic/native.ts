@@ -181,7 +181,7 @@ declare var pi_update;
 /**
  * 获取设备所有详情
  */
-export const getDeviceAllDetail = ():Promise<any> => {
+export const  getDeviceAllDetail = ():Promise<any> => {
     if (!pi_update.inAndroidApp && !pi_update.inIOSApp) {
         return new Promise((resolve) => {
             const uuid = getStore('setting/deviceId') || cryptoRandomInt().toString();
@@ -295,9 +295,14 @@ registerToWx('wxd842d1d167444cd0');   // 加载就立即调用
 /**
  * 从微信APP获取临时凭证Code
  */
-export const getWXCode = (ok?:any) => {
-    WeChatLogin.getCodeFromWX('snsapi_userinfo','',(res,code,state) => {
-        console.log('getWXCode!!!!!!',res,code,state);
-        ok && ok(code);
+export const getWXCode = (ok?:any,fail?:any) => {
+    WeChatLogin.getCodeFromWX('snsapi_userinfo','',(res,code) => {
+        console.log('getWXCode!!!!!!',res,code);
+        if(res === 0){
+            ok && ok(code);
+        }else{
+            fail && fail();
+        }
+       
     });
 };

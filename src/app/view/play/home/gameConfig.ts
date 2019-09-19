@@ -11,6 +11,7 @@ import { screenMode } from '../../../../pi/browser/webview';
   * http://xzxd.cocolandgame.com/dst/boot/yineng/yineng.html
   * http://192.168.35.202/dst/boot/yineng/yineng.html?debug
   http://gcydzm.17youx.cn:9888/client/boot/index.html
+  http://cgcydzm.17youx.cn/client/boot/haohai.html
   */
 export const gameList = [
     {
@@ -18,7 +19,7 @@ export const gameList = [
         title:{ zh_Hans:'一代掌门',zh_Hant:'一代掌门',en:'' },
         desc:{ zh_Hans:'一代掌门',zh_Hant:'一代掌门',en:'' },
         img:['app/res/image1/chairMan.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
-        url:'http://gcydzm.17youx.cn:8555/client/boot/haohai.html',
+        url:'/dst/client/boot/haohai.html',
         apkDownloadUrl:shareDownload,
         webviewName:'fairyChivalry',
         appid:'103',

@@ -2,7 +2,7 @@
  * 授权、支付等API
  */
 import { WebViewManager, screenMode } from '../../pi/browser/webview';
-import { popNew, cfg } from '../../pi/ui/root';
+import { popNew, cfg, browserAdaptive } from '../../pi/ui/root';
 import { loadDir } from '../../pi/widget/util';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
@@ -292,13 +292,13 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
  * 跳转充值页面
  */
 const gotoRecharge = (order:ThirdOrder,beneficiary:string = '好嗨游戏',okCB:Function) => {
-            cfg.full = false; //PC模式
-            cfg.width = 750;
-            cfg.height =  1334;
-            cfg.wscale = 0.25;
-            cfg.hscale = 0;
-            window.onresize();
     return new Promise(resolve => {
+        cfg.full = false; //PC模式
+        cfg.width = 750;
+        cfg.height =  1334;
+        cfg.wscale = 0.25;
+        cfg.hscale = 0;
+        window.onresize = browserAdaptive;
         popNew('app-view-wallet-cloudWalletCustomize-thirdRechargeSC',{ order,beneficiary,okCB },(rechargeSuccess:boolean) => {
             resolve(rechargeSuccess);
         });
@@ -470,3 +470,10 @@ const jsonUriSort = (json) => {
 
     return msg;
 };
+
+/**
+ * 关闭钱包后台
+ */
+const closeWalletWebview = ()=>{
+    // TODO
+}

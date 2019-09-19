@@ -21,7 +21,7 @@ export const run = (cb): void =>  {
     // 数据检查
     checkUpdate();
     // 打开首页面
-    popNew('app-view-base-app');
+    // popNew('app-view-base-app');
     if (!getStore('user/id')) {
         // if (getAllAccount().length > 0) {
         //     popNew('app-view-base-entrance1');
@@ -29,6 +29,8 @@ export const run = (cb): void =>  {
         //     popNew('app-view-base-entrance');
         // }
         popNew('app-view-base-rowEntrance');
+    }else{
+        popNew('app-view-base-app');
     }
     // 锁屏页面
     popNewPage();

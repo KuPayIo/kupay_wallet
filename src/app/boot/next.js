@@ -164,7 +164,7 @@ winit.initNext = function () {
 				console.log("update progress: ", e);
 				pi_update.updateProgress(e);
 			}, function () {
-				setTimeout(()=>{
+				setTimeout(function () {
 					pi_update.closePop();
 					// 重启
 					h5UpdateMod.reload();
@@ -194,7 +194,7 @@ winit.initNext = function () {
 			util = mods[1],
 			lang = mods[2];
 			fm = tmpfm;
-			const setting = JSON.parse(localStorage.getItem('setting'));
+			var setting = JSON.parse(localStorage.getItem('setting'));
 			lang.setLang(setting && setting.language || 'zh_Hans');  // 初始化语言为简体中文
 	
 			// 判断是否第一次进入,决定是显示片头界面还是开始界面
@@ -211,8 +211,8 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				loadChatSource();  // 聊天
-				loadEarnSource();  // 活动
+				// loadChatSource();  // 聊天
+				// loadEarnSource();  // 活动
 				loadWalletFirstPageSource();  //钱包
 				loadWalletLoginSource();  // 登录相关
 				loadImages(); // 预加载图片
@@ -281,6 +281,9 @@ winit.initNext = function () {
 			"app/view/play/home/",
 			"app/view/chat/home/",
 			"app/view/wallet/home/",
+			"app/view/wallet/import/rowPhoneLogin.tpl",			
+			"app/view/wallet/import/rowPhoneLogin.js",			
+			"app/view/wallet/import/rowPhoneLogin.wcss",			
 			"earn/client/app/res/css/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
@@ -297,9 +300,9 @@ winit.initNext = function () {
 	}
 
 	// 全部所需资源下载完成,进入app,显示界面
-	var enterApp = function(){
-		console.log(`chatReady = ${fpFlags.chatReady},earnReady = ${fpFlags.earnReady},walletReady = ${fpFlags.walletReady}`);
-		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady ){
+	var enterApp = function() {
+		console.log("chatReady = " + fpFlags.chatReady + ", earnReady = " + fpFlags.earnReady + ",walletReady = " + fpFlags.walletReady);
+		if( fpFlags.walletReady ){
 			console.time("enterApp ----");
 			var sourceList = ["pi/ui/root.js","pi/ui/root.tpl","pi/ui/html.js","pi/ui/html.tpl"];
 			util.loadDir(sourceList, flags, fm, undefined, function (fileMap) {
@@ -352,6 +355,10 @@ winit.initNext = function () {
 			tab.release();
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
 			setStore('flags/level_3_page_loaded', true);
+			// 移除加载等待页面
+			var loadding = document.querySelector('#loadingDiv');
+			loadding && loadding.parentElement.remove();
+
 			console.timeEnd('all resource loaded');
 			loadLeftImages();
 			loadPiSdk();
@@ -508,58 +515,57 @@ function updateUiInit(){
 			$updateItemInnerHtml += $item;
 		}
 
-		var newVersion = option.version ? `：V${option.version}` : "";
+		var newVersion = option.version ? "：V" + option.version : "";
 		var errorTips = "正在连接服务器";
-		if(option.updateError){
-			$root.innerHTML = `
-			<div class="pi-mask">
-				<div class="pi-update-box animated bounceInUp">
-					<img src="../res/image/rocket.png" class="pi-update-rocket" />
-					<div class="pi-update-content">
-					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
-					<div class="pi-update-items">
-						${$updateItemInnerHtml}
-					</div>
-					</div>
-					<div class="pi-update-bottom">
-						<div class="pi-update-btns">
-							<div class="pi-update-cancel-btn">${option.confirmCancel}</div>
-							<div class="pi-update-ok-btn">${option.confirmOk}</div>
-						</div>
-						<div class="pi-update-progress-container">
-							${errorTips}
-						</div>
-						<div class="pi-update-complete-btn"></div>
-					</div>
-				</div>
-			</div>`;
+		if(option.updateError) {
+			$root.innerHTML = 
+			'<div class="pi-mask">' + 
+				'<div class="pi-update-box animated bounceInUp">' + 
+					'<img src="../res/image/rocket.png" class="pi-update-rocket" />;' + 
+					'<div class="pi-update-content">' + 
+					'<div class="pi-update-title">发现新版本<span id="pi-version">' + newVersion + '</span></div>' + 
+					'<div class="pi-update-items">' + 
+						$updateItemInnerHtml + 
+					'</div>' + 
+					'</div>' + 
+					'<div class="pi-update-bottom">' + 
+						'<div class="pi-update-btns">' + 
+							'<div class="pi-update-cancel-btn">' + option.confirmCancel + '</div>' + 
+							'<div class="pi-update-ok-btn">' + option.confirmOk + '</div>' + 
+						'</div>' + 
+						'<div class="pi-update-progress-container">' + 
+							errorTips + 
+						'</div>' + 
+						'<div class="pi-update-complete-btn"></div>' + 
+					'</div>' + 
+				'</div>' + 
+			'</div>';
 		}else{
-			$root.innerHTML = `
-			<div class="pi-mask">
-				<div class="pi-update-box animated bounceInUp">
-					<img src="../res/image/rocket.png" class="pi-update-rocket" />
-					<div class="pi-update-content">
-					<div class="pi-update-title">发现新版本<span id="pi-version">${newVersion}</span></div>
-					<div class="pi-update-items">
-						${$updateItemInnerHtml}
-					</div>
-					</div>
-					<div class="pi-update-bottom">
-						<div class="pi-update-btns">
-							<div class="pi-update-cancel-btn">${option.confirmCancel}</div>
-							<div class="pi-update-ok-btn">${option.confirmOk}</div>
-						</div>
-						<div class="pi-update-progress-container">
-							<div class="pi-update-progress-bg">
-								<div class="pi-update-progress"></div>
-							</div>
-							<div class="pi-update-progress-text">0%</div>
-						</div>
-						<div class="pi-update-complete-btn"></div>
-					</div>
-				</div>
-			</div>
-			`;
+			$root.innerHTML = 
+			'<div class="pi-mask">' + 
+			'<div class="pi-update-box animated bounceInUp">' + 
+					'<img src="../res/image/rocket.png" class="pi-update-rocket" />' + 
+					'<div class="pi-update-content">' + 
+					'<div class="pi-update-title">发现新版本<span id="pi-version">' + newVersion + '</span></div>' + 
+					'<div class="pi-update-items">' + 
+						$updateItemInnerHtml + 
+						'</div>' + 
+					'</div>' + 
+					'<div class="pi-update-bottom">' + 
+					'<div class="pi-update-btns">' + 
+						'<div class="pi-update-cancel-btn">' + option.confirmCancel + '</div>' + 
+							'<div class="pi-update-ok-btn">' + option.confirmOk + '</div>' + 
+							'</div>' + 
+						'<div class="pi-update-progress-container">' + 
+						'<div class="pi-update-progress-bg">' + 
+							'<div class="pi-update-progress"></div>' + 
+								'</div>' + 
+							'<div class="pi-update-progress-text">0%</div>' + 
+							'</div>' + 
+						'<div class="pi-update-complete-btn"></div>' + 
+						'</div>' + 
+					'</div>' + 
+			'</div>';
 		}
 		
 		var $body = document.querySelector("body");
@@ -569,7 +575,7 @@ function updateUiInit(){
 		if(option.updateError){
 			var container = document.querySelector(".pi-update-progress-container");
 			var dots = ["."];
-			setInterval(()=>{
+			setInterval(function () {
 				if(dots.length >= 3) dots = [];
 				dots.push(".");
 				container.innerHTML = errorTips + dots.join("");
@@ -657,11 +663,11 @@ function getUpdateContent(){
 		"androidUpdateContent":["接入了新的支付","支持游戏悬浮窗","支持手机号注册","修复了部分bug"],
 		"iosUpdateContent":["ios底层修复1","ios底层修复2","ios底层修复3","ios底层修复4"],
 	};
-	const updateJsonStr = localStorage.getItem("updateJson");
+	var updateJsonStr = localStorage.getItem("updateJson");
 	pi_update.updateJson = updateJsonStr ? JSON.parse(updateJsonStr) : defaultUpdateJson;
 	var ajax = pi_modules.ajax.exports;
-	const url = winit.appURL + "/update.json";
-	const timeout = 1000;
+	var url = winit.appURL + "/update.json";
+	var timeout = 1000;
 	ajax.get(url + "?" + Math.random(), {}, undefined, undefined, timeout, function (updateJson) {
 		localStorage.setItem("updateJson",updateJson);
 		pi_update.updateJson = JSON.parse(updateJson);

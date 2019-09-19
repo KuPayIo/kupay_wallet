@@ -104,13 +104,21 @@ const openNewWebview = (payload) => {
     });
 };
 
+// 关闭钱包后台
+const closeWalletWebview = () => {
+    pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'closeWalletWebview', (error, result) => {
+        console.log('closeWalletWebview call success');
+    });
+}
+
 // ----------对外接口------------------------------------------------------------------------------------------
 
 // tslint:disable-next-line:variable-name
 const pi_api = {
     authorize,
     thirdPay,
-    openNewWebview
+    openNewWebview,
+    closeWalletWebview
 }; 
 
 pi_sdk.api = pi_api;

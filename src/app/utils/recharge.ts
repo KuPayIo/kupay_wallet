@@ -79,7 +79,8 @@ export const jumpWxpay = (order) => {
                 content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
                 style: 'color:#F7931A;',
                 sureText: { zh_Hans: '支付成功', zh_Hant: '支付成功', en: '' },
-                cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
+                onlyOk:true,
+                // cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
             }, () => {
                 WebViewManager.freeView('payWebView');
                 // const firstRecharge = earnGetStore('flags').firstRecharge;

@@ -41,25 +41,26 @@ export class App extends Widget {
                     icon: 'play.png',
                     iconActive: 'play_active.png',
                     components: 'app-view-play-home-home'
-                },{
-                    modulName: 'APP_CHAT',
-                    text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
-                    icon: 'chat.png',
-                    iconActive: 'chat_active.png',
-                    components: 'chat-client-app-view-chat-contact'
-                },{
-                    modulName: 'APP_EARN',
-                    text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
-                    icon: 'earn.png',
-                    iconActive: 'earn_active.png',
-                    components: 'earn-client-app-view-home-home1'
-                },{
-                    modulName: 'APP_WALLET',
-                    text: { zh_Hans:'钱',zh_Hant:'錢',en:'' },
-                    icon: 'wallet.png',
-                    iconActive: 'wallet_active.png',
-                    components: 'app-view-wallet-home-home'
                 }
+                // ,{
+                //     modulName: 'APP_CHAT',
+                //     text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
+                //     icon: 'chat.png',
+                //     iconActive: 'chat_active.png',
+                //     components: 'chat-client-app-view-chat-contact'
+                // },{
+                //     modulName: 'APP_EARN',
+                //     text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
+                //     icon: 'earn.png',
+                //     iconActive: 'earn_active.png',
+                //     components: 'earn-client-app-view-home-home1'
+                // },{
+                //     modulName: 'APP_WALLET',
+                //     text: { zh_Hans:'钱',zh_Hant:'錢',en:'' },
+                //     icon: 'wallet.png',
+                //     iconActive: 'wallet_active.png',
+                //     components: 'app-view-wallet-home-home'
+                // }
             ],
             tabBarAnimateClasss:''
         };

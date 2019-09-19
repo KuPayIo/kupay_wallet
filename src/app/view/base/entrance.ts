@@ -1,13 +1,13 @@
 import { Widget } from '../../../pi/widget/widget';
-import { CreateWalletType, Option, touristLogin, createWalletRandom, phoneImport } from '../../logic/localWallet';
+import { CreateWalletType, Option, touristLogin, phoneImport } from '../../logic/localWallet';
 import { setStore } from '../../store/memstore';
 import { getLoginMod, getDataCenter } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewMessage, popNewLoading } from '../../utils/tools';
 import { getWXCode } from '../../logic/native';
 import { sourceIp } from '../../ipConfig';
-import { loadDir } from '../../../pi/widget/util';
 import { getRandom, logoutAccountDel } from '../../net/login';
+import { popNew } from '../../../pi/ui/root';
 
 /**
  * 登录注册
@@ -32,8 +32,7 @@ export class Entrance extends Widget {
                 mod.openConnect(secrectHash);
             });
             
-            this.ok && this.ok();
-            popNewMessage('登录成功');
+            this.importSuccess()
         });
         console.log('游客登录');
     }
@@ -57,7 +56,7 @@ export class Entrance extends Widget {
         // popNew3('app-view-wallet-import-phoneImport',{},() => {
         //     this.ok && this.ok();
         // });
-        popNew3('app-view-wallet-import-rowPhoneLogin',{},() => {
+        popNew('app-view-wallet-import-rowPhoneLogin',{},() => {
             this.ok && this.ok();
         });
     }
@@ -66,6 +65,8 @@ export class Entrance extends Widget {
     public wechatLoginClick() {
         getWXCode(code => {
             this.wechatLogin(code)
+        },()=>{
+            popNewMessage('微信授权失败');
         });
     }
 
@@ -77,7 +78,7 @@ export class Entrance extends Widget {
         };
         const secretHash = await phoneImport(option);
         if (!secretHash) {
-            close.callback(close.widget);
+            close && close.callback(close.widget);
             popNewMessage('导入失败');
 
             return;
@@ -90,13 +91,13 @@ export class Entrance extends Widget {
                 const password = r.rid;
                 if(!user || !password){
                     this.importError('微信授权失败');
+                    close && close.callback(close.widget);                
                     
                     return;
                 }
                 const itype = await getRandom(secretHash,2,undefined,undefined,undefined,undefined,user,password);
-                close.callback(close.widget);
                 console.log('getRandom itype = ',itype);
-                close.callback(close.widget);
+                close && close.callback(close.widget);  
                 if (itype === -301) {
                     this.importError('验证码错误');
                 } else if (itype === 1014) {
@@ -116,13 +117,13 @@ export class Entrance extends Widget {
     public importError(tips:string) {
         popNewMessage(tips);
         logoutAccountDel(true);
-        this.props.code = '';
     }
     
     // 导入成功
     public importSuccess() {
         popNewMessage('登录成功');
         this.ok && this.ok();
+        popNew3('app-view-base-app');
         // 刷新本地钱包
         getDataCenter().then(dataCenter => {
             dataCenter.refreshAllTx();
