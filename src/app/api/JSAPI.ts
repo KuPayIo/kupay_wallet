@@ -222,6 +222,15 @@ export interface ThirdOrder {
 }
 
 /**
+ * 关闭钱包后台
+ */
+export const closeWalletWebview = () => {
+    WebViewManager.closeDefault(()=>{
+        console.log('关闭钱包后台成功了');
+    });
+}
+
+/**
  * 支付返回结果
  */
 const enum PayCode {
@@ -256,9 +265,8 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
             } else {// 余额足够 并且开启免密 但是免密上限
                 return [undefined,{ result:PayCode.EXCEEDLIMIT }]; 
             }
-        } else { // 余额不够
-            // TODO 跳转充值页面
-            minWebview1(webviewName);
+        } else { // 余额不够 跳转充值页面
+            // minWebview1(webviewName);  // 最小化游戏
             
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
             console.log(`商户信息 ========== mch_id = ${order.mch_id}  mchInfo = ${mchInfo}`);
@@ -293,12 +301,12 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
  */
 const gotoRecharge = (order:ThirdOrder,beneficiary:string = '好嗨游戏',okCB:Function) => {
     return new Promise(resolve => {
-        cfg.full = false; //PC模式
-        cfg.width = 750;
-        cfg.height =  1334;
-        cfg.wscale = 0.25;
-        cfg.hscale = 0;
-        window.onresize = browserAdaptive;
+        // cfg.full = false; //PC模式
+        // cfg.width = 750;
+        // cfg.height =  1334;
+        // cfg.wscale = 0.25;
+        // cfg.hscale = 0;
+        // window.onresize = browserAdaptive;
         popNew('app-view-wallet-cloudWalletCustomize-thirdRechargeSC',{ order,beneficiary,okCB },(rechargeSuccess:boolean) => {
             resolve(rechargeSuccess);
         });
@@ -471,9 +479,3 @@ const jsonUriSort = (json) => {
     return msg;
 };
 
-/**
- * 关闭钱包后台
- */
-const closeWalletWebview = ()=>{
-    // TODO
-}

@@ -399,6 +399,18 @@
 			justify-content: center;
 			align-items: center;
 		}
+		.pi-loading-mask{
+			position: absolute;
+			margin: 0;
+			top: 0;
+			right: 0;   
+			bottom: 0;
+			left: 0;
+			background: #fff;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 	</style>
 	<!-- <script src="http://soeasysdk.com/soeasysr/zm_engine_v2.js"></script> -->
 	<script type="text/javascript">
@@ -452,8 +464,8 @@
 				winit.severPort = location.port ? location.port : "80";		
 			}else{// 本地包需要配置服务器ip和port
 				// 外网 39.98.200.23   high.herominer.net 
-				winit.severIp = "192.168.31.226";
-				// winit.severIp = "39.98.48.66";
+				// winit.severIp = "192.168.31.226";
+				winit.severIp = "39.98.48.66";
 				winit.severPort = "80";		
 			}
 
@@ -712,19 +724,19 @@
 					"/chairMan/app/boot/index.js?" + Math.random(), "utf8", winit.initFail, "load index error");
 			}
 
-			if (document.hidden === true)
-				setTimeout(function () {
-					var div = document.createElement('div');
-					div.onclick = function () {
-						div.remove();
-						winit.start();
-					};
-					div.setAttribute("style", "position:absolute;width: 100%;height: 100%;");
-					div.innerHTML =
-						'<div style="position:absolute;width: 100%;top:50%;text-align:center;color:white;">页面暂停，按下可继续</div>';
-					document.body.appendChild(div);
-				}, 1);
-			else
+			// if (document.hidden === true)
+			// 	setTimeout(function () {
+			// 		var div = document.createElement('div');
+			// 		div.onclick = function () {
+			// 			div.remove();
+			// 			winit.start();
+			// 		};
+			// 		div.setAttribute("style", "position:absolute;width: 100%;height: 100%;");
+			// 		div.innerHTML =
+			// 			'<div style="position:absolute;width: 100%;top:50%;text-align:center;color:white;">页面暂停，按下可继续</div>';
+			// 		document.body.appendChild(div);
+			// 	}, 1);
+			// else
 				winit.start();
 
 			
@@ -846,6 +858,20 @@
 		</div>
 	</div>
 </body>
+<script>
+	window.onload = function(){
+		if(!window.isFirst){
+			document.getElementById('rcmj_loading_log').style.background = '#fff';
+			const element = document.createElement('div');
+			const html = ' <div class="pi-loading-mask">'+
+                		'<p>正在跳转至支付页面。。。</p>'+
+					'</div>'
+			element.innerHTML = html;
+			document.getElementById('rcmj_loading_log').appendChild(element);
+		}
+	};
+	
+</script>
 <!-- <script type="text/javascript">
 if(!localStorage.firstInApp){
 	var innerHtml = `

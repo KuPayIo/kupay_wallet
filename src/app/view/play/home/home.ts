@@ -80,8 +80,11 @@ export class PlayHome extends Widget {
         this.props = {
             ...props,
             offlienType:OfflienType.WALLET
-        };
+        };        
         super.setProps(this.props);
+        if(!(<any>window).isFirst){
+            this.props.showLoadding = true;
+        }
         console.log(props);
         const userInfo = getUserInfo();
         if (userInfo) {
@@ -94,10 +97,11 @@ export class PlayHome extends Widget {
 
     }
 
-    public attach() {
-        super.attach();
-        // this.defaultEnterGame();
-    }
+    // public attach() {
+    //     super.attach();
+    //     this.defaultEnterGame();
+    // }
+
     /**
      * 刷新页面
      */
@@ -261,7 +265,9 @@ register('user/info',() => {
 
 register('user/isLogin', (isLogin:boolean) => {
     setTimeout(() => {
-        const w:any = forelet.getWidget(WIDGET_NAME);
-        w && w.defaultEnterGame();
+        if((<any>window).isFirst){
+            const w:any = forelet.getWidget(WIDGET_NAME);
+            w && w.defaultEnterGame();
+        }
     },0);
 });

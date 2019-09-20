@@ -97,3 +97,16 @@
     background-position: center;
     /* margin-top: 20px; */
 }
+.pi-loading-mask{
+    position: absolute;
+    margin: 0;
+    top: 0;
+    right: 0;   
+    bottom: 0;
+    left: 0;
+    background: #fff;
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

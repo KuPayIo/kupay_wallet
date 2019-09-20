@@ -573,6 +573,7 @@ const settingChange = () => {
         topHeight: getStore('setting/topHeight'),
         bottomHeight:getStore('setting/bottomHeight')
     };
+    console.log('setting:----',localSetting);
     setLocalStorage('setting', localSetting);
 };
 

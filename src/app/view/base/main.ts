@@ -14,6 +14,7 @@ import { walletManualReconnect } from '../../net/login';
 import { LockScreen } from '../../store/interface';
 import { getAllAccount, getStore, setStore } from '../../store/memstore';
 import { piRequire } from '../../utils/commonjsTools';
+import { WebViewManager } from '../../../pi/browser/webview';
 
 // ============================== 导出
 export const run = (cb): void =>  {
@@ -29,11 +30,11 @@ export const run = (cb): void =>  {
         //     popNew('app-view-base-entrance');
         // }
         popNew('app-view-base-rowEntrance');
-    }else{
+    } else {
         popNew('app-view-base-app');
     }
     // 锁屏页面
-    popNewPage();
+    // popNewPage();
     // 预先从底层获取一些数据
     preFetchFromNative();
     console.timeEnd('home enter');
@@ -44,6 +45,13 @@ export const run = (cb): void =>  {
         if (cb) cb();
     }, 100);
 };
+
+/**
+ * 告诉底层已经准备好
+ */
+export const readySuccess = ()=>{
+    WebViewManager.getReady(null);
+}
 
 /**
  * 界面入口

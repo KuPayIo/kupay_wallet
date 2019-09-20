@@ -228,12 +228,12 @@ winit.initNext = function () {
 		var sourceList = [
 			"app/net/login.js",
 			"app/net/push.js",
-			"earn/client/app/net/login.js",
-			"chat/client/app/net/login.js",
-			"earn/xlsx/awardCfg.c.js",
-			"earn/xlsx/awardCfg.s.js",
-			"earn/xlsx/item.c.js",
-			"earn/xlsx/item.s.js"
+			// "earn/client/app/net/login.js",
+			// "chat/client/app/net/login.js",
+			// "earn/xlsx/awardCfg.c.js",
+			// "earn/xlsx/awardCfg.s.js",
+			// "earn/xlsx/item.c.js",
+			// "earn/xlsx/item.s.js"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.log(11111,Date.now()-self.startTime)
@@ -241,9 +241,9 @@ winit.initNext = function () {
 			tab.timeout = 90000;
 			tab.release();
 			// 聊天登录
-			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
+			// pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
 			// 活动注册
-			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
+			// pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
 			
 			// erlang服务器推送注册
 			pi_modules.commonjs.exports.relativeGet("app/net/push").exports.initPush();
@@ -277,14 +277,13 @@ winit.initNext = function () {
 			"app/components1/",
 			"app/res/css/",
 			"app/res/js/",
-			"app/view/ceshi/",
 			"app/view/play/home/",
-			"app/view/chat/home/",
-			"app/view/wallet/home/",
+			// "app/view/chat/home/",
+			// "app/view/wallet/home/",
 			"app/view/wallet/import/rowPhoneLogin.tpl",			
 			"app/view/wallet/import/rowPhoneLogin.js",			
-			"app/view/wallet/import/rowPhoneLogin.wcss",			
-			"earn/client/app/res/css/"
+			"app/view/wallet/import/rowPhoneLogin.wcss",					
+			// "earn/client/app/res/css/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			// debugger
@@ -312,9 +311,14 @@ winit.initNext = function () {
 				tab.release();
 				// 加载根组件
 				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+				if(window.isFirst){
+					root.cfg.width = 1334;
+					root.cfg.height = 750;
+				}else{
+					root.cfg.width = 750;
+					root.cfg.height =  1334;
+				}
 				root.cfg.full = false; //PC模式
-				root.cfg.width = 1334;
-				root.cfg.height = 750;
 				root.cfg.wscale = 0.25;
 				root.cfg.hscale = 0;
 				var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
@@ -332,20 +336,25 @@ winit.initNext = function () {
 	// 加载剩下的资源
 	var loadLeftSource = function () {
 		var level2SourceList = [
-			"app/core/",
+			// "app/core/",
+			"pi/browser/",
 			"app/logic/",
-			"app/components/",
 			"app/api/",
-			"app/view/",
-			"chat/client/app/view/",
-			"chat/client/app/widget/",
-			"chat/client/app/res/",
-			"earn/client/app/view/",
-			"earn/client/app/test/",
-			"earn/client/app/components/",
-			"earn/client/app/xls/",
-			"earn/xlsx/",
-			"earn/client/app/res/"
+			"app/components/modalBox/",
+			"app/view/wallet/cloudWalletCustomize/thirdRechargeSC.tpl",
+			"app/view/wallet/cloudWalletCustomize/thirdRechargeSC.js",
+			"app/view/wallet/cloudWalletCustomize/thirdRechargeSC.wcss",	
+			// "app/view/",
+			// "app/components/",
+			// "chat/client/app/view/",
+			// "chat/client/app/widget/",
+			// "chat/client/app/res/",
+			// "earn/client/app/view/",
+			// "earn/client/app/test/",
+			// "earn/client/app/components/",
+			// "earn/client/app/xls/",
+			// "earn/xlsx/",
+			// "earn/client/app/res/"
 		];
 
 		// 加载其他文件
@@ -355,6 +364,10 @@ winit.initNext = function () {
 			tab.release();
 			var setStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.setStore;
 			setStore('flags/level_3_page_loaded', true);
+			
+			// 告诉底层已经准备好了，可以接受第三方的消息
+			pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports.readySuccess();
+
 			// 移除加载等待页面
 			var loadding = document.querySelector('#loadingDiv');
 			loadding && loadding.parentElement.remove();

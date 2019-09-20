@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
         {{: topBarTitle = {"zh_Hans":"充值","zh_Hant":"充值","en":""} }}
-        <div><widget w-tag="app-components-topBar-topBar">{"title":{{topBarTitle}} }</widget></div>
+        <div><widget w-tag="app-components1-topBar-topBar">{"title":{{topBarTitle}} }</widget></div>
         <div w-class="body">
             {{% 订单详情}}
             <div w-class="body-top">
@@ -54,7 +54,7 @@
                 {{% 支付按钮}}
                 <div w-class="body-bottom" ev-btn-tap="rechargeClick">
                     {{let btnName = {"zh_Hans":"支付","zh_Hant":"支付","en":""} }}
-                    <app-components1-btn-btn>{name:{{btnName}},color:"blue",style:"width:90%;"}</app-components1-btn-btn>
+                    <app-components1-btn-btn>{name:{{btnName}},color:"blue",style:"width:90%;height:80px;line-height:80px;"}</app-components1-btn-btn>
                 </div>
             </div>
             

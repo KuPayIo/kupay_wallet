@@ -76,7 +76,7 @@
 }
 .pay-name{
     height:45px;
-    font-size:32px;
+    font-size:30px;
     margin-left:30px;
     font-family:PingFangSC-Medium;
     font-weight:500;

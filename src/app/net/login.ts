@@ -125,9 +125,6 @@ export const applyAutoLogin = async () => {
         const cipherToolsMod = await getCipherToolsMod();
         const decryptToken = cipherToolsMod.encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
-        console.log(`1: ${getStore('user/token')}, 2: ${deviceDetail.uuid.toString()},4:${res.token}`);
-        const token = cipherToolsMod.decrypt(getStore('user/token'),deviceDetail.uuid.toString());
-        console.log(`,3:${JSON.stringify(token)}`);
     });
 };
 
@@ -139,38 +136,42 @@ export const autoLogin = async (conRandom:string) => {
     console.time('loginMod getCipherToolsMod');    
     const [deviceDetail,cipherToolsMod] = await Promise.all([getDeviceAllDetail(),getCipherToolsMod()]);
     console.timeEnd('loginMod getCipherToolsMod');       
-    console.log(`1: ${getStore('user/token')}, 2: ${deviceDetail.uuid.toString()}`);
-    const token = cipherToolsMod.decrypt(getStore('user/token'),deviceDetail.uuid.toString());
-    
-    const param:any = {
-        device_id: deviceDetail.uuid,
-        token,
-        random:conRandom
-    };
-    if (pi_update.inAndroidApp || pi_update.inIOSApp) {
-        param.operator = deviceDetail.operator;
-        param.network = deviceDetail.netWorkStatus;
-        param.app_version = pi_update.updateJson.version;
-    }
-    const msg = { 
-        type: 'wallet/user@auto_login', 
-        param
-    };
-    console.log('autoLogin = ',msg);
-    requestAsync(msg).then(res => {
-        loginWalletSuccess();
-        console.timeEnd('loginMod autoLogin');
-        setStore('user/isLogin', true);
-        console.timeEnd('loginMod start');
-        console.log('自动登录成功-----------',res);
-    }).catch((res) => {
-        setStore('user/isLogin', false);
-        if (res.error !== -69) {
-            alert("fail to auto login");
-            setStore('user/token','');
-            loginWalletFailed();
+    console.log(`token: ${getStore('user/token')}, deviceId: ${deviceDetail.uuid.toString()}`);
+    try{
+        const token = cipherToolsMod.decrypt(getStore('user/token'),deviceDetail.uuid.toString());
+        const param:any = {
+            device_id: deviceDetail.uuid,
+            token,
+            random:conRandom
+        };
+        if (pi_update.inAndroidApp || pi_update.inIOSApp) {
+            param.operator = deviceDetail.operator;
+            param.network = deviceDetail.netWorkStatus;
+            param.app_version = pi_update.updateJson.version;
         }
-    });
+        const msg = { 
+            type: 'wallet/user@auto_login', 
+            param
+        };
+        console.log('autoLogin = ',msg);
+        requestAsync(msg).then(res => {
+            loginWalletSuccess();
+            console.timeEnd('loginMod autoLogin');
+            setStore('user/isLogin', true);
+            console.timeEnd('loginMod start');
+            console.log('自动登录成功-----------',res);
+        }).catch((res) => {
+            setStore('user/isLogin', false);
+            if (res.error !== -69) {
+                setStore('user/token','');
+                loginWalletFailed();
+            }
+        });
+
+    }catch(err){
+        setStore('user/token','');
+        loginWalletFailed();
+    }
 };
 /**
  * 创建钱包后默认登录
@@ -493,7 +494,7 @@ export const logoutWallet = (success:Function) => {
  * 踢人下线提示
  * @param secretHash 密码
  */
-export const kickOffline = (secretHash:string = '',phone?:number,code?:number,num?:string) => {
+export const kickOffline = (secretHash:string = '',phone?:string,code?:string,num?:string) => {
     popNew('app-components-modalBoxCheckBox-modalBoxCheckBox',{ 
         title:'检测到在其它设备有登录',
         content:'清除其它设备账户信息' 
