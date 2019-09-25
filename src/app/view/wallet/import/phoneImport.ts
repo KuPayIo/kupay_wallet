@@ -10,6 +10,7 @@ import { defaultPassword } from '../../../config';
 import { callDcInitErc20GasLimit, callDcRefreshAllTx, callDeleteAccount, callGetAllAccount,callGetRandom,getStoreData, setStoreData } from '../../../middleLayer/wrap';
 import { regPhone, verifyPhone } from '../../../net/pull';
 import { CreateWalletOption } from '../../../publicLib/interface';
+import { getDataCenter } from '../../../utils/commonjsTools';
 import { delPopPhoneTips, playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
 import { phoneImport } from '../../../viewLogic/localWallet';
 import { logoutAccount } from '../../../viewLogic/login';
@@ -117,8 +118,13 @@ export class PhoneImport extends Widget {
         popNewMessage('登录成功');
         this.ok && this.ok();
         // 刷新本地钱包
-        callDcRefreshAllTx();
-        callDcInitErc20GasLimit();
+        // callDcRefreshAllTx();
+        // callDcInitErc20GasLimit();
+        // 刷新本地钱包
+        getDataCenter().then(dataCenter => {
+            dataCenter.refreshAllTx();
+            dataCenter.initErc20GasLimit();
+        });
     }
 
     /**

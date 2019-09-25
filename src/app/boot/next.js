@@ -214,92 +214,74 @@ winit.initNext = function () {
 			 */
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
-				firstStageLoaded();
+				// firstStageLoaded();
+				testLoaded();
+				// loadWalletLoginSource();
+				// loadChatSource();  // 聊天
+				// loadImages(); // 预加载图片
+				
 			});
 		}, function (result) {
 			alert("加载基础模块失败, " + result.error + ":" + result.reason);
 		}, modProcess.handler);
 	}
-	
-	// 加载第一阶段必须文件 加载完成后即可获取数据
-	var firstStageLoaded = function(){
+	var loadWalletLoginSource=function(){
 		var sourceList = [
-			"app/postMessage/",
+			"app/remote/login.js",
+			"app/remote/push.js",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",
-			"app/viewLogic/login.js"
+			"earn/xlsx/awardCfg.c.js",
+			"earn/xlsx/awardCfg.s.js",
+			"earn/xlsx/item.c.js",
+			"earn/xlsx/item.s.js"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
-			console.log("firstStageLoaded success-----------------");
+			console.log(11111,Date.now()-self.startTime)
+			var tab = util.loadCssRes(fileMap);
+			tab.timeout = 90000;
+			tab.release();
 			// 聊天登录
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
 			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
-			var WebViewManager = pi_modules.commonjs.exports.relativeGet("pi/browser/webview").exports.WebViewManager;
-			WebViewManager.addListenStage(function(stage){
-				console.log('WebViewManager stage',stage)
-				if(stage === "firstStage"){    // 第一阶段完成  可以注册监听
-					// TODO 在回调中加载剩余代码 并且注册监听已经完成
-					var callGetHomePageEnterData = pi_modules.commonjs.exports.relativeGet("app/middleLayer/wrap").exports.callGetHomePageEnterData;
-					var getDataStart = Date.now();
-					console.log('callGetHomePageEnterData start-----------------')
-					callGetHomePageEnterData().then(function(res){
-						console.log('callGetHomePageEnterData-------------------')
-						self.getData = Date.now() - getDataStart;
-						fpFlags.homePageReady = true;
-						fpFlags.homePageData = res;
-						enterApp();
-					});
-				}
-			});
-			console.log("stage webview goReady");
-			WebViewManager.getReady("firstStage");   // 通知一阶段准备完毕
-			// 继续加载首页所需
-			loadWalletFirstPageSource();  //钱包
-			loadChatSource();  // 聊天
-			loadEarnSource();  // 活动
-			loadImages(); // 预加载图片
-			if(!pi_update.inApp){
-				vmLoaded();
-			}
+			// erlang服务器推送注册
+			pi_modules.commonjs.exports.relativeGet("app/remote/push").exports.initPush();
+			// erlang服务器连接登录
+			pi_modules.commonjs.exports.relativeGet("app/remote/login").exports.registerStore();
+			pi_modules.commonjs.exports.relativeGet("app/remote/login").exports.openConnect();
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
+	var testLoaded = function(){
+		console.time("fp loadWalletFirstPageSource");
+		// var routerPathList = calcRouterPathList();
+		var sourceList = [
+			"pi/ui/lang.js",
+			"pi/ui/lang.tpl",
+			"app/components/",
+			"app/components1/",
+			"app/view/",
+			"app/res/",
+			"chat/client/",
+			"earn/client/",
+			"earn/xlxs/"
+		];
+		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
+			// debugger
+			var tab = util.loadCssRes(fileMap);
+			tab.timeout = 90000;
+			tab.release();
+			fpFlags.earnReady = true;
+			enterApp();
+			
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
 
-	// vm代码加载
-	var vmLoaded = ()=>{
-		util.loadDir([ "app/store/","app/remote/postWalletMessage.js"], flags, fm, undefined, function (fileMap) {
-			// store 数据初始化完成后才通知 如果数据初始化没完成就通知  有可能数据还没读出来钱包就已经取了数据  导致数据不一致
-			var initStore = pi_modules.commonjs.exports.relativeGet("app/store/memstore").exports.initStore;
-			initStore().then(() => {
-				var WebViewManager = pi_modules.commonjs.exports.relativeGet("pi/browser/webview").exports.WebViewManager;
-				WebViewManager.addListenStage(function(stage){
-					if(stage === "firstStage"){    // 第一阶段完成  
-						// TODO 在回调中加载剩余代码 并且注册监听已经完成
-						var postStoreLoadedMessage = pi_modules.commonjs.exports.relativeGet("app/remote/postWalletMessage").exports.postStoreLoadedMessage;
-						console.log("postStoreLoadedMessage start-----------------------");
-						postStoreLoadedMessage();
-						// 加载剩下资源
-						util.loadDir([ "app/remote/","app/core_common/","app/core_pc/","app/publicLib/"], flags, fm, undefined, function (fileMap) {
-							var postAllLoadedMessage = pi_modules.commonjs.exports.relativeGet("app/remote/postWalletMessage").exports.postAllLoadedMessage;
-							console.log("postAllLoadedMessage start-----------------------");
-							postAllLoadedMessage();
-						}, function (r) {
-							console.log("加载目录失败, " + r.url + ", " + r.error + ":" + r.reason);
-						}, function(){});
-					}
-				});
-				console.log("stage vm goReady");
-				WebViewManager.getReady("firstStage"); // 通知一阶段准备完毕
-			});
-			
-		}, function (r) {
-			console.log("加载目录失败, " + r.url + ", " + r.error + ":" + r.reason);
-		}, function(){});
-	}
 
-	
 	// 加载钱包首页所需资源
 	var loadWalletFirstPageSource = function () {
 		console.time("fp loadWalletFirstPageSource");
@@ -387,28 +369,32 @@ winit.initNext = function () {
 
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
-		console.log('enterApp chatReady ',fpFlags.chatReady,' earnReady ',fpFlags.earnReady,' walletReady ',fpFlags.walletReady,' homePageReady ',fpFlags.homePageReady)
-		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady && fpFlags.homePageReady){
+		if(fpFlags.earnReady){
 			// 加载根组件
-			var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
-			root.cfg.full = false; //PC模式
-			var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
-			index.run(fpFlags.homePageData,function () {
-				// 关闭读取界面
-				document.body.removeChild(document.getElementById('rcmj_loading_log'));
-				var closeBg = new Date().getTime() - self.startTime1;
-				var timeArrStr = localStorage.getItem('timeArr');
-				var timeArr;
-				if (timeArrStr) {
-					timeArr = JSON.parse(timeArrStr);
-				} else {
-					timeArr = [];
-				}
-				timeArr.push({ homeEnter:self.homeEnter,getData:self.getData,closeBg,checkUpdateTime:self.checkUpdateTime });
-				localStorage.setItem('timeArr',JSON.stringify(timeArr));
-			   	loadLeftSource();
-			});
-			
+			var sourceList = [
+				"pi/ui/root.ts",
+				"pi/ui/root.tpl",
+				"pi/ui/html.ts",
+				"pi/ui/html.tpl"
+			];
+			util.loadDir(sourceList,flags,fm,suffixCfg,function(fileMap){
+				console.timeEnd("enterApp ----");
+				var tab = util.loadCssRes(fileMap);
+				tab.timeout = 90000;
+				tab.release();
+				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+				root.cfg.full = false; //PC模式
+				var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+
+				var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+				index.run(function () {
+					// 关闭读取界面
+					document.body.removeChild(document.getElementById('rcmj_loading_log'));
+				});
+				loadLeftSource();
+			},function(r){
+				alert("加载目录失败, " + r.error + ":" + r.reason);
+			},dirProcess.handler);
 			
 		}
 	}

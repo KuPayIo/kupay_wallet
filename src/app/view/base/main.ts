@@ -14,47 +14,80 @@ import { addWidget } from '../../../pi/widget/util';
 import { getHasEnterGame, setHasEnterGame } from '../../api/thirdBase';
 import { callEmitWebviewReload, callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
 import { LockScreen } from '../../publicLib/interface';
+import { getStore } from '../../store/memstore';
 import { getScreenModify, preLoadAd } from '../../viewLogic/native';
 
 // ============================== 导出
-export const run = (homePageData,cb): void =>  {
-    callEmitWebviewReload();
+// export const run = (homePageData,cb): void =>  {
+//     callEmitWebviewReload();
+//     addWidget(document.body, 'pi-ui-root');
+//     // 数据检查  
+//     checkUpdate();  
+//     popNew('app-view-base-app');
+//     const id = homePageData[0];
+//     const accounts = homePageData[1];
+//     if (!id) {
+//         if (accounts.length > 0) {
+//             popNew('app-view-base-entrance1',{ accounts });
+//         } else {
+//             popNew('app-view-base-entrance');
+//         }
+//     } 
+//     // 锁屏页面;
+//     popNewPage();
+//     self.homeEnter = Date.now() - self.startTime;
+//     if (cb) cb();
+    
+//     // 预先从底层获取一些数据
+//     preFetchFromNative();
+//     // app event 注册
+//     addAppEvent();
+// };
+export const run = (cb):void => {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查  
     checkUpdate();  
-    popNew('app-view-base-app');
-    const id = homePageData[0];
-    const accounts = homePageData[1];
-    if (!id) {
-        if (accounts.length > 0) {
-            popNew('app-view-base-entrance1',{ accounts });
-        } else {
-            popNew('app-view-base-entrance');
-        }
-    } 
-    // 锁屏页面;
-    popNewPage();
-    self.homeEnter = Date.now() - self.startTime;
-    if (cb) cb();
-    
+    // if (!getStore('user/id')) {
+    //     // if (getAllAccount().length > 0) {
+    //     //     popNew('app-view-base-entrance1');
+    //     // } else {
+    //     //     popNew('app-view-base-entrance');
+    //     // }
+    //     popNew('app-view-base-entrance');
+    // } else {
+    //     popNew('app-view-base-app');
+    // }
+    popNew('chat-client-app-view-home-contact');
+    // 锁屏页面
+    // popNewPage();
     // 预先从底层获取一些数据
     preFetchFromNative();
+    console.timeEnd('home enter');
     // app event 注册
     addAppEvent();
+    // 解决进入时闪一下问题
+    setTimeout(() => {
+        if (cb) cb();
+    }, 100);
 };
 
 /**
  * 界面入口
  */
 const popNewPage = () => {
-    ifNeedUnlockScreen().then(locked => {
-        if (locked) {
-            popNew('app-components1-lockScreenPage-lockScreenPage', {
-                openApp: true
-            });
-        }
+    // ifNeedUnlockScreen().then(locked => {
+    //     if (locked) {
+    //         popNew('app-components1-lockScreenPage-lockScreenPage', {
+    //             openApp: true
+    //         });
+    //     }
         
-    });
+    // });
+    if (ifNeedUnlockScreen()) {
+        popNew('app-components1-lockScreenPage-lockScreenPage', {
+            openApp: true
+        });
+    }
 };
 
 /**
