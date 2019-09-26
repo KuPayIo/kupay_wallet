@@ -449,8 +449,8 @@
 				winit.severPort = location.port ? location.port : "80";		
 			}else{// 本地包需要配置服务器ip和port
 				// 外网 39.98.200.23   high.herominer.net 
-				winit.severIp = "192.168.31.226";  // 本地服务器
-				// winit.severIp = "39.98.48.66";  // 外网测试服
+				// winit.severIp = "192.168.31.226";  // 本地服务器
+				winit.severIp = "39.98.48.66";  // 外网测试服
 				winit.severPort = "80";		
 			}
 			if(inApp){   // 移动端文件夹名
@@ -458,6 +458,7 @@
 			}else{       // pc端文件夹名
 				winit.walletName = "wallet";
 			}
+			console.log(`Is debug version ${winit.debug}, serverIp ${winit.severIp}`)
 
 			// app更新配置的URL地址
 			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/appversion";
@@ -727,7 +728,7 @@
 	</script>
 </head>
 
-<body onselectstart="return false" style="-webkit-text-size-adjust:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);-webkit-user-select:none;background-color:#fff;margin:0px;padding:0px;list-style:none;overflow:hidden;">
+<body  style="-webkit-text-size-adjust:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);background-color:#fff;margin:0px;padding:0px;list-style:none;overflow:hidden;">
 	<div id="rcmj_loading_log" style="background-color:#fff">
 		<div class="inner" id="logo_inner">
 			<div class="logo animated  animated-hinge fadeIn">
