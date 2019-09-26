@@ -17,7 +17,7 @@ import { defaultLogin } from './login';
 /**
  * 通用的异步通信
  */
-export const requestAsync = (msg: any):Promise<any> => {
+export const requestAsync = (msg: any, timeout?:number):Promise<any> => {
     return new Promise((resolve, reject) => {
         request(msg, (resp: any) => {
             if (resp.type) {
@@ -28,7 +28,7 @@ export const requestAsync = (msg: any):Promise<any> => {
             } else {
                 resolve(resp);
             }
-        });
+        }, timeout);
     });
 };
 

@@ -1,13 +1,13 @@
+import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Widget } from '../../../../pi/widget/widget';
 import { Option, phoneImport } from '../../../logic/localWallet';
 import { getRandom, logoutAccountDel } from '../../../net/login';
 import { regPhone, verifyPhone } from '../../../net/pull';
 import { deleteAccount, getAllAccount, getStore, setStore } from '../../../store/memstore';
-import { getDataCenter, getPullMod } from '../../../utils/commonjsTools';
+import { getPullMod } from '../../../utils/commonjsTools';
 import { defaultPassword } from '../../../utils/constants';
 import { delPopPhoneTips, playerName, popNewLoading, popNewMessage } from '../../../utils/tools';
-import { popNew } from '../../../../pi/ui/root';
 
 interface Props {
     phone:string;
@@ -93,12 +93,12 @@ export class RowPhoneLogin extends Widget {
             psw:defaultPassword,
             nickName:await playerName()
         };
-        const close = popNewLoading('导入中');
+        const close = popNewLoading('注册中');
         const verify = await verifyPhone(this.props.phone,areaCode);
         const secretHash = await phoneImport(option);
         if (!secretHash) {
             close.callback(close.widget);
-            popNewMessage('导入失败');
+            popNewMessage('注册失败');
 
             return;
         }
@@ -154,12 +154,12 @@ export class RowPhoneLogin extends Widget {
         setStore('user/info',userInfo,false);
         popNewMessage('登录成功');
         this.ok && this.ok();
-        popNew('app-view-base-app');
+        // popNew('app-view-base-app');
         // 刷新本地钱包
-        getDataCenter().then(dataCenter => {
-            dataCenter.refreshAllTx();
-            dataCenter.initErc20GasLimit();
-        });
+        // getDataCenter().then(dataCenter => {
+        //     dataCenter.refreshAllTx();
+        //     dataCenter.initErc20GasLimit();
+        // });
     }
 
     // 返回
@@ -184,7 +184,6 @@ export class RowPhoneLogin extends Widget {
  * 删除相同手机号绑定的账户
  */
 const deletePrePhoneAccount = (phoneNumber:string) => {
-    debugger;
     const accounts = getAllAccount();
     for (const index in accounts) {
         const account = accounts[index];

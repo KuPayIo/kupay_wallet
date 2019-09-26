@@ -101,7 +101,6 @@ export const openNewWebview = (payload:{ webviewName: string;url:string;args:Obj
             loadDir([path], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
-                console.timeEnd('loginMod thirdApiDependPromise');
                 resolve(content);
             }, () => {
                 //
@@ -184,6 +183,8 @@ export const setFreeSecrectPay = (payload,callback) => {
 export const thirdPay = (payload,callback) => {
     thirdPay1(payload.order,payload.webviewName).then(([err,res]) => {
         callback(err,res);
+        WebViewManager.open(payload.webviewName, `${getGameItem(payload.webviewName).url}?${Math.random()}`, payload.webviewName,'',screenMode.landscape);
+        closeWalletWebview();
     });
 };
 
@@ -270,9 +271,7 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
             
             const mchInfo = await getOneUserInfo([Number(order.mch_id)]);
             console.log(`商户信息 ========== mch_id = ${order.mch_id}  mchInfo = ${mchInfo}`);
-            const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName,() => {
-                WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'',screenMode.landscape);
-            });
+            const rechargeSuccess = await gotoRecharge(order,mchInfo && mchInfo.nickName);
             if (rechargeSuccess) {  // 充值成功   直接购买
                 if (setNoPassword === SetNoPassword.SETED) {// 余额足够并且免密开启   直接购买
                     console.log('walletPay start------',order);
@@ -282,10 +281,10 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
                     return [undefined,{ result:PayCode.SUCCESS }];
                 } else if (setNoPassword === SetNoPassword.NOSETED) { // 余额足够  但是没有开启免密
                     return [undefined,{ result:PayCode.SETNOPASSWORD }]; 
-                } else {// 余额足够 并且开启免密 但是免密上限
+                } else {  // 余额足够 并且开启免密 但是免密上限
                     return [undefined,{ result:PayCode.EXCEEDLIMIT }]; 
                 }
-            } else {
+            } else {   // 取消充值
                 return [undefined,{ result:PayCode.RECHARGEFAILED }];
             }
         }
@@ -299,7 +298,7 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
 /**
  * 跳转充值页面
  */
-const gotoRecharge = (order:ThirdOrder,beneficiary:string = '好嗨游戏',okCB:Function) => {
+const gotoRecharge = (order:ThirdOrder,beneficiary:string = '好嗨游戏') => {
     return new Promise(resolve => {
         // cfg.full = false; //PC模式
         // cfg.width = 750;
@@ -307,7 +306,7 @@ const gotoRecharge = (order:ThirdOrder,beneficiary:string = '好嗨游戏',okCB:
         // cfg.wscale = 0.25;
         // cfg.hscale = 0;
         // window.onresize = browserAdaptive;
-        popNew('app-view-wallet-cloudWalletCustomize-thirdRechargeSC',{ order,beneficiary,okCB },(rechargeSuccess:boolean) => {
+        popNew('app-view-wallet-cloudWalletCustomize-thirdRechargeSC',{ order,beneficiary },(rechargeSuccess:boolean) => {
             resolve(rechargeSuccess);
         });
     });

@@ -1,14 +1,6 @@
 /**
  * sdk tools
  */
-// tslint:disable-next-line:variable-name
-const pi_sdk = (<any>window).pi_sdk || {};
-
-// tslint:disable-next-line:variable-name
-const pi_config = pi_sdk.config;
-
-// tslint:disable-next-line:variable-name
-const pi_store = pi_sdk.store;
 
 /**
  * 悬浮框按钮样式
@@ -169,11 +161,11 @@ export const createThirdBaseStyle = () => {
  */
 export const buttonModInit = () => {
     return () => {
-        if (pi_config.buttonMod === pi_config.buttonMods.FLOATBUTTON) {  // 可拖动悬浮框 三个点
+        if ((<any>window).pi_sdk.config.buttonMod === (<any>window).pi_sdk.config.buttonMods.FLOATBUTTON) {  // 可拖动悬浮框 三个点
             floatButtonInit();
-        } else if (pi_config.buttonMod === pi_config.buttonMods.WXBUTTON) {   // 微信小程序悬浮框
+        } else if ((<any>window).pi_sdk.config.buttonMod === (<any>window).pi_sdk.config.buttonMods.WXBUTTON) {   // 微信小程序悬浮框
             WxButtionInit();
-        } else if (pi_config.buttonMod === pi_config.buttonMods.FLOATBUTTON2) { // 可拖动悬浮框 图标
+        } else if ((<any>window).pi_sdk.config.buttonMod === (<any>window).pi_sdk.config.buttonMods.FLOATBUTTON2) { // 可拖动悬浮框 图标
             floatButtonInit2();
         } else {                    // 默认
             floatButtonInit2();
@@ -269,7 +261,7 @@ export const createThirdApiStyleTag = () => {
 
     .pi-update-box {
     background-color: #fff;
-    background-image: url(${pi_config.imgUrlPre}update_bg.png);
+    background-image: url(${(<any>window).pi_sdk.config.imgUrlPre}update_bg.png);
     background-repeat: no-repeat;
     background-size: 100% 235px;
     width: 630px;
@@ -518,7 +510,7 @@ export const createThirdApiStyleTag = () => {
 export const createAuthorizeElementTag = () => {
     const htmlText = `
         <div class="pi-update-box animated bounceInUp">
-            <img src="${pi_config.imgUrlPre}rocket.png" class="pi-update-rocket" />
+            <img src="${(<any>window).pi_sdk.config.imgUrlPre}rocket.png" class="pi-update-rocket" />
             <div class="pi-update-content">
                 <div class="pi-update-title">您将获取以下授权</span></div>
                 <div class="pi-update-items">
@@ -625,11 +617,11 @@ export const popInputBox =  (title,okCB,cancelCB?) => {
  * 根据id获取buttonItem
  */
 const getButtonItemById = (id) => {
-    const index = pi_config.showButtons.findIndex((item) => {
+    const index = (<any>window).pi_sdk.config.showButtons.findIndex((item) => {
         return item.id === id;
     });
 
-    return pi_config.showButtons[index];
+    return (<any>window).pi_sdk.config.showButtons[index];
 };
 
 // 创建设置免密弹窗标签
@@ -666,7 +658,7 @@ const createInputBoxElementTag =  (title) => {
  */
 const setButtonMod = (buttonMod) => {
     console.log('setButtonMod',buttonMod);
-    pi_config.buttonMod = buttonMod;
+    (<any>window).pi_sdk.config.buttonMod = buttonMod;
 };
 
 /**
@@ -715,7 +707,7 @@ const WxButtionInit = () => {
     $wxDots.addEventListener('click',popNewPanel());
   
       // 关闭游戏
-    const closeItem = getButtonItemById(pi_config.ButtonId.EXITGAME);
+    const closeItem = getButtonItemById((<any>window).pi_sdk.config.ButtonId.EXITGAME);
     $wxCircle.addEventListener('click',closeItem.clickCb);
   
     $wxBtns.appendChild($wxDots);
@@ -735,8 +727,8 @@ const floatButtonInit2 =  () => {
     $floatButton.setAttribute('style','position: absolute;top:133px;right: 0px; width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);z-index: 99999;');
     // tslint:disable-next-line:no-inner-html
     $floatButton.innerHTML = `
-          <img src="${pi_config.imgUrlPre}wallet_logo.png" style="width:100%;height:100%;border-radius:50%;"/>
-          <img src="${pi_config.imgUrlPre}bubble.png" style="border-radius:50%;position: absolute;width:100%;height:100%;top:0;left:0;"/>
+          <img src="${(<any>window).pi_sdk.config.imgUrlPre}wallet_logo.png" style="width:100%;height:100%;border-radius:50%;"/>
+          <img src="${(<any>window).pi_sdk.config.imgUrlPre}bubble.png" style="border-radius:50%;position: absolute;width:100%;height:100%;top:0;left:0;"/>
       `;
     $floatButton.addEventListener('click',popNewPanel());
     document.querySelector('body').appendChild($floatButton);
@@ -755,24 +747,24 @@ const popNewPanel = () => {
             e.stopPropagation();
             e.preventDefault();
         });
-        pi_config.showButtons.forEach((item,index) => {
+        (<any>window).pi_sdk.config.showButtons.forEach((item,index) => {
             if (!item.show) return;
             const $bottomItem = document.createElement('div');
             $bottomItem.setAttribute('class','pi-bottom-item');
-            if(pi_config.isHorizontal) {  // 横屏游戏
+            if((<any>window).pi_sdk.config.isHorizontal) {  // 横屏游戏
                 $bottomItem.style.flex = "1 0 0";
                 $bottomItem.style.width = "160px";
             }
             $bottomItem.setAttribute('id',item.id);
             let imgUrl = item.img;
             let text = item.text;
-            if (item.id === pi_config.ButtonId.FREESECRET) {
-                imgUrl = pi_store.freeSecret ? item.startImg : item.closeImg;
-                text = pi_store.freeSecret ? item.startText : item.closeText;
+            if (item.id === (<any>window).pi_sdk.config.ButtonId.FREESECRET) {
+                imgUrl = (<any>window).pi_sdk.store.freeSecret ? item.startImg : item.closeImg;
+                text = (<any>window).pi_sdk.store.freeSecret ? item.startText : item.closeText;
             }
           
             // tslint:disable-next-line:no-inner-html
-            $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${pi_config.imgUrlPre}${imgUrl}" class="pi-item-img"/></div>
+            $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${(<any>window).pi_sdk.config.imgUrlPre}${imgUrl}" class="pi-item-img"/></div>
               <div class="pi-text">${text}</div>`;
             $bottomItem.addEventListener('click',() => {
                 (throttle(item.clickCb))();
@@ -808,7 +800,7 @@ const browserAdaptive =  () => {
     let cfg = {
         width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
     };
-    if(pi_config.isHorizontal) {  // 横屏游戏
+    if((<any>window).pi_sdk.config.isHorizontal) {  // 横屏游戏
         cfg = {
             width: 1334, height: 750, wscale: 0, hscale: 0, full: false
         };

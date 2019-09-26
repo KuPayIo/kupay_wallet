@@ -189,7 +189,7 @@ winit.initNext = function () {
 
 	// app下载入口函数
 	var appLoadEntrance = function(){
-		pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang","pi/render3d/babylon/babylon"], {}, function (mods, tmpfm) {
+		pi_modules.commonjs.exports.require(["pi/util/html", "pi/widget/util","pi/util/lang"], {}, function (mods, tmpfm) {
 			html = mods[0],
 			util = mods[1],
 			lang = mods[2];
@@ -275,6 +275,7 @@ winit.initNext = function () {
 			"pi/ui/lang.tpl",
 			"app/view/base/",
 			"app/components1/",
+			"app/components/modalBoxCheckBox/",
 			"app/res/css/",
 			"app/res/js/",
 			"app/view/play/home/",
@@ -286,7 +287,7 @@ winit.initNext = function () {
 			// "earn/client/app/res/css/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
-			// debugger
+			console.timeEnd("fp loadWalletFirstPageSource");
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -337,10 +338,10 @@ winit.initNext = function () {
 	var loadLeftSource = function () {
 		var level2SourceList = [
 			// "app/core/",
-			"pi/browser/",
 			"app/logic/",
 			"app/api/",
 			"app/components/modalBox/",
+			"app/components/message/",
 			"app/view/wallet/cloudWalletCustomize/thirdRechargeSC.tpl",
 			"app/view/wallet/cloudWalletCustomize/thirdRechargeSC.js",
 			"app/view/wallet/cloudWalletCustomize/thirdRechargeSC.wcss",	

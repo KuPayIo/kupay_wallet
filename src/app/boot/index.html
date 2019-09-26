@@ -452,7 +452,7 @@
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
-			winit.debug = true; 
+			winit.debug = false; 
 			// main = location.port ? main + ":" + location.port : main;
 			winit.isLoc = location.protocol.indexOf("file")>=0
 
@@ -864,7 +864,7 @@
 			document.getElementById('rcmj_loading_log').style.background = '#fff';
 			const element = document.createElement('div');
 			const html = ' <div class="pi-loading-mask">'+
-                		'<p>正在跳转至支付页面。。。</p>'+
+                		'<p>正在跳转至支付页面...</p>'+
 					'</div>'
 			element.innerHTML = html;
 			document.getElementById('rcmj_loading_log').appendChild(element);

@@ -21,13 +21,13 @@
                 <div w-class="pay-title"><widget w-tag="pi-ui-lang">{{payTitle}}</widget></div>
                 <div w-class="select-body">
                     {{% 微信支付}}
-                    <div w-class="select-item" on-tap="changPay('wxpay')">
+                    <div w-class="select-item" on-tap="changPay('{{it.PayType.WX}}')">
                         <div w-class="select-detail">
                             <img src="app/res/image/wxPay.png" width="60px" />
                             <widget w-class="pay-name" w-tag="pi-ui-lang">{"zh_Hans":"微信支付","zh_Hant":"微信支付","en":""}</widget>
                         </div>
                         <div w-class="select-round">
-                            {{if it.payType ==='wxpay'}}
+                            {{if it.selPayType == it.PayType.WX}}
                             <img src="app/res/image/icon_right2.png" width="42px" />
                             {{else}}
                             <div w-class="select-img"></div>
@@ -37,13 +37,13 @@
     
     
                     {{% 支付宝支付}}
-                    <div w-class="select-item" on-tap="changPay('alipay')">
+                    <div w-class="select-item" on-tap="changPay('{{it.PayType.Alipay}}')">
                         <div w-class="select-detail">
                             <img src="app/res/image/aliPay.png" width="60px" />
                             <widget w-class="pay-name" w-tag="pi-ui-lang">{"zh_Hans":"支付宝支付","zh_Hant":"支付寶支付","en":""}</widget>
                         </div>
                         <div w-class="select-round">
-                            {{if it.payType ==='alipay'}}
+                            {{if it.selPayType === it.PayType.Alipay}}
                             <img src="app/res/image/icon_right2.png" width="42px" />
                             {{else}}
                             <div w-class="select-img"></div>

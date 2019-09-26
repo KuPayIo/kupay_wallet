@@ -2,12 +2,10 @@
  * 微信、支付宝充值模块
  */
 
-import { getStore as earnGetStore, setStore  as earnSetStore } from '../../earn/client/app/store/memstore';
-import { WebViewManager } from '../../pi/browser/webview';
-import { popNew } from '../../pi/ui/root';
-import { getModulConfig } from '../modulConfig';
+import { AliPay } from '../../pi/browser/alipay';
+import { payByWx } from '../logic/native';
 import { requestAsync } from '../net/pull';
-import { popNewLoading } from './tools';
+import { popNewLoading, popNewMessage } from './tools';
 
 export interface OrderDetail {
     total: number; // 总价
@@ -22,8 +20,8 @@ export interface OrderDetail {
  * 支付方式
  */
 export enum PayType {
-    WX = 'wxpay',
-    Alipay = 'alipay'
+    WX = 'wx_app_pay',
+    Alipay = 'alipay_app'
 }
 /**
  * 确认订单支付接口
@@ -35,33 +33,37 @@ export const confirmPay = async (orderDetail: OrderDetail) => {
     const msg = { type: 'order_pay', param: orderDetail };
     const loading = popNewLoading({ zh_Hans: '充值中...', zh_Hant: '充值中...', en: '' });
     try {
-        const resData: any = await requestAsync(msg);
-        console.log('pay 下单结果===============',resData);
+        const resData: any = await requestAsync(msg,-1);
         setTimeout(() => {
             loading.callback(loading.widget);
-        },3000);
-        const jumpData = {
-            oid: resData.oid,
-            mweb_url: ''
-        };
+        }, 500);
+        // const jumpData = {
+        //     oid: resData.oid,
+        //     mweb_url: ''
+        // };
         let retOrder;
         if (orderDetail.payType === PayType.Alipay) {// 支付宝H5支付
-            const aliRes = await fetch('https://openapi.alipay.com/gateway.do', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                },
-                body: URLencode(resData.JsData)// 这里是请求对象
-            });
-            jumpData.mweb_url = aliRes.url;
-            retOrder = await jumpAlipay(jumpData);
+            // const aliRes = await fetch('https://openapi.alipay.com/gateway.do', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            //     },
+            //     body: URLencode(resData.JsData)// 这里是请求对象
+            // });
+            // jumpData.mweb_url = aliRes.url;
+            retOrder = await jumpAlipay(resData.JsData);
         } else if (orderDetail.payType === PayType.WX) { // 微信H5支付
-            jumpData.mweb_url = JSON.parse(resData.JsData).mweb_url;
-            retOrder = await jumpWxpay(jumpData);
+            // jumpData.mweb_url = JSON.parse(resData.JsData).mweb_url;
+            retOrder = await jumpWxpay(resData.JsData);
         }
+        const mess = { type: 'order_query', param: { oid: resData.oid } };
+        await requestAsync(mess,-1);
         
         return retOrder;
     } catch (err) {
+        if (err === 0) {
+            popNewMessage('网络未连接');
+        }
         loading.callback(loading.widget);
     }
 };
@@ -72,25 +74,42 @@ export const confirmPay = async (orderDetail: OrderDetail) => {
  */
 export const jumpWxpay = (order) => {
     return new Promise((resolve,reject) => {
-        WebViewManager.newView('payWebView',order.mweb_url,{ Referer: getModulConfig('PAY_DOMAIN') });
-        setTimeout(() => {
-            popNew('app-components-modalBox-modalBox', {
-                title: '',
-                content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
-                style: 'color:#F7931A;',
-                sureText: { zh_Hans: '支付成功', zh_Hant: '支付成功', en: '' },
-                onlyOk:true,
-                // cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
-            }, () => {
-                WebViewManager.freeView('payWebView');
-                // const firstRecharge = earnGetStore('flags').firstRecharge;
-                // if (!firstRecharge) earnSetStore('flags/firstRecharge',true);
+        // WebViewManager.newView('payWebView',order.mweb_url,{ Referer: getModulConfig('PAY_DOMAIN') });
+        // setTimeout(() => {
+        //     popNew('app-components-modalBox-modalBox', {
+        //         title: '',
+        //         content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
+        //         style: 'color:#F7931A;',
+        //         sureText: { zh_Hans: '支付成功', zh_Hant: '支付成功', en: '' },
+        //         onlyOk:true,
+        //         // cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
+        //     }, () => {
+        //         WebViewManager.freeView('payWebView');
+        //         // const firstRecharge = earnGetStore('flags').firstRecharge;
+        //         // if (!firstRecharge) earnSetStore('flags/firstRecharge',true);
+        //         resolve(order);
+        //     }, () => {
+        //         WebViewManager.freeView('payWebView');
+        //         reject();
+        //     });
+        // }, 5000);
+        payByWx(order, (res) => {
+            if (res === 0) {
+                popNewMessage('支付成功');
                 resolve(order);
-            }, () => {
-                WebViewManager.freeView('payWebView');
-                reject();
-            });
-        }, 5000);
+
+                return;
+            }
+
+            if (res === -1) {
+                popNewMessage('支付失败');
+            } else if (res === -2) {
+                popNewMessage('取消支付');
+            } else if (res === -7) {
+                popNewMessage('未安装微信');
+            }
+            reject();
+        });
     });
     
 };
@@ -103,30 +122,49 @@ export const jumpWxpay = (order) => {
  */
 export const jumpAlipay = (order) => {
     return new Promise((resolve,reject) => {
-        const $payIframe = document.createElement('iframe');
-        $payIframe.setAttribute('sandbox', 'allow-scripts allow-top-navigation');
-        $payIframe.setAttribute('src', order.mweb_url);
-        $payIframe.setAttribute('style', 'position:absolute;width:0px;height:0px;visibility:hidden;');
-        document.body.appendChild($payIframe);
-        setTimeout(() => {
-            popNew('app-components-modalBox-modalBox', {
-                title: '',
-                content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
-                style: 'color:#F7931A;',
-                sureText: { zh_Hans: '支付成功', zh_Hant: '支付成功', en: '' },
-                cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
-            }, () => {
-                document.body.removeChild($payIframe);
-                const firstRecharge = earnGetStore('flags').firstRecharge;
-                if (!firstRecharge) earnSetStore('flags/firstRecharge',true);
+        // const $payIframe = document.createElement('iframe');
+        // $payIframe.setAttribute('sandbox', 'allow-scripts allow-top-navigation');
+        // $payIframe.setAttribute('src', order.mweb_url);
+        // $payIframe.setAttribute('style', 'position:absolute;width:0px;height:0px;visibility:hidden;');
+        // document.body.appendChild($payIframe);
+        // setTimeout(() => {
+        //     popNew('app-components-modalBox-modalBox', {
+        //         title: '',
+        //         content: { zh_Hans: '请确认支付是否已完成？', zh_Hant: '请确认支付是否已完成？', en: '' },
+        //         style: 'color:#F7931A;',
+        //         sureText: { zh_Hans: '支付成功', zh_Hant: '支付成功', en: '' },
+        //         onlyOk:true,
+        //         // cancelText: { zh_Hans: '重新支付', zh_Hant: '重新支付', en: '' }
+        //     }, () => {
+        //         document.body.removeChild($payIframe);
+        //         // const firstRecharge = earnGetStore('flags').firstRecharge;
+        //         // if (!firstRecharge) earnSetStore('flags/firstRecharge',true);
+        //         resolve(order);
+        //     }, () => {
+        //         document.body.removeChild($payIframe);
+        //         reject();
+        //     });
+        // }, 5000);
+
+        AliPay.goAliPay(order,(res) => {
+            if (res === 0) {
+                popNewMessage('支付成功');
                 resolve(order);
-            }, () => {
-                document.body.removeChild($payIframe);
-                reject();
-            });
-        }, 5000);
+
+                return;
+            }
+
+            if (res === -1) {
+                popNewMessage('支付失败');
+            } else if (res === -2) {
+                popNewMessage('取消支付');
+            } else if (res === -7) {
+                popNewMessage('未安装支付宝');
+            }
+            reject();
+        });
     });
-    
+   
 };
 
 /**

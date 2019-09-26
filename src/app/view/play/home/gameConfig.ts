@@ -1,6 +1,6 @@
+import { screenMode } from '../../../../pi/browser/webview';
 import { shareDownload } from '../../../config';
 import { getLocalStorage } from '../../../store/filestore';
-import { screenMode } from '../../../../pi/browser/webview';
 
 /**
  * 第三方游戏相关配置
@@ -18,8 +18,8 @@ export const gameList = [
         usePi:true,
         title:{ zh_Hans:'一代掌门',zh_Hant:'一代掌门',en:'' },
         desc:{ zh_Hans:'一代掌门',zh_Hant:'一代掌门',en:'' },
-        img:['app/res/image1/chairMan.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
-        url:'/dst/client/boot/haohai.html',
+        img:['app/res/image1/bg_open.jpg','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
+        url:'http://cgcydzm.17youx.cn/client/boot/haohai.html',
         apkDownloadUrl:shareDownload,
         webviewName:'fairyChivalry',
         appid:'103',

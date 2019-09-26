@@ -2,16 +2,19 @@
  * 钱包登录模块
  */
 
+import { WebViewManager } from '../../pi/browser/webview';
 import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
+import { closeWalletWebview } from '../api/JSAPI';
 import { wsUrl } from '../config';
 import { getDeviceAllDetail } from '../logic/native';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../store/interface';
-import { Account, getAllAccount, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
+import { Account, getStore, initCloudWallets, LocalCloudWallet,register, setStore } from '../store/memstore';
 import { getCipherToolsMod, getGenmnemonicMod, getGlobalWalletClass, getWalletToolsMod } from '../utils/commonjsTools';
 import { CMD, defaultPassword } from '../utils/constants';
-import { closeAllPage, delPopPhoneTips, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
+import { closeAllPage, delPopPhoneTips, getUserInfo, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
+import { gameList } from '../view/play/home/gameConfig';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, requestAsync, setUserInfo } from './pull';
 
@@ -137,7 +140,7 @@ export const autoLogin = async (conRandom:string) => {
     const [deviceDetail,cipherToolsMod] = await Promise.all([getDeviceAllDetail(),getCipherToolsMod()]);
     console.timeEnd('loginMod getCipherToolsMod');       
     console.log(`token: ${getStore('user/token')}, deviceId: ${deviceDetail.uuid.toString()}`);
-    try{
+    try {
         const token = cipherToolsMod.decrypt(getStore('user/token'),deviceDetail.uuid.toString());
         const param:any = {
             device_id: deviceDetail.uuid,
@@ -154,9 +157,9 @@ export const autoLogin = async (conRandom:string) => {
             param
         };
         console.log('autoLogin = ',msg);
-        requestAsync(msg).then(res => {
-            loginWalletSuccess();
+        requestAsync(msg).then(async res => {
             console.timeEnd('loginMod autoLogin');
+            await loginWalletSuccess();
             setStore('user/isLogin', true);
             console.timeEnd('loginMod start');
             console.log('自动登录成功-----------',res);
@@ -168,7 +171,7 @@ export const autoLogin = async (conRandom:string) => {
             }
         });
 
-    }catch(err){
+    } catch (err) {
         setStore('user/token','');
         loginWalletFailed();
     }
@@ -202,12 +205,23 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
     };
     console.log('defaultLogin = ',msgLogin);
 
-    return requestAsync(msgLogin).then((r:any) => {
+    return requestAsync(msgLogin).then(async (r:any) => {
         console.log('============================好嗨号acc_id:',r.acc_id);
         setStore('user/info/acc_id',r.acc_id,false);
-        loginWalletSuccess();
         applyAutoLogin();
-        setStore('user/isLogin', true);
+        // 去授权id
+        await loginWalletSuccess();
+        // setStore('user/isLogin', true);
+        
+        if ((<any>window).isFirst) {
+            const gameItem = gameList[0];
+            const gameTitle = gameItem.title.zh_Hans;
+            const gameUrl =   gameItem.url;
+            const webviewName = gameItem.webviewName;
+            const screen = gameItem.screenMode;
+            WebViewManager.open(webviewName, gameUrl, gameTitle, '', screen);
+            closeWalletWebview();
+        }
     }).catch(err => {
         setStore('user/isLogin', false);
         if (err.error !== -69) {
@@ -515,13 +529,26 @@ export const kickOffline = (secretHash:string = '',phone?:string,code?:string,nu
 const loginWalletSuccess = () => {
     setStore('flags/hasLogined',true);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
 
-    for (const loginType of loginedCallbackList) {
-        getOpenId(loginType.appId).then(res => {
-            loginType.success(res.openid);
-        }).catch(err => {
-            console.log(`appId ${loginType.appId} get openId failed`,err);
-        });
-    }
+    // for (const loginType of loginedCallbackList) {
+    //     getOpenId(loginType.appId).then(res => {
+    //         loginType.success(res.openid);
+    //     }).catch(err => {
+    //         console.log(`appId ${loginType.appId} get openId failed`,err);
+    //     });
+    // }
+    return getOpenId(gameList[0].appid).then(resData => {
+        const ret:any = {};
+        ret.openId = resData.openid;
+        ret.avatar = getUserInfo().avatar;
+        ret.nickName = getUserInfo().nickName;
+        ret.timeStamp = resData.timestamp.value;
+        ret.sign = resData.sign;
+        (<any>window).JSBridge.setUserInfoTrans(JSON.stringify(ret));
+
+    }).catch(err => {
+        console.log(`appId ${gameList[0].appid} get openId failed`,err);
+    });
+    
 };
 
 /**

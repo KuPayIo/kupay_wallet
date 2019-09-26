@@ -9,7 +9,12 @@
     <div w-class="body">
         {{if it.showLoadding}}
         <div w-class="pi-loading-mask">
-            <p>正在跳转至支付页面。。。</p>
+            <div w-class="pi-loading-spinner">
+                <div w-class="loading-img"></div>
+                <p w-class="pi-loading-text">
+                    支付中
+                </p>
+            </div>
         </div>
         {{end}}
         {{for i,v of it.gameList}}

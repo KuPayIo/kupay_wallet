@@ -29,7 +29,8 @@ export class ThirdRechargeSC  extends Widget {
             scBalance,
             total_fee_show:props.order.total_fee / SCPrecision,
             needPay,
-            payType: PayType.WX,
+            PayType,
+            selPayType: PayType.WX,
             walletName:getModulConfig('WALLET_NAME')
 
         };
@@ -45,7 +46,7 @@ export class ThirdRechargeSC  extends Widget {
             total: num * SCUnitprice, // 总价
             body: wxPayShow, // 信息
             num, // 充值SC数量
-            payType: this.props.payType, // 支付方式
+            payType: this.props.selPayType, // 支付方式
             cointype: CloudCurrencyType.SC, // 充值类型
             note: ''          // 备注
         };
@@ -53,9 +54,10 @@ export class ThirdRechargeSC  extends Widget {
             if (res) {
                 getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
                 this.props.okCB && this.props.okCB();
-                setTimeout(() => {
-                    this.ok && this.ok(true);
-                },500);
+                this.ok && this.ok(true);
+                // setTimeout(() => {
+                //     this.ok && this.ok(true);
+                // },500);
             }
         });
     }
@@ -64,7 +66,7 @@ export class ThirdRechargeSC  extends Widget {
      * @param payType 支付方式
      */
     public changPay(payType: string) {
-        this.props.payType = payType;
+        this.props.selPayType = payType;
         this.paint();
     }
 
@@ -73,8 +75,8 @@ export class ThirdRechargeSC  extends Widget {
      */
     public backPrePage() {
         this.props.okCB && this.props.okCB();
-        setTimeout(() => {
-            this.ok && this.ok(false);
-        },500);
+        this.ok && this.ok(false);
+        // setTimeout(() => {
+        // },500);
     }
 }

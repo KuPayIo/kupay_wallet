@@ -306,3 +306,24 @@ export const getWXCode = (ok?:any,fail?:any) => {
        
     });
 };
+
+/**
+ * goWXPay 微信支付
+ * 
+ * @param app_id ：微信开发平台的appID
+ * @param partnerid : 微信支付分配的商户号
+ * @param prepayid : 微信返回的支付会话ID
+ * @param packages : 扩展字段，暂时填写 "Sign=WXPay" 固定值
+ * @param noncestr : 随机字符串
+ * @param timestamp ：时间戳
+ * @param sign ：签名
+ * @param success : 成功回调
+ * @param result ：0：充值成功， -1： 充值错误（参数异常）  -2： 用户选择取消
+ */
+export const payByWx = (param:string,ok?:any) => {
+    const r = JSON.parse(param);
+    WeChatLogin.goWXPay(r.appid,r.partnerid,r.prepayid,r.package,r.noncestr,r.timestamp,r.sign,(res) => {
+        console.log('payByWx!!!!!!!!',res);
+        ok && ok(res);
+    });
+};

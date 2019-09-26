@@ -41,20 +41,22 @@ export const initPush = () => {
             },() => {
                 setTimeout(() => {
                     closeAllPage();
-                    if (getAllAccount().length > 0) {
-                        popNew('app-view-base-entrance1');
-                    } else {
-                        popNew('app-view-base-entrance');
-                    }
+                    // if (getAllAccount().length > 0) {
+                    //     popNew('app-view-base-entrance1');
+                    // } else {
+                    //     popNew('app-view-base-entrance');
+                    // }
+                    popNew('app-view-base-rowEntrance');
                 },100);
             },() => {
                 setTimeout(() => {
                     closeAllPage();
-                    if (getAllAccount().length > 0) {
-                        popNew('app-view-base-entrance1');
-                    } else {
-                        popNew('app-view-base-entrance');
-                    }
+                    // if (getAllAccount().length > 0) {
+                    //     popNew('app-view-base-entrance1');
+                    // } else {
+                    //     popNew('app-view-base-entrance');
+                    // }
+                    popNew('app-view-base-rowEntrance');
                 },100);
             });
         };
@@ -70,7 +72,7 @@ export const initPush = () => {
         console.log('服务器推送成功==========================',res);
 
         return () => {
-            popNewMessage(getStaticLanguage().transfer.rechargeTips);
+            // popNewMessage(getStaticLanguage().transfer.rechargeTips);
         };
     });
 

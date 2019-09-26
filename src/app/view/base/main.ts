@@ -39,7 +39,7 @@ export const run = (cb): void =>  {
     preFetchFromNative();
     console.timeEnd('home enter');
     // app event 注册
-    addAppEvent();
+    // addAppEvent();
     // 解决进入时闪一下问题
     setTimeout(() => {
         if (cb) cb();

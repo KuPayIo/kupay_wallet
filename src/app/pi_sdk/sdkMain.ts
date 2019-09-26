@@ -158,6 +158,14 @@ const piSdkInit = () => {
 
 pi_config.ButtonId = ButtonId;
 pi_config.showButtons = showButtons;
+pi_config.webviewName = 'fairyChivalry';
+pi_config.isHorizontal = true;
+pi_config.fromWallet = true;
+pi_config.appid = '103';
+pi_config.thirdBase = 'app/api/thirdBase';
+pi_config.jsApi = 'app/api/JSAPI';
+pi_config.imgUrlPre = 'http://192.168.33.13/wallet/app/res/image/third/';
+
 
 pi_sdk.setWebviewManager = setWebviewManager;
 pi_sdk.piSdkInit = piSdkInit;

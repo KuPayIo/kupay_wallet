@@ -45,11 +45,14 @@ export const setFreeSecrectPay =  (openFreeSecret) => {
 
 // 获取openID
 const authorize = (payload, callBack) => {
-    pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'authorize', payload,  (error, result) => {
-        console.log('getOpenId call success', error);
-        console.log('getOpenId call success', result);
-        callBack(error, result);
-    });
+
+    const data = (<any>window).JSBridge.getUserInfoTrans();
+    callBack(undefined,data && JSON.parse(data));
+    // pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'authorize', payload,  (error, result) => {
+    //     console.log('getOpenId call success', error);
+    //     console.log('getOpenId call success', result);
+    //     callBack(error, result);
+    // });
 };
 
 // 第三方支付
@@ -64,7 +67,7 @@ const thirdPay =  (order, callBack) => {
     };
     closePopBox();
     popNewLoading('支付中...');
-    pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'thirdPay', { order,webviewName:pi_sdk.config.webviewName },  (error, res) => {
+    (<any>window).pi_sdk.pi_RPC_Method((<any>window).pi_sdk.config.jsApi, 'thirdPay', { order,webviewName:(<any>window).pi_sdk.config.webviewName },  (error, res) => {
         console.log('thirdPay call success',res);
         closePopBox();
         if (res.result === payCode.SUCCESS) {
@@ -74,7 +77,7 @@ const thirdPay =  (order, callBack) => {
             const title = res.result === payCode.SETNOPASSWORD ? '未开启免密支付，请输入支付密码' : '免密额度到达上限';
             popInputBox(title,(value) => {
                 popNewLoading('支付中...');
-                pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'thirdPayDirect', { order,password:value },  (error, res) => {
+                (<any>window).pi_sdk.pi_RPC_Method((<any>window).pi_sdk.config.jsApi, 'thirdPayDirect', { order,password:value },  (error, res) => {
                     console.log('thirdPayDirect call success',res);
                     closePopBox();
                     if (res.result === payCode.ERRORPSW) {

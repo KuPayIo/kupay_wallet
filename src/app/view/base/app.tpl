@@ -1,7 +1,4 @@
 <div style="width:100%;height:100%;display: flex;">
-    {{if it.showGameImg && 0}}
-    <div w-class="gameImg" style="background-image: url(app/res/image1/chairMan.jpg);"></div>
-    {{end}}
 
     <div w-class="tabs" >
     {{if it.type === 0}}

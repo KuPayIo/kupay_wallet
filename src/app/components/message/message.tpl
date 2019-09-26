@@ -1,4 +1,4 @@
-<div w-class="main" class="{{if !it.isShow}}message-fade-enter{{end}} message_open ">
+<div w-class="main" class="message_open ">
     <p w-class="text">
     {{if typeof(it.content)==='string' }}
         {{it.content}}

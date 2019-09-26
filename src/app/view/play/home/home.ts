@@ -1,24 +1,24 @@
  // ================================ 导入
-import { WebViewManager, screenMode } from '../../../../pi/browser/webview';
+import { screenMode, WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
+import { closeWalletWebview } from '../../../api/JSAPI';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
-import { notify } from '../../../../pi/widget/event_gui';
-import { getRealNode } from '../../../../pi/widget/painter';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+let hasEnterGame = false;
 
 /**
  * play home 
@@ -49,7 +49,6 @@ export class PlayHome extends Widget {
             loadDir([path], undefined, undefined, undefined, fileMap => {
                 const arr = new Uint8Array(fileMap[path]);
                 const content = new TextDecoder().decode(arr);
-                console.timeEnd('loginMod thirdApiDependPromise');
                 resolve(content);
             }, () => {
                 //
@@ -82,7 +81,7 @@ export class PlayHome extends Widget {
             offlienType:OfflienType.WALLET
         };        
         super.setProps(this.props);
-        if(!(<any>window).isFirst){
+        if (!(<any>window).isFirst) {
             this.props.showLoadding = true;
         }
         console.log(props);
@@ -97,10 +96,12 @@ export class PlayHome extends Widget {
 
     }
 
-    // public attach() {
-    //     super.attach();
-    //     this.defaultEnterGame();
-    // }
+    public attach() {
+        super.attach();
+        if ((<any>window).isFirst) {
+            this.defaultEnterGame();
+        }
+    }
 
     /**
      * 刷新页面
@@ -194,26 +195,26 @@ export class PlayHome extends Widget {
             };
             const pi3ConfigStr = `
                 window.pi_sdk = ${JSON.stringify(pi_sdk)};
-            `;
+            `;            
+
             this.configPromise = Promise.resolve(pi3ConfigStr);
             if (gameItem.usePi) { // 有pi的项目
                 this.configPromise.then(configContent => {
-                    if(gameUrl.indexOf('http') > -1){
-                        WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent, screen);
-                        setStore('flags/EnterGame',true); 
-                    }else{
-                        WebViewManager.open(webviewName, gameUrl, gameTitle, configContent, screen);
+                    if (gameUrl.indexOf('http') > -1) {
+                        WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, '', screen);
+                    } else {
+                        WebViewManager.open(webviewName, gameUrl, gameTitle, '', screen);
                     }
-                    setStore('flags/EnterGame',true); 
-                    hasEnterGame = false;                       
+                    hasEnterGame = false;  
+                    closeWalletWebview();                     
                 });
             } else {
                 const allPromise = Promise.all([this.injectStartPromise,this.configPromise,this.piSdkPromise,this.injectEndPromise]);
                 allPromise.then(([injectStartContent,configContent,piSdkContent,injectEndContent]) => {
                     const content =  injectStartContent + configContent + piSdkContent + injectEndContent;
                     WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content, screen);
-                    setStore('flags/EnterGame',true);
-                    hasEnterGame = false;                    
+                    hasEnterGame = false;
+                    closeWalletWebview();              
                 });
             }
         }
@@ -237,20 +238,19 @@ export class PlayHome extends Widget {
         const phoneNumber = getUserInfo().phoneNumber;    
         console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
         // if (!firstEnterGame || phoneNumber) {
-            if (!getStore('user/isLogin')  || !this.props.isActive || hasEnterGame) {
-                console.log('defaultEnterGame failed');
+        if (!getStore('user/isLogin')  || !this.props.isActive || hasEnterGame) {
+            console.log('defaultEnterGame failed');
     
-                return;
-            } else {
-                console.log('defaultEnterGame success');
-                this.gameClick(0);
+            return;
+        } else {
+            console.log('defaultEnterGame success');
+            this.gameClick(0);
                 // localStorage.setItem('firstEnterGame','true');
-            }
+        }
         // }
     }
 
 }
-let hasEnterGame = false;
 // ========================================
 register('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -265,7 +265,7 @@ register('user/info',() => {
 
 register('user/isLogin', (isLogin:boolean) => {
     setTimeout(() => {
-        if((<any>window).isFirst){
+        if ((<any>window).isFirst) {
             const w:any = forelet.getWidget(WIDGET_NAME);
             w && w.defaultEnterGame();
         }
