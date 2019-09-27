@@ -17,24 +17,21 @@ import { LockScreen } from '../../publicLib/interface';
 import { getScreenModify, preLoadAd } from '../../viewLogic/native';
 
 // ============================== 导出
-export const run = (homePageData,cb): void =>  {
+export const run = (cb): void =>  {
     callEmitWebviewReload();
     addWidget(document.body, 'pi-ui-root');
     // 数据检查  
     checkUpdate();  
-    const id = homePageData[0];
-    const accounts = homePageData[1];
-    popNew('app-view-base-app');
-    if (!id) {
-        if (accounts.length > 0) {
-            popNew('app-view-base-entrance1',{ accounts });
-        } else {
-            popNew('app-view-base-entrance');
-        }
-    } 
+    popNew('app-view-base-test');
+    // if (!id) {
+    //     if (accounts.length > 0) {
+    //         popNew('app-view-base-entrance1',{ accounts });
+    //     } else {
+    //         popNew('app-view-base-entrance');
+    //     }
+    // } 
     // 锁屏页面;
-    popNewPage();
-    self.homeEnter = Date.now() - self.startTime;
+    // popNewPage();
     if (cb) cb();
     
     // 预先从底层获取一些数据

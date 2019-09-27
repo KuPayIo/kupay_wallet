@@ -1,8 +1,8 @@
 /**
  * 隐私政策文本
  */
-import { getLang } from '../../../../pi/util/lang';
-import { getModulConfig } from '../../../publicLib/modulConfig';
+import { getLang } from '../../../pi/util/lang';
+import { getModulConfig } from '../../publicLib/modulConfig';
 
 // tslint:disable-next-line:max-func-body-length
 export const getPrivacyPolicy = () => {

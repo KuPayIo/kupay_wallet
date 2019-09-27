@@ -2,14 +2,14 @@
  * 联系我们
  */
 // ===============================================导入
-import { getLocalStorage } from '../../../../chat/client/app/data/lcstore';
-import { getChatUid } from '../../../../chat/client/app/net/rpc';
-import { GENERATOR_TYPE } from '../../../../chat/server/data/db/user.s';
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../publicLib/modulConfig';
-import { rippleShow } from '../../../utils/tools';
+import { getLocalStorage } from '../../../chat/client/app/data/lcstore';
+import { getChatUid } from '../../../chat/client/app/net/rpc';
+import { GENERATOR_TYPE } from '../../../chat/server/data/db/user.s';
+import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Widget } from '../../../pi/widget/widget';
+import { getModulConfig } from '../../publicLib/modulConfig';
+import { rippleShow } from '../../utils/tools';
 // ==================================================导出
 declare var pi_update;
 declare var pi_modules;
@@ -56,7 +56,7 @@ export class ContanctUs extends Widget {
                 break;
             // KuPay公众号
             case 2:
-                popNew('app-view-mine-other-wechatQrcode',{ fg:1 });
+                popNew('app-view-aboutApp-wechatQrcode',{ fg:1 });
                 break;
             default:
                 console.log(this.props.cfgData.tips);

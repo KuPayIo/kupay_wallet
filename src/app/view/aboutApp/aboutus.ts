@@ -2,11 +2,11 @@
  * about us
  */
 // =======================================导入
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../publicLib/modulConfig';
-import { popNewMessage, rippleShow } from '../../../utils/tools';
+import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Widget } from '../../../pi/widget/widget';
+import { getModulConfig } from '../../publicLib/modulConfig';
+import { popNewMessage, rippleShow } from '../../utils/tools';
 // =========================================导出
 declare var pi_update;
 declare var pi_modules;
@@ -19,7 +19,7 @@ export class Aboutus extends Widget {
             version: pi_update.updateJson.version,
             appVersion:pi_modules.appUpdate.exports.getLocalVersion().join('.') || '1.0.0',
             data: [
-                { value: '', components: 'app-view-mine-other-privacypolicy' },
+                { value: '', components: 'app-view-aboutApp-privacypolicy' },
                 { value: '', components: '' },
                 { value: '', components: '' }
             ],
@@ -36,7 +36,6 @@ export class Aboutus extends Widget {
             const tips = { zh_Hans:'已是最新版本',zh_Hant:'已是最新版',en:'' };
             popNewMessage(tips[getLang()]);
         } else {
-            // popNew('app-view-mine-other-shareDownload');
             popNew('earn-client-app-view-activity-inviteFriend');
         }
     }

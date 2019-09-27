@@ -2,17 +2,17 @@
  * sendRedEnv
  */
 // =============================================导入
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { callGetServerCloudBalance,callVerifyIdentidy, setStoreData } from '../../../middleLayer/wrap';
-import { sendRedEnvlope } from '../../../net/pull';
-import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
-import { getModulConfig } from '../../../publicLib/modulConfig';
-import { currencyType } from '../../../publicLib/tools';
-import { getUserInfo, popNewLoading, popNewMessage } from '../../../utils/tools';
-import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
+import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { callGetServerCloudBalance,callVerifyIdentidy, setStoreData } from '../../middleLayer/wrap';
+import { sendRedEnvlope } from '../../net/pull';
+import { CloudCurrencyType, LuckyMoneyType } from '../../publicLib/interface';
+import { getModulConfig } from '../../publicLib/modulConfig';
+import { currencyType } from '../../publicLib/tools';
+import { getUserInfo, popNewLoading, popNewMessage } from '../../utils/tools';
+import { getCloudBalances, registerStoreData } from '../../viewLogic/common';
 // ================================================导出
 
 // tslint:disable-next-line:no-reserved-keywords
@@ -44,9 +44,9 @@ export class WriteRedEnv extends Widget {
     public props:Props = {
         ktShow:getModulConfig('KT_SHOW'),
         list: [
-            { img: '../../res/image1/currency/KT.png', name: 'KT', num: 0 },
-            { img: '../../res/image1/currency/BTC.png', name: 'BTC', num:0 },
-            { img: '../../res/image1/currency/ETH.png', name: 'ETH', num:0 }
+            { img: '../res/image1/currency/KT.png', name: 'KT', num: 0 },
+            { img: '../res/image1/currency/BTC.png', name: 'BTC', num:0 },
+            { img: '../res/image1/currency/ETH.png', name: 'ETH', num:0 }
         ],
         selected: 0,
         showPin: false,
@@ -58,7 +58,7 @@ export class WriteRedEnv extends Widget {
         forceHide:false,
         ktBalance:0,
         inFlag:'',
-        acc_id:""
+        acc_id:''
     };
 
     public create() {
@@ -72,7 +72,7 @@ export class WriteRedEnv extends Widget {
         const isIos = getModulConfig('IOS');
         if (isIos) {
             this.props.list = [
-                { img: '../../res/image1/currency/KT.png', name: 'KT', num: 0 }
+                { img: '../res/image1/currency/KT.png', name: 'KT', num: 0 }
             ];
         }
     }
@@ -110,7 +110,7 @@ export class WriteRedEnv extends Widget {
     public goHistory() {
         this.props.forceHide = true;
         this.paint();
-        popNew('app-view-earn-redEnvelope-redEnvHistory');
+        popNew('app-view-redEnvelope-redEnvHistory');
         setTimeout(() => {
             this.props.forceHide = false;
             this.paint();
@@ -280,7 +280,7 @@ export class WriteRedEnv extends Widget {
                 acc_id:this.props.acc_id
             });
         } else {
-            popNew('app-view-earn-redEnvelope-sendRedEnv', {
+            popNew('app-view-redEnvelope-sendRedEnv', {
                 message: lm,
                 rid,
                 rtype: rtype,

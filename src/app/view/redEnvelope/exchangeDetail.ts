@@ -1,14 +1,14 @@
 /**
  * ExchangeDetail
  */
-import { Json } from '../../../../pi/lang/type';
-import { getLang } from '../../../../pi/util/lang';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { callGetOneUserInfo, callQueryDetailLog } from '../../../middleLayer/wrap';
-import { uploadFileUrlPrefix } from '../../../publicLib/config';
-import { CloudCurrencyType } from '../../../publicLib/interface';
-import { currencyType } from '../../../publicLib/tools';
+import { Json } from '../../../pi/lang/type';
+import { getLang } from '../../../pi/util/lang';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { callGetOneUserInfo, callQueryDetailLog } from '../../middleLayer/wrap';
+import { uploadFileUrlPrefix } from '../../publicLib/config';
+import { CloudCurrencyType } from '../../publicLib/interface';
+import { currencyType } from '../../publicLib/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

@@ -2,13 +2,13 @@
  * 联系我们
  */
 // ===============================================导入
-import { ShareType } from '../../../../pi/browser/shareToPlatforms';
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../publicLib/modulConfig';
-import { popNewMessage } from '../../../utils/tools';
-import { makeScreenShot } from '../../../viewLogic/native';
+import { ShareType } from '../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Widget } from '../../../pi/widget/widget';
+import { getModulConfig } from '../../publicLib/modulConfig';
+import { popNewMessage } from '../../utils/tools';
+import { makeScreenShot } from '../../viewLogic/native';
 // ==================================================导出
 
 interface Props {

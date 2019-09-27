@@ -1,17 +1,17 @@
 /**
  * RedEnvHistory
  */
-import { ShareType } from '../../../../pi/browser/shareToPlatforms';
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { sharePerUrl } from '../../../config';
-import { callGetInviteCode,callQuerySendRedEnvelopeRecord, getStoreData } from '../../../middleLayer/wrap';
-import { PAGELIMIT } from '../../../publicLib/config';
-import { LuckyMoneyType } from '../../../publicLib/interface';
-import { getUserInfo } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
+import { ShareType } from '../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { sharePerUrl } from '../../config';
+import { callGetInviteCode,callQuerySendRedEnvelopeRecord, getStoreData } from '../../middleLayer/wrap';
+import { PAGELIMIT } from '../../publicLib/config';
+import { LuckyMoneyType } from '../../publicLib/interface';
+import { getUserInfo } from '../../utils/tools';
+import { registerStoreData } from '../../viewLogic/common';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -133,7 +133,7 @@ export class RedEnvHistory extends Widget {
      * 查看详情
      */
     public goDetail(ind:number) {
-        popNew('app-view-earn-redEnvelope-redEnvDetail',this.props.recordList[ind]);
+        popNew('app-view-redEnvelope-redEnvDetail',this.props.recordList[ind]);
     }
 
     /**

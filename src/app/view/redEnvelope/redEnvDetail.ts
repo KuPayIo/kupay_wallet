@@ -1,16 +1,16 @@
 /**
  * RedEnvDetail
  */
-import { ShareType } from '../../../../pi/browser/shareToPlatforms';
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { sharePerUrl } from '../../../config';
-import { callGetInviteCode,callGetOneUserInfo, callQueryDetailLog, getStoreData } from '../../../middleLayer/wrap';
-import { uploadFileUrlPrefix } from '../../../publicLib/config';
-import { LuckyMoneyType } from '../../../publicLib/interface';
-import { getUserInfo } from '../../../utils/tools';
+import { ShareType } from '../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { sharePerUrl } from '../../config';
+import { callGetInviteCode,callGetOneUserInfo, callQueryDetailLog, getStoreData } from '../../middleLayer/wrap';
+import { uploadFileUrlPrefix } from '../../publicLib/config';
+import { LuckyMoneyType } from '../../publicLib/interface';
+import { getUserInfo } from '../../utils/tools';
 
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -54,7 +54,7 @@ export class RedEnvDetail extends Widget {
         getUserInfo().then(user => {
             if (user) {
                 this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
-                this.props.userHead = user.avatar ? user.avatar :'../../../res/image/default_avater_big.png';
+                this.props.userHead = user.avatar ? user.avatar :'../../res/image/default_avater_big.png';
                 this.paint();
             }
         });
@@ -73,7 +73,7 @@ export class RedEnvDetail extends Widget {
             callGetOneUserInfo([redBagList[i].cuid]).then(user => {
                 this.props.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
                 // tslint:disable-next-line:max-line-length
-                this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../../res/image/default_avater_big.png'; 
+                this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../res/image/default_avater_big.png'; 
                 if (this.props.rtype === 1 && redBagList.length === this.props.totalNum && this.props.greatAmount < redBagList[i].amount) {
                     this.props.greatAmount = redBagList.amount;
                     this.props.greatUser = i;

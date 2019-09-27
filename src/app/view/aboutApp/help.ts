@@ -2,7 +2,7 @@
  * help
  */
 // =============================================导入
-import { Widget } from '../../../../pi/widget/widget';
+import { Widget } from '../../../pi/widget/widget';
 import { getHelpAnswer } from './helpText';
 // ================================================导出
 export class FAQ extends Widget {

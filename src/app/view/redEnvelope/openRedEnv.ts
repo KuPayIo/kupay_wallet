@@ -1,16 +1,16 @@
 /**
  * open red-envelope
  */
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { callGetServerCloudBalance,setStoreData } from '../../../middleLayer/wrap';
-import { convertRedBag, takeRedBag } from '../../../net/pull';
-import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
-import { currencyType } from '../../../publicLib/tools';
-import { smallUnit2LargeUnit } from '../../../publicLib/unitTools';
-import { popNewMessage } from '../../../utils/tools';
+import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { callGetServerCloudBalance,setStoreData } from '../../middleLayer/wrap';
+import { convertRedBag, takeRedBag } from '../../net/pull';
+import { CloudCurrencyType, LuckyMoneyType } from '../../publicLib/interface';
+import { currencyType } from '../../publicLib/tools';
+import { smallUnit2LargeUnit } from '../../publicLib/unitTools';
+import { popNewMessage } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -61,7 +61,7 @@ export class OpenRedEnvelope extends Widget {
                 convertFg = await this.convertClick();
             } 
             if (convertFg) {  
-                popNew('app-view-earn-exchange-exchangeDetail',this.props);
+                popNew('app-view-redEnvelope-exchangeDetail',this.props);
                 popNewMessage(this.language.successMess);
                 this.backPrePage(JSON.stringify(this.props)); // 兑换成功
             }
@@ -84,7 +84,7 @@ export class OpenRedEnvelope extends Widget {
                 amount: 0,
                 rid: rid.slice(2)
             };
-            popNew('app-view-earn-exchange-exchangeDetail',this.props);
+            popNew('app-view-redEnvelope-exchangeDetail',this.props);
             this.backPrePage(JSON.stringify(this.props)); // 查看兑换记录
 
             return false;

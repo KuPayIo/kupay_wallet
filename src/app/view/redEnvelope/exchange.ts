@@ -3,18 +3,18 @@
  */
 // ============================== 导入
 
-import { convertAwards } from '../../../../earn/client/app/net/rpc';
-import { popModalBoxs, popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { callGetServerCloudBalance,setStoreData } from '../../../middleLayer/wrap';
-import { convertRedBag, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../../net/pull';
-import { CloudCurrencyType, LuckyMoneyType } from '../../../publicLib/interface';
-import { getModulConfig } from '../../../publicLib/modulConfig';
-import { eth2Wei, smallUnit2LargeUnit } from '../../../publicLib/unitTools';
-import { showError } from '../../../utils/toolMessages';
-import { popNewLoading, popNewMessage } from '../../../utils/tools';
+import { convertAwards } from '../../../earn/client/app/net/rpc';
+import { popModalBoxs, popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { callGetServerCloudBalance,setStoreData } from '../../middleLayer/wrap';
+import { convertRedBag, getData, inputInviteCdKey, queryRedBagDesc, setData } from '../../net/pull';
+import { CloudCurrencyType, LuckyMoneyType } from '../../publicLib/interface';
+import { getModulConfig } from '../../publicLib/modulConfig';
+import { eth2Wei, smallUnit2LargeUnit } from '../../publicLib/unitTools';
+import { showError } from '../../utils/toolMessages';
+import { popNewLoading, popNewMessage } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -70,7 +70,7 @@ export class Exchange extends Widget {
             suid:res.src_id,
             code
         };
-        popNew('app-view-earn-exchange-openRedEnv', redEnvelope);
+        popNew('app-view-redEnvelope-openRedEnv', redEnvelope);
         setTimeout(() => {
             this.props.cid = '';
             this.paint(true);
@@ -81,7 +81,7 @@ export class Exchange extends Widget {
      * 查看历史记录
      */
     public goHistory() {
-        popNew('app-view-earn-exchange-exchangeHistory');
+        popNew('app-view-redEnvelope-exchangeHistory');
     }
 
     /**

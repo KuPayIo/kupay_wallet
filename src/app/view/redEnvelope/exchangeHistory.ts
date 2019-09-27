@@ -1,18 +1,18 @@
 /**
  * ExchangeHistory
  */
-import { appLanguageList } from '../../../../pi/browser/localLanguage';
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { callGetOneUserInfo, callQueryConvertLog, getStoreData, setStoreData } from '../../../middleLayer/wrap';
-import { getData } from '../../../net/pull';
-import { PAGELIMIT } from '../../../publicLib/config';
-import { parseRtype, timestampFormat } from '../../../publicLib/tools';
-import { getUserInfo } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
-import { SettingLanguage } from '../../base/app';
+import { appLanguageList } from '../../../pi/browser/localLanguage';
+import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { callGetOneUserInfo, callQueryConvertLog, getStoreData, setStoreData } from '../../middleLayer/wrap';
+import { getData } from '../../net/pull';
+import { PAGELIMIT } from '../../publicLib/config';
+import { parseRtype, timestampFormat } from '../../publicLib/tools';
+import { getUserInfo } from '../../utils/tools';
+import { registerStoreData } from '../../viewLogic/common';
+import { SettingLanguage } from '../base/app';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -109,7 +109,7 @@ export class ExchangeHistory extends Widget {
      * 查看详情
      */
     public goDetail(ind:number) {
-        popNew('app-view-earn-exchange-exchangeDetail',this.props.recordListShow[ind]);
+        popNew('app-view-redEnvelope-exchangeDetail',this.props.recordListShow[ind]);
     }
 
     // 获取邀请码记录

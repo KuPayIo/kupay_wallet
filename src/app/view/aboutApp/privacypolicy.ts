@@ -1,8 +1,8 @@
 /**
  * privacy policy
  */
-import { Widget } from '../../../../pi/widget/widget';
-import { getModulConfig } from '../../../publicLib/modulConfig';
+import { Widget } from '../../../pi/widget/widget';
+import { getModulConfig } from '../../publicLib/modulConfig';
 import { getIosPrivacyPolicy, getPrivacyPolicy } from './privacyPolicyText';
 
 export class PrivacyPolicy extends Widget {
