@@ -215,7 +215,6 @@ winit.initNext = function () {
 			html.checkWebpFeature(function (r) {
 				flags.webp = flags.webp || r;
 				firstStageLoaded();
-				// loadPiSdk();
 			});
 		}, function (result) {
 			alert("加载基础模块失败, " + result.error + ":" + result.reason);
@@ -236,14 +235,16 @@ winit.initNext = function () {
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
 			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
-
 			var WebViewManager = pi_modules.commonjs.exports.relativeGet("pi/browser/webview").exports.WebViewManager;
 			WebViewManager.addListenStage(function(stage){
+				console.log('WebViewManager stage',stage)
 				if(stage === "firstStage"){    // 第一阶段完成  可以注册监听
 					// TODO 在回调中加载剩余代码 并且注册监听已经完成
 					var callGetHomePageEnterData = pi_modules.commonjs.exports.relativeGet("app/middleLayer/wrap").exports.callGetHomePageEnterData;
 					var getDataStart = Date.now();
+					console.log('callGetHomePageEnterData start-----------------')
 					callGetHomePageEnterData().then(function(res){
+						console.log('callGetHomePageEnterData-------------------')
 						self.getData = Date.now() - getDataStart;
 						fpFlags.homePageReady = true;
 						fpFlags.homePageData = res;
@@ -298,16 +299,6 @@ winit.initNext = function () {
 		}, function(){});
 	}
 
-	var loadPiSdk = function(){
-		util.loadDir(["app/pi_sdk/"], flags, fm, undefined, function (fileMap) {
-			pi_sdk.setWebviewManager("pi/browser/webview");
-			pi_sdk.piSdkInit();
-		}, function (r) {
-			alert("加载目录失败, " + r.error + ":" + r.reason);
-		}, dirProcess.handler);
-	}
-	
-	
 	
 	// 加载钱包首页所需资源
 	var loadWalletFirstPageSource = function () {
@@ -396,6 +387,7 @@ winit.initNext = function () {
 
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
+		console.log('enterApp chatReady ',fpFlags.chatReady,' earnReady ',fpFlags.earnReady,' walletReady ',fpFlags.walletReady,' homePageReady ',fpFlags.homePageReady)
 		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady && fpFlags.homePageReady){
 			// 加载根组件
 			var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;

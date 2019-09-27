@@ -13,13 +13,21 @@
     font-weight: 600;
 }
 .itemDesc{
+    width:420px;
+    height:80px;
+    font-family:STHeitiSC;
+    font-weight:300;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     color: rgba(136, 136, 136, 0.87);
     font-size: 28px;
     margin-right: 20px;
+    line-height: 80px;
+    text-align: right;
 }
 .itemImg{
     width: 40px;
     height: 40px;
     margin-right: 20px;
 }
-

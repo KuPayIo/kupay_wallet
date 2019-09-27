@@ -56,10 +56,20 @@ export const initPush = () => {
         const invite = getStore('inviteUsers').invite_success || [];
         
         if (res.accId) {
-            const index = invite.indexOf(res.accId);
-            index === -1 && invite.push(res.accId);
+            // const index = invite.indexOf(res.accId);
+            // index === -1 && invite.push([res.accId,(new Date().getTime()),GENERATORTYPE.NOTICE_1]);
+            let index = -1;
+            invite.forEach((v,i) => {
+                if (v[0] === res.accId) {
+                    index = i;
+                }
+            });
+            if (index === -1) {
+                invite.push([res.accId,(new Date().getTime()),'invite']);  
+            } 
+            setStore('inviteUsers/invite_success',invite);
         }
-        setStore('inviteUsers/invite_success',invite);
+  
     });
 
     // 监听兑换邀请码成功事件
@@ -67,9 +77,10 @@ export const initPush = () => {
         console.log('event_convert_invite服务器推送兑换邀请码成功=====================',res);
         let invite = [];
         if (res.accId) {
-            invite = [res.accId];
-        }
+            invite = [res.accId,(new Date().getTime()),'beInvited'];
+        } 
         setStore('inviteUsers/convert_invite',invite);
+
     });
 
     // 监听邀请好友并成为真实用户事件

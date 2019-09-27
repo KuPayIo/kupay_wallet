@@ -434,7 +434,6 @@
 			}
 			winit.startTime = Date.now();
 			var name = "wallet"; // 每个项目需要定义自己的名称，该名称决定了访问域名和本地存储名
-			// debugger;
 			var main = document.domain.replace(/^(\D+\w*\.)(\w+\.[\w\.]+)/, "$2");
 			var remote = (document.domain != main || /^\w+\.\w+$/.test(document.domain)) ? name + "." : "";
 			winit.store = name;
@@ -450,7 +449,8 @@
 				winit.severPort = location.port ? location.port : "80";		
 			}else{// 本地包需要配置服务器ip和port
 				// 外网 39.98.200.23   high.herominer.net 
-				winit.severIp = "192.168.31.10";
+				winit.severIp = "192.168.31.226";  // 本地服务器
+				// winit.severIp = "39.98.48.66";  // 外网测试服
 				winit.severPort = "80";		
 			}
 			if(inApp){   // 移动端文件夹名
@@ -458,15 +458,6 @@
 			}else{       // pc端文件夹名
 				winit.walletName = "wallet";
 			}
-
-			// if(!winit.isLoc){ // 浏览器版本自动识别
-			// 	winit.severIp = main;
-			// 	winit.severPort = location.port ? location.port : "443";		
-			// }else{// 本地包需要配置服务器ip和port
-			// 	// 外网 39.98.200.23   high.herominer.net 
-			// 	winit.severIp = "39.98.200.23";
-			// 	winit.severPort = "443";		
-			// }
 
 			// app更新配置的URL地址
 			winit.appURL = "http://" + winit.severIp + ":" + winit.severPort + "/appversion";

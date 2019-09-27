@@ -1,15 +1,15 @@
-/**
- * account home
- */
+
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { Widget } from '../../../../pi/widget/widget';
 import { getStoreData } from '../../../middleLayer/wrap';
 import { uploadFile } from '../../../net/pull';
-import { changeWalletName, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow, walletNameAvailable } from '../../../utils/tools';
+// tslint:disable-next-line:max-line-length
+import { changeWalletName, changeWalletNote, changeWalletSex, deepCopy, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow, walletNameAvailable } from '../../../utils/tools';
 import { registerStoreData } from '../../../viewLogic/common';
 import { exportMnemonic } from '../../../viewLogic/localWallet';
+import { logoutAccount } from '../../../viewLogic/login';
 import { selectImage } from '../../../viewLogic/native';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords 
@@ -17,6 +17,9 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+/**
+ * account home
+ */
 export class AccountHome extends Widget {
     public ok: () => void;
     public language: any;
@@ -36,7 +39,9 @@ export class AccountHome extends Widget {
             canEditName: false,
             editName:'',
             chooseImage: false,
-            avatarHtml: ''
+            avatarHtml: '',
+            sex:2,
+            note:''
         };
         Promise.all([getUserInfo(),getStoreData('wallet')]).then(([userInfo,wallet]) => {
             if (userInfo.phoneNumber) {
@@ -48,6 +53,8 @@ export class AccountHome extends Widget {
             this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
             this.props.backup = wallet.isBackup;
             this.props.isTourist = !wallet.setPsw;
+            this.props.sex = userInfo.sex;
+            this.props.note = userInfo.note ? userInfo.note :'';
             this.paint();
         });
     }
@@ -184,6 +191,114 @@ export class AccountHome extends Widget {
             
         }
         this.paint(true);
+    }
+
+    /**
+     * 修改名称
+     */
+    public changeName() {
+        popNew('chat-client-app-widget-pageEdit-pageEdit',{ title:'修改昵称', contentInput:this.props.nickName,maxLength:10 },(res:any) => {
+            changeWalletName(res.content);
+            this.props.nickName = res.content;
+            popNewMessage('修改昵称成功');
+            this.paint();
+        });
+    }
+
+    /**
+     * 修改个性签名
+     */
+    public changeSignature() {
+        popNew('chat-client-app-widget-pageEdit-pageEdit',{ title:'修改个性签名', contentInput:this.props.note,maxLength:100 },(res:any) => {
+            changeWalletNote(res.content);
+            this.props.note = res.content;
+            popNewMessage('修改个性签名成功');
+            this.paint();
+        });
+    }
+
+    /**
+     * 退出账户不删除信息
+     */
+    public async logOut() {
+        const wallet = await getStoreData('wallet');
+        const setPsw = wallet.setPsw;
+        const modalBox2 = deepCopy(this.language.modalBox2);
+        if (!setPsw) {
+            modalBox2.sureText = this.language.modalBox2.sureText1;
+        }
+        popNew('app-components-modalBox-modalBox', modalBox2 , () => {  
+            if (!setPsw) {
+                this.ok && this.ok();
+            } else {
+                this.backUp();
+            }
+            
+            console.log('取消1');
+        }, () => {
+            console.log(1);
+            logoutAccount().then(() => {
+                this.backPrePage();
+            });
+            
+        }
+        );
+    }
+
+    /**
+     * 备份
+     */
+    public async backUp() {
+        const psw = await popPswBox();
+        if (!psw) return;
+        const ret = await exportMnemonic(psw);
+        if (ret) {
+            popNew('app-view-wallet-backup-index', { ...ret });
+            this.ok && this.ok();
+        }
+    }
+
+    /**
+     * 注销账户
+     */
+    public async logOutDel() {
+        const setPsw = await getStoreData('wallet/setPsw');
+        const modalBox3 = deepCopy(this.language.modalBox3);
+        if (!setPsw) {
+            modalBox3.sureText = this.language.modalBox3.sureText1;
+        }
+        popNew('app-components-modalBox-modalBox', modalBox3 , () => {
+            if (!setPsw) {
+                this.ok && this.ok();
+            } else {
+                this.backUp();
+            }
+            console.log('取消2');
+        }, () => {
+            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[3], style: 'color:#F7931A;' }, () => {
+                logoutAccount(true).then(() => {
+                    this.backPrePage();
+                });
+                
+            });
+        });
+    }
+
+    /** 
+     * 选择性别
+     */
+    public changeSex() {
+        popNew('app-components1-checkSex-checkSex', { title:'选择性别',active:this.props.sex }, (r: any) => {
+            changeWalletSex(r);
+            this.props.sex = r;
+            popNewMessage('修改性别成功');
+            this.paint();
+        });
+    }
+
+    // 黑名单管理
+    public blacklist() {
+        popNew('chat-client-app-view-contactList-blacklist',{ title:'黑名单管理' ,addType:'放出' });
     }
 }
 
