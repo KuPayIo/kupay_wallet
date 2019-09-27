@@ -564,3 +564,27 @@ export const getStaticLanguage = () => {
     
     return Config[lan];
 };
+
+/**
+ * 将APP注册到微信
+ */
+export const registerToWx = (appId:string) => {
+    console.log('registerToWx!!!!!!',appId);
+    // WeChatLogin.regToWx(appId);
+};
+registerToWx('wxd842d1d167444cd0');   // 加载就立即调用
+
+/**
+ * 从微信APP获取临时凭证Code
+ */
+export const getWXCode = (ok?:any,fail?:any) => {
+    // WeChatLogin.getCodeFromWX('snsapi_userinfo','',(res,code) => {
+    //     console.log('getWXCode!!!!!!',res,code);
+    //     if (res === 0) {
+    //         ok && ok(code);
+    //     } else {
+    //         fail && fail();
+    //     }
+       
+    // });
+};

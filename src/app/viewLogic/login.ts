@@ -1,58 +1,25 @@
 import { popNew } from '../../pi/ui/root';
-import { defaultPassword } from '../config';
-// tslint:disable-next-line:max-line-length
-import { callDefaultLogin, callGetOpenId, callGetRandom, callLogoutAccount,callVerifyIdentidy, getStoreData, openWSConnect } from '../middleLayer/wrap';
+import { callGetOpenId, callLogoutAccount,callManualLogin, openWSConnect } from '../middleLayer/wrap';
 import { getSourceLoaded } from '../postMessage/localLoaded';
 import { CMD } from '../publicLib/config';
-import { closeAllPage, delPopPhoneTips, popNewLoading, popNewMessage, popPswBox } from '../utils/tools';
+import { closeAllPage, delPopPhoneTips } from '../utils/tools';
 import { registerStoreData } from './common';
 
 /**
- * 密码弹框重新登录
- */
-const loginWalletFailedPop = async () => {
-    const wallet = await getStoreData('wallet');
-    let psw;
-    let secretHash;
-    if (!wallet.setPsw) {
-        psw = defaultPassword;
-        secretHash = await callVerifyIdentidy(psw);
-    } else {
-        psw = await popPswBox([],true,true);
-        if (!psw) {
-            return;
-        }
-        const close = popNewLoading({ zh_Hans:'登录中',zh_Hant:'登錄中',en:'' });
-        secretHash = await callVerifyIdentidy(psw);
-        close && close.callback(close.widget);
-        if (!secretHash) {
-            popNewMessage('密码错误,请重新输入');
-            loginWalletFailedPop();
-
-            return;
-        }
-        
-    }
-    const conRandom = await getStoreData('user/conRandom');
-    callDefaultLogin(secretHash,conRandom);
-};
-
-/**
  * 踢人下线提示
- * @param secretHash 密码
  */
-export const kickOffline = (secretHash:string = '',phone?:number,code?:number,num?:string) => {
+export const kickOffline = (userType:string,user:string = '',pwd:string,device_id:string) => {
     popNew('app-components-modalBoxCheckBox-modalBoxCheckBox',{ 
         title:'检测到在其它设备有登录',
         content:'清除其它设备账户信息' 
     },(deleteAccount:boolean) => {
         if (deleteAccount) {
-            callGetRandom(secretHash,CMD.FORCELOGOUTDEL,phone,code,num);
+            callManualLogin(userType,user,pwd,device_id,CMD.FORCELOGOUTDEL);
         } else {
-            callGetRandom(secretHash,CMD.FORCELOGOUT,phone,code,num);
+            callManualLogin(userType,user,pwd,device_id,CMD.FORCELOGOUT);
         }
     },() => {
-        callGetRandom(secretHash,CMD.FORCELOGOUT);
+        callManualLogin(userType,user,pwd,device_id,CMD.FORCELOGOUT);
     });
 };
 
@@ -151,11 +118,6 @@ registerStoreData('flags/doLoginSuccess',(doLoginSuccess:boolean) => {
     loginWalletSuccess();
 });
 
-// 登录失败 执行失败操作
-registerStoreData('flags/doLoginFailed',(doLogoutSuccess:boolean) => {
-    loginWalletFailedPop();
-});
-
 // 登出成功 执行成功操作
 registerStoreData('flags/doLogoutSuccess',(doLogoutSuccess:boolean) => {
     logoutWalletSuccess();
@@ -164,7 +126,7 @@ registerStoreData('flags/doLogoutSuccess',(doLogoutSuccess:boolean) => {
 // 账号已经登录  踢人下线
 registerStoreData('flags/kickOffline',(res:any) => {
     if (getSourceLoaded()) {
-        kickOffline(res.secretHash,res.phone,res.code,res.num);
+        kickOffline(res.userType,res.user,res.pwd,res.device_id);
     } else {
         localStorage.setItem('kickOffline',JSON.stringify(res));
     }

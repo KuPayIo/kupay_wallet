@@ -24,9 +24,9 @@ export const vmRegisterStore = (keysStr:string) => {
 let firstRegisterSuccess = false;
 const firstRegisterCbs = [];
 /**
- * 第一次注册监听  (在第一次注册成功后才取登录  保证webview端能监听到登录相关信息)
+ * 监听VM准备完成 保证webview端能监听到登录相关信息
  */
-export const addFirstRegisterListener = (cb:Function) => {
+export const registerVmComplete = (cb:Function) => {
     if (!firstRegisterSuccess) {
         firstRegisterCbs.push(cb);
     } else {
@@ -35,7 +35,7 @@ export const addFirstRegisterListener = (cb:Function) => {
 };
 
 /**
- * 第一次注册成功
+ * VM准备完成 执行回调
  */
 export const emitFirstRegister = () => {
     firstRegisterSuccess = true;

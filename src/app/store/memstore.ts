@@ -173,12 +173,12 @@ export const initCloudWallets = () => {
  * 获取所有的账户列表
  */
 export const getAllAccount = () => {
-    console.log('getAllAccount start----------')
+    console.log('getAllAccount start----------');
     return getLocalStorage('accounts', {
         currenctId: '',
         accounts: {}
     }).then(localAcccounts => {
-        console.log('getAllAccount', localAcccounts)
+        console.log('getAllAccount', localAcccounts);
         const accounts = [];
         for (const key in localAcccounts.accounts) {
             accounts.push(localAcccounts.accounts[key]);
@@ -188,7 +188,7 @@ export const getAllAccount = () => {
             return item2.wallet.logoutTimestamp - item1.wallet.logoutTimestamp;
         });
     }).catch(e => {
-        console.log("getAllAcount failed, e = ", e);
+        console.log('getAllAcount failed, e = ', e);
     });
 };
 

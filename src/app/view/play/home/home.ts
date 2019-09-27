@@ -8,8 +8,6 @@ import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
-import { getPi3Config } from '../../../api/pi3Config';
-import { closePopFloatBox, setHasEnterGame } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,callGetInviteCode, getStoreData } from '../../../middleLayer/wrap';
 import { LuckyMoneyType } from '../../../publicLib/interface';
@@ -140,7 +138,6 @@ export class PlayHome extends Widget {
      * 点击游戏
      */
     public async gameClick(num:number) {
-        closePopFloatBox();
         const id = await getStoreData('user/id');
         if (!id) return;
         popNew3('earn-client-app-view-openBox-openBox');

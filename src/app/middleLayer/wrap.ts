@@ -24,7 +24,7 @@ const vmRpcCall = (methodName:string,params: any[]):Promise<any> => {
     // if (count > 0) {
     //     return Promise.resolve();
     // }
-    console.log('vmRpcCall start methodName',methodName)
+    console.log('vmRpcCall start methodName',methodName);
    
     return loadMod().then(() => {
         return new Promise((resolve,reject) => {
@@ -110,7 +110,7 @@ export const callDeleteAccount = (id: string) => {
  * 获取首页登录所需数据
  */
 export const callGetHomePageEnterData = () => {
-    console.log('callGetHomePageEnterData vmRpcCall')
+    console.log('callGetHomePageEnterData vmRpcCall');
     return vmRpcCall('callGetHomePageEnterData',[]);
 };
 // ===========================================memstroe相关===================================================================
@@ -225,17 +225,10 @@ export const callRequestAsyncNeedLogin = (msg: any,secretHash:string) => {
 };
 
 /**
- * 获取随机数
- * flag:0 普通用户注册，1注册即为真实用户
+ * 手动登录
  */
-export const callGetRandom = (secretHash:string,cmd?:number,phone?:number,code?:number,num?:string) => {
-    return vmRpcCall('callGetRandom',[secretHash,cmd,phone,code,num]);
-};
-/**
- * 创建钱包后默认登录
- */
-export const callDefaultLogin = (hash:string,conRandom:string) => {
-    return vmRpcCall('callDefaultLogin',[hash,conRandom]);
+export const callManualLogin = (userType:number,user:string,pwd:string,deviceId:string,cmd:number= 0) => {
+    return vmRpcCall('callManualLogin',[userType,user,pwd,deviceId,cmd]);
 };
 
 // 获取云端余额

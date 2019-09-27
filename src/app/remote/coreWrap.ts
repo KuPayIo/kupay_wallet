@@ -9,7 +9,7 @@ import { deleteAccount, getAllAccount, getCloudBalances1, getStore, setStore } f
 import { getHomePageEnterData } from '../store/vmRegister';
 import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, dcUpdateBalance } from './dataCenter';
 // tslint:disable-next-line:max-line-length
-import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from './login';
+import { getOpenId, loginSuccess, logoutAccount, manualLogin, openConnect, requestAsync, walletManualReconnect } from './login';
 // tslint:disable-next-line:max-line-length
 import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getFriendsKTTops, getHighTop, getInviteCode, getMineDetail, getMining, getOneUserInfo, getProductList, getPurchaseRecord, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
 // tslint:disable-next-line:max-line-length
@@ -213,22 +213,10 @@ export const callRequestAsyncNeedLogin = (msg: any,secretHash:string,callback:Fu
 };
 
 /**
- * 获取随机数
- * flag:0 普通用户注册，1注册即为真实用户
+ * 手动登录
  */
-export const callGetRandom = (secretHash:string,cmd:number = undefined,phone:number = undefined,
-    code:number = undefined,num:string = undefined ,callback:Function) => {
-    getRandom(secretHash,cmd,phone,code,num).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([err]);
-    });
-};
-/**
- * 创建钱包后默认登录
- */
-export const callDefaultLogin = (hash:string,conRandom:string,callback:Function) => {
-    defaultLogin(hash,conRandom).then(res => {
+export const callManualLogin = (userType:number,user:string,pwd:string,deviceId:string,cmd:number= 0,callback:Function) => {
+    manualLogin(userType,user,pwd,deviceId,cmd).then(res => {
         callback([undefined,res]);
     }).catch(err => {
         callback([err]);

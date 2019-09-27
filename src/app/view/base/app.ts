@@ -125,7 +125,7 @@ export class App extends Widget {
 // ===================================================== 立即执行
 
 setSourceLoadedCallbackList(() => {
-    checkPopPhoneTips();
+    // checkPopPhoneTips();
     let res:any = localStorage.getItem('kickOffline');
     if (res) {
         res = JSON.parse(res);

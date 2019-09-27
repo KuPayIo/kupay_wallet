@@ -2,20 +2,81 @@
  * 钱包登录模块
  */
 
-import { closeCon, open, reopen, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
+import { closeCon, open, reopen, request, setReloginCallback, setReloginMsg, setUrl } from '../../pi/net/ui/con_mgr';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { GlobalWallet } from '../core_common/globalWallet';
-import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
+import { wsUrl } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
 import { Account, getAllAccount, getStore,initCloudWallets, LocalCloudWallet, register, setStore } from '../store/memstore';
-import { addFirstRegisterListener } from '../store/vmRegister';
+import { registerVmComplete } from '../store/vmRegister';
 import { clearAllTimer, initDataCenter } from './dataCenter';
-// tslint:disable-next-line:max-line-length
-import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';
-import { getDeviceAllDetail } from './tools';
-import { decrypt, encrypt, getMnemonicByHash, sign } from './wallet';
+import { setUserInfo } from './pull';
+import { getDeviceId } from './tools';
+import { decrypt, encrypt } from './wallet';
 
- // 设置重登录回调
+/**
+ * 通用的异步通信
+ */
+export const requestAsync = (msg: any):Promise<any> => {
+    return new Promise((resolve, reject) => {
+        request(msg, (resp: any) => {
+            if (resp.type) {
+                console.log(`错误信息为${resp.type}`);
+                reject(resp);
+            } else if (resp.result !== 1) {
+                reject(resp);
+            } else {
+                resolve(resp);
+            }
+        });
+    });
+};
+
+/**
+ * 开启连接
+ */
+export const openConnect = () => {
+    setUrl(wsUrl);
+    open(conSuccess,conError,conClose,conReOpen);
+};
+
+/**
+ * 连接成功回调
+ */
+const conSuccess = () => {
+    console.log('con success');
+    setStore('user/offline',false);
+    autoLogin();
+};
+
+/**
+ * 连接出错回调
+ */
+const conError = (err) => {
+    console.log('con error');
+    setStore('user/isLogin',false);
+    setStore('user/offline',true);
+};
+
+/**
+ * 连接关闭回调
+ */
+const conClose = () => {
+    console.log('con close');
+    setStore('user/isLogin',false);
+    setStore('user/offline',true);
+};
+
+/**
+ * 重新连接回调
+ */
+const conReOpen = () => {
+    console.log('con reopen');
+    setStore('user/offline',false);
+};
+
+/**
+ * 设置重登录回调
+ */
 setReloginCallback((res) => {
     const rtype = res.type;
     console.log('relogin ',rtype);
@@ -46,185 +107,47 @@ export const walletManualReconnect = () => {
 };
 
 /**
- * 通用的异步通信
- */
-export const requestAsync = (msg: any):Promise<any> => {
-    return new Promise((resolve, reject) => {
-        request(msg, (resp: any) => {
-            if (resp.type) {
-                console.log(`错误信息为${resp.type}`);
-                reject(resp);
-            } else if (resp.result !== 1) {
-                reject(resp);
-            } else {
-                resolve(resp);
-            }
-        });
-    });
-};
-
-/**
- * 通用的异步通信 需要登录
- * 
- * 需要登录权限的接口
- * emit_red_bag  发红包
- * to_cash       eth提现
- * btc_to_cash   btc提现
- * manage_money@buy    购买理财
- * manage_money@sell   出售理财
- */
-export const requestAsyncNeedLogin = async (msg: any,secretHash:string) => {
-    const isLogin = getStore('user/isLogin');
-    if (!isLogin) {
-        await defaultLogin(secretHash,getStore('user/conRandom'));
-    }
-
-    return requestAsync(msg);
-    
-};
-
-/**
- * 开启连接
- */
-export const openConnect = (secretHash?:string) => {
-    setUrl(wsUrl);
-    open(conSuccess(secretHash),conError,conClose,conReOpen);
-};
-
-/**
- * 连接成功回调
- */
-const conSuccess = (secretHash:string) => {
-    return () => {
-        console.log('con success');
-        setStore('user/offline',false);
-        getRandom(secretHash);
-    };
-};
-
-/**
- * 连接出错回调
- */
-const conError = (err) => {
-    console.log('con error');
-    setStore('user/isLogin',false);
-    setStore('user/offline',true);
-};
-
-/**
- * 连接关闭回调
- */
-const conClose = () => {
-    console.log('con close');
-    setStore('user/isLogin',false);
-    setStore('user/offline',true);
-};
-
-/**
- * 重新连接回调
- */
-const conReOpen = () => {
-    console.log('con reopen');
-    setStore('user/offline',false);
-    // console.log();
-};
-
-/**
  * 申请自动登录token
  */
 export const applyAutoLogin = async () => {
-    const deviceDetail =  await getDeviceAllDetail();
-    const deviceId = deviceDetail.uuid.toString();
+    const deviceId = await getDeviceId();
     const msg = { 
         type: 'wallet/user@set_auto_login', 
-        param: { 
-            device_id:deviceId
-        }
+        param: {}
     };
     requestAsync(msg).then(async (res) => {
         const decryptToken = await encrypt(res.token,deviceId);
         setStore('user/token',decryptToken);
+    }).catch(r => {
+        console.log('申请自动登陆失败',r);
     });
 };
 
 /**
  * 自动登录
  */
-export const autoLogin = async (conRandom:string) => {
-    const deviceDetail = await getDeviceAllDetail();
-    const token = await decrypt(getStore('user/token'),deviceDetail.uuid.toString());
+export const autoLogin = async () => {
+    const deviceId = await getDeviceId();
+    const token = await decrypt(getStore('user/token'),deviceId);
+    const user = getStore('user');
     const param:any = {
-        device_id: deviceDetail.uuid,
+        device_id: deviceId,
         token,
-        random:conRandom
+        user:user.conUid,
+        userType:user.userType
     };
-    if (inAndroidApp || inIOSApp) {
-        param.operator = deviceDetail.operator;
-        param.network = deviceDetail.netWorkStatus;
-        // TODO
-        // param.app_version = pi_update.updateJson.version;
-        param.app_version = '1.0.0';
-    }
     const msg = { 
         type: 'wallet/user@auto_login', 
         param
     };
-    console.log('autoLogin = ',msg);
     requestAsync(msg).then(res => {
-        setStore('flags/doLoginSuccess',true);
         setStore('user/isLogin', true);
-        setStore('flags/hasLogined',true,false);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
         console.log('自动登录成功-----------',res);
     }).catch((res) => {
         setStore('user/isLogin', false);
-        if (res.error !== -69) {
-            setStore('user/token','');
-            setStore('flags/doLoginFailed',true);
-        }
+        setStore('user/token','');
+        console.log('自动登录失败-----------',res);
     });
-};
-
-/**
- * 创建钱包后默认登录
- */
-export const defaultLogin = async (hash:string,conRandom:string) => {
-    const [deviceDetail,mnemonic] = await Promise.all([getDeviceAllDetail(),getMnemonicByHash(hash)]);
-    const wlt = await GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
-    const start1 = new Date().getTime();
-    const privateKey = wlt.exportPrivateKey();
-    console.log('计算耗时 exportPrivateKey = ',new Date().getTime() - start1);
-    const start2 = new Date().getTime();
-    const signStr = await sign(conRandom, privateKey);
-    console.log('计算耗时 sign = ',new Date().getTime() - start2);
-    const param:any = { sign: signStr };
-    if (inAndroidApp || inIOSApp) {
-        param.operator = deviceDetail.operator;
-        param.network = deviceDetail.netWorkStatus;
-        // TODO
-        // param.app_version = pi_update.updateJson.version;
-        param.app_version = '1.0.0';
-    }
-    const msgLogin = { 
-        type: 'login', 
-        param
-    };
-    console.log('defaultLogin = ',msgLogin);
-
-    return requestAsync(msgLogin).then((r:any) => {
-        console.log('============================好嗨号acc_id:',r.acc_id);
-        setStore('user/info/acc_id',r.acc_id,false);
-        applyAutoLogin();
-        setStore('flags/doLoginSuccess',true);
-        setStore('user/isLogin', true);
-        setStore('flags/hasLogined',true,false);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
-    }).catch(err => {
-        console.log('defaultLogin err',JSON.stringify(err));
-        setStore('user/isLogin', false);
-        if (err.error !== -69) {
-            setStore('flags/doLoginFailed',true);
-        }
-    });
-
 };
 
 /**
@@ -237,81 +160,46 @@ export const getOpenId = (appId:string) => {
     return requestAsync(msg);
 };
 
+export enum UserType {
+    wallet= 1,  
+    tel= 2,   // 手机号
+    wx= 3,   // 微信
+    tourist= 4  // 游客
+}
+
 /**
- * 获取随机数
- * flag:0 普通用户注册，1注册即为真实用户
+ * 手动登录
+ * @param userType 登录类型
+ * @param user 登录账号
+ * @param pwd 验证码 sid
+ * @param device_id 设备ID
+ * @param cmd 设备ID
  */
-export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code?:number,num?:string) => {
-    const wallet = getStore('wallet');
-    if (!wallet) return;
-    const deviceDetail = await getDeviceAllDetail();
-    let publicKey;
-    if (inIOSApp || inAndroidApp) {
-        publicKey = getStore('user/publicKey');
-    } else {
-        publicKey = `04${getStore('user/publicKey')}`;
-    }
-    const param:any = {
-        account: getStore('user/id').slice(2), 
-        pk: publicKey,
-        device_id:deviceDetail.uuid,
-        flag:1
+export const manualLogin = async (userType:UserType,user:string,pwd:string,cmd:number= 0,deviceId?:string) => {
+    const device_id = deviceId ? deviceId :await getDeviceId();
+    const param = {
+        userType,
+        user,
+        pwd,
+        device_id,
+        cmd
     };
-    if (inAndroidApp) {
-        param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
-        param.os = `android ${deviceDetail.version}`;
-        param.total_memory = deviceDetail.total;
-    } else if (inIOSApp) {
-        param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
-        param.os = `ios ${deviceDetail.version}`;
-        param.total_memory = deviceDetail.total;
-    }
-    
-    if (cmd) {
-        param.cmd = cmd;
-    }
-    if (phone) {
-        param.phone = phone;
-    }
-    if (code) {
-        param.code = code;
-    }
-    if (num) {
-        param.num = num;
-    }
-    const msg = { 
-        type: 'get_random', 
+    const msg = {
+        type:'login',
         param
     };
     
-    let resp;
-    try {
-        console.log('getRandom startTime= ',new Date().getTime());
-        resp = await requestAsync(msg);
-        setBottomLayerReloginMsg(resp.user,resp.userType,resp.password);
-        const conRandom = resp.rand;
-        if (secretHash) {
-            defaultLogin(secretHash,conRandom);
-        } else {
-            if (getStore('user/token')) {
-                autoLogin(conRandom);
-            } else {
-                setStore('flags/doLoginFailed',true);
-            }
-        }
-        setStore('user/conUid', resp.uid,false);
-        console.log('uid =',resp.uid);
-        setStore('user/conRandom', conRandom,false);
-    } catch (res) {
-        console.log('getRandom endTime= ',new Date().getTime());
-        resp = res;
-        if (res.type === 1014 && res.why !== deviceDetail.uuid) {  // 避免自己踢自己下线
-            setStore('flags/kickOffline',{ secretHash,phone,code,num });   // 通知踢人下线
-        } 
-    } 
-    console.log('getRandom resp = ',JSON.stringify(resp));
+    return requestAsync(msg).then(res => {
+        setStore('flags/isLogin',true);
+        setStore('user/acc_id',res.acc_id);
+        setReloginMsg(res.uid,userType,res.password);
 
-    return resp && (resp.type || resp.result);
+    }).catch(res => {
+        setStore('flags/isLogin',false);
+        if (res.type === 1014 && res.why !== device_id) {    // 避免自己踢自己下线
+            setStore('flags/kickOffline',{ userType,user,pwd,device_id });
+        }
+    });
 };
 
 /**
@@ -387,14 +275,13 @@ export const logoutAccount = async (save:boolean = true) => {
     setStore('cloud',cloud,false);
     setStore('activity',activity,false);
     setStore('setting/lockScreen',lockScreen);
-    setStore('flags/doLogoutSuccess',true);  // 登出钱包
-    setBottomLayerReloginMsg('','','');
+    setReloginMsg('','','');
     closeCon();
     setTimeout(() => {
         openConnect();
     },100);
     clearAllTimer();
-    console.log('logoutAccount uid1 = ',uid);
+    console.log('logoutAccount uid = ',uid);
     
     const uids = [];
     accounts.forEach(item => {
@@ -424,7 +311,7 @@ export const logoutAccount = async (save:boolean = true) => {
 /**
  * 登录成功
  */
-export const loginSuccess = (account:Account,secretHash:string) => {    
+export const loginSuccess = (account:Account) => {    
     const fileUser = account.user;
     const user:User = {
         isLogin: true,
@@ -481,7 +368,7 @@ export const loginSuccess = (account:Account,secretHash:string) => {
     setStore('wallet',wallet);
     setStore('cloud',cloud);
     setStore('user',user);
-    openConnect(secretHash);
+    openConnect();
     initDataCenter();
 };
 
@@ -493,28 +380,6 @@ const registerStore = () => {
             setUserInfo();
         }
     });
-
-        // 登录状态成功
-    register('user/isLogin', (isLogin: boolean) => {
-        if (isLogin) {
-            // 余额
-            getServerCloudBalance();
-            // 用户基础信息
-            getUserInfoFromServer(getStore('user/conUid')).then(() => {
-                getBindPhone();
-                // 获取真实用户
-                getRealUser();
-            });
-        } 
-        // eth gasPrice
-        fetchGasPrices();
-
-        // btc fees
-        fetchBtcFees();
-        getRealUser();
-    });
 };
-
 registerStore();
-
-addFirstRegisterListener(openConnect);  // 在第一次注册成功后才连接服务器
+registerVmComplete(openConnect);  // 在第一次注册成功后才连接服务器

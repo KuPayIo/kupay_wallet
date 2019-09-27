@@ -3,14 +3,16 @@
  */
 import { goshare, ImageNameType } from '../../pi/browser/vm';
 import { WebViewManager } from '../../pi/browser/webview';
-import { SCPrecision } from '../publicLib/config';
+import { ajax } from '../../pi/lang/mod';
+import { SCPrecision, sourceIp } from '../publicLib/config';
 import { CloudCurrencyType, ThirdCmd } from '../publicLib/interface';
 import { getCloudBalances, setStore } from '../store/memstore';
-import { getOpenId, requestAsync } from './login';
+import { getOpenId, manualLogin, requestAsync, UserType } from './login';
 import { postThirdPushMessage } from './postWalletMessage';
 import { getOneUserInfo } from './pull';
 import { goRecharge } from './recharge';
 import { addWebviewReloadListener } from './reload';
+import { getWXCode } from './tools';
 import { exportPrivateKeyByMnemonic, getMnemonicByHash, sign, VerifyIdentidy } from './wallet';
 
 export enum resCode {
@@ -449,5 +451,58 @@ const openDefaultWebview = (cb?:Function) => {
         } else {
             cb && cb();
         }
+    });
+};
+
+/**
+ * 关闭钱包后台
+ */
+export const closeWalletWebview = () => {
+    WebViewManager.closeDefault(() => {
+        console.log('关闭钱包后台成功了');
+    });
+};
+
+/**
+ * 发送验证码
+ */
+export const sendCode = async (phone: string,cb?:Function) => {
+    const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num:'86', name: '好嗨' } };
+    try {
+        const res = await requestAsync(msg);
+        cb && cb(res);
+    } catch (err) {
+        console.log('获取验证码失败');
+        cb && cb(err);
+    }
+};
+
+/**
+ * 手动登陆
+ */
+export const thirdManualLogin = (payload:{userType:UserType;user:string;pwd:string;cmd?:number;deviceId?:string},cb?:Function) => {
+    manualLogin(payload.userType,payload.user,payload.pwd,payload.cmd,payload.deviceId).then(res => {
+        cb && cb(null,1);
+    }).catch(res => {
+        cb && cb('error',0);
+    });
+}; 
+
+export const wechatLogin = (cb?:Function) => {
+    getWXCode(code => {
+        const url = `http://${sourceIp}:8099/wx/app/oauth2?code=${code}&state=_${encodeURIComponent(`http://${sourceIp}/chairMan/app/boot/index.html?from=0`)}`;
+        ajax.get(url, {}, undefined, undefined, 1000, async (res) => {
+            const r = JSON.parse(res);
+            const user = r.openid;
+            const pwd = r.rid;
+            if (!user || !pwd) {
+                cb('error',0);
+
+                return;
+            }
+            manualLogin(UserType.wx,user,pwd);
+        },() => {
+            cb('error',0);
+        });
     });
 };

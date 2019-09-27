@@ -406,7 +406,8 @@ winit.initNext = function () {
 				}
 				timeArr.push({ homeEnter:self.homeEnter,getData:self.getData,closeBg,checkUpdateTime:self.checkUpdateTime });
 				localStorage.setItem('timeArr',JSON.stringify(timeArr));
-			   	loadLeftSource();
+				loadLeftSource();
+				loadPiSdk()
 			});
 			
 			
@@ -465,7 +466,14 @@ winit.initNext = function () {
 		}, dirProcess.handler);
 	}
 
-
+	var loadPiSdk = function(){
+		util.loadDir(["app/pi_sdk/"], flags, fm, undefined, function (fileMap) {
+			pi_sdk.setWebviewManager("pi/browser/webview");
+			pi_sdk.piSdkInit();
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
+	}
 };
 
 
