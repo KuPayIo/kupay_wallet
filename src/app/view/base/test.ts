@@ -3,19 +3,19 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { piLoadDir } from '../../utils/commonjsTools';
+import { manualLogin } from '../../viewLogic/localWallet';
+// tslint:disable-next-line:max-line-length
+import { loadAboutAppSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadRedEnvelopeSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
 
 export class Test extends Widget {
+    // 登录
+    public login() {
+        manualLogin();
+    }
     // 开宝箱
     public open1() {
         const loading = popNew('app-components1-loading-loading1');
-        const sourceList = [
-            'earn/client/app/view/openBox/',
-            'earn/client/app/view/myProduct/',
-            'earn/xlsx/',
-            'earn/client/app/xls/'
-        ];
-        piLoadDir(sourceList).then(() => {
+        loadOpenBoxSource().then(() => {
             popNew('earn-client-app-view-openBox-openBox');
             loading.callback(loading.widget);
         });
@@ -24,13 +24,7 @@ export class Test extends Widget {
      // 大转盘
     public open2() {
         const loading = popNew('app-components1-loading-loading1');
-        const sourceList = [
-            'earn/client/app/view/turntable/',
-            'earn/client/app/view/myProduct/',
-            'earn/xlsx/',
-            'earn/client/app/xls/'
-        ];
-        piLoadDir(sourceList).then(() => {
+        loadTurntableSource().then(() => {
             popNew('earn-client-app-view-turntable-turntable');
             loading.callback(loading.widget);
         });
@@ -39,12 +33,7 @@ export class Test extends Widget {
     // 我的勋章
     public open3() {
         const loading = popNew('app-components1-loading-loading1');
-        const sourceList = [
-            'earn/client/app/view/medal/',
-            'earn/xlsx/',
-            'earn/client/app/xls/'
-        ];
-        piLoadDir(sourceList).then(() => {
+        loadMedalSource().then(() => {
             popNew('earn-client-app-view-medal-medal');
             loading.callback(loading.widget);
         });
@@ -53,12 +42,7 @@ export class Test extends Widget {
      // 挖矿
     public open4() {
         const loading = popNew('app-components1-loading-loading1');
-        const sourceList = [
-            'earn/client/app/view/mining/',
-            'earn/xlsx/',
-            'earn/client/app/xls/'
-        ];
-        piLoadDir(sourceList).then(() => {
+        loadMiningSource().then(() => {
             popNew('earn-client-app-view-mining-miningHome');
             loading.callback(loading.widget);
         });
@@ -67,13 +51,7 @@ export class Test extends Widget {
      // 分享
     public open5() {
         const loading = popNew('app-components1-loading-loading1');
-        const sourceList = [
-            'app/components/qrcode/',
-            'earn/client/app/view/share/',
-            'earn/xlsx/',
-            'earn/client/app/xls/'
-        ];
-        piLoadDir(sourceList).then(() => {
+        loadShareSource().then(() => {
             popNew('earn-client-app-view-share-inviteFriend');
             loading.callback(loading.widget);
         });
@@ -82,12 +60,7 @@ export class Test extends Widget {
     // 嗨豆商城
     public open6() {
         const loading = popNew('app-components1-loading-loading1');
-        const sourceList = [
-            'earn/client/app/view/mall/',
-            'earn/xlsx/',
-            'earn/client/app/xls/'
-        ];
-        piLoadDir(sourceList).then(() => {
+        loadMallSource().then(() => {
             popNew('earn-client-app-view-mall-exchange');
             loading.callback(loading.widget);
         });
@@ -96,12 +69,7 @@ export class Test extends Widget {
     // 公众号 联系我们 关于好嗨 帮助
     public open7(i:number) {
         const loading = popNew('app-components1-loading-loading1');
-        const sourceList = [
-            'app/view/aboutApp/',
-            'app/components/basicItem/',
-            'app/components/collapse/'
-        ];
-        piLoadDir(sourceList).then(() => {
+        loadAboutAppSource().then(() => {
             if (i === 0) {
                 popNew('app-view-aboutApp-wechatQrcode',{ fg:1 });
             } else if (i === 1) {
@@ -119,15 +87,7 @@ export class Test extends Widget {
      // 发红包 开红包
     public open8(i:number) {
         const loading = popNew('app-components1-loading-loading1');
-        const sourceList = [
-            'app/view/redEnvelope/',
-            'app/components/selectBox/',
-            'app/components/basicInput/',
-            'app/components1/input/',
-            'app/components1/btn/',
-            'app/components1/img/'
-        ];
-        piLoadDir(sourceList).then(() => {
+        loadRedEnvelopeSource().then(() => {
             if (i === 0) {
                 popNew('app-view-redEnvelope-writeRedEnv');
             } else {

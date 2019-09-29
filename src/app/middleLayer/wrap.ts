@@ -24,7 +24,7 @@ const vmRpcCall = (methodName:string,params: any[]):Promise<any> => {
     // if (count > 0) {
     //     return Promise.resolve();
     // }
-    console.log('vmRpcCall start methodName',methodName)
+    console.log('vmRpcCall start methodName',methodName);
    
     return loadMod().then(() => {
         return new Promise((resolve,reject) => {
@@ -110,7 +110,6 @@ export const callDeleteAccount = (id: string) => {
  * 获取首页登录所需数据
  */
 export const callGetHomePageEnterData = () => {
-    console.log('callGetHomePageEnterData vmRpcCall')
     return vmRpcCall('callGetHomePageEnterData',[]);
 };
 // ===========================================memstroe相关===================================================================
@@ -684,4 +683,11 @@ export const callEmitWebviewReload = () => {
  */
 export const callRpcTimeingTest = () => {
     return vmRpcCall('callRpcTimeingTest',[]);
+};
+
+/**
+ * 新版游客登录  暂时
+ */
+export const callManualLogin = () => {
+    return vmRpcCall('callManualLogin',[]);
 };

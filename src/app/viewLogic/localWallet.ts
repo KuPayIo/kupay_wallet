@@ -5,7 +5,7 @@ import { getStore as gameGetStore, setStore as gameSetStore } from '../../earn/c
 import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 // tslint:disable-next-line:max-line-length
-import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callBuyProduct, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDcClearTxTimer, callDcInitErc20GasLimit, callDcRefreshAllTx, callDcUpdateAddrInfo, callDeletLocalTx, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetAllAccount, callGetHighTop, callGetPurchaseRecord, callGetRechargeLogs, callGetServerCloudBalance, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callResendBtcRecharge ,callResendBtcTransfer,callUpdateLocalTx, callVerifyIdentidy, setStoreData } from '../middleLayer/wrap';
+import { callBackupMnemonic, callBtcRecharge, callBtcWithdraw, callBuyProduct, callCreateNewAddr, callCreateWalletByImage, callCreateWalletRandom, callDcClearTxTimer, callDcInitErc20GasLimit, callDcRefreshAllTx, callDcUpdateAddrInfo, callDeletLocalTx, callDoERC20TokenTransfer, callDoEthTransfer, callEthRecharge, callEthWithdraw, callGetAllAccount, callGetHighTop, callGetPurchaseRecord, callGetRechargeLogs, callGetServerCloudBalance, callGetWltAddrIndex, callImportWalletByFragment, callImportWalletByMnemonic, callManualLogin ,callResendBtcRecharge,callResendBtcTransfer, callUpdateLocalTx, callVerifyIdentidy, setStoreData } from '../middleLayer/wrap';
 import { Config, ERC20Tokens } from '../publicLib/config';
 import { CloudCurrencyType, CreateWalletOption, TxHistory } from '../publicLib/interface';
 import { doErrorShow } from '../utils/toolMessages';
@@ -84,6 +84,20 @@ export const touristLogin = async (option: CreateWalletOption) => {
     callDcInitErc20GasLimit();
 
     return secrectHash;
+};
+
+/**
+ * 新版游客登录
+ */
+export const manualLogin = async () => {
+    const close = popNewLoading({ zh_Hans:'游客登录中',zh_Hant:'遊客登錄中',en:'' });
+    try {
+        await callManualLogin();
+    } catch (err) {
+        return '';
+    } finally {
+        close.callback(close.widget);
+    }
 };
 
 /**

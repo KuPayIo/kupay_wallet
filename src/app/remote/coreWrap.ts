@@ -9,7 +9,7 @@ import { deleteAccount, getAllAccount, getCloudBalances1, getStore, setStore } f
 import { getHomePageEnterData } from '../store/vmRegister';
 import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, dcUpdateBalance } from './dataCenter';
 // tslint:disable-next-line:max-line-length
-import { defaultLogin, getOpenId, getRandom, loginSuccess, logoutAccount, openConnect, requestAsync, requestAsyncNeedLogin, walletManualReconnect } from './login';
+import { getOpenId, loginSuccess, logoutAccount, openConnect, requestAsync, requestAsyncNeedLogin, touristLogin, walletManualReconnect } from './login';
 // tslint:disable-next-line:max-line-length
 import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getFriendsKTTops, getHighTop, getInviteCode, getMineDetail, getMining, getOneUserInfo, getProductList, getPurchaseRecord, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
 // tslint:disable-next-line:max-line-length
@@ -218,11 +218,11 @@ export const callRequestAsyncNeedLogin = (msg: any,secretHash:string,callback:Fu
  */
 export const callGetRandom = (secretHash:string,cmd:number = undefined,phone:number = undefined,
     code:number = undefined,num:string = undefined ,callback:Function) => {
-    getRandom(secretHash,cmd,phone,code,num).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([err]);
-    });
+    // getRandom(secretHash,cmd,phone,code,num).then(res => {
+    //     callback([undefined,res]);
+    // }).catch(err => {
+    //     callback([err]);
+    // });
 };
 /**
  * 创建钱包后默认登录
@@ -874,4 +874,15 @@ export const callEmitWebviewReload = (callback:Function) => {
  */
 export const callRpcTimeingTest = (callback:Function) => {
     callback([undefined,rpcTimeingTest()]);
+};
+
+/**
+ * 新版游客登录
+ */
+export const callManualLogin = (callback:Function) => {
+    touristLogin().then(res => {
+        callback([undefined,res]);
+    }).catch(err => {
+        callback([handleError(err)]);
+    });
 };

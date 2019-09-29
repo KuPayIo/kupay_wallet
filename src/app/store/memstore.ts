@@ -27,7 +27,7 @@ export const initStore = () => {
 
         return initAccount().then(() => { // 账户初始化
             initFileStore().then(() => {  // indexDb数据初始化
-                initTxHistory();         // 历史记录初始化
+                // initTxHistory();         // 历史记录初始化
             });
         });
     });
@@ -173,12 +173,13 @@ export const initCloudWallets = () => {
  * 获取所有的账户列表
  */
 export const getAllAccount = () => {
-    console.log('getAllAccount start----------')
+    console.log('getAllAccount start----------');
+
     return getLocalStorage('accounts', {
         currenctId: '',
         accounts: {}
     }).then(localAcccounts => {
-        console.log('getAllAccount', localAcccounts)
+        console.log('getAllAccount', localAcccounts);
         const accounts = [];
         for (const key in localAcccounts.accounts) {
             accounts.push(localAcccounts.accounts[key]);
@@ -188,7 +189,7 @@ export const getAllAccount = () => {
             return item2.wallet.logoutTimestamp - item1.wallet.logoutTimestamp;
         });
     }).catch(e => {
-        console.log("getAllAcount failed, e = ", e);
+        console.log('getAllAcount failed, e = ', e);
     });
 };
 
@@ -288,39 +289,42 @@ const initAccount = () => {
 
             // store.wallet init
             const localWallet = curAccount.wallet;
-            const currencyRecords = [];
-            for (const localRecord of localWallet.currencyRecords) {
-                const addrs = [];
-                for (const info of localRecord.addrs) {
-                    const addrInfo: AddrInfo = {
-                        addr: info.addr,
-                        balance: info.balance,
-                        txHistory: []
+            if (localWallet) {
+                const currencyRecords = [];
+                for (const localRecord of localWallet.currencyRecords) {
+                    const addrs = [];
+                    for (const info of localRecord.addrs) {
+                        const addrInfo: AddrInfo = {
+                            addr: info.addr,
+                            balance: info.balance,
+                            txHistory: []
+                        };
+                        addrs.push(addrInfo);
+                    }
+                    const record: CurrencyRecord = {
+                        currencyName: localRecord.currencyName,
+                        currentAddr: localRecord.currentAddr,
+                        addrs,
+                        updateAddr: localRecord.updateAddr
                     };
-                    addrs.push(addrInfo);
+                    currencyRecords.push(record);
                 }
-                const record: CurrencyRecord = {
-                    currencyName: localRecord.currencyName,
-                    currentAddr: localRecord.currentAddr,
-                    addrs,
-                    updateAddr: localRecord.updateAddr
+    
+                const wallet: Wallet = {
+                    vault: localWallet.vault,
+                    setPsw: localWallet.setPsw,
+                    isBackup: localWallet.isBackup,
+                    sharePart: false,
+                    helpWord: false,
+                    showCurrencys: localWallet.showCurrencys,
+                    currencyRecords,
+                    changellyPayinAddress: localWallet.changellyPayinAddress || [],
+                    changellyTempTxs: localWallet.changellyTempTxs || [],
+                    logoutTimestamp: localWallet.logoutTimestamp || 0
                 };
-                currencyRecords.push(record);
+                store.wallet = wallet;
             }
-
-            const wallet: Wallet = {
-                vault: localWallet.vault,
-                setPsw: localWallet.setPsw,
-                isBackup: localWallet.isBackup,
-                sharePart: false,
-                helpWord: false,
-                showCurrencys: localWallet.showCurrencys,
-                currencyRecords,
-                changellyPayinAddress: localWallet.changellyPayinAddress || [],
-                changellyTempTxs: localWallet.changellyTempTxs || [],
-                logoutTimestamp: localWallet.logoutTimestamp || 0
-            };
-            store.wallet = wallet;
+            
         } else {
             store.user.salt = cryptoRandomInt().toString();
         }

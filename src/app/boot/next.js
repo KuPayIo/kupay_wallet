@@ -220,28 +220,43 @@ winit.initNext = function () {
 			alert("加载基础模块失败, " + result.error + ":" + result.reason);
 		}, modProcess.handler);
 	}
-	
-	// 加载第一阶段必须文件 加载完成后即可获取数据
 	var firstStageLoaded = function(){
 		var sourceList = [
-			"pi/ui/root.js",
-			"pi/ui/root.tpl",
-			"pi/ui/html.js",
-			"pi/ui/html.tpl",
-			"pi/ui/lang.js",
-			"pi/ui/lang.tpl",
-			"app/view/base/",
-			'app/components/topBar/',
-            'app/components1/blankDiv/',
-			"app/components1/loading/",
-			"app/res/css/",
-			'earn/client/app/res/css/'
+			"app/view/base/sourceLoaded.js",
+			"app/postMessage/",
+			"earn/client/app/net/login.js",
+			"chat/client/app/net/login.js",
+			"app/viewLogic/login.js"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
-			var tab = util.loadCssRes(fileMap);
-			tab.timeout = 90000;
-			tab.release();
-			enterApp();
+			console.log("firstStageLoaded success-----------------");
+			pi_modules.commonjs.exports.relativeGet("app/view/base/sourceLoaded").exports.init(flags,fm,suffixCfg);
+			// 聊天登录
+			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
+			// 活动注册
+			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
+			var WebViewManager = pi_modules.commonjs.exports.relativeGet("pi/browser/webview").exports.WebViewManager;
+			WebViewManager.addListenStage(function(stage){
+				console.log('WebViewManager stage',stage)
+				if(stage === "firstStage"){    // 第一阶段完成  可以注册监听
+					// TODO 在回调中加载剩余代码 并且注册监听已经完成
+					var callGetHomePageEnterData = pi_modules.commonjs.exports.relativeGet("app/middleLayer/wrap").exports.callGetHomePageEnterData;
+					console.log('callGetHomePageEnterData start-----------------')
+					callGetHomePageEnterData().then(function(res){
+						console.log('callGetHomePageEnterData-------------------')
+						fpFlags.homePageReady = true;
+						fpFlags.homePageData = res;
+						enterApp();
+					});
+				}
+			});
+			console.log("stage webview goReady");
+			WebViewManager.getReady("firstStage");   // 通知一阶段准备完毕
+			// 继续加载首页所需
+			loadWalletFirstPageSource();  //钱包
+			if(!pi_update.inApp){
+				vmLoaded();
+			}
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -284,28 +299,26 @@ winit.initNext = function () {
 	var loadWalletFirstPageSource = function () {
 		console.time("fp loadWalletFirstPageSource");
 		var sourceList = [
-			"app/viewLogic/",
-			"app/view/base/",
-			"app/components1/",
-			"app/res/css/",
-			"app/view/play/home/",
-			"app/view/wallet/home/",
-			"earn/client/app/res/css/",
 			"pi/ui/root.js",
 			"pi/ui/root.tpl",
 			"pi/ui/html.js",
 			"pi/ui/html.tpl",
 			"pi/ui/lang.js",
-			"pi/ui/lang.tpl"
+			"pi/ui/lang.tpl",
+			"app/view/base/",
+			'app/components/topBar/',
+            'app/components1/blankDiv/',
+			"app/components1/loading/",
+			"app/components1/btn/",
+			"app/res/css/",
+			'earn/client/app/res/css/'
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
 			fpFlags.walletReady = true;
-
 			enterApp();
-			
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -367,16 +380,16 @@ winit.initNext = function () {
 
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
-		// 加载根组件
-		var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
-		root.cfg.full = false; //PC模式
-		var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
-		index.run(function () {
-			// 关闭读取界面
-			document.body.removeChild(document.getElementById('rcmj_loading_log'));
-		});
-			
-			
+		if(fpFlags.homePageReady && fpFlags.walletReady){
+			// 加载根组件
+			var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+			root.cfg.full = false; //PC模式
+			var index = pi_modules.commonjs.exports.relativeGet("app/view/base/main").exports;
+			index.run(fpFlags.homePageData,function () {
+				// 关闭读取界面
+				document.body.removeChild(document.getElementById('rcmj_loading_log'));
+			});
+		}
 	}
 
 	// 加载一些需要预加载的图片

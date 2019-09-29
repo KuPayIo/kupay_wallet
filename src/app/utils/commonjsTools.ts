@@ -18,14 +18,14 @@ export const relativeGet = (path:string) => {
 /**
  * loadDir加载模块
  */
-export const piLoadDir = (sourceList:string[]) => {
+export const piLoadDir = (sourceList:string[],flags?:any,fileMap?:any,suffixCfg?:any) => {
     return new Promise((resolve,reject) => {
         const html = relativeGet('pi/util/html');
         html.checkWebpFeature((r) => {
-            const flags:any = {};
+            flags = flags || {};
             flags.webp = flags.webp || r;
             const util = relativeGet('pi/widget/util');
-            util.loadDir(sourceList, flags, undefined, undefined,  (fileMap) => {
+            util.loadDir(sourceList, flags, fileMap, suffixCfg,  (fileMap) => {
                 const tab = util.loadCssRes(fileMap);
                 tab.timeout = 90000;
                 tab.release();

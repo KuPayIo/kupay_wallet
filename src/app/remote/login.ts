@@ -4,7 +4,6 @@
 
 import { closeCon, open, reopen, request, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { GlobalWallet } from '../core_common/globalWallet';
 import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
 import { Account, getAllAccount, getStore,initCloudWallets, LocalCloudWallet, register, setStore } from '../store/memstore';
@@ -12,7 +11,7 @@ import { addFirstRegisterListener } from '../store/vmRegister';
 import { clearAllTimer, initDataCenter } from './dataCenter';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';
-import { getDeviceAllDetail } from './tools';
+import { getDeviceAllDetail, getDeviceId } from './tools';
 import { decrypt, encrypt, getMnemonicByHash, sign } from './wallet';
 
 declare var pi_modules;
@@ -77,9 +76,9 @@ export const requestAsync = (msg: any):Promise<any> => {
  */
 export const requestAsyncNeedLogin = async (msg: any,secretHash:string) => {
     const isLogin = getStore('user/isLogin');
-    if (!isLogin) {
-        await defaultLogin(secretHash,getStore('user/conRandom'));
-    }
+    // if (!isLogin) {
+    //     await defaultLogin(secretHash,getStore('user/conRandom'));
+    // }
 
     return requestAsync(msg);
     
@@ -90,18 +89,20 @@ export const requestAsyncNeedLogin = async (msg: any,secretHash:string) => {
  */
 export const openConnect = (secretHash?:string) => {
     setUrl(wsUrl);
-    open(conSuccess(secretHash),conError,conClose,conReOpen);
+    open(conSuccess,conError,conClose,conReOpen);
 };
 
 /**
  * 连接成功回调
  */
 const conSuccess = (secretHash:string) => {
-    return () => {
-        console.log('con success');
-        setStore('user/offline',false);
-        getRandom(secretHash);
-    };
+    const token = getStore('user/token');
+    setStore('user/offline',false);
+    if (token) {
+        autoLogin();
+    } else {
+        touristLogin();
+    }
 };
 
 /**
@@ -152,13 +153,15 @@ export const applyAutoLogin = async () => {
 /**
  * 自动登录
  */
-export const autoLogin = async (conRandom:string) => {
+export const autoLogin = async () => {
     const deviceDetail = await getDeviceAllDetail();
     const token = await decrypt(getStore('user/token'),deviceDetail.uuid.toString());
+    const userId = getStore('user/id');
     const param:any = {
+        userType:3,
+        user:userId,
         device_id: deviceDetail.uuid,
-        token,
-        random:conRandom
+        token
     };
     if (inAndroidApp || inIOSApp) {
         param.operator = deviceDetail.operator;
@@ -185,47 +188,6 @@ export const autoLogin = async (conRandom:string) => {
 };
 
 /**
- * 创建钱包后默认登录
- */
-export const defaultLogin = async (hash:string,conRandom:string) => {
-    const [deviceDetail,mnemonic] = await Promise.all([getDeviceAllDetail(),getMnemonicByHash(hash)]);
-    const wlt = await GlobalWallet.createWltByMnemonic(mnemonic,'ETH',0);
-    const start1 = new Date().getTime();
-    const privateKey = wlt.exportPrivateKey();
-    console.log('计算耗时 exportPrivateKey = ',new Date().getTime() - start1);
-    const start2 = new Date().getTime();
-    const signStr = await sign(conRandom, privateKey);
-    console.log('计算耗时 sign = ',new Date().getTime() - start2);
-    const param:any = { sign: signStr };
-    if (inAndroidApp || inIOSApp) {
-        param.operator = deviceDetail.operator;
-        param.network = deviceDetail.netWorkStatus;
-        param.app_version = pi_modules.appVersion;
-    }
-    const msgLogin = { 
-        type: 'login', 
-        param
-    };
-    console.log('defaultLogin = ',msgLogin);
-
-    return requestAsync(msgLogin).then((r:any) => {
-        console.log('============================好嗨号acc_id:',r.acc_id);
-        setStore('user/info/acc_id',r.acc_id,false);
-        applyAutoLogin();
-        setStore('flags/doLoginSuccess',true);
-        setStore('user/isLogin', true);
-        setStore('flags/hasLogined',true,false);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
-    }).catch(err => {
-        console.log('defaultLogin err',JSON.stringify(err));
-        setStore('user/isLogin', false);
-        if (err.error !== -69) {
-            setStore('flags/doLoginFailed',true);
-        }
-    });
-
-};
-
-/**
  * 授权用户openID接口
  * @param appId appId 
  */
@@ -235,81 +197,39 @@ export const getOpenId = (appId:string) => {
     return requestAsync(msg);
 };
 
-/**
- * 获取随机数
- * flag:0 普通用户注册，1注册即为真实用户
- */
-export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code?:number,num?:string) => {
-    const wallet = getStore('wallet');
-    if (!wallet) return;
-    const deviceDetail = await getDeviceAllDetail();
-    let publicKey;
-    if (inIOSApp || inAndroidApp) {
-        publicKey = getStore('user/publicKey');
-    } else {
-        publicKey = `04${getStore('user/publicKey')}`;
+// 游客登录
+export const touristLogin = async () => {
+    const uuid = getStore('setting/deviceId') || cryptoRandomInt().toString();
+    setStore('setting/deviceId',uuid);
+    const user = getStore('user');
+    let userId = user.id;
+    if (!userId) {
+        userId = new Date().getTime();
+        user.id = userId;
+        setStore('user',user);
     }
-    const param:any = {
-        account: getStore('user/id').slice(2), 
-        pk: publicKey,
-        device_id:deviceDetail.uuid,
-        flag:1
+
+    // tslint:disable-next-line:variable-name
+    const device_id = uuid;
+    const param = {
+        userType:3,
+        user:userId,
+        pwd:'',
+        device_id
     };
-    if (inAndroidApp) {
-        param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
-        param.os = `android ${deviceDetail.version}`;
-        param.total_memory = deviceDetail.total;
-    } else if (inIOSApp) {
-        param.device_model = `${deviceDetail.manufacturer} ${deviceDetail.model}`;
-        param.os = `ios ${deviceDetail.version}`;
-        param.total_memory = deviceDetail.total;
-    }
-    
-    if (cmd) {
-        param.cmd = cmd;
-    }
-    if (phone) {
-        param.phone = phone;
-    }
-    if (code) {
-        param.code = code;
-    }
-    if (num) {
-        param.num = num;
-    }
-    const msg = { 
-        type: 'get_random', 
+    const msg = {
+        type:'login',
         param
     };
     
-    let resp;
-    try {
-        console.log('getRandom startTime= ',new Date().getTime());
-        resp = await requestAsync(msg);
-        setBottomLayerReloginMsg(resp.user,resp.userType,resp.password);
-        const conRandom = resp.rand;
-        if (secretHash) {
-            defaultLogin(secretHash,conRandom);
-        } else {
-            if (getStore('user/token')) {
-                autoLogin(conRandom);
-            } else {
-                setStore('flags/doLoginFailed',true);
-            }
-        }
-        setStore('user/conUid', resp.uid,false);
-        console.log('uid =',resp.uid);
-        setStore('user/conRandom', conRandom,false);
-    } catch (res) {
-        console.log('getRandom endTime= ',new Date().getTime());
-        resp = res;
-        if (res.type === 1014 && res.why !== deviceDetail.uuid) {  // 避免自己踢自己下线
-            setStore('flags/kickOffline',{ secretHash,phone,code,num });   // 通知踢人下线
-        } 
-    } 
-    console.log('getRandom resp = ',JSON.stringify(resp));
-
-    return resp && (resp.type || resp.result);
+    return requestAsync(msg).then(res => {
+        setStore('flags/isLogin',true);
+        setStore('user/acc_id',res.acc_id);
+        console.log('游客登录成功 =',res);
+        applyAutoLogin();
+    }).catch(res => {
+        setStore('flags/isLogin',false);
+    });
 };
 
 /**
@@ -317,7 +237,7 @@ export const getRandom = async (secretHash:string,cmd?:number,phone?:number,code
  */
 // tslint:disable-next-line:max-func-body-length
 export const logoutAccount = async (save:boolean = true) => {
-    let accounts = await getAllAccount();
+    let accounts:any = await getAllAccount();
     const wallet = getStore('wallet');
     setStore('flags/saveAccount', false , false); // 重置saveAccount
     if (save && wallet.setPsw) {
