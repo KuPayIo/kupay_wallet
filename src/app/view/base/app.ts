@@ -8,7 +8,6 @@ import { collect, pageRoutersCollection } from '../../../pi/collection/collectio
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { changellyGetCurrencies } from '../../net/changellyPull';
 import { setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { getModulConfig } from '../../publicLib/modulConfig';
 import { checkPopPhoneTips, getUserInfo, rippleShow } from '../../utils/tools';
@@ -74,8 +73,6 @@ export class App extends Widget {
         this.props.tabBarList = this.props.tabBarList.filter(item => {
             return getModulConfig(item.modulName);
         });  
-        // 币币兑换可用货币获取
-        changellyGetCurrencies();
         getUserInfo().then(userInfo => {
             console.log('app userInfo = ',userInfo);
             this.props.userInfo = userInfo;

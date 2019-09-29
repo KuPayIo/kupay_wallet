@@ -8,7 +8,6 @@ import { uploadFile } from '../../net/pull';
 // tslint:disable-next-line:max-line-length
 import { changeWalletName, changeWalletNote, changeWalletSex, deepCopy, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow, walletNameAvailable } from '../../utils/tools';
 import { registerStoreData } from '../../viewLogic/common';
-import { exportMnemonic } from '../../viewLogic/localWallet';
 import { logoutAccount } from '../../viewLogic/login';
 import { selectImage } from '../../viewLogic/native';
 // ================================ 导出
@@ -93,27 +92,6 @@ export class AccountHome extends Widget {
      */
     public userNameChange(e:any) {
         this.props.editName = e.value;
-    }
-
-    // 备份助记词
-    public async backupWalletClick() {
-        const psw = await popPswBox();
-        if (!psw) return;
-        const ret = await exportMnemonic(psw);
-        if (ret) {
-            popNew('app-view-wallet-backup-index', { ...ret });
-        }
-
-    }
-
-    // 导出私钥
-    public async exportPrivateKeyClick() {
-        const psw = await popPswBox();
-        if (!psw) return;
-        const ret = await exportMnemonic(psw,false);
-        if (ret && ret.mnemonic) {
-            popNew('app-view-mine-account-exportPrivateKey', { mnemonic:ret.mnemonic });
-        }
     }
 
     public uploadAvatar() {
@@ -231,7 +209,7 @@ export class AccountHome extends Widget {
             if (!setPsw) {
                 this.ok && this.ok();
             } else {
-                this.backUp();
+                // this.backUp();
             }
             
             console.log('取消1');
@@ -243,19 +221,6 @@ export class AccountHome extends Widget {
             
         }
         );
-    }
-
-    /**
-     * 备份
-     */
-    public async backUp() {
-        const psw = await popPswBox();
-        if (!psw) return;
-        const ret = await exportMnemonic(psw);
-        if (ret) {
-            popNew('app-view-wallet-backup-index', { ...ret });
-            this.ok && this.ok();
-        }
     }
 
     /**
@@ -271,7 +236,7 @@ export class AccountHome extends Widget {
             if (!setPsw) {
                 this.ok && this.ok();
             } else {
-                this.backUp();
+                // this.backUp();
             }
             console.log('取消2');
         }, () => {

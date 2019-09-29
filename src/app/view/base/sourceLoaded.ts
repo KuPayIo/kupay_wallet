@@ -21,6 +21,7 @@ export const init = (fl:any,fm:any,sc:any) => {
 export const loadOpenBoxSource = () => {
     const sourceList = [
         'earn/client/app/view/openBox/',
+        'earn/client/app/components/lotteryModal/',
         'earn/client/app/view/myProduct/',
         'earn/client/app/xls/dataCfg.c.js',
         'earn/client/app/xls/dataCfg.s.js'

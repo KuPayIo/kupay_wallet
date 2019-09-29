@@ -688,6 +688,6 @@ export const callRpcTimeingTest = () => {
 /**
  * 新版游客登录  暂时
  */
-export const callManualLogin = () => {
-    return vmRpcCall('callManualLogin',[]);
+export const callTouristLogin = () => {
+    return vmRpcCall('callTouristLogin',[]);
 };

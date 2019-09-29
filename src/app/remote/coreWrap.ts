@@ -536,10 +536,10 @@ export const callEmitWebviewReload = (callback:Function) => {
 /**
  * 新版游客登录
  */
-export const callManualLogin = (callback:Function) => {
+export const callTouristLogin = (callback:Function) => {
     touristLogin().then(res => {
         callback([undefined,res]);
     }).catch(err => {
-        callback([handleError(err)]);
+        callback([err]);
     });
 };

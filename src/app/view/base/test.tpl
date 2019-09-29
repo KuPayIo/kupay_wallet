@@ -1,6 +1,5 @@
 <div class="new-page">
      <div w-class="container">
-        <div w-class="item" on-tap="login">登录</div>
          <div w-class="item" on-tap="open1">开宝箱</div>
          <div w-class="item" on-tap="open2">大转盘</div>
          <div w-class="item" on-tap="open3">我的勋章</div>

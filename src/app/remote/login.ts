@@ -99,9 +99,7 @@ const conSuccess = (secretHash:string) => {
     setStore('user/offline',false);
     if (token) {
         autoLogin();
-    } else {
-        touristLogin();
-    }
+    } 
 };
 
 /**
@@ -415,17 +413,17 @@ const registerStore = () => {
             // 余额
             getServerCloudBalance();
             // 用户基础信息
-            getUserInfoFromServer(getStore('user/conUid')).then(() => {
-                getBindPhone();
-                // 获取真实用户
-                getRealUser();
-            });
+            // getUserInfoFromServer(getStore('user/conUid')).then(() => {
+            //     getBindPhone();
+            //     // 获取真实用户
+            //     getRealUser();
+            // });
         } 
         // eth gasPrice
-        fetchGasPrices();
+        // fetchGasPrices();
 
         // btc fees
-        fetchBtcFees();
+        // fetchBtcFees();
         getRealUser();
     });
 };

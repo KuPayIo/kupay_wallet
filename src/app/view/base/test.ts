@@ -3,15 +3,10 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { manualLogin } from '../../viewLogic/localWallet';
 // tslint:disable-next-line:max-line-length
 import { loadAboutAppSource, loadAccountSource, loadCloudRechargeSource, loadDividendSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadRedEnvelopeSource, loadSettingSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
 
 export class Test extends Widget {
-    // 登录
-    public login() {
-        manualLogin();
-    }
     // 开宝箱
     public open1() {
         const loading = popNew('app-components1-loading-loading1');

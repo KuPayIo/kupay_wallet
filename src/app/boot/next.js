@@ -324,60 +324,6 @@ winit.initNext = function () {
 		}, dirProcess.handler);
 	}
 
-	// 加载聊天代码
-	var loadChatSource = function () {
-		console.time("fp loadChatSource");
-		var sourceList = [
-			"chat/client/app/view/home/",
-			"chat/client/app/view/contactList/contactList.tpl",
-			"chat/client/app/view/contactList/contactList.js",
-			"chat/client/app/view/contactList/contactList.wcss",
-			"chat/client/app/view/contactList/contactItem.tpl",
-			"chat/client/app/view/contactList/contactItem.js",
-			"chat/client/app/view/contactList/contactItem.wcss",
-			"chat/client/app/widget/imgShow/"
-		]; 
-		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
-			console.timeEnd("fp loadChatSource");
-			console.log("load loadChatSource-----------------");
-			var tab = util.loadCssRes(fileMap);
-			// 将预加载的资源缓冲90秒，释放
-			tab.timeout = 90000;
-			tab.release();
-			fpFlags.chatReady = true;
-			enterApp();
-		}, function (r) {
-			alert("加载目录失败, " + r.error + ":" + r.reason);
-		},dirProcess.handler);
-	}
-
-	// 加载活动代码
-	var loadEarnSource = function () {
-		console.time("fp loadEarnSource");
-		var sourceList = [
-			"earn/client/app/view/home/",
-			"earn/client/app/components1/",
-			"earn/client/app/view/activity/miningHome.tpl",
-			"earn/client/app/view/activity/miningHome.js",
-			"earn/client/app/view/activity/miningHome.wcss",
-			"earn/xlsx/awardCfg.c.js",
-			"earn/xlsx/awardCfg.s.js",
-			"earn/xlsx/item.c.js",
-			"earn/xlsx/item.s.js",
-		];
-		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
-			console.timeEnd("fp loadEarnSource");
-			var tab = util.loadCssRes(fileMap);
-			tab.timeout = 90000;
-			tab.release();
-			console.log("load loadEarnSource-----------------");
-			fpFlags.earnReady = true;
-			enterApp();
-		}, function (r) {
-			alert("加载目录失败, " + r.error + ":" + r.reason);
-		}, dirProcess.handler);
-	}
-
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
 		if(fpFlags.homePageReady && fpFlags.walletReady){
@@ -403,35 +349,6 @@ winit.initNext = function () {
 		}, dirProcess.handler);
 	}
 
-
-	// 加载剩下的资源
-	var loadLeftSource = function () {
-		var level2SourceList = [
-			"app/components/",
-			"app/view/",
-			"chat/client/app/view/",
-			"chat/client/app/widget/",
-			"chat/client/app/res/",
-			"earn/client/app/view/",
-			"earn/client/app/test/",
-			"earn/client/app/components/",
-			"earn/client/app/xls/",
-			"earn/xlsx/",
-			"earn/client/app/res/"
-		];
-
-		// 加载其他文件
-		util.loadDir(level2SourceList, flags, fm, undefined, function (fileMap) {
-			var tab = util.loadCssRes(fileMap);
-			tab.timeout = 90000;
-			tab.release();
-			var emitSourceLoaded = pi_modules.commonjs.exports.relativeGet("app/postMessage/localLoaded").exports.emitSourceLoaded;
-			emitSourceLoaded();
-			loadLeftImages();
-		}, function (r) {
-			alert("加载目录失败, " + r.error + ":" + r.reason);
-		}, dirProcess.handler);
-	}
 
 	// 加载剩下的图片
 	var loadLeftImages = function () {
