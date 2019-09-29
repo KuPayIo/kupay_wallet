@@ -10,8 +10,6 @@ import { Account, getAllAccount, getStore,initCloudWallets, LocalCloudWallet, re
 import { registerVmComplete } from '../store/vmRegister';
 import { clearAllTimer, initDataCenter } from './dataCenter';
 import { setUserInfo } from './pull';
-import { getDeviceId } from './tools';
-import { decrypt, encrypt } from './wallet';
 
 /**
  * 通用的异步通信
@@ -45,7 +43,6 @@ export const openConnect = () => {
 const conSuccess = () => {
     console.log('con success');
     setStore('user/offline',false);
-    autoLogin();
 };
 
 /**
@@ -104,102 +101,6 @@ export const walletManualReconnect = () => {
         console.log('walletManualReconnect openConnect');
         openConnect();
     }
-};
-
-/**
- * 申请自动登录token
- */
-export const applyAutoLogin = async () => {
-    const deviceId = await getDeviceId();
-    const msg = { 
-        type: 'wallet/user@set_auto_login', 
-        param: {}
-    };
-    requestAsync(msg).then(async (res) => {
-        const decryptToken = await encrypt(res.token,deviceId);
-        setStore('user/token',decryptToken);
-    }).catch(r => {
-        console.log('申请自动登陆失败',r);
-    });
-};
-
-/**
- * 自动登录
- */
-export const autoLogin = async () => {
-    const deviceId = await getDeviceId();
-    const token = await decrypt(getStore('user/token'),deviceId);
-    const user = getStore('user');
-    const param:any = {
-        device_id: deviceId,
-        token,
-        user:user.conUid,
-        userType:user.userType
-    };
-    const msg = { 
-        type: 'wallet/user@auto_login', 
-        param
-    };
-    requestAsync(msg).then(res => {
-        setStore('user/isLogin', true);
-        console.log('自动登录成功-----------',res);
-    }).catch((res) => {
-        setStore('user/isLogin', false);
-        setStore('user/token','');
-        console.log('自动登录失败-----------',res);
-    });
-};
-
-/**
- * 授权用户openID接口
- * @param appId appId 
- */
-export const getOpenId = (appId:string) => {
-    const msg = { type: 'get_openid', param: { appid:appId } };
-
-    return requestAsync(msg);
-};
-
-export enum UserType {
-    wallet= 1,  
-    tel= 2,   // 手机号
-    wx= 3,   // 微信
-    tourist= 4  // 游客
-}
-
-/**
- * 手动登录
- * @param userType 登录类型
- * @param user 登录账号
- * @param pwd 验证码 sid
- * @param device_id 设备ID
- * @param cmd 设备ID
- */
-export const manualLogin = async (userType:UserType,user:string,pwd:string,cmd:number= 0,deviceId?:string) => {
-    const device_id = deviceId ? deviceId :await getDeviceId();
-    const param = {
-        userType,
-        user,
-        pwd,
-        device_id,
-        cmd
-    };
-    const msg = {
-        type:'login',
-        param
-    };
-    
-    return requestAsync(msg).then(res => {
-        setStore('flags/isLogin',true);
-        setStore('user/acc_id',res.acc_id);
-        setReloginMsg(res.uid,userType,res.password);
-
-    }).catch(res => {
-        setStore('flags/isLogin',false);
-        if (res.type === 1014 && res.why !== device_id) {    // 避免自己踢自己下线
-            setStore('flags/kickOffline',{ userType,user,pwd,device_id });
-        }
-    });
 };
 
 /**

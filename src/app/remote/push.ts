@@ -1,7 +1,7 @@
 /**
  * 后端主动推消息给后端
  */
-import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
+import { setMsgHandler, setReloginMsg } from '../../pi/net/ui/con_mgr';
 import { CMD } from '../publicLib/config';
 import { ServerPushArgs, ServerPushKey } from '../publicLib/interface';
 import { getStore, setStore } from '../store/memstore';
@@ -20,7 +20,7 @@ export const initPush = () => {
     // 监听指令事件
     setMsgHandler(ServerPushKey.CMD,(res) => {
         console.log('强制下线==========================',res);
-        setBottomLayerReloginMsg('','','');
+        setReloginMsg('','','');
         const cmd = res.cmd;
         if (cmd === CMD.FORCELOGOUT) {
             logoutAccount();

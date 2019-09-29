@@ -1,15 +1,31 @@
+/**
+ * pull request
+ */
 import { MainChainCoin, PAGELIMIT } from '../publicLib/config';
 import { CloudCurrencyType, MinerFeeLevel } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
 import { kpt2kt, wei2Eth } from '../publicLib/unitTools';
 import { getStore, setStore } from '../store/memstore';
-import { requestAsync, requestAsyncNeedLogin } from './login';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from './parse';
 
 /**
- * pull request
+ * 通用的异步通信
  */
+export const requestAsync = (msg: any):Promise<any> => {
+    return new Promise((resolve, reject) => {
+        request(msg, (resp: any) => {
+            if (resp.type) {
+                console.log(`错误信息为${resp.type}`);
+                reject(resp);
+            } else if (resp.result !== 1) {
+                reject(resp);
+            } else {
+                resolve(resp);
+            }
+        });
+    });
+};
 
 // 获取真实用户
 export const getRealUser = () => {

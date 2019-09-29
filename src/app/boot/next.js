@@ -388,7 +388,7 @@ winit.initNext = function () {
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
 		console.log('enterApp chatReady ',fpFlags.chatReady,' earnReady ',fpFlags.earnReady,' walletReady ',fpFlags.walletReady,' homePageReady ',fpFlags.homePageReady)
-		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady && fpFlags.homePageReady){
+		if( fpFlags.chatReady && fpFlags.earnReady && fpFlags.walletReady){
 			// 加载根组件
 			var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
 			root.cfg.full = false; //PC模式
@@ -407,7 +407,7 @@ winit.initNext = function () {
 				timeArr.push({ homeEnter:self.homeEnter,getData:self.getData,closeBg,checkUpdateTime:self.checkUpdateTime });
 				localStorage.setItem('timeArr',JSON.stringify(timeArr));
 				loadLeftSource();
-				loadPiSdk()
+				loadPiSdk();
 			});
 			
 			
@@ -469,7 +469,10 @@ winit.initNext = function () {
 	var loadPiSdk = function(){
 		util.loadDir(["app/pi_sdk/"], flags, fm, undefined, function (fileMap) {
 			pi_sdk.setWebviewManager("pi/browser/webview");
-			pi_sdk.piSdkInit();
+			pi_sdk.piSdkInit((res)=>{
+				console.log('bind vm success',res);
+				window.pi_sdk.api.authorize({appId:101},function(err,result){});
+			});
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);

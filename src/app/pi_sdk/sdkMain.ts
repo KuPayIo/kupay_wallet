@@ -219,9 +219,7 @@ const setWebviewManager = (path:string) => {
 const piSdkInit = (cb:any) => {
     createThirdBaseStyle();
     createThirdApiStyleTag();
-    createSignInStyle();
-    createSignInPage();
-    pi_service.bind(2000, { webviewName:pi_config.webviewName }, cb);
+    pi_service.bind(2000, { webviewName: pi_config.webviewName }, cb);
     // buttonModInit()();
     // getFreeSecret();
 };
@@ -232,7 +230,7 @@ pi_config.webviewName = 'fairyChivalry';
 pi_config.isHorizontal = false;
 pi_config.appid = '103';
 pi_config.jsApi = 'app/remote/JSAPI';
-pi_config.imgUrlPre = 'http://192.168.33.13/wallet/app/res/image/third/';
+pi_config.imgUrlPre = 'http://192.168.31.226/wallet/app/res/image/third/';
 
 pi_sdk.setWebviewManager = setWebviewManager;
 pi_sdk.piSdkInit = piSdkInit;

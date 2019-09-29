@@ -11,7 +11,6 @@ import { addAppBackPressed } from '../../../pi/browser/app_comon_event';
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { getHasEnterGame, setHasEnterGame } from '../../api/thirdBase';
 import { callEmitWebviewReload, callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
 import { LockScreen } from '../../publicLib/interface';
 import { getScreenModify, preLoadAd } from '../../viewLogic/native';
@@ -23,15 +22,15 @@ export const run = (homePageData,cb): void =>  {
     // 数据检查  
     checkUpdate();  
     popNew('app-view-base-app');
-    const id = homePageData[0];
-    const accounts = homePageData[1];
-    if (!id) {
-        if (accounts.length > 0) {
-            popNew('app-view-base-entrance1',{ accounts });
-        } else {
-            popNew('app-view-base-entrance');
-        }
-    } 
+    // const id = homePageData[0];
+    // const accounts = homePageData[1];
+    // if (!id) {
+    //     if (accounts.length > 0) {
+    //         popNew('app-view-base-entrance1',{ accounts });
+    //     } else {
+    //         popNew('app-view-base-entrance');
+    //     }
+    // } 
     // 锁屏页面;
     popNewPage();
     self.homeEnter = Date.now() - self.startTime;
