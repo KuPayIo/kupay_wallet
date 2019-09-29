@@ -8,11 +8,9 @@ import { collect, pageRoutersCollection } from '../../../pi/collection/collectio
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { setSourceLoadedCallbackList } from '../../postMessage/localLoaded';
 import { getModulConfig } from '../../publicLib/modulConfig';
-import { checkPopPhoneTips, getUserInfo, rippleShow } from '../../utils/tools';
-import { registerStoreData } from '../../viewLogic/common';
-import { kickOffline } from '../../viewLogic/login';
+import { register } from '../../store/memstore';
+import { getUserInfo, rippleShow } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -135,26 +133,16 @@ export class App extends Widget {
 
 // ===================================================== 立即执行
 
-setSourceLoadedCallbackList(() => {
-    checkPopPhoneTips();
-    let res:any = localStorage.getItem('kickOffline');
-    if (res) {
-        res = JSON.parse(res);
-        localStorage.removeItem('kickOffline');
-        kickOffline(res.secretHash,res.phone,res.code,res.num);  // 踢人下线提示
-    }
-});
-
 // localStorage key
 export const SettingLanguage = 'language';
 
 // 语言配置
-registerStoreData('setting/language',(r) => {
+register('setting/language',(r) => {
     localStorage.setItem(SettingLanguage,r);
     setLang(r);
 });
 
-registerStoreData('user',(user:any) => {
+register('user',(user:any) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         getUserInfo(user.info).then(userInfo => {
@@ -165,7 +153,7 @@ registerStoreData('user',(user:any) => {
 });
 
 // 创建钱包成功
-registerStoreData('flags/createWallet',(createWallet:boolean) => {
+register('flags/createWallet',(createWallet:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.switchToPlay();
 });

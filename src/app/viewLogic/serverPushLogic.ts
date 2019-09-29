@@ -1,9 +1,6 @@
-import { getStore as gameGetStore,setStore as gameSetStore } from '../../earn/client/app/store/memstore';
 import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
-import { callGetHighTop } from '../middleLayer/wrap';
-import { addServerPushListener } from '../postMessage/serverPush';
-import { CloudCurrencyType, ServerPushKey } from '../publicLib/interface';
+import { CloudCurrencyType } from '../publicLib/interface';
 import { closeAllPage, getPopPhoneTips, getStaticLanguage, popNewMessage } from '../utils/tools';
 
 /**
@@ -76,15 +73,11 @@ export const balanceChange = (args:any) => {
         bindPhonePop();
     }
     if (args.cointype === CloudCurrencyType.KT) {
-        callGetHighTop(100).then((data) => {
-            const mine = gameGetStore('mine',{});
-            mine.miningRank = data.miningRank || 0;
-            gameSetStore('mine',mine);  
-        });
+        // callGetHighTop(100).then((data) => {
+        //     const mine = gameGetStore('mine',{});
+        //     mine.miningRank = data.miningRank || 0;
+        //     gameSetStore('mine',mine);  
+        // });
         console.log('KT余额变化');
     }
 };
-
-addServerPushListener(ServerPushKey.CMD,forceOffline);       // 踢人下线
-addServerPushListener(ServerPushKey.EVENTPAYOK,payOk);       // 充值成功
-addServerPushListener(ServerPushKey.ALTERBALANCEOK,balanceChange);  // 余额变化   

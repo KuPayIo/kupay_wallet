@@ -4,7 +4,7 @@
 import { AdPlatform, ADUnion, PlayEvent } from '../../pi/browser/ad_unoin';
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { WebViewManager } from '../../pi/browser/webview';
-import { setStoreData } from '../middleLayer/wrap';
+import { setStore } from '../store/memstore';
 import { piRequire } from '../utils/commonjsTools';
 import { popNewLoading } from '../utils/tools';
 
@@ -14,9 +14,7 @@ import { popNewLoading } from '../utils/tools';
 export const getScreenModify = () => {
     WebViewManager.getScreenModify((high,low) => {
         const calHigh = high / window.devicePixelRatio * 2;
-        // const calLow = low / window.devicePixelRatio * 2;
-        setStoreData('setting/topHeight',calHigh);
-        // setStoreData('setting/bottomHeight',calLow);
+        setStore('setting/topHeight',calHigh);
     });
 };
 

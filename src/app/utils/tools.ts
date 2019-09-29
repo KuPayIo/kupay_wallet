@@ -6,19 +6,17 @@ import { setStore as earnSetStore } from '../../earn/client/app/store/memstore';
 import { appLanguageList } from '../../pi/browser/localLanguage';
 import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
-import { Callback } from '../../pi/util/util';
 import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
 import { lookup } from '../../pi/widget/widget';
 import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from '../config';
-import { callGetAccountDetail, callGoRecharge, getStoreData, setStoreData } from '../middleLayer/wrap';
-import { getSourceLoaded } from '../postMessage/localLoaded';
 import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../publicLib/config';
 import { CloudCurrencyType, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
+import { getAccountDetail } from '../remote/pull';
+import { gotoRecharge } from '../remote/recharge';
+import { getCloudBalances, getStore, setStore } from '../store/memstore';
 import { SettingLanguage } from '../view/base/app';
-import { getCloudBalances } from '../viewLogic/common';
-import { logoutAccount } from '../viewLogic/login';
 import { piLoadDir, piRequire } from './commonjsTools';
 /**
  * 获取用户基本信息
@@ -28,7 +26,7 @@ export const getUserInfo = (userInfo1?:any) => {
     if (userInfo1) {
         promise = Promise.resolve(userInfo1);
     } else {
-        promise = getStoreData('user/info');
+        promise = getStore('user/info');
     }
     
     return promise.then(userInfo => {
@@ -141,7 +139,8 @@ export const popPswBox = (content = [],onlyOk:boolean = false,cancelDel:boolean 
             resolve(r);
             if (!r && cancelDel) popPswBox(content,onlyOk,cancelDel);
         }, (forgetPsw:boolean) => {
-            if (cancelDel && !forgetPsw)  logoutAccount();
+            // TODO 删除账号
+            // if (cancelDel && !forgetPsw)  logoutAccount();
             resolve('');
         });
     });
@@ -470,39 +469,6 @@ export const calCurrencyLogoUrl = (currencyName:string) => {
 };
 
 /**
- * 弹出三级页面
- */
-export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
-    if (getSourceLoaded()) {
-        popNew(name,props,ok,cancel);
-    } else {
-        const loading = popNew('app-components1-loading-loading1');
-        const level3SourceList = [
-            'app/middleLayer/',
-            'app/publicLib/',
-            'app/viewLogic/',
-            'app/components/',
-            'app/res/',
-            'app/view/',
-            'chat/client/app/view/',
-            'chat/client/app/widget/',
-            'chat/client/app/res/',
-            'earn/client/app/view/',
-            'earn/client/app/test/',
-            'earn/client/app/components/',
-            'earn/client/app/res/',
-            'earn/client/app/xls/',
-            'earn/xlsx/'
-        ];
-        piLoadDir(level3SourceList).then(() => {
-            console.log('popNew3 ------ all resource loaded');
-            popNew(name,props,ok,cancel);
-            loading.callback(loading.widget);
-        });
-    }
-};
-
-/**
  * 关掉所有页面 （不包括首页面）
  */
 export const closeAllPage = () => {
@@ -538,7 +504,7 @@ export const getPopPhoneTips = () => {
 
 // 检查手机弹框提示
 export const checkPopPhoneTips = () => {
-    return Promise.all([getStoreData('user/info/phoneNumber'),getStoreData('user/id')]).then(([phoneNumber,uid]) => {
+    return Promise.all([getStore('user/info/phoneNumber'),getStore('user/id')]).then(([phoneNumber,uid]) => {
         if (phoneNumber) {
             delPopPhoneTips();
             
@@ -665,26 +631,11 @@ export const fetchLocalTxByHash1 = (currencyRecords:CurrencyRecord[],hash:string
     }
 };
 
-// 删除助记词
-export const deleteMnemonic = () => {
-    setStoreData('wallet/isBackup',true);
-};
-
-// 记录通过分享片段备份
-export const sharePart = () => {
-    setStoreData('wallet/sharePart',true);
-};
-
-// 记录通过助计词备份
-export const helpWord = () => {
-    setStoreData('wallet/helpWord',true);
-};
-
 /**
  * 获取货币单位符号 $ ￥
  */
 export const getCurrencyUnitSymbol = () => {
-    return getStoreData('setting/currencyUnit', 'CNY').then(currencyUnit => {
+    return getStore('setting/currencyUnit', 'CNY').then(currencyUnit => {
         if (currencyUnit === 'CNY') {
             return '￥';
         } else if (currencyUnit === 'USD') {
@@ -714,19 +665,18 @@ export const getCurrentAddrInfo1 = (currencyName:string,currencyRecords:Currency
  * 去充值
  */
 export const goRecharge = () => {
-    getCloudBalances().then(cloudBalances => {
-        const scBalance = cloudBalances.get(CloudCurrencyType.SC);
-        callGoRecharge(scBalance,0).then(([err,res]) => {
-            if (err !== 'cancel recharge') {
-                popNewMessage('支付失败');
-                console.log('支付失败 err',err);
+    const cloudBalances = getCloudBalances();
+    const scBalance = cloudBalances.get(CloudCurrencyType.SC);
+    gotoRecharge(scBalance,0).then(([err,res]) => {
+        if (err !== 'cancel recharge') {
+            popNewMessage('支付失败');
+            console.log('支付失败 err',err);
 
-                return;
-            }
-            popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: res.oid,itype:res.itype,ctype:1 });
-            earnSetStore('flags/firstRecharge',true); // 首次充值
-            callGetAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
-        });
+            return;
+        }
+        popNew('app-view-wallet-cloudWalletCustomize-transactionDetails', { oid: res.oid,itype:res.itype,ctype:1 });
+        earnSetStore('flags/firstRecharge',true); // 首次充值
+        getAccountDetail(CloudCurrencyType[CloudCurrencyType.SC],1);
     });
 };
 
@@ -771,9 +721,9 @@ export const walletNameAvailable = (walletName) => {
  * @param walletName wallet name
  */
 export const changeWalletName = (walletName:string) => {
-    return getStoreData('user/info').then(userInfo => {
+    return getStore('user/info').then(userInfo => {
         userInfo.nickName = walletName;
-        setStoreData('user/info', userInfo);
+        setStore('user/info', userInfo);
     });
     
 };
@@ -818,9 +768,9 @@ export const nickNameInterception = (name: string): string => {
  * @param walletNote wallet note
  */
 export const changeWalletNote = (walletNote:string) => {
-    return getStoreData('user/info').then(userInfo => {
+    return getStore('user/info').then(userInfo => {
         userInfo.note = walletNote;
-        setStoreData('user/info', userInfo);
+        setStore('user/info', userInfo);
     });
     
 };
@@ -830,9 +780,9 @@ export const changeWalletNote = (walletNote:string) => {
  * @param walletSex wallet sex
  */
 export const changeWalletSex = (walletSex:number) => {
-    return getStoreData('user/info').then(userInfo => {
+    return getStore('user/info').then(userInfo => {
         userInfo.sex = walletSex;
-        setStoreData('user/info', userInfo);
+        setStore('user/info', userInfo);
     });
     
 };

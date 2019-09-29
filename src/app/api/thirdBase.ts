@@ -3,10 +3,9 @@ import { applyToGroup, getChatUid } from '../../chat/client/app/net/rpc';
 import { GENERATOR_TYPE } from '../../chat/server/data/db/user.s';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
+import { logoutWallet } from '../net/login';
 import { loadDir1 } from '../utils/commonjsTools';
-import { popNew3 } from '../utils/tools';
 import { getGameItem } from '../view/play/home/gameConfig';
-import { logoutWallet } from '../viewLogic/login';
 import { getPi3Config } from './pi3Config';
 
 /**
@@ -113,7 +112,7 @@ export const gotoGameService = (webviewName: string) => {
 const gotoGameService1 = (webviewName: string) => {
     const item = getGameItem(webviewName);
     getChatUid(item.accId).then((r) => {
-        popNew3('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER,okCB:() => {
+        popNew('chat-client-app-view-chat-chat',{ id: r,chatType: GENERATOR_TYPE.USER,okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
         } });
     });
@@ -139,7 +138,7 @@ const gotoOfficialGroupChat1 = (webviewName: string) => {
     const item = getGameItem(webviewName);
     applyToGroup(item.groupId).then((r) => {
         console.log(' applyToGroup success');
-        popNew3('chat-client-app-view-chat-chat',{ id: r, chatType: GENERATOR_TYPE.GROUP,okCB:() => {
+        popNew('chat-client-app-view-chat-chat',{ id: r, chatType: GENERATOR_TYPE.GROUP,okCB:() => {
             WebViewManager.open(webviewName, `${getGameItem(webviewName).url}?${Math.random()}`, webviewName,'');
         } });
     });

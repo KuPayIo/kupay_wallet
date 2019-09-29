@@ -1,15 +1,20 @@
+import { requestAsync } from '../net/login';
 import { MainChainCoin, PAGELIMIT } from '../publicLib/config';
 import { CloudCurrencyType, MinerFeeLevel } from '../publicLib/interface';
 import { unicodeArray2Str } from '../publicLib/tools';
 import { kpt2kt, wei2Eth } from '../publicLib/unitTools';
 import { getStore, setStore } from '../store/memstore';
-import { requestAsync, requestAsyncNeedLogin } from './login';
 // tslint:disable-next-line:max-line-length
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMineDetail, parseMiningHistory, parseMiningRank, parseMyInviteRedEnv, parseProductList, parsePurchaseRecord, parseRechargeWithdrawalLog, parseSendRedEnvLog, splitCloudCurrencyDetail } from './parse';
 
 /**
  * pull request
  */
+
+const requestAsyncNeedLogin = (msg:any,hash:string) => {
+    // TODO 这里添加权限控制
+    return requestAsync(msg);
+};
 
 // 获取真实用户
 export const getRealUser = () => {

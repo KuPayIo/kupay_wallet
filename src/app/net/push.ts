@@ -4,10 +4,9 @@
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
 import { CMD } from '../publicLib/config';
 import { ServerPushArgs, ServerPushKey } from '../publicLib/interface';
+import { getServerCloudBalance } from '../remote/pull';
 import { getStore, setStore } from '../store/memstore';
-import { logoutAccount } from './login';
-import { postServerPushMessage } from './postWalletMessage';
-import { getServerCloudBalance } from './pull';
+import { balanceChange, payOk } from '../viewLogic/serverPushLogic';
 
 // ===================================================== 导入
 
@@ -23,15 +22,14 @@ export const initPush = () => {
         setBottomLayerReloginMsg('','','');
         const cmd = res.cmd;
         if (cmd === CMD.FORCELOGOUT) {
-            logoutAccount();
+            // logoutAccount();
         } else if (cmd === CMD.FORCELOGOUTDEL) {
-            logoutAccount(false);
+            // logoutAccount(false);
         }
         const args:ServerPushArgs = {
             key:ServerPushKey.CMD,
             result:res
         };
-        postServerPushMessage(args);
     });
 
     // 监听充值成功事件
@@ -41,13 +39,7 @@ export const initPush = () => {
             console.log('服务器推送成功 云端余额更新==========================',res);
         });
         console.log('服务器推送成功==========================',res);
-
-        const args:ServerPushArgs = {
-            key:ServerPushKey.EVENTPAYOK,
-            result:res
-        };
-        postServerPushMessage(args);
-
+        payOk();
     });
 
     // 监听邀请好友成功事件
@@ -111,15 +103,7 @@ export const initPush = () => {
             }
             
         }
-
-        const args:ServerPushArgs = {
-            key:ServerPushKey.ALTERBALANCEOK,
-            result:{
-                ...res,
-                popType
-            }
-        };
-        postServerPushMessage(args);
+        balanceChange(res);
     });
 
     // setMsgHandler('event_kt_alert',(res) => {

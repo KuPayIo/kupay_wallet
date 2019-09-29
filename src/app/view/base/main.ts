@@ -12,19 +12,17 @@ import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
 import { getHasEnterGame, setHasEnterGame } from '../../api/thirdBase';
-import { callEmitWebviewReload, callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
 import { LockScreen } from '../../publicLib/interface';
+import { getStore } from '../../store/memstore';
 import { getScreenModify, preLoadAd } from '../../viewLogic/native';
 
 // ============================== 导出
-export const run = (homePageData,cb): void =>  {
-    callEmitWebviewReload();
+export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查  
     checkUpdate();  
-    const id = homePageData[0];
+    const id = getStore('user/id');
     popNew('app-view-base-test');
-    
     if (!id) {
         popNew('app-view-base-entrance');
     } 
@@ -89,11 +87,7 @@ const addAppEvent = () => {
                 });
     
                 setTimeout(() => {
-                    getStoreData('user/isLogin').then(isLogin => {
-                        if (!isLogin) {
-                            callWalletManualReconnect();
-                        }
-                    });
+                    // TODO 钱包登录
                         
                     if (!chatGetStore('isLogin')) {
                         chatManualReconnect();
@@ -142,7 +136,7 @@ const addAppEvent = () => {
 const ifNeedUnlockScreen = async () => {
     const unlockScreen = document.getElementById('keyboard');
     if (unlockScreen) return false;
-    const ls: LockScreen = await getStoreData('setting/lockScreen',{});
+    const ls: LockScreen = await getStore('setting/lockScreen',{});
     const lockScreenPsw = ls.psw;
     const openLockScreen = ls.open !== false;
 

@@ -6,7 +6,7 @@ import { getStore as earnGetStore, setStore  as earnSetStore } from '../../earn/
 import { IAPManager } from '../../pi/browser/iap_manager';
 import { WebViewManager } from '../../pi/browser/webview';
 import { popNew } from '../../pi/ui/root';
-import { callRequestAsync } from '../middleLayer/wrap';
+import { requestAsync } from '../net/login';
 import { getModulConfig } from '../publicLib/modulConfig';
 import { popNewLoading } from './tools';
 
@@ -37,7 +37,7 @@ export const confirmPay = async (orderDetail: OrderDetail,appleGood?:string) => 
     const msg = { type: 'order_pay', param: orderDetail };
     const loading = popNewLoading({ zh_Hans: '充值中...', zh_Hant: '充值中...', en: '' });
     try {
-        const resData: any = await callRequestAsync(msg);
+        const resData: any = await requestAsync(msg);
         console.log('pay 下单结果===============',resData);
         setTimeout(() => {
             loading.callback(loading.widget);
@@ -149,7 +149,7 @@ export const jumpAlipay = (order) => {
 export const getOrderDetail = async (oid: string) => {
     const msg = { type: 'get_order_detail', param: { oid } };
     
-    return callRequestAsync(msg);
+    return requestAsync(msg);
 };
 
 /**
@@ -171,6 +171,6 @@ const URLencode = (sStr) => {
 export const getOrderLocal = (transactionId: string) => {
     const msg = { type: 'wallet/order@order_query_local', param: { transaction_id:transactionId } };
     
-    return callRequestAsync(msg);
+    return requestAsync(msg);
      
 };

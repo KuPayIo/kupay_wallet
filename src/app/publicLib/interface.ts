@@ -35,13 +35,11 @@ export enum TaskSid {
  */
 export interface Store {
     user: User;          // 账号
-    wallet: Wallet;      // 钱包
     cloud: Cloud;        // 云端
     activity: Activity;  // 活动：红包，挖矿，分成，理财
 
     setting: Setting;     // 设置
 
-    third: Third;        // 第三方通信数据，如：changelly...
     flags: object;       // 全局的标识
     inviteUsers:object;  // 邀请好友
 }
@@ -98,9 +96,7 @@ export interface User {
     allIsLogin:boolean;     // 所有服务登录状态  (钱包  活动  聊天)
 
     token: string;         // 自动登录token
-    conRandom: string;     // 连接随机数
     conUid: string;        // 服务器连接uid
-    publicKey: string;     // 用户公钥, 第一个以太坊地址的公钥
 
     salt: string;          // 加密 盐值
 
@@ -201,9 +197,7 @@ export interface FinancialManagement {
  */
 export interface Activity {
     luckyMoney: LuckyMoney;                   // 红包
-    mining: Mining;                           // 挖矿
     dividend: Dividend;                       // 分红
-    financialManagement: FinancialManagement; // 理财
 }
 
 /**

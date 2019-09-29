@@ -1,8 +1,8 @@
 import { closePayView, goiOSPay, gopay, payPlatform } from '../../pi/browser/vm';
+import { requestAsync } from '../net/login';
 import { erlangLogicPayPort, SCUnitprice, sourceIp, wxPayShow } from '../publicLib/config';
 import { CloudCurrencyType, TaskSid } from '../publicLib/interface';
 import { piFetch } from '../publicLib/tools';
-import { requestAsync } from './login';
 
 /**
  * 充值模块
@@ -20,7 +20,7 @@ export interface OrderDetail {
 /**
  * 去充值页面
  */
-export const goRecharge = async (balance:number,muchNeed:number) => {
+export const gotoRecharge = async (balance:number,muchNeed:number) => {
     try {
         const { conpay, sMD, platform } = await openRechargePage(balance,muchNeed);
         console.log('充值数量',conpay);
