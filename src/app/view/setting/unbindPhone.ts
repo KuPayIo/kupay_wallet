@@ -1,9 +1,9 @@
 /**
  * 解绑手机号
  */
-import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
-import { getUserInfo } from '../../../utils/tools';
+import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
+import { getUserInfo } from '../../utils/tools';
 
 export class UnbindPhone extends Widget {
     public ok:() => void;

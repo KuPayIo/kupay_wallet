@@ -127,3 +127,52 @@ export const loadRedEnvelopeSource = () => {
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);
 };
+
+/**
+ * 加载分红资源 
+ */
+export const loadDividendSource = () => {
+    const sourceList = [
+        'app/view/dividend/',
+        'app/components/threeParaCard/'
+    ];
+
+    return piLoadDir(sourceList,flags,fileMap,suffixCfg);
+};
+
+/**
+ * 加载云端充值资源 
+ */
+export const loadCloudRechargeSource = () => {
+    const sourceList = [
+        'app/view/cloudRecharge/'
+    ];
+
+    return piLoadDir(sourceList,flags,fileMap,suffixCfg);
+};
+
+/**
+ * 加载用户信息资源 
+ */
+export const loadAccountSource = () => {
+    const sourceList = [
+        'app/view/account/',
+        'app/components/basicItem/',
+        'app/components1/img/'
+    ];
+
+    return piLoadDir(sourceList,flags,fileMap,suffixCfg);
+};
+
+/**
+ * 加载设置资源 
+ */
+export const loadSettingSource = () => {
+    const sourceList = [
+        'app/view/setting/',
+        'app/components/switch/',
+        'app/components/basicItem/'
+    ];
+
+    return piLoadDir(sourceList,flags,fileMap,suffixCfg);
+};

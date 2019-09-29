@@ -1,15 +1,15 @@
 /**
- * other record
+ * 入账
  */
-import { popNew } from '../../../../pi/ui/root';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { getRealNode } from '../../../../pi/widget/painter';
-import { Widget } from '../../../../pi/widget/widget';
-import { callGetWithdrawLogs,getStoreData } from '../../../middleLayer/wrap';
-import { CloudCurrencyType } from '../../../publicLib/interface';
-import { getModulConfig } from '../../../publicLib/modulConfig';
-import { currencyType, timestampFormat } from '../../../publicLib/tools';
-import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
+import { popNew } from '../../../pi/ui/root';
+import { Forelet } from '../../../pi/widget/forelet';
+import { getRealNode } from '../../../pi/widget/painter';
+import { Widget } from '../../../pi/widget/widget';
+import { callGetAccountDetail } from '../../middleLayer/wrap';
+import { CloudCurrencyType } from '../../publicLib/interface';
+import { getModulConfig } from '../../publicLib/modulConfig';
+import { timestampFormat } from '../../publicLib/tools';
+import { getCloudWallets, registerStoreData } from '../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -19,7 +19,7 @@ interface Props {
     currencyName:string;
     isActive:boolean;
 }
-export class AccountOut extends Widget {
+export class AccountEntry extends Widget {
     public props:any;
     public create() {
         super.create();
@@ -42,18 +42,20 @@ export class AccountOut extends Widget {
     public init() {
         getCloudWallets().then(cloudWallets => {
             const allLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]);
-            this.props.recordList = this.parseRecordList(allLogs.withdrawLogs.list);
+            this.props.recordList = this.parseRecordList(allLogs.rechargeLogs.list);
             this.props.nextStart = allLogs.otherLogs.start;
             this.props.canLoadMore = allLogs.otherLogs.canLoadMore;
             this.paint();
         });
     }
-
+    /**
+     * 更新props数据
+     */
     public updateRecordList() {
-        if (!this.props.currencyName) return;
+        if (!this.props) return;
         getCloudWallets().then(cloudWallets => {
             const allLogs = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]);
-            this.props.recordList = this.parseRecordList(allLogs.withdrawLogs.list);
+            this.props.recordList = this.parseRecordList(allLogs.rechargeLogs.list);
             this.props.nextStart = allLogs.otherLogs.start;
             this.props.canLoadMore = allLogs.otherLogs.canLoadMore;
             this.paint();
@@ -62,11 +64,15 @@ export class AccountOut extends Widget {
     }
 
     // tslint:disable-next-line:typedef
-    public parseRecordList(list) {
+    /**
+     * 处理充值列表
+     * @param list 充值列表 
+     */
+    public parseRecordList(list:any) {
         // tslint:disable-next-line:max-line-length
         const titleShow = this.props.currencyName === CloudCurrencyType[CloudCurrencyType.SC] ? getModulConfig('SC_SHOW') : getModulConfig('KT_SHOW');
         list.forEach((item) => {
-            item.amountShow = `${item.amount} ${currencyType(titleShow)}`;
+            item.amountShow = `+${item.amount} ${titleShow}`;
             item.timeShow = timestampFormat(item.time).slice(5);
             item.iconShow = item.behaviorIcon;
         });
@@ -75,7 +81,7 @@ export class AccountOut extends Widget {
     }
 
     public loadMore() {
-        callGetWithdrawLogs(this.props.currencyName,this.props.nextStart);
+        callGetAccountDetail(this.props.currencyName,0,this.props.nextStart);
     }
     public getMoreList() {
         const h1 = getRealNode((<any>this.tree).children[0]).offsetHeight; 
@@ -88,7 +94,6 @@ export class AccountOut extends Widget {
             this.loadMore();
         } 
     }
-
     public recordListItemClick(e:any,index:number) {
         const item = this.props.recordList[index];
         if (this.props.currencyName === CloudCurrencyType[CloudCurrencyType.SC] && item.oid) {
@@ -100,8 +105,6 @@ export class AccountOut extends Widget {
         }
     }
 }
-
-// ====================================
 
 registerStoreData('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);

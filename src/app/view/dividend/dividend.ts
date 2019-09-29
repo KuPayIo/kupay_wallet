@@ -3,15 +3,15 @@
  * 
  */
 // ============================== 导入
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { callGetDividend, callGetDividHistory,callGetMining, getStoreData } from '../../../middleLayer/wrap';
-import { PAGELIMIT } from '../../../publicLib/config';
-import { CloudCurrencyType } from '../../../publicLib/interface';
-import { getModulConfig } from '../../../publicLib/modulConfig';
-import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
+import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { callGetDividend, callGetDividHistory,callGetMining, getStoreData } from '../../middleLayer/wrap';
+import { PAGELIMIT } from '../../publicLib/config';
+import { CloudCurrencyType } from '../../publicLib/interface';
+import { getModulConfig } from '../../publicLib/modulConfig';
+import { getCloudBalances, registerStoreData } from '../../viewLogic/common';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -70,7 +70,7 @@ export class Dividend extends Widget {
      * 查看分红说明
      */
     public goDetail() {
-        popNew('app-view-earn-mining-dividendDetail');
+        popNew('app-view-dividend-dividendDetail');
     }
 
     /**

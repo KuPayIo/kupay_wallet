@@ -1,15 +1,15 @@
 /**
  * other record
  */
-import { popNew } from '../../../../pi/ui/root';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { getRealNode } from '../../../../pi/widget/painter';
-import { Widget } from '../../../../pi/widget/widget';
-import { callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
-import { CloudCurrencyType, CurrencyRecord } from '../../../publicLib/interface';
-import { currencyType, timestampFormat } from '../../../publicLib/tools';
-import { fetchLocalTxByHash1, parseStatusShow } from '../../../utils/tools';
-import { getCloudWallets, registerStoreData } from '../../../viewLogic/common';
+import { popNew } from '../../../pi/ui/root';
+import { Forelet } from '../../../pi/widget/forelet';
+import { getRealNode } from '../../../pi/widget/painter';
+import { Widget } from '../../../pi/widget/widget';
+import { callGetAccountDetail,getStoreData } from '../../middleLayer/wrap';
+import { CloudCurrencyType, CurrencyRecord } from '../../publicLib/interface';
+import { currencyType, timestampFormat } from '../../publicLib/tools';
+import { fetchLocalTxByHash1, parseStatusShow } from '../../utils/tools';
+import { getCloudWallets, registerStoreData } from '../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

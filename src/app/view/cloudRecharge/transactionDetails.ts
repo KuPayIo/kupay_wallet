@@ -1,19 +1,19 @@
 /**
  * 交易详情页面
  */
-import { ShareType } from '../../../../pi/browser/shareToPlatforms';
-import { payPlatform } from '../../../../pi/browser/vm';
-import { popNew } from '../../../../pi/ui/root';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { callGetOneUserInfo } from '../../../middleLayer/wrap';
-import { SCPrecision } from '../../../publicLib/config';
-import { TaskSid } from '../../../publicLib/interface';
-import { getModulConfig } from '../../../publicLib/modulConfig';
-import { timestampFormat } from '../../../publicLib/tools';
-import { getOrderDetail, getOrderLocal } from '../../../utils/recharge';
-import { popNewMessage } from '../../../utils/tools';
-import { makeScreenShot } from '../../../viewLogic/native';
+import { ShareType } from '../../../pi/browser/shareToPlatforms';
+import { payPlatform } from '../../../pi/browser/vm';
+import { popNew } from '../../../pi/ui/root';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { callGetOneUserInfo } from '../../middleLayer/wrap';
+import { SCPrecision } from '../../publicLib/config';
+import { TaskSid } from '../../publicLib/interface';
+import { getModulConfig } from '../../publicLib/modulConfig';
+import { timestampFormat } from '../../publicLib/tools';
+import { getOrderDetail, getOrderLocal } from '../../utils/recharge';
+import { popNewMessage } from '../../utils/tools';
+import { makeScreenShot } from '../../viewLogic/native';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords

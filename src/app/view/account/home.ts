@@ -1,16 +1,16 @@
 
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData } from '../../../middleLayer/wrap';
-import { uploadFile } from '../../../net/pull';
+import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { getStoreData } from '../../middleLayer/wrap';
+import { uploadFile } from '../../net/pull';
 // tslint:disable-next-line:max-line-length
-import { changeWalletName, changeWalletNote, changeWalletSex, deepCopy, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow, walletNameAvailable } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
-import { exportMnemonic } from '../../../viewLogic/localWallet';
-import { logoutAccount } from '../../../viewLogic/login';
-import { selectImage } from '../../../viewLogic/native';
+import { changeWalletName, changeWalletNote, changeWalletSex, deepCopy, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow, walletNameAvailable } from '../../utils/tools';
+import { registerStoreData } from '../../viewLogic/common';
+import { exportMnemonic } from '../../viewLogic/localWallet';
+import { logoutAccount } from '../../viewLogic/login';
+import { selectImage } from '../../viewLogic/native';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords 
 declare var module: any;
@@ -140,9 +140,9 @@ export class AccountHome extends Widget {
      */
     public changePhone() {
         if (!this.props.phone) {  // 绑定
-            popNew('app-view-mine-setting-phone');
+            popNew('app-view-setting-phone');
         } else { // 重新绑定
-            popNew('app-view-mine-setting-unbindPhone');
+            popNew('app-view-setting-unbindPhone');
         }
         
     }
@@ -152,9 +152,9 @@ export class AccountHome extends Widget {
      */
     public changePsw() {
         if (this.props.isTourist) {
-            popNew('app-view-mine-setting-settingPsw',{});
+            popNew('app-view-setting-settingPsw',{});
         } else {
-            popNew('app-view-mine-setting-changePsw');
+            popNew('app-view-setting-changePsw');
         }
         
     }

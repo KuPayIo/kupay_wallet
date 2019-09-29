@@ -2,15 +2,15 @@
  * setting
  */
 // =============================================导入
-import { popNew } from '../../../../pi/ui/root';
-import { getLang } from '../../../../pi/util/lang';
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { getStoreData, setStoreData } from '../../../middleLayer/wrap';
-import { deepCopy, popPswBox, rippleShow } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
-import { exportMnemonic } from '../../../viewLogic/localWallet';
-import { logoutAccount } from '../../../viewLogic/login';
+import { popNew } from '../../../pi/ui/root';
+import { getLang } from '../../../pi/util/lang';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { getStoreData, setStoreData } from '../../middleLayer/wrap';
+import { deepCopy, popPswBox, rippleShow } from '../../utils/tools';
+import { registerStoreData } from '../../viewLogic/common';
+import { exportMnemonic } from '../../viewLogic/localWallet';
+import { logoutAccount } from '../../viewLogic/login';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

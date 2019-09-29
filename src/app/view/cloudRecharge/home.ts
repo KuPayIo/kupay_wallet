@@ -1,14 +1,14 @@
 /**
  * SC 交易记录主页
  */
-import { Forelet } from '../../../../pi/widget/forelet';
-import { Widget } from '../../../../pi/widget/widget';
-import { callFetchBalanceValueOfCoin,callGetAccountDetail,getStoreData } from '../../../middleLayer/wrap';
-import { CloudCurrencyType } from '../../../publicLib/interface';
-import { getModulConfig } from '../../../publicLib/modulConfig';
-import { fetchCloudGain, formatBalance, formatBalanceValue } from '../../../publicLib/tools';
-import { getCurrencyUnitSymbol, goRecharge } from '../../../utils/tools';
-import { getCloudBalances, registerStoreData } from '../../../viewLogic/common';
+import { Forelet } from '../../../pi/widget/forelet';
+import { Widget } from '../../../pi/widget/widget';
+import { callFetchBalanceValueOfCoin,callGetAccountDetail,getStoreData } from '../../middleLayer/wrap';
+import { CloudCurrencyType } from '../../publicLib/interface';
+import { getModulConfig } from '../../publicLib/modulConfig';
+import { fetchCloudGain, formatBalance, formatBalanceValue } from '../../publicLib/tools';
+import { getCurrencyUnitSymbol, goRecharge } from '../../utils/tools';
+import { getCloudBalances, registerStoreData } from '../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -32,13 +32,13 @@ export class CloudWalletHome extends Widget {
             titleShow,
             tabs:[{
                 tab:{ zh_Hans:'全部',zh_Hant:'全部',en:'' },
-                components:'app-view-wallet-cloudWalletCustomize-totalRecord'
+                components:'app-view-cloudRecharge-totalRecord'
             },{
                 tab:{ zh_Hans:'入账',zh_Hant:'入賬',en:'' },
-                components:'app-view-wallet-cloudWalletCustomize-accountEntry'
+                components:'app-view-cloudRecharge-accountEntry'
             },{
                 tab:{ zh_Hans:'出账',zh_Hant:'出賬',en:'' },
-                components:'app-view-wallet-cloudWalletCustomize-accountOut'
+                components:'app-view-cloudRecharge-accountOut'
             }],
             activeNum:0,
             gain:fetchCloudGain(),

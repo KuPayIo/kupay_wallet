@@ -5,7 +5,7 @@ import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { manualLogin } from '../../viewLogic/localWallet';
 // tslint:disable-next-line:max-line-length
-import { loadAboutAppSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadRedEnvelopeSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
+import { loadAboutAppSource, loadAccountSource, loadCloudRechargeSource, loadDividendSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadRedEnvelopeSource, loadSettingSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
 
 export class Test extends Widget {
     // 登录
@@ -93,6 +93,46 @@ export class Test extends Widget {
             } else {
                 popNew('app-view-redEnvelope-exchange');
             }
+            
+            loading.callback(loading.widget);
+        });
+    }
+
+    // 分红
+    public open9(i:number) {
+        const loading = popNew('app-components1-loading-loading1');
+        loadDividendSource().then(() => {
+            popNew('app-view-dividend-dividend');
+            
+            loading.callback(loading.widget);
+        });
+    }
+
+    // 云端充值
+    public open10() {
+        const loading = popNew('app-components1-loading-loading1');
+        loadCloudRechargeSource().then(() => {
+            popNew('app-view-cloudRecharge-home',{ currencyName:'SC',gain:0 });
+            
+            loading.callback(loading.widget);
+        });
+    }
+
+    // 账户信息
+    public open11() {
+        const loading = popNew('app-components1-loading-loading1');
+        loadAccountSource().then(() => {
+            popNew('app-view-account-home');
+            
+            loading.callback(loading.widget);
+        });
+    }
+
+    // 设置
+    public open12() {
+        const loading = popNew('app-components1-loading-loading1');
+        loadSettingSource().then(() => {
+            popNew('app-view-setting-setting');
             
             loading.callback(loading.widget);
         });
