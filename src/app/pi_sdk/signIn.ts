@@ -192,6 +192,7 @@ export const createSignInPage = () => {
     document.querySelector('#phoneLogin').addEventListener('click',phoneLogin);
     document.querySelector('#wxLogin').addEventListener('click',wxLogin);
     document.querySelector('#qqLogin').addEventListener('click',qqLogin);
+    document.querySelector('#wbLogin').addEventListener('click',wbLogin);
     document.querySelector('#touristLogin').addEventListener('click',touristLogin);
 };
 
