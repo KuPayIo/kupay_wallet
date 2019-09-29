@@ -8,11 +8,10 @@ import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
 import { AddrInfo, CloudCurrencyType, CurrencyRecord, User, UserInfo, Wallet } from '../publicLib/interface';
 import { Account, getAllAccount, getStore,initCloudWallets, LocalCloudWallet, register, setStore } from '../store/memstore';
 import { addFirstRegisterListener } from '../store/vmRegister';
-import { clearAllTimer, initDataCenter } from './dataCenter';
 // tslint:disable-next-line:max-line-length
 import { fetchBtcFees, fetchGasPrices, getBindPhone, getRealUser, getServerCloudBalance, getUserInfoFromServer, setUserInfo } from './pull';
-import { getDeviceAllDetail, getDeviceId } from './tools';
-import { decrypt, encrypt, getMnemonicByHash, sign } from './wallet';
+import { getDeviceAllDetail } from './tools';
+import { decrypt, encrypt } from './wallet';
 
 declare var pi_modules;
 
@@ -311,7 +310,6 @@ export const logoutAccount = async (save:boolean = true) => {
     setTimeout(() => {
         openConnect();
     },100);
-    clearAllTimer();
     console.log('logoutAccount uid1 = ',uid);
     
     const uids = [];
@@ -400,7 +398,6 @@ export const loginSuccess = (account:Account,secretHash:string) => {
     setStore('cloud',cloud);
     setStore('user',user);
     openConnect(secretHash);
-    initDataCenter();
 };
 
 // 注册store

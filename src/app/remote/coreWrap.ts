@@ -1,25 +1,18 @@
 /**
  * 对rpc调用函数的封装  在所有的函数后面加上callback 所有函数返回值都为undefiend
  */
-import { getEthApiBaseUrl } from '../core_common/config';
-import { isValidMnemonic } from '../core_common/genmnemonic';
-import { LANGUAGE } from '../publicLib/config';
-import { AddrInfo, CloudCurrencyType, CreateWalletOption, MinerFeeLevel, TxHistory, TxPayload } from '../publicLib/interface';
+import { CloudCurrencyType, TxHistory } from '../publicLib/interface';
 import { deleteAccount, getAllAccount, getCloudBalances1, getStore, setStore } from '../store/memstore';
 import { getHomePageEnterData } from '../store/vmRegister';
-import { dcClearTxTimer, dcInitErc20GasLimit, dcRefreshAllTx, dcUpdateAddrInfo, dcUpdateBalance } from './dataCenter';
 // tslint:disable-next-line:max-line-length
 import { getOpenId, loginSuccess, logoutAccount, openConnect, requestAsync, requestAsyncNeedLogin, touristLogin, walletManualReconnect } from './login';
 // tslint:disable-next-line:max-line-length
 import { buyProduct, fetchBtcFees, fetchGasPrices, getAccountDetail, getDividend, getDividHistory, getFriendsKTTops, getHighTop, getInviteCode, getMineDetail, getMining, getOneUserInfo, getProductList, getPurchaseRecord, getRechargeLogs, getServerCloudBalance, getWithdrawLogs, queryConvertLog, queryDetailLog, querySendRedEnvelopeRecord } from './pull';
-// tslint:disable-next-line:max-line-length
-import { btcRecharge, btcWithdraw, doERC20TokenTransfer, doEthTransfer, ethRecharge, ethWithdraw, resendBtcRecharge, resendBtcTransfer, transfer } from './pullWallet';
 import { goRecharge } from './recharge';
 import { emitWebviewReload } from './reload';
 // tslint:disable-next-line:max-line-length
-import { currencyExchangeAvailable, deletLocalTx, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList,getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from './tools';
-// tslint:disable-next-line:max-line-length
-import { backupMnemonic, createNewAddr, createWalletByImage, createWalletRandom, exportBTCPrivateKey, exportERC20TokenPrivateKey, exportETHPrivateKey, exportPrivateKeyByMnemonic, fetchGasPrice, fetchMinerFeeList, fetchTransactionList, getMnemonicByHash, getWltAddrIndex, importWalletByFragment, importWalletByMnemonic, lockScreenHash, lockScreenVerify, passwordChange, preCalAhashToArgon2Hash, rpcTimeingTest, updateShowCurrencys, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
+import { currencyExchangeAvailable, fetchBalanceValueOfCoin, fetchCloudTotalAssets, fetchCloudWalletAssetList, fetchCoinGain, fetchLocalTotalAssets, fetchWalletAssetList,getAddrsInfoByCurrencyName, getCurrentAddrInfo, updateLocalTx } from './tools';
+import { lockScreenHash, lockScreenVerify, passwordChange, VerifyIdentidy, VerifyIdentidy1 } from './wallet';
 
 /**
  * 对所有的错误进行处理  rpc调用会对结果JOSN.stringify,如果是Error对象,stringify后为"{}"
@@ -96,13 +89,6 @@ export const callGetHomePageEnterData = (callback:Function) => {
 // ===========================================memstroe相关===================================================================
 
 // ===========================================tools相关===================================================================
-
-/**
- * 删除本地交易记录
- */
-export const callDeletLocalTx = (tx: TxHistory,callback:Function) => {
-    callback([undefined,deletLocalTx(tx)]);
-};
 
 /**
  * 获取云端总资产
@@ -206,29 +192,6 @@ export const callRequestAsync = (msg: any,callback:Function) => {
  */
 export const callRequestAsyncNeedLogin = (msg: any,secretHash:string,callback:Function) => {
     requestAsyncNeedLogin(msg,secretHash).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([err]);
-    });
-};
-
-/**
- * 获取随机数
- * flag:0 普通用户注册，1注册即为真实用户
- */
-export const callGetRandom = (secretHash:string,cmd:number = undefined,phone:number = undefined,
-    code:number = undefined,num:string = undefined ,callback:Function) => {
-    // getRandom(secretHash,cmd,phone,code,num).then(res => {
-    //     callback([undefined,res]);
-    // }).catch(err => {
-    //     callback([err]);
-    // });
-};
-/**
- * 创建钱包后默认登录
- */
-export const callDefaultLogin = (hash:string,conRandom:string,callback:Function) => {
-    defaultLogin(hash,conRandom).then(res => {
         callback([undefined,res]);
     }).catch(err => {
         callback([err]);
@@ -491,47 +454,6 @@ export const callGetFriendsKTTops = (arr:any,callback:Function) => {
 // ===========================================wallet相关===================================================================
 
 /**
- * 获取eth api url
- */
-export const callGetEthApiBaseUrl = (callback:Function) => {
-    callback([undefined,getEthApiBaseUrl()]);
-};
-
-/**
- * dataCenter更新余额
- */
-export const callDcUpdateBalance = (addr: string, currencyName: string,callback:Function) => {
-    callback([undefined,dcUpdateBalance(addr, currencyName)]);
-};
-
-/**
- * dataCenter刷新本地钱包
- */
-export const callDcRefreshAllTx = (callback:Function) => {
-    callback([undefined,dcRefreshAllTx()]);
-};
-
-/**
- * dataCenter初始化ERC20代币GasLimit
- */
-export const callDcInitErc20GasLimit = (callback:Function) => {
-    callback([undefined,dcInitErc20GasLimit()]);
-};
-
-/**
- * dataCenter更新地址相关 交易记录及余额定时更新
- */
-export const callDcUpdateAddrInfo = (addr: string, currencyName: string,callback:Function) => {
-    callback([undefined,dcUpdateAddrInfo(addr,currencyName)]);
-};
-
-/**
- * dataCenter通过hash清楚定时器
- */
-export const callDcClearTxTimer = (hash: string,callback:Function) => {
-    callback([undefined,dcClearTxTimer(hash)]);
-};
-/**
  * 验证当前账户身份
  * @param passwd 密码
  */
@@ -555,84 +477,6 @@ export const callVerifyIdentidy1 = (passwd:string,vault:string,salt:string,callb
 };
 
 /**
- * 导出ETH第一个地址私钥
- */
-export const callExportPrivateKeyByMnemonic = (mnemonic:string,callback:Function) => {
-    exportPrivateKeyByMnemonic(mnemonic).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * 随机创建钱包
- */
-export const callCreateWalletRandom = (option: CreateWalletOption,tourist:boolean = false,callback:Function) => {
-    createWalletRandom(option,tourist).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * 通过助记词导入钱包
- */
-export const callImportWalletByMnemonic = (option: CreateWalletOption,callback:Function) => {
-    importWalletByMnemonic(option).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * 图片创建钱包
- */
-export const callCreateWalletByImage = (option: CreateWalletOption,callback:Function) => {
-    createWalletByImage(option).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * 冗余助记词导入
- */
-export const callImportWalletByFragment = (option: CreateWalletOption,callback:Function) => {
-    importWalletByFragment(option).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * 创建新地址
- */
-export const callCreateNewAddr = (passwd: string, currencyName: string,callback:Function) => {
-    createNewAddr(passwd,currencyName).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * 备份助记词
- * @param passwd 密码 
- */
-export const callBackupMnemonic = (passwd:string,needFragments:boolean = true,callback:Function) => {
-    backupMnemonic(passwd,needFragments).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
  * 修改密码
  */
 export const callPasswordChange = (secretHash: string, newPsw: string,callback:Function) => {
@@ -641,186 +485,6 @@ export const callPasswordChange = (secretHash: string, newPsw: string,callback:F
     }).catch(err => {
         callback([handleError(err)]);
     });
-};
-
-/**
- * 获取矿工费
- */
-export const callFetchMinerFeeList = (currencyName:string,callback:Function) => {
-    callback([undefined,fetchMinerFeeList(currencyName)]);
-};
-
-// 获取gasPrice
-export const callFetchGasPrice = (minerFeeLevel: MinerFeeLevel,callback:Function) => {
-    callback([undefined,fetchGasPrice(minerFeeLevel)]);
-};
-
-/**
- * 获取某个地址的交易记录
- */
-export const callFetchTransactionList = (addr:string,currencyName:string,callback:Function) => {
-    callback([undefined,fetchTransactionList(addr,currencyName)]);
-};
-
-// 根据hash获取助记词
-export const callGetMnemonicByHash = (hash:string,callback:Function) => {
-    getMnemonicByHash(hash).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * 增加或者删除展示的币种
- */
-export const callUpdateShowCurrencys = (currencyName:string,added:boolean,callback:Function) => {
-    callback([undefined,updateShowCurrencys(currencyName,added)]);
-};
-
-/**
- * 普通转账
- */
-export const callTransfer = (psw:string,txPayload:TxPayload,callback:Function) => {
-    transfer(psw,txPayload).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * 判断助记词是否合法
- */
-export const callisValidMnemonic = (language: LANGUAGE, mnemonic: string,callback:Function) => {
-    callback([undefined,isValidMnemonic(language, mnemonic)]);
-};
-
-// 导出以太坊私钥
-export const callExportETHPrivateKey = (mnemonic:string,addrs: AddrInfo[],callback:Function) => {
-    exportETHPrivateKey(mnemonic, addrs).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
- // 导出BTC私钥
-export const callExportBTCPrivateKey = (mnemonic:string,addrs: AddrInfo[],callback:Function) => {
-    exportBTCPrivateKey(mnemonic, addrs).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-// 导出ERC20私钥
-export const callExportERC20TokenPrivateKey = (mnemonic:string,addrs: AddrInfo[],currencyName:string,callback:Function) => {
-    exportERC20TokenPrivateKey(mnemonic, addrs,currencyName).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * btc充值
- */
-export const callBtcRecharge = (psw:string,txRecord:TxHistory,callback:Function) => {
-    btcRecharge(psw,txRecord).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * eth充值
- */
-export const callEthRecharge = (psw:string,txRecord:TxHistory,callback:Function) => {
-    ethRecharge(psw,txRecord).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * btc重发充值
- */
-export const callResendBtcRecharge = (psw:string,txRecord:TxHistory,callback:Function) => {
-    resendBtcRecharge(psw,txRecord).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-// eth提现
-export const callEthWithdraw = (secretHash:string,toAddr:string,amount:number | string,callback:Function) => {
-    ethWithdraw(secretHash,toAddr,amount).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-// btc提现
-export const callBtcWithdraw = (secretHash:string,toAddr:string,amount:number | string,callback:Function) => {
-    btcWithdraw(secretHash,toAddr,amount).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * 获取钱包地址的位置
- */
-export const callGetWltAddrIndex = (addr: string, currencyName: string,callback:Function) => {
-    callback([undefined,getWltAddrIndex(addr,currencyName)]);
-};
-
-/**
- * 处理ETH转账
- */
-export const callDoEthTransfer = (psw:string,addrIndex:number,txRecord:TxHistory,callback:Function) => {
-    doEthTransfer(psw,addrIndex,txRecord).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * btc重发
- */
-export const callResendBtcTransfer = (psw:string,addrIndex:number,txRecord:TxHistory,callback:Function) => {
-    resendBtcTransfer(psw,addrIndex,txRecord).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * 处理eth代币转账
- */
-export const callDoERC20TokenTransfer = (psw:string,addrIndex:number, txRecord:TxHistory,callback:Function) => {
-    doERC20TokenTransfer(psw,addrIndex,txRecord).then(res => {
-        callback([undefined,res]);
-    }).catch(err => {
-        callback([handleError(err)]);
-    });
-};
-
-/**
- * 图片创建或者导入的时候提前计算hash
- * @param imagePsw 图片密码
- * @param ahash ahash
- */
-export const callPreCalAhashToArgon2Hash = (ahash: string, imagePsw: string,callback:Function) => {
-    callback([undefined,preCalAhashToArgon2Hash(ahash,imagePsw)]);
 };
 
 // 锁屏密码hash算法
@@ -868,13 +532,6 @@ export const callEmitWebviewReload = (callback:Function) => {
 };
 
 // ==================================reload相关=========================================
-
-/**
- * rpc通信测试
- */
-export const callRpcTimeingTest = (callback:Function) => {
-    callback([undefined,rpcTimeingTest()]);
-};
 
 /**
  * 新版游客登录
