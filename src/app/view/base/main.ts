@@ -11,10 +11,8 @@ import { addAppBackPressed } from '../../../pi/browser/app_comon_event';
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { getHasEnterGame, setHasEnterGame } from '../../api/thirdBase';
-import { LockScreen } from '../../publicLib/interface';
+import { LockScreen } from '../../public/interface';
 import { getStore } from '../../store/memstore';
-import { getScreenModify, preLoadAd } from '../../viewLogic/native';
 
 // ============================== 导出
 export const run = (cb): void =>  {
@@ -31,7 +29,7 @@ export const run = (cb): void =>  {
     if (cb) cb();
     
     // 预先从底层获取一些数据
-    preFetchFromNative();
+    // preFetchFromNative();
     // app event 注册
     addAppEvent();
 };
@@ -141,4 +139,20 @@ const ifNeedUnlockScreen = async () => {
     const openLockScreen = ls.open !== false;
 
     return lockScreenPsw && openLockScreen;
+};
+
+let hasEnterGame = false;   // 是否进入游戏  锁屏判断是否从游戏退出，是就不展示锁屏界面
+
+/**
+ * 设置hasEnterGame
+ */
+export const setHasEnterGame = (entered:boolean) => {
+    hasEnterGame = entered;
+};
+
+/**
+ * 获取hasEnterGame
+ */
+export const getHasEnterGame = () => {
+    return hasEnterGame;
 };

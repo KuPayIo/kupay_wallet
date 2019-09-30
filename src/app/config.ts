@@ -1,5 +1,4 @@
-import { defalutShowCurrencys, sourceIp } from './publicLib/config';
-import { getModulConfig } from './publicLib/modulConfig';
+import { defalutShowCurrencys,getModulConfig, sourceIp } from './public/config';
 
 /**
  * config file

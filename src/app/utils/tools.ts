@@ -1,56 +1,64 @@
-/**
- * common tools
- */
-import { getStore as chatGetStore } from '../../chat/client/app/data/store';
 import { setStore as earnSetStore } from '../../earn/client/app/store/memstore';
-import { appLanguageList } from '../../pi/browser/localLanguage';
-import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
-import { getRealNode } from '../../pi/widget/painter';
 import { resize } from '../../pi/widget/resize/resize';
-import { lookup } from '../../pi/widget/widget';
 import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from '../config';
-import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin, uploadFileUrlPrefix } from '../publicLib/config';
-import { CloudCurrencyType, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../publicLib/interface';
-import { unicodeArray2Str } from '../publicLib/tools';
-import { getAccountDetail } from '../remote/pull';
-import { gotoRecharge } from '../remote/recharge';
-import { getCloudBalances, getStore, setStore } from '../store/memstore';
-import { SettingLanguage } from '../view/base/app';
-import { piLoadDir, piRequire } from './commonjsTools';
+import { getAccountDetail } from '../net/pull';
+import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin } from '../public/config';
+import { CloudCurrencyType, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../public/interface';
+import { getCloudBalances, getStore,setStore } from '../store/memstore';
+import { piRequire } from './commonjsTools';
+import { arrayBuffer2File, getUserInfo, popNewMessage, unicodeArray2Str } from './pureUtils';
+import { gotoRecharge } from './recharge';
+
 /**
- * 获取用户基本信息
+ * arrayBuffer图片压缩
+ * @param buffer 图片arraybuffer
  */
-export const getUserInfo = (userInfo1?:any) => {
-    let promise;
-    if (userInfo1) {
-        promise = Promise.resolve(userInfo1);
-    } else {
-        promise = getStore('user/info');
-    }
+export const imgResize = (buffer:ArrayBuffer,callback:Function) => {
+    const file = arrayBuffer2File(buffer);
+    const fr = new FileReader();
+    fr.readAsDataURL(file); 
+    fr.onload = () => { 
+        const dataUrl = fr.result.toString();  
+        resize({ url: dataUrl, width: 140, ratio: 0.3, type: 'jpeg' }, (res) => {
+            console.log('resize---------', res);
+            callback(res);
+        });
+    };
     
-    return promise.then(userInfo => {
-        console.log('getUserInfo userInfo = ',userInfo);
-        let avatar = userInfo.avatar;
-        if (avatar && avatar.indexOf('data:image') < 0) {
-            avatar = `${uploadFileUrlPrefix}${avatar}`;
-        } else {
-            avatar = 'app/res/image/default_avater_big.png';
-        }
-        const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
+};
+
+/**
+ * 获取文字配置
+ */
+export const getStaticLanguage = () => {
+    const lan = getStore('setting/language');
     
-        return {
-            nickName: userInfo.nickName,
-            phoneNumber: userInfo.phoneNumber,
-            areaCode: userInfo.areaCode,
-            isRealUser: userInfo.isRealUser,
-            acc_id: userInfo.acc_id,
-            avatar,
-            level,
-            sex:userInfo.sex,
-            note:userInfo.note
-        };
-    });
+    return Config[lan];
+};
+
+/**
+ * 获取手机提示语
+ */
+export const getPopPhoneTips = () => {
+    const modalBox = { 
+        zh_Hans:{
+            title:'绑定手机',
+            content:'为了避免您的游戏数据丢失，请绑定手机号',
+            sureText:'去绑定',
+            onlyOk:true
+        },
+        zh_Hant:{
+            title:'綁定手機',
+            content:'為了避免您的遊戲數據丟失，請綁定手機號',
+            sureText:'去綁定',
+            onlyOk:true
+        },
+        en:'' 
+    };
+
+    return modalBox[getLang()];
 };
 
 /**
@@ -145,25 +153,6 @@ export const popPswBox = (content = [],onlyOk:boolean = false,cancelDel:boolean 
         });
     });
    
-};
-
-// 弹出提示框
-export const popNewMessage = (content: any) => {
-    const name = 'app-components-message-message';
-    if (!lookup(name)) {
-        const name1 = name.replace(/-/g,'/');
-        const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
-        piLoadDir(sourceList).then(() => {
-            popNew(name, { content });
-        });
-    } else {
-        popNew(name, { content });
-    }
-};
-
-// 弹出loading
-export const popNewLoading = (text: any) => {
-    return popNew('app-components1-loading-loading', { text });
 };
 
 // ==========================================================new version tools
@@ -299,62 +288,6 @@ export const calPercent = (surplus: number, total: number) => {
 };
 
 /**
- * base64 to blob
- */
-export const base64ToBlob = (base64: string) => {
-    const arr = base64.split(',');
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-
-    return new Blob([u8arr], { type: mime });
-};
-/**
- * 图片base64转file格式
- */
-export const base64ToFile = (base64: string) => {
-    const blob = base64ToBlob(base64);
-    const newFile = new File([blob], 'avatar.jpeg', { type: blob.type });
-    console.log(newFile);
-
-    return newFile;
-};
-
-/**
- * arrayBuffer转file格式
- */
-export const arrayBuffer2File = (buffer:ArrayBuffer) => {
-    const u8Arr = new Uint8Array(buffer);
-    const blob = new Blob([u8Arr], { type: 'image/jpeg' });
-    const newFile = new File([blob], 'avatar.jpeg', { type: blob.type });
-    console.log('arrayBuffer2File = ',newFile);
-
-    return newFile;
-};
-
-/**
- * arrayBuffer图片压缩
- * @param buffer 图片arraybuffer
- */
-export const imgResize = (buffer:ArrayBuffer,callback:Function) => {
-    const file = arrayBuffer2File(buffer);
-    const fr = new FileReader();
-    fr.readAsDataURL(file); 
-    fr.onload = () => { 
-        const dataUrl = fr.result.toString();  
-        resize({ url: dataUrl, width: 140, ratio: 0.3, type: 'jpeg' }, (res) => {
-            console.log('resize---------', res);
-            callback(res);
-        });
-    };
-    
-};
-
-/**
  * 助记词片段分享加密
  * 为了便于识别用户使用的是同一组密钥，会在分享出去的密钥的第2/4/6/8/10/12加上一个相同的随机数
  */
@@ -435,15 +368,6 @@ export const judgeAddressAvailable = (ctype: string, addr: string) => {
     }
 };
 
- // 水波纹动画效果展示
-export const rippleShow = (e:any) => {
-    getRealNode(e.node).classList.add('ripple');
-    
-    setTimeout(() => {
-        getRealNode(e.node).classList.remove('ripple');
-    }, 300);
-};
-
 /**
  * 获取随机名字
  */
@@ -466,40 +390,6 @@ export const calCurrencyLogoUrl = (currencyName:string) => {
     const directory = preShowCurrencys.indexOf(currencyName) >= 0 ? 'image1' : 'image';
     
     return `app/res/${directory}/currency/${currencyName}.png`;
-};
-
-/**
- * 关掉所有页面 （不包括首页面）
- */
-export const closeAllPage = () => {
-    for (const v of backList) {
-        if (v.widget.name !== 'app-view-base-app') {
-            backCall();
-        }
-    }
-};
-
-/**
- * 获取手机提示语
- */
-export const getPopPhoneTips = () => {
-    const modalBox = { 
-        zh_Hans:{
-            title:'绑定手机',
-            content:'为了避免您的游戏数据丢失，请绑定手机号',
-            sureText:'去绑定',
-            onlyOk:true
-        },
-        zh_Hant:{
-            title:'綁定手機',
-            content:'為了避免您的遊戲數據丟失，請綁定手機號',
-            sureText:'去綁定',
-            onlyOk:true
-        },
-        en:'' 
-    };
-
-    return modalBox[getLang()];
 };
 
 // 检查手机弹框提示
@@ -593,24 +483,6 @@ export const uncodeUtf16 = (str:string) => {
         }
     });
 
-};
-
-/**
- * 根据当前语言设置获取静态文字，对于组件模块
- */
-export const getLanguage = (w) => {
-    const lan = localStorage.getItem(SettingLanguage) || appLanguageList[appLanguageList.zh_Hans];
-
-    return w.config.value[lan];
-};
-
-/**
- * 根据当前语言设置获取静态文字，对于单独的ts文件
- */
-export const getStaticLanguage =  () => {
-    const lan = localStorage.getItem(SettingLanguage) || appLanguageList[appLanguageList.zh_Hans];
-
-    return Config[lan];
 };
 
 /**

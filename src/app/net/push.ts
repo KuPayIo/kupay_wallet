@@ -2,11 +2,11 @@
  * 后端主动推消息给后端
  */
 import { setBottomLayerReloginMsg, setMsgHandler } from '../../pi/net/ui/con_mgr';
-import { CMD } from '../publicLib/config';
-import { ServerPushArgs, ServerPushKey } from '../publicLib/interface';
-import { getServerCloudBalance } from '../remote/pull';
+import { CMD } from '../public/config';
+import { ServerPushKey } from '../public/interface';
 import { getStore, setStore } from '../store/memstore';
-import { balanceChange, payOk } from '../viewLogic/serverPushLogic';
+import { balanceChange, payOk } from '../utils/serverPushLogic';
+import { getServerCloudBalance } from './pull';
 
 // ===================================================== 导入
 
@@ -26,10 +26,6 @@ export const initPush = () => {
         } else if (cmd === CMD.FORCELOGOUTDEL) {
             // logoutAccount(false);
         }
-        const args:ServerPushArgs = {
-            key:ServerPushKey.CMD,
-            result:res
-        };
     });
 
     // 监听充值成功事件

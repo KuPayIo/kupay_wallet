@@ -1,7 +1,10 @@
+import { getStore as gameGetStore,setStore as gameSetStore } from '../../earn/client/app/store/memstore';
 import { popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
-import { CloudCurrencyType } from '../publicLib/interface';
-import { closeAllPage, getPopPhoneTips, getStaticLanguage, popNewMessage } from '../utils/tools';
+import { getHighTop } from '../net/pull';
+import { CloudCurrencyType } from '../public/interface';
+import { getPopPhoneTips, getStaticLanguage } from '../utils/tools';
+import { closeAllPage, popNewMessage } from './pureUtils';
 
 /**
  * 服务器推送处理
@@ -73,11 +76,11 @@ export const balanceChange = (args:any) => {
         bindPhonePop();
     }
     if (args.cointype === CloudCurrencyType.KT) {
-        // callGetHighTop(100).then((data) => {
-        //     const mine = gameGetStore('mine',{});
-        //     mine.miningRank = data.miningRank || 0;
-        //     gameSetStore('mine',mine);  
-        // });
+        getHighTop(100).then((data) => {
+            const mine = gameGetStore('mine',{});
+            mine.miningRank = data.miningRank || 0;
+            gameSetStore('mine',mine);  
+        });
         console.log('KT余额变化');
     }
 };

@@ -6,7 +6,7 @@ import { ImagePicker } from '../../pi/browser/imagePicker';
 import { WebViewManager } from '../../pi/browser/webview';
 import { setStore } from '../store/memstore';
 import { piRequire } from '../utils/commonjsTools';
-import { popNewLoading } from '../utils/tools';
+import { popNewLoading } from './pureUtils';
 
 /**
  * 获取屏幕刘海与下部分高度

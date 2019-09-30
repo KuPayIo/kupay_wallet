@@ -7,9 +7,9 @@ import { appLanguageList, LocalLanguageMgr } from '../../pi/browser/localLanguag
 import { HandlerMap } from '../../pi/util/event';
 import { setLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { defaultSetting, topHeight } from '../publicLib/config';
+import { defaultSetting, topHeight } from '../public/config';
 // tslint:disable-next-line:max-line-length
-import { CloudCurrencyType, CloudWallet,  Setting, Store, UserInfo } from '../publicLib/interface';
+import { CloudCurrencyType, CloudWallet,  Setting, Store, UserInfo } from '../public/interface';
 import { deleteFile, getLocalStorage, initFileStore, initLocalStorageFileStore, setLocalStorage, writeFile } from './filestore';
 
 // ============================================ 导出
@@ -313,9 +313,6 @@ const registerAccountChange = () => {
     register('user', () => {
         accountChange();
     });
-    register('wallet', () => {
-        accountChange();
-    });
     register('cloud', () => {
         accountChange();
     });
@@ -403,8 +400,6 @@ const accountChange = () => {
             localCloudWallets.set(k, cloudWallet);
         }
 
-        const fileTxHistorys = [];
-       
         const newAccount: Account = {
             user: localUser,
             cloud: { cloudWallets: <any>[...localCloudWallets] }
@@ -414,7 +409,6 @@ const accountChange = () => {
         localAccounts.accounts[storeUser.id] = newAccount;
 
         setLocalStorage('accounts', localAccounts);
-        writeFile(storeUser.id, fileTxHistorys);
     });
 
 };
@@ -546,3 +540,5 @@ export interface LocalCloudWallet {
     balance: number;   // 余额
 }
 // =======================================================
+
+initStore();

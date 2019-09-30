@@ -1,4 +1,4 @@
-import { sourceIp } from '../publicLib/config';
+import { sourceIp } from '../public/config';
 
 /**
  * 第三方注入配置

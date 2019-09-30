@@ -1,6 +1,6 @@
 import { Widget } from '../../../pi/widget/widget';
 import { touristLogin } from '../../net/login';
-import { popNewMessage } from '../../utils/tools';
+import { popNewMessage } from '../../utils/pureUtils';
 
 /**
  * 登录注册

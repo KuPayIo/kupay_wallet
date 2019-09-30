@@ -1,8 +1,7 @@
+import { DeviceIdProvider } from '../../pi/browser/device';
 import { open, request,setUrl } from '../../pi/net/ui/con_mgr';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { inAndroidApp, inIOSApp, wsUrl } from '../publicLib/config';
-import { getDeviceAllDetail } from '../remote/tools';
-import { decrypt, encrypt } from '../remote/wallet';
+import { inAndroidApp, inIOSApp, wsUrl } from '../public/config';
 import { getStore, setStore } from '../store/memstore';
 
 /**
@@ -80,7 +79,7 @@ const conReOpen = () => {
  */
 export const autoLogin = async () => {
     const deviceDetail = await getDeviceAllDetail();
-    const token = await decrypt(getStore('user/token'),deviceDetail.uuid.toString());
+    const token = getStore('user/token');
     const userId = getStore('user/id');
     const param:any = {
         userType:3,
@@ -103,6 +102,7 @@ export const autoLogin = async () => {
         setStore('user/isLogin', true);
         setStore('flags/hasLogined',true,false);  // 在当前生命周期内登录成功过 重登录的时候以此判断是否有登录权限
         console.log('自动登录成功-----------',res);
+        loginWalletSuccess();
     }).catch((res) => {
         setStore('user/isLogin', false);
         if (res.error !== -69) {
@@ -125,8 +125,7 @@ export const applyAutoLogin = async () => {
         }
     };
     requestAsync(msg).then(async (res) => {
-        const decryptToken = await encrypt(res.token,deviceId);
-        setStore('user/token',decryptToken);
+        setStore('user/token',res.token);
     });
 };
 
@@ -169,6 +168,7 @@ export const touristLogin = async () => {
         setStore('flags/isLogin',true);
         setStore('user/acc_id',res.acc_id);
         console.log('游客登录成功 =',res);
+        loginWalletSuccess();
         applyAutoLogin();
     }).catch(res => {
         setStore('flags/isLogin',false);
@@ -238,3 +238,149 @@ const logoutWalletSuccess =  () => {
 };
 
 openConnect();
+
+/**
+ * 获取设备唯一id
+ * 
+ */
+export const getDeviceId = (deviceIdProvider:DeviceIdProvider) => {
+    const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+    if (oldDeviceAllDetail) {
+        return Promise.resolve(oldDeviceAllDetail.uuid);
+    }
+
+    return new Promise(resolve => {
+        deviceIdProvider = deviceIdProvider || new DeviceIdProvider();
+        deviceIdProvider.getUUId((uuid:string) => {
+            console.log(`获取设备的唯一id = ${uuid}`);
+            if (!uuid) {
+                uuid = getStore('setting/deviceId') || cryptoRandomInt().toString();
+                setStore('setting/deviceId',uuid);
+            }
+            resolve(uuid);
+        });
+    });
+};
+
+/**
+ * 获取设备信息
+ */
+export const getDeviceSystem = (deviceIdProvider:DeviceIdProvider) => {
+    const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+    if (oldDeviceAllDetail) {
+        return Promise.resolve({ 
+            manufacturer:oldDeviceAllDetail.manufacturer ,
+            model:oldDeviceAllDetail.model,
+            version:oldDeviceAllDetail.version 
+        });
+    }
+
+    return new Promise(resolve => {
+        deviceIdProvider = deviceIdProvider || new DeviceIdProvider();
+        deviceIdProvider.getSystem((manufacturer:string,model:string,version:string) => {
+            console.log(`获取设备信息 设备制造商 = ${manufacturer},设备名称 = ${model},系统版本号 = ${version}`);
+            resolve({ 
+                manufacturer:manufacturer || 'default',
+                model:model || 'default',
+                version:version || 'default' 
+            });
+        });
+    });
+};
+
+/**
+ * 获取设备总内存和当前可用内存
+ */
+export const getDeviceMemSize = (deviceIdProvider:DeviceIdProvider) => {
+    const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+    if (oldDeviceAllDetail) {
+        return Promise.resolve({ 
+            total:oldDeviceAllDetail.total ,
+            avail: oldDeviceAllDetail.avail 
+        });
+    }
+
+    return new Promise(resolve => {
+        deviceIdProvider = deviceIdProvider || new DeviceIdProvider();
+        deviceIdProvider.getMemSize((total:string,avail:string) => {
+            console.log(`获取设备内存 系统总内存 = ${total},当前可用内存 = ${avail}`);
+            resolve({ 
+                total:total || 'default',
+                avail: avail || 'default'
+            });
+        });
+    });
+};
+
+/**
+ * 获取当前网络状态
+ */
+export const getDeviceNetWorkStatus = (deviceIdProvider:DeviceIdProvider) => {
+    const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+    if (oldDeviceAllDetail) {
+        return Promise.resolve(oldDeviceAllDetail.netWorkStatus);
+    }
+
+    return new Promise(resolve => {
+        deviceIdProvider = deviceIdProvider || new DeviceIdProvider();
+        deviceIdProvider.getNetWorkStatus((netWorkStatus) => {
+            console.log(`获取当前网络状态 = ${netWorkStatus}`);
+            resolve(netWorkStatus || 'default');
+        });
+    });
+};
+
+/**
+ * 获取网络供应商
+ */
+export const getOperatorName = (deviceIdProvider:DeviceIdProvider) => {
+    const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+    if (oldDeviceAllDetail) {
+        return Promise.resolve(oldDeviceAllDetail.operator);
+    }
+
+    return new Promise(resolve => {
+        deviceIdProvider = deviceIdProvider || new DeviceIdProvider();
+        deviceIdProvider.getOperatorName((operator:string) => {
+            console.log(`获取网络供应商 = ${operator}`);
+            resolve(operator || 'default');
+        });
+    });
+};
+
+/**
+ * 获取设备所有详情
+ */
+export const getDeviceAllDetail = ():Promise<any> => {
+    if (!inAndroidApp && !inIOSApp) {
+        return new Promise((resolve) => {
+            const uuid = getStore('setting/deviceId') || cryptoRandomInt().toString();
+            setStore('setting/deviceId',uuid);
+            resolve({ uuid });
+        });
+    } else {
+        const oldDeviceAllDetail = getStore('flags').deviceAllDetail;
+        if (oldDeviceAllDetail) {
+            return Promise.resolve(oldDeviceAllDetail);
+        }
+
+        const deviceIdProvider = new DeviceIdProvider();
+        // tslint:disable-next-line:max-line-length
+        const allPromise = [getDeviceId(deviceIdProvider),getDeviceSystem(deviceIdProvider),getDeviceMemSize(deviceIdProvider),getDeviceNetWorkStatus(deviceIdProvider),getOperatorName(deviceIdProvider)];
+
+        return Promise.all(allPromise).then(([uuid,system,mem,netWorkStatus,operator]) => {
+            const deviceAllDetail = {
+                uuid,
+                netWorkStatus,
+                operator,
+                ...system,
+                ...mem
+            };
+            console.log('获取设备所有信息 ==',deviceAllDetail);
+            setStore('flags/deviceAllDetail',deviceAllDetail);
+
+            return deviceAllDetail;
+        });
+    }
+    
+};

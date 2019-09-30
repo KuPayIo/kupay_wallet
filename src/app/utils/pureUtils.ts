@@ -1,11 +1,128 @@
+import { getStore as chatGetStore } from '../../chat/client/app/data/store';
+import { backCall, backList, popNew } from '../../pi/ui/root';
+import { getRealNode } from '../../pi/widget/painter';
+import { lookup } from '../../pi/widget/widget';
+import { Config, getModulConfig, inJSVM, uploadFileUrlPrefix } from '../public/config';
+import { CurrencyRecord } from '../public/interface';
+import { getStore } from '../store/memstore';
+import { piLoadDir } from './commonjsTools';
 
-/***
- * 共用 tools
+/**
+ * 常用工具 尽量不依赖其他文件很重的文件
  */
-import { ArgonHash } from '../../pi/browser/argonHash';
-import { Config, inJSVM } from './config';
-import { CurrencyRecord } from './interface';
-import { getModulConfig } from './modulConfig';
+
+declare var pi_modules;
+/**
+ * 封装ajax成fetch模式
+ * @param url  请求url
+ * @param header 请求头
+ */
+export const piFetch = (url:string,param?:any):Promise<any> => {
+    // return Promise.reject();
+    if (!inJSVM) return fetch(url,param).then(res => res.json());
+
+    return new Promise((resolve,reject) => {
+        if (param && param.method === 'POST') {   // post
+            // tslint:disable-next-line:max-line-length
+            pi_modules.ajax.exports.post(url,param.headers,param.body,'string',param.headers['Content-Type'] || 'application/json',pi_modules.ajax.exports.RESP_TYPE_TEXT,(res) => {
+                console.log(`piFetch POST ${url} success===`,res);
+                try {
+                    resolve(JSON.parse(res));
+                } catch (err) {
+                    resolve(res);
+                }
+                
+            },(err) => {
+                console.log(`piFetch POST ${url} err===`,err);
+                try {
+                    reject(JSON.parse(err));
+                } catch (err) {
+                    reject(err);
+                }
+            });
+        } else {    // get
+            pi_modules.ajax.exports.get(url,undefined,param && param.body,'string',pi_modules.ajax.exports.RESP_TYPE_TEXT,(res) => {
+                console.log(`piFetch GET ${url} success===`,res);
+                try {
+                    resolve(JSON.parse(res));
+                } catch (err) {
+                    resolve(res);
+                }
+            },(err) => {
+                console.log(`piFetch GET ${url} err===`,err);
+                try {
+                    reject(JSON.parse(err));
+                } catch (err) {
+                    reject(err);
+                }
+            });
+        }
+        
+    });
+};
+
+// 弹出提示框
+export const popNewMessage = (content: any) => {
+    const name = 'app-components-message-message';
+    if (!lookup(name)) {
+        const name1 = name.replace(/-/g,'/');
+        const sourceList = [`${name1}.tpl`,`${name1}.js`,`${name1}.wcss`,`${name1}.cfg`,`${name1}.widget`];
+        piLoadDir(sourceList).then(() => {
+            popNew(name, { content });
+        });
+    } else {
+        popNew(name, { content });
+    }
+};
+
+// 弹出loading
+export const popNewLoading = (text: any) => {
+    return popNew('app-components1-loading-loading', { text });
+};
+
+ // 水波纹动画效果展示
+export const rippleShow = (e:any) => {
+    getRealNode(e.node).classList.add('ripple');
+    
+    setTimeout(() => {
+        getRealNode(e.node).classList.remove('ripple');
+    }, 300);
+};
+
+/**
+ * 获取用户基本信息
+ */
+export const getUserInfo = (userInfo1?:any) => {
+    let promise;
+    if (userInfo1) {
+        promise = Promise.resolve(userInfo1);
+    } else {
+        promise = getStore('user/info');
+    }
+    
+    return promise.then(userInfo => {
+        console.log('getUserInfo userInfo = ',userInfo);
+        let avatar = userInfo.avatar;
+        if (avatar && avatar.indexOf('data:image') < 0) {
+            avatar = `${uploadFileUrlPrefix}${avatar}`;
+        } else {
+            avatar = 'app/res/image/default_avater_big.png';
+        }
+        const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
+    
+        return {
+            nickName: userInfo.nickName,
+            phoneNumber: userInfo.phoneNumber,
+            areaCode: userInfo.areaCode,
+            isRealUser: userInfo.isRealUser,
+            acc_id: userInfo.acc_id,
+            avatar,
+            level,
+            sex:userInfo.sex,
+            note:userInfo.note
+        };
+    });
+};
 
 /**
  * 货币判断
@@ -266,59 +383,51 @@ export const xorEncode = (str:string, key:string) => {
     return res;
 };
 
-declare var pi_modules;
 /**
- * 封装ajax成fetch模式
- * @param url  请求url
- * @param header 请求头
+ * base64 to blob
  */
-export const piFetch = (url:string,param?:any):Promise<any> => {
-    // return Promise.reject();
-    if (!inJSVM) return fetch(url,param).then(res => res.json());
+export const base64ToBlob = (base64: string) => {
+    const arr = base64.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
 
-    return new Promise((resolve,reject) => {
-        if (param && param.method === 'POST') {   // post
-            // tslint:disable-next-line:max-line-length
-            pi_modules.ajax.exports.post(url,param.headers,param.body,'string',param.headers['Content-Type'] || 'application/json',pi_modules.ajax.exports.RESP_TYPE_TEXT,(res) => {
-                console.log(`piFetch POST ${url} success===`,res);
-                try {
-                    resolve(JSON.parse(res));
-                } catch (err) {
-                    resolve(res);
-                }
-                
-            },(err) => {
-                console.log(`piFetch POST ${url} err===`,err);
-                try {
-                    reject(JSON.parse(err));
-                } catch (err) {
-                    reject(err);
-                }
-            });
-        } else {    // get
-            pi_modules.ajax.exports.get(url,undefined,param && param.body,'string',pi_modules.ajax.exports.RESP_TYPE_TEXT,(res) => {
-                console.log(`piFetch GET ${url} success===`,res);
-                try {
-                    resolve(JSON.parse(res));
-                } catch (err) {
-                    resolve(res);
-                }
-            },(err) => {
-                console.log(`piFetch GET ${url} err===`,err);
-                try {
-                    reject(JSON.parse(err));
-                } catch (err) {
-                    reject(err);
-                }
-            });
-        }
-        
-    });
+    return new Blob([u8arr], { type: mime });
+};
+/**
+ * 图片base64转file格式
+ */
+export const base64ToFile = (base64: string) => {
+    const blob = base64ToBlob(base64);
+    const newFile = new File([blob], 'avatar.jpeg', { type: blob.type });
+    console.log(newFile);
+
+    return newFile;
 };
 
-export const performanceTest = () => {
-    const argonHash = new ArgonHash();
-    argonHash.init();
+/**
+ * arrayBuffer转file格式
+ */
+export const arrayBuffer2File = (buffer:ArrayBuffer) => {
+    const u8Arr = new Uint8Array(buffer);
+    const blob = new Blob([u8Arr], { type: 'image/jpeg' });
+    const newFile = new File([blob], 'avatar.jpeg', { type: blob.type });
+    console.log('arrayBuffer2File = ',newFile);
 
-    return argonHash.calcHashValuePromise({ pwd:'123456789', salt:'210456001' });
+    return newFile;
+};
+
+/**
+ * 关掉所有页面 （不包括首页面）
+ */
+export const closeAllPage = () => {
+    for (const v of backList) {
+        if (v.widget.name !== 'app-view-base-app') {
+            backCall();
+        }
+    }
 };

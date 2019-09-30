@@ -1,9 +1,9 @@
 /**
  * 单位转换工具类
  */
+import { ERC20Tokens, SCPrecision } from '../public/config';
 import { BigNumber } from './bignumber';
-import { ERC20Tokens, SCPrecision } from './config';
-import { formatBalance } from './tools';
+import { formatBalance } from './pureUtils';
 
 /**
  * 根据货币类型小单位转大单位  

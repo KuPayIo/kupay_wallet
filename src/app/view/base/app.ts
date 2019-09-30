@@ -8,9 +8,9 @@ import { collect, pageRoutersCollection } from '../../../pi/collection/collectio
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getModulConfig } from '../../publicLib/modulConfig';
+import { getModulConfig } from '../../public/config';
 import { register } from '../../store/memstore';
-import { getUserInfo, rippleShow } from '../../utils/tools';
+import { getUserInfo, rippleShow } from '../../utils/pureUtils';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

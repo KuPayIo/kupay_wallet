@@ -1,5 +1,3 @@
-import { MinerFeeLevel } from './interface';
-import { getModulConfig } from './modulConfig';
 
 /**
  * 配置
@@ -59,11 +57,51 @@ console.log('activeLogicPort=',activeLogicPort);
 console.log('chatLogicIp=',chatLogicIp);
 console.log('chatLogicPort=',chatLogicPort);
 
+/**
+ *  app模块配置
+ */
+
+// ---------app模块功能配置----------------------------
+const appModulConfig = {
+    APP_CHAT: true,            // 聊天模块
+    APP_WALLET: true,           // 钱包模块
+    APP_EARN: true,             // 赚钱模块
+    APP_PLAY: true,            // 游戏模块
+    APP_PAY:false,             // 支付测试模块
+    FINANCIAL_SERVICES: false,   // 优选理财
+    GITHUB:true,                  // github显示
+    IOSCLOUDASSETSHIDDEN:['ETH','BTC'],         // 云端资产隐藏
+    IOS:true,                     // 是否ios版本
+
+    WALLET_NAME: '好嗨',                        // 钱包名字
+    WALLET_WEBSITE:'http://www.highapp.cn',     // 官网地址
+    LOGIN_IMG:'app/res/image/login_bg.png',     // 登录页面图片
+    WALLET_LOGO:'app/res/image/img_logo.png',    // 钱包logo
+    WECHAT_HELPER:'app/res/image/wechat_robot.jpg',  // 微信小助手二维码
+    WECHAT_ACCOUNT:'app/res/image/wechat_pn.jpg',  // 微信公众号二维码
+    QQ_CODE:'1598787032',                               // qq号
+    PAY_DOMAIN:'https://app.herominer.net',   // 支付注册域名
+    CONTACTUSDESC:'',                  // 联系我们文字描述
+    ABOUTUSDESC:'',                   // 关于我们文字描述
+    KT_SHOW : '嗨豆',                    // KT界面显示文字
+    ST_SHOW : '碎银',                    // ST界面显示文字
+    SC_SHOW : '银两'                     // SC界面显示文字
+};
+
+export const getModulConfig = (modulName: string) => {
+    if (appModulConfig.hasOwnProperty(modulName)) {
+        return appModulConfig[modulName];
+    } else {
+        return false;
+    }
+};
+
 // 上传的文件url前缀
 export const uploadFileUrlPrefix = `http://${sourceIp}/service/get_file?sid=`;
 
 // 向资源服务器请求第3方数据url prefix
 export const thirdUrlPre = `http://${sourceIp}/proxy`;
+
 /**
  * 预估出来的erc20 gasLimit倍数
  */
@@ -553,36 +591,6 @@ export const defaultGasLimit = 21000;
 export const MAX_SHARE_LEN = 3;
 // 助记词片段分享最小数
 export const MIN_SHARE_LEN = 2;
-
-// 不同矿工费的到账时间
-export const timeOfArrival = {
-    ETH:[{
-        level:MinerFeeLevel.Standard,
-        text:{ zh_Hans:'标准',zh_Hant:'標準',en:'' },// 标准
-        time:{ zh_Hans:'1-3分钟',zh_Hant:'1-3分鐘',en:'' }
-    },{
-        level:MinerFeeLevel.Fast,
-        text:{ zh_Hans:'快',zh_Hant:'快',en:'' },// 快
-        time:{ zh_Hans:'30-60秒',zh_Hant:'30-60秒',en:'' }
-    },{
-        level:MinerFeeLevel.Fastest,
-        text:{ zh_Hans:'最快',zh_Hant:'最快',en:'' },// 最快
-        time:{ zh_Hans:'10-30秒',zh_Hant:'10-30秒',en:'' }
-    }],
-    BTC:[{
-        level:MinerFeeLevel.Standard,
-        text:{ zh_Hans:'标准',zh_Hant:'標準',en:'' },// 标准
-        time:{ zh_Hans:'2-3小时',zh_Hant:'2-3小時',en:'' }
-    },{
-        level:MinerFeeLevel.Fast,
-        text:{ zh_Hans:'快',zh_Hant:'快',en:'' },// 快
-        time:{ zh_Hans:'0.5-1小时',zh_Hant:'0.5-1小時',en:'' }
-    },{
-        level:MinerFeeLevel.Fastest,
-        text:{ zh_Hans:'最快',zh_Hant:'最快',en:'' },// 最快
-        time:{ zh_Hans:'1-30分钟',zh_Hant:'1-30分鐘',en:'' }
-    }]
-};
 
 // 默认ETH ERC20转账地址,预估矿工费的时候使用
 export const defaultEthToAddr = '0x040e7783A06e9b994F6e90DF5b2933C03F1b8F21';

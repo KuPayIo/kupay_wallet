@@ -1,13 +1,13 @@
 
 import { isArray } from '../../pi/net/websocket/util';
-import { PAGELIMIT, uploadFileUrlPrefix } from '../publicLib/config';
+import { PAGELIMIT, uploadFileUrlPrefix } from '../public/config';
 // tslint:disable-next-line:max-line-length
-import { CloudCurrencyType,LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, PurchaseHistory, TaskSid } from '../publicLib/interface';
-// tslint:disable-next-line:max-line-length
-import { currencyType, formatBalance, GetDateDiff, parseRtype, timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from '../publicLib/tools';
-import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from '../publicLib/unitTools';
-import { getStaticLanguage } from '../remote/tools';
+import { CloudCurrencyType, LuckyMoneyDetail, LuckyMoneyExchangeDetail, LuckyMoneySendDetail, MineRank, PurchaseHistory, TaskSid } from '../public/interface';
 import { getStore } from '../store/memstore';
+// tslint:disable-next-line:max-line-length
+import { currencyType, formatBalance, GetDateDiff, parseRtype, timestampFormat, timestampFormatToDate, transDate, unicodeArray2Str } from './pureUtils';
+import { getStaticLanguage } from './tools';
+import { kpt2kt, sat2Btc, smallUnit2LargeUnit, wei2Eth } from './unitTools';
 
 /**
  * 解析数据
@@ -187,30 +187,7 @@ export const parseMiningRank = (data) => {
     return miningData;
    
 };
-/**
- * 解析挖矿历史记录
- */
-export const parseMiningHistory = (data) => {
-    const list = [];
-    for (let i = 0; i < data.value.length; i++) {
-        list.push({
-            num: formatBalance(kpt2kt(data.value[i][0])),
-            total: kpt2kt(data.value[i][1]),
-            time: transDate(new Date(data.value[i][2]))
-        });
-    }
-      
-    const miningHistory = getStore('activity/mining/history');
-    const rList = miningHistory && miningHistory.list || [];
-    const start = String(data.start); 
-    const canLoadMore = list.length > PAGELIMIT;
 
-    return {
-        list:rList.concat(list),
-        start,
-        canLoadMore
-    };
-};
 /**
  * 解析分红历史记录
  */
