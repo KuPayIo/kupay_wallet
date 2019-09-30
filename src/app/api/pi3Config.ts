@@ -1,19 +1,13 @@
-import { sourceIp } from '../publicLib/config';
+import { sourceIp } from '../public/config';
+import { ButtonMods } from '../view/play/home/gameConfig';
 
 /**
  * 第三方注入配置
  */
 
- // 按钮模式
-enum ButtonMods { 
-    FLOATBUTTON = 1,  // 悬浮框样式1  三个点 可拖动
-    WXBUTTON = 2,      // 微信小程序样式
-    FLOATBUTTON2 = 3   // 悬浮框样式2  图标 可拖动
-}
 export const getPi3Config = () => {
     return {
         buttonMods:ButtonMods,   // 所有按钮模式
-        buttonMod:ButtonMods.FLOATBUTTON2,   // 当前按钮模式
         jsApi:'app/remote/JSAPI',
         imgUrlPre:`http://${sourceIp}/browser/app/res/image/third/`
     };

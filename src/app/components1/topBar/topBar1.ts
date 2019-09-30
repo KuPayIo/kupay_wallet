@@ -5,7 +5,7 @@
 import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
-import { popNew3, rippleShow } from '../../utils/tools';
+import { rippleShow } from '../../utils/pureUtils';
 
 interface Props {
     avatar:string;

@@ -107,6 +107,7 @@ export const getLocalStorage = (key: string, defaultValue = undefined): Promise<
         mod.read(localStorageImpl, key, (res) => {
             if (!res) {
                 resolve(defaultValue);
+                
                 return;
             }
 
@@ -118,7 +119,7 @@ export const getLocalStorage = (key: string, defaultValue = undefined): Promise<
             console.log('读取数据失败', key);
             console.log('读取失败原因', JSON.stringify(err));
             resolve(defaultValue);
-            console.log('getLocalStorage---------------------------')
+            console.log('getLocalStorage---------------------------');
         });
     });
 };

@@ -1,3 +1,4 @@
+import { listDirFile } from '../../pi/widget/util';
 
 /**
  * commonjs 动态加载文件
@@ -17,14 +18,14 @@ export const relativeGet = (path:string) => {
 /**
  * loadDir加载模块
  */
-export const piLoadDir = (sourceList:string[]) => {
+export const piLoadDir = (sourceList:string[],flags?:any,fileMap?:any,suffixCfg?:any) => {
     return new Promise((resolve,reject) => {
         const html = relativeGet('pi/util/html');
         html.checkWebpFeature((r) => {
-            const flags:any = {};
+            flags = flags || {};
             flags.webp = flags.webp || r;
             const util = relativeGet('pi/widget/util');
-            util.loadDir(sourceList, flags, undefined, undefined,  (fileMap) => {
+            util.loadDir(sourceList, flags, fileMap, suffixCfg,  (fileMap) => {
                 const tab = util.loadCssRes(fileMap);
                 tab.timeout = 90000;
                 tab.release();
@@ -80,4 +81,21 @@ export const loadJS = (roots, url, charset, callback, errText, i, afterCallback)
     n.crossorigin = true;
     n.src = roots[i || 0] + url;
     head.appendChild(n);
+};
+
+/**
+ * 通过load模块加载资源  获取资源原始数据
+ */
+export const loadDir1 = (dirs:string[],successCb:Function) => {
+    let fileList = [];
+    const suffixMap = new Map();
+    listDirFile(dirs, undefined, fileList, suffixMap, undefined, undefined,undefined);
+    fileList = fileList.concat(suffixMap.get('js'));
+    const load = pi_modules.load.exports;
+    const down = load.create(fileList, successCb, (err) => {
+        console.error('load fileList err = ',err);
+    }, (res) => {
+        // console.log(res);
+    });
+    load.start(down);
 };

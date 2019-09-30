@@ -1,4 +1,4 @@
-import { inAndroidApp, inIOSApp } from '../publicLib/config';
+import { inAndroidApp, inIOSApp } from '../public/config';
 
 /**
  * commonjs 动态加载文件

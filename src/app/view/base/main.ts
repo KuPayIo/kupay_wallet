@@ -11,34 +11,25 @@ import { addAppBackPressed } from '../../../pi/browser/app_comon_event';
 import { ExitApp } from '../../../pi/browser/exitApp';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
-import { getHasEnterGame, setHasEnterGame } from '../../api/thirdBase';
-import { callEmitWebviewReload, callWalletManualReconnect, getStoreData } from '../../middleLayer/wrap';
-import { LockScreen } from '../../publicLib/interface';
-import { getScreenModify, preLoadAd } from '../../viewLogic/native';
+import { LockScreen } from '../../public/interface';
+import { getStore } from '../../store/memstore';
 
 // ============================== 导出
-export const run = (homePageData,cb): void =>  {
-    callEmitWebviewReload();
+export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查  
     checkUpdate();  
+    const id = getStore('user/id');
     popNew('app-view-base-app');
-    const id = homePageData[0];
-    const accounts = homePageData[1];
     if (!id) {
-        if (accounts.length > 0) {
-            popNew('app-view-base-entrance1',{ accounts });
-        } else {
-            popNew('app-view-base-entrance');
-        }
+        popNew('app-view-base-entrance');
     } 
     // 锁屏页面;
-    popNewPage();
-    self.homeEnter = Date.now() - self.startTime;
+    // popNewPage();
     if (cb) cb();
     
     // 预先从底层获取一些数据
-    preFetchFromNative();
+    // preFetchFromNative();
     // app event 注册
     addAppEvent();
 };
@@ -94,11 +85,7 @@ const addAppEvent = () => {
                 });
     
                 setTimeout(() => {
-                    getStoreData('user/isLogin').then(isLogin => {
-                        if (!isLogin) {
-                            callWalletManualReconnect();
-                        }
-                    });
+                    // TODO 钱包登录
                         
                     if (!chatGetStore('isLogin')) {
                         chatManualReconnect();
@@ -147,9 +134,25 @@ const addAppEvent = () => {
 const ifNeedUnlockScreen = async () => {
     const unlockScreen = document.getElementById('keyboard');
     if (unlockScreen) return false;
-    const ls: LockScreen = await getStoreData('setting/lockScreen',{});
+    const ls: LockScreen = await getStore('setting/lockScreen',{});
     const lockScreenPsw = ls.psw;
     const openLockScreen = ls.open !== false;
 
     return lockScreenPsw && openLockScreen;
+};
+
+let hasEnterGame = false;   // 是否进入游戏  锁屏判断是否从游戏退出，是就不展示锁屏界面
+
+/**
+ * 设置hasEnterGame
+ */
+export const setHasEnterGame = (entered:boolean) => {
+    hasEnterGame = entered;
+};
+
+/**
+ * 获取hasEnterGame
+ */
+export const getHasEnterGame = () => {
+    return hasEnterGame;
 };

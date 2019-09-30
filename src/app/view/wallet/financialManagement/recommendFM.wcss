@@ -1,9 +1,0 @@
-.new-page{
-    overflow-x: hidden;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-}
-.product-list{
-    padding: 30px 20px;
-}

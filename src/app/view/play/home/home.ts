@@ -4,18 +4,14 @@
  // ================================ 导入
 import { WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
+import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
 import { notify } from '../../../../pi/widget/event';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
-import { getPi3Config } from '../../../api/pi3Config';
-import { closePopFloatBox, setHasEnterGame } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,callGetInviteCode, getStoreData } from '../../../middleLayer/wrap';
-import { LuckyMoneyType } from '../../../publicLib/interface';
-import { popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
+import { getStore, register } from '../../../store/memstore';
 import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
@@ -33,35 +29,35 @@ export class PlayHome extends Widget {
     public thirdApiPromise:Promise<string>;
     constructor() {
         super();
-        setTimeout(() => {
-            this.thirdApiPromise = new Promise((resolve) => {
-                const path = 'app/api/thirdApi.js.txt';
-                loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
-                    const arr = new Uint8Array(fileMap[path]);
-                    const content = new TextDecoder().decode(arr);
-                    resolve(content);
-                }, () => {
-                    //
-                }, () => {
-                    //
-                });
-            });
-        },0);
+        // setTimeout(() => {
+        //     this.thirdApiPromise = new Promise((resolve) => {
+        //         const path = 'app/api/thirdApi.js.txt';
+        //         loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
+        //             const arr = new Uint8Array(fileMap[path]);
+        //             const content = new TextDecoder().decode(arr);
+        //             resolve(content);
+        //         }, () => {
+        //             //
+        //         }, () => {
+        //             //
+        //         });
+        //     });
+        // },0);
 
-        setTimeout(() => {
-            this.thirdApiDependPromise = new Promise((resolve) => {
-                const path = 'app/api/thirdApiDepend.js.txt';
-                loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
-                    const arr = new Uint8Array(fileMap[path]);
-                    const content = new TextDecoder().decode(arr);
-                    resolve(content);
-                }, () => {
-                    //
-                }, () => {
-                    //
-                });
-            });
-        },0);
+        // setTimeout(() => {
+        //     this.thirdApiDependPromise = new Promise((resolve) => {
+        //         const path = 'app/api/thirdApiDepend.js.txt';
+        //         loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
+        //             const arr = new Uint8Array(fileMap[path]);
+        //             const content = new TextDecoder().decode(arr);
+        //             resolve(content);
+        //         }, () => {
+        //             //
+        //         }, () => {
+        //             //
+        //         });
+        //     });
+        // },0);
        
     }
     
@@ -87,6 +83,7 @@ export class PlayHome extends Widget {
             { name:'小黄人',icon:'../../../res/image/game/littleYellowMan.png' }
         ];
         // 今日推荐
+        // tslint:disable-next-line:max-line-length
         this.props.recommendedToday =  { name:'仙之侠道',icon:'../../../res/image/game/xianzhixiadao.png',bg:'../../../res/image/game/xianzhixiadaoBg.png',desc:'2019最热唯美奇幻手游' };
         // 热门
         this.props.popular = [
@@ -94,6 +91,7 @@ export class PlayHome extends Widget {
             { name:'仙之侠道',icon:'',bg:'../../../res/image/game/xianzhixiadaoBg1.png',desc:'2019最热唯美奇幻手游' }
         ];
         // 编辑推荐
+        // tslint:disable-next-line:max-line-length
         this.props.editRecommend = { name:'一起吃鸡',icon:'../../../res/image/game/bullfighting.png',bg:'../../../res/image/game/eatingChicken.png',desc:'2019LPL春季赛常规赛' };
         // 全部游戏
         this.props.allGame = [
@@ -142,7 +140,7 @@ export class PlayHome extends Widget {
     }
 
     public showMine() {
-        popNew3('app-view-mine-home-home');
+        popNew('app-view-mine-home-home');
     }
 
     /**
@@ -161,15 +159,15 @@ export class PlayHome extends Widget {
      * 搜索
      */
     public toSearch() {
-        popNew3('app-view-play-searchGame');
+        popNew('app-view-play-searchGame');
     }
 
     /**
      * 点击游戏
      */
     public async gameClick(num:number) {
-        closePopFloatBox();
-        const id = await getStoreData('user/id');
+        // closePopFloatBox();
+        const id = getStore('user/id');
         if (!id) return;
         popNew3('earn-client-app-view-openBox-openBox');
         
@@ -223,7 +221,7 @@ export class PlayHome extends Widget {
      * @param index 序号
      */
     public activityClick(index:number) {
-        popNew3(this.props.activityList[index].url);
+        popNew(this.props.activityList[index].url);
     }
 
     /**
@@ -232,7 +230,7 @@ export class PlayHome extends Widget {
     public defaultEnterGame() {
         return;
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
-        getStoreData('user/isLogin').then(isLogin => {
+        getStore('user/isLogin').then(isLogin => {
             const phoneNumber = this.props.userInfo.phoneNumber;    
             console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
             if (!firstEnterGame || phoneNumber) {
@@ -260,7 +258,7 @@ export class PlayHome extends Widget {
 let hasEnterGame = false;
 // ========================================
 
-registerStoreData('user/isLogin', (isLogin:boolean) => {
+register('user/isLogin', (isLogin:boolean) => {
     setTimeout(() => {
         const w:any = forelet.getWidget(WIDGET_NAME);
         w && w.defaultEnterGame();   

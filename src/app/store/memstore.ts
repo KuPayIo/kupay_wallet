@@ -7,10 +7,11 @@ import { appLanguageList, LocalLanguageMgr } from '../../pi/browser/localLanguag
 import { HandlerMap } from '../../pi/util/event';
 import { setLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { defaultSetting, topHeight } from '../publicLib/config';
+import { defaultSetting, topHeight } from '../public/config';
 // tslint:disable-next-line:max-line-length
-import { AddrInfo, BtcMinerFee, ChangellyPayinAddr, ChangellyTempTxs, CloudCurrencyType, CloudWallet, Currency2USDT, CurrencyRecord, GasPrice, Setting, Silver, Store, TxHistory, UserInfo, Wallet } from '../publicLib/interface';
-import { deleteFile, getFile, getLocalStorage, initFileStore, initLocalStorageFileStore, setLocalStorage, writeFile } from './filestore';
+import { BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, GasPrice, Setting, Silver, Store, UserInfo } from '../public/interface';
+// tslint:disable-next-line:max-line-length
+import { deleteFile, getLocalStorage, initFileStore, initLocalStorageFileStore, setLocalStorage } from './filestore';
 
 // ============================================ 导出
 
@@ -27,7 +28,7 @@ export const initStore = () => {
 
         return initAccount().then(() => { // 账户初始化
             initFileStore().then(() => {  // indexDb数据初始化
-                initTxHistory();         // 历史记录初始化
+                // initTxHistory();         // 历史记录初始化
             });
         });
     });
@@ -173,22 +174,21 @@ export const initCloudWallets = () => {
  * 获取所有的账户列表
  */
 export const getAllAccount = () => {
-    console.log('getAllAccount start----------')
+    console.log('getAllAccount start----------');
+
     return getLocalStorage('accounts', {
         currenctId: '',
         accounts: {}
     }).then(localAcccounts => {
-        console.log('getAllAccount', localAcccounts)
+        console.log('getAllAccount', localAcccounts);
         const accounts = [];
         for (const key in localAcccounts.accounts) {
             accounts.push(localAcccounts.accounts[key]);
         }
 
-        return accounts.sort((item1, item2) => {
-            return item2.wallet.logoutTimestamp - item1.wallet.logoutTimestamp;
-        });
+        return accounts;
     }).catch(e => {
-        console.log("getAllAcount failed, e = ", e);
+        console.log('getAllAcount failed, e = ', e);
     });
 };
 
@@ -217,46 +217,6 @@ const initFile = () => {
 };
 
 /**
- * 初始化历史记录
- * @param fileTxHistorys indexDb存储的历史记录
- */
-const initTxHistory = () => {
-    return new Promise(resolve => {
-        if (!store.user.id) {
-            resolve();
-
-            return;
-        }
-        getFile(store.user.id, (value, key) => {
-            if (value) {
-                const currencyRecords = store.wallet.currencyRecords;
-                for (const record of currencyRecords) {
-                    for (const addrInfo of record.addrs) {
-                        addrInfo.txHistory = getTxHistory(value, record.currencyName, addrInfo.addr);
-                    }
-                }
-            }
-            resolve();
-        }, () => {
-            resolve();
-            console.log('read error');
-        });
-    });
-
-};
-
-/**
- * 获取历史记录
- */
-const getTxHistory = (fileTxHistorys: FileTxHistory[], currencyName: string, addr: string) => {
-    for (const fileTxHistory of fileTxHistorys) {
-        if (fileTxHistory.currencyName === currencyName && fileTxHistory.addr === addr) {
-            return fileTxHistory.txHistory;
-        }
-    }
-};
-
-/**
  * 账户初始化
  */
 const initAccount = () => {
@@ -271,7 +231,6 @@ const initAccount = () => {
             // store.user init
             store.user.id = fileUser.id;
             store.user.token = fileUser.token;
-            store.user.publicKey = fileUser.publicKey;
             store.user.salt = fileUser.salt;
             store.user.info = {
                 ...store.user.info,
@@ -285,42 +244,6 @@ const initAccount = () => {
                 cloudWallet.balance = localCloudWallets.get(key).balance;
 
             }
-
-            // store.wallet init
-            const localWallet = curAccount.wallet;
-            const currencyRecords = [];
-            for (const localRecord of localWallet.currencyRecords) {
-                const addrs = [];
-                for (const info of localRecord.addrs) {
-                    const addrInfo: AddrInfo = {
-                        addr: info.addr,
-                        balance: info.balance,
-                        txHistory: []
-                    };
-                    addrs.push(addrInfo);
-                }
-                const record: CurrencyRecord = {
-                    currencyName: localRecord.currencyName,
-                    currentAddr: localRecord.currentAddr,
-                    addrs,
-                    updateAddr: localRecord.updateAddr
-                };
-                currencyRecords.push(record);
-            }
-
-            const wallet: Wallet = {
-                vault: localWallet.vault,
-                setPsw: localWallet.setPsw,
-                isBackup: localWallet.isBackup,
-                sharePart: false,
-                helpWord: false,
-                showCurrencys: localWallet.showCurrencys,
-                currencyRecords,
-                changellyPayinAddress: localWallet.changellyPayinAddress || [],
-                changellyTempTxs: localWallet.changellyTempTxs || [],
-                logoutTimestamp: localWallet.logoutTimestamp || 0
-            };
-            store.wallet = wallet;
         } else {
             store.user.salt = cryptoRandomInt().toString();
         }
@@ -410,9 +333,6 @@ const registerAccountChange = () => {
     register('user', () => {
         accountChange();
     });
-    register('wallet', () => {
-        accountChange();
-    });
     register('cloud', () => {
         accountChange();
     });
@@ -481,7 +401,6 @@ const accountChange = () => {
             const saveAccount = flags.saveAccount;
             const account = localAccounts.accounts[localAccounts.currenctId];
             if (!account) return;
-            account.wallet.logoutTimestamp = new Date().getTime();
             if (saveAccount) {
                 localAccounts.currenctId = '';
                 setLocalStorage('accounts', localAccounts);
@@ -510,46 +429,8 @@ const accountChange = () => {
             localCloudWallets.set(k, cloudWallet);
         }
 
-        const wallet = getStore('wallet');
-        const fileTxHistorys = [];
-        let localWallet: LocalWallet = null;
-        if (wallet) {
-            const localCurrencyRecords = wallet.currencyRecords.map(record => {
-                const addrs = record.addrs.map(info => {
-                    const fileTxHistory: FileTxHistory = {
-                        currencyName: record.currencyName,
-                        addr: info.addr,
-                        txHistory: info.txHistory
-                    };
-                    fileTxHistorys.push(fileTxHistory);
-
-                    return {
-                        addr: info.addr,
-                        balance: info.balance
-                    };
-                });
-
-                return {
-                    ...record,
-                    addrs
-                };
-            });
-
-            localWallet = {
-                vault: wallet.vault,
-                setPsw: wallet.setPsw,
-                isBackup: wallet.isBackup,
-                showCurrencys: wallet.showCurrencys,
-                currencyRecords: localCurrencyRecords,
-                changellyPayinAddress: wallet.changellyPayinAddress,
-                changellyTempTxs: wallet.changellyTempTxs,
-                logoutTimestamp: new Date().getTime()
-            };
-        }
-
         const newAccount: Account = {
             user: localUser,
-            wallet: localWallet,
             cloud: { cloudWallets: <any>[...localCloudWallets] }
         };
 
@@ -557,7 +438,6 @@ const accountChange = () => {
         localAccounts.accounts[storeUser.id] = newAccount;
 
         setLocalStorage('accounts', localAccounts);
-        writeFile(storeUser.id, fileTxHistorys);
     });
 
 };
@@ -611,9 +491,7 @@ const store: Store = {
         isLogin: false,              // 登录状态
         allIsLogin: false,            // 所有服务登录状态  (钱包  活动  聊天)
         token: '',                   // 自动登录token
-        conRandom: '',               // 连接随机数
         conUid: '',                   // 服务器连接uid
-        publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
         salt: '',                    // 加密 盐值
         info: {                      // 用户基本信息
             nickName: '',           // 昵称
@@ -626,7 +504,6 @@ const store: Store = {
             note: ''                   // 个性签名
         }
     },
-    wallet: null,
     cloud: {
         cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
     },
@@ -636,21 +513,9 @@ const store: Store = {
             exchange: null,       // 兑换红包记录
             invite: null          // 邀请码记录
         },
-        mining: {
-            total: null,      // 挖矿汇总信息
-            history: null, // 挖矿历史记录
-            addMine: [],  // 矿山增加项目
-            mineRank: null,    // 矿山排名
-            miningRank: null,  // 挖矿排名
-            itemJump: null
-        },                       // 挖矿
         dividend: {
             total: null,         // 分红汇总信息
             history: null       // 分红历史记录
-        },
-        financialManagement: {          // 理财
-            products: null,
-            purchaseHistories: null
         }
     },
     setting: {
@@ -706,7 +571,6 @@ export interface Accounts {
  */
 export interface Account {
     user: LocalUser;
-    wallet: LocalWallet;
     cloud: LocalCloud;
 }
 
@@ -750,20 +614,6 @@ export interface LocalCloudWallet {
 }
 
 /**
- * 钱包对象
- */
-export interface LocalWallet {
-    vault: string;                      // 钱包核心
-    setPsw: boolean;                     // 是否已经设置密码
-    isBackup: boolean;                  // 备份助记词与否
-    showCurrencys: string[];            // 显示的货币列表
-    currencyRecords: LocalCurrencyRecord[];  // 支持的所有货币记录
-    changellyPayinAddress: ChangellyPayinAddr[]; // changelly payinAddress
-    changellyTempTxs: ChangellyTempTxs[]; // changelly临时交易记录
-    logoutTimestamp?: number;      // 登出时间戳
-}
-
-/**
  * 本地3方数据
  */
 export interface LocalThird {
@@ -774,13 +624,6 @@ export interface LocalThird {
     silver: Silver; // 白银价格
     currency2USDTMap: [string, Currency2USDT][]; // k线  --> 计算涨跌幅
 }
-
-/**
- * indexDB历史记录
- */
-export interface FileTxHistory {
-    currencyName: string;
-    addr: string;
-    txHistory: TxHistory[];
-}
 // =======================================================
+
+initStore();

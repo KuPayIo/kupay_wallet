@@ -1,7 +1,8 @@
 /**
  * 处理提示信息
  */
-import { getStaticLanguage, popNewMessage } from './tools';
+import { popNewMessage } from './pureUtils';
+import { getStaticLanguage } from './tools';
 
 /**
  * 显示错误信息
