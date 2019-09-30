@@ -13,6 +13,9 @@
             <widget w-tag="pi-ui-lang" w-class="offline">{zh_Hans:"离线",zh_Hant:"離線",en:"Offline"}</widget>
             {{end}}
         </div>
+        {{if it.title}}
+        <div w-class="title">{{it.title}}</div>
+        {{end}}
         <div style="display:inline-block;" on-down="onShow">
             {{if it.nextImg}}
             <img src="{{it.nextImg}}" w-class="refreshBtn" on-tap="goNext"/>

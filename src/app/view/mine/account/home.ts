@@ -95,27 +95,6 @@ export class AccountHome extends Widget {
         this.props.editName = e.value;
     }
 
-    // 备份助记词
-    public async backupWalletClick() {
-        const psw = await popPswBox();
-        if (!psw) return;
-        const ret = await exportMnemonic(psw);
-        if (ret) {
-            popNew('app-view-wallet-backup-index', { ...ret });
-        }
-
-    }
-
-    // 导出私钥
-    public async exportPrivateKeyClick() {
-        const psw = await popPswBox();
-        if (!psw) return;
-        const ret = await exportMnemonic(psw,false);
-        if (ret && ret.mnemonic) {
-            popNew('app-view-mine-account-exportPrivateKey', { mnemonic:ret.mnemonic });
-        }
-    }
-
     public uploadAvatar() {
         const imagePicker = selectImage((width, height, url) => {
             console.log('selectImage url = ',url);
@@ -143,18 +122,6 @@ export class AccountHome extends Widget {
             popNew('app-view-mine-setting-phone');
         } else { // 重新绑定
             popNew('app-view-mine-setting-unbindPhone');
-        }
-        
-    }
-
-    /**
-     * 修改密码
-     */
-    public changePsw() {
-        if (this.props.isTourist) {
-            popNew('app-view-mine-setting-settingPsw',{});
-        } else {
-            popNew('app-view-mine-setting-changePsw');
         }
         
     }
@@ -218,69 +185,14 @@ export class AccountHome extends Widget {
     }
 
     /**
-     * 退出账户不删除信息
+     * 注销账户
      */
-    public async logOut() {
-        const wallet = await getStoreData('wallet');
-        const setPsw = wallet.setPsw;
-        const modalBox2 = deepCopy(this.language.modalBox2);
-        if (!setPsw) {
-            modalBox2.sureText = this.language.modalBox2.sureText1;
-        }
-        popNew('app-components-modalBox-modalBox', modalBox2 , () => {  
-            if (!setPsw) {
-                this.ok && this.ok();
-            } else {
-                this.backUp();
-            }
-            
-            console.log('取消1');
-        }, () => {
-            console.log(1);
-            logoutAccount().then(() => {
+    public logOutDel() {
+        popNew('app-components-modalBox-modalBox', { title: '确认退出', content:'' }, () => {
+            logoutAccount(true).then(() => {
                 this.backPrePage();
             });
             
-        }
-        );
-    }
-
-    /**
-     * 备份
-     */
-    public async backUp() {
-        const psw = await popPswBox();
-        if (!psw) return;
-        const ret = await exportMnemonic(psw);
-        if (ret) {
-            popNew('app-view-wallet-backup-index', { ...ret });
-            this.ok && this.ok();
-        }
-    }
-
-    /**
-     * 注销账户
-     */
-    public async logOutDel() {
-        const setPsw = await getStoreData('wallet/setPsw');
-        const modalBox3 = deepCopy(this.language.modalBox3);
-        if (!setPsw) {
-            modalBox3.sureText = this.language.modalBox3.sureText1;
-        }
-        popNew('app-components-modalBox-modalBox', modalBox3 , () => {
-            if (!setPsw) {
-                this.ok && this.ok();
-            } else {
-                this.backUp();
-            }
-            console.log('取消2');
-        }, () => {
-            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[3], style: 'color:#F7931A;' }, () => {
-                logoutAccount(true).then(() => {
-                    this.backPrePage();
-                });
-                
-            });
         });
     }
 
