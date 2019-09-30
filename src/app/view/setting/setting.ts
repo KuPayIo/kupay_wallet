@@ -6,9 +6,8 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getStoreData, setStoreData } from '../../middleLayer/wrap';
-import { rippleShow } from '../../utils/tools';
-import { registerStoreData } from '../../viewLogic/common';
+import { getStore, register, setStore } from '../../store/memstore';
+import { rippleShow } from '../../utils/pureUtils';
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -39,23 +38,21 @@ export class Setting extends Widget {
     }
 
     public initData() {
-        getStoreData('setting').then(setting => {
-            const ls = setting.lockScreen;
-            if (ls) {
-                this.props.openLockScreen = ls.open !== false;
-            }
-            const lan = setting.language || 'zh_Hans';
-            const unit = setting.currencyUnit || 'CNY';
-            const color = setting.changeColor || 'redUp';
+        const setting = getStore('setting');
+        const ls = setting.lockScreen;
+        if (ls) {
+            this.props.openLockScreen = ls.open !== false;
+        }
+        const lan = setting.language || 'zh_Hans';
+        const unit = setting.currencyUnit || 'CNY';
+        const color = setting.changeColor || 'redUp';
 
-            const itemList = [
+        const itemList = [
                 { title: this.language.itemTitle[0], list: this.language.languageSet, selected: lan, flag: 0 },
                 { title: this.language.itemTitle[1], list: this.language.currencyUnit, selected: unit, flag: 1 },
                 { title: this.language.itemTitle[2], list: this.language.changeColor, selected: color, flag: 2 }
-            ];
-            this.props.itemList = itemList;
-            this.paint();
-        });
+        ];
+        this.props.itemList = itemList;
     }
 
     // 动画效果执行
@@ -71,10 +68,10 @@ export class Setting extends Widget {
      */
     public async onSwitchChange() {
         if (this.props.openLockScreen) {   // 如果锁屏开关打开则直接关闭
-            const ls = await getStoreData('setting/lockScreen');
+            const ls = await getStore('setting/lockScreen');
             ls.open = !ls.open;
             this.props.openLockScreen = false;
-            setStoreData('setting/lockScreen', ls);
+            setStore('setting/lockScreen', ls);
         } else {
             popNew('app-components1-lockScreenPage-lockScreenPage', { setting: true }, (r) => {
                 if (!r) {
@@ -99,33 +96,33 @@ export class Setting extends Widget {
 }
 
 // ================================================本地，立即执行
-registerStoreData('setting/language', (r) => {
+register('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.language = w.config.value[r];
         w.initData();
     }
 });
-registerStoreData('setting/currencyUnit', () => {
+register('setting/currencyUnit', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-registerStoreData('setting/changeColor', () => {
+register('setting/changeColor', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-registerStoreData('setting/lockScreen', () => {
+register('setting/lockScreen', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
 
-registerStoreData('user',() => {
+register('user',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();

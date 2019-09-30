@@ -9,8 +9,9 @@ import { setLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { defaultSetting, topHeight } from '../public/config';
 // tslint:disable-next-line:max-line-length
-import { CloudCurrencyType, CloudWallet,  Setting, Store, UserInfo } from '../public/interface';
-import { deleteFile, getLocalStorage, initFileStore, initLocalStorageFileStore, setLocalStorage, writeFile } from './filestore';
+import { BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, GasPrice, Setting, Silver, Store, UserInfo } from '../public/interface';
+// tslint:disable-next-line:max-line-length
+import { deleteFile, getLocalStorage, initFileStore, initLocalStorageFileStore, setLocalStorage } from './filestore';
 
 // ============================================ 导出
 
@@ -22,10 +23,13 @@ export const initStore = () => {
 
     return initFile().then(() => {
         initSettings();         // 设置初始化
+        initThird();            // 三方数据初始化
         initInviteUsers();      // 邀请好友数据初始化
 
         return initAccount().then(() => { // 账户初始化
-            initFileStore();  // indexDb数据初始化
+            initFileStore().then(() => {  // indexDb数据初始化
+                // initTxHistory();         // 历史记录初始化
+            });
         });
     });
 };
@@ -182,9 +186,7 @@ export const getAllAccount = () => {
             accounts.push(localAcccounts.accounts[key]);
         }
 
-        return accounts.sort((item1, item2) => {
-            return item2.wallet.logoutTimestamp - item1.wallet.logoutTimestamp;
-        });
+        return accounts;
     }).catch(e => {
         console.log('getAllAcount failed, e = ', e);
     });
@@ -240,6 +242,7 @@ const initAccount = () => {
             for (const [key, value] of localCloudWallets) {
                 const cloudWallet = store.cloud.cloudWallets.get(key);
                 cloudWallet.balance = localCloudWallets.get(key).balance;
+
             }
         } else {
             store.user.salt = cryptoRandomInt().toString();
@@ -299,10 +302,27 @@ const initSettings = () => {
 };
 
 /**
+ * 三方数据初始
+ */
+const initThird = () => {
+    getLocalStorage('third').then(third => {
+        if (!third) return;
+        store.third.gasPrice = third.gasPrice;
+        store.third.btcMinerFee = third.btcMinerFee;
+        store.third.rate = third.rate;
+        store.third.silver = third.silver;
+        store.third.gasLimitMap = new Map<string, number>(third.gasLimitMap);
+        store.third.currency2USDTMap = new Map<string, Currency2USDT>(third.currency2USDTMap);
+    });
+
+};
+
+/**
  * 注册文件数据库监听
  */
 const registerFileStore = () => {
     registerAccountChange(); // 监听账户变化
+    registerThirdChange(); // 监听3方数据变化
     registerSettingChange(); // 监听setting数据变化
 };
 
@@ -315,6 +335,15 @@ const registerAccountChange = () => {
     });
     register('cloud', () => {
         accountChange();
+    });
+};
+
+/**
+ * 3方数据变化监听
+ */
+const registerThirdChange = () => {
+    register('third', () => {
+        thirdChange();
     });
 };
 
@@ -372,7 +401,6 @@ const accountChange = () => {
             const saveAccount = flags.saveAccount;
             const account = localAccounts.accounts[localAccounts.currenctId];
             if (!account) return;
-            account.wallet.logoutTimestamp = new Date().getTime();
             if (saveAccount) {
                 localAccounts.currenctId = '';
                 setLocalStorage('accounts', localAccounts);
@@ -388,6 +416,7 @@ const accountChange = () => {
         const localUser: LocalUser = {
             id: storeUser.id,
             token: storeUser.token,
+            publicKey: storeUser.publicKey,
             salt: storeUser.salt,
             info: storeUser.info
         };
@@ -411,6 +440,21 @@ const accountChange = () => {
         setLocalStorage('accounts', localAccounts);
     });
 
+};
+
+/**
+ * 第3方数据变化
+ */
+const thirdChange = () => {
+    const localThird: LocalThird = {
+        gasPrice: getStore('third/gasPrice'),
+        btcMinerFee: getStore('third/btcMinerFee'),
+        gasLimitMap: [...getStore('third/gasLimitMap')],   // map 转二维数组
+        rate: getStore('third/rate'),
+        silver: getStore('third/silver'),
+        currency2USDTMap: [...getStore('third/currency2USDTMap')]
+    };
+    setLocalStorage('third', localThird);
 };
 
 /**
@@ -468,7 +512,7 @@ const store: Store = {
             sends: null,          // 发送红包记录
             exchange: null,       // 兑换红包记录
             invite: null          // 邀请码记录
-        },                     // 挖矿
+        },
         dividend: {
             total: null,         // 分红汇总信息
             history: null       // 分红历史记录
@@ -487,6 +531,20 @@ const store: Store = {
         deviceInfo: null,           // 设备信息
         topHeight,              // 设备头部应空出来的高度
         bottomHeight: 0            // 设备底部应空出来的高度
+    },
+    third: {
+        gasPrice: null,                             // gasPrice分档次
+        btcMinerFee: null,                          // btc minerfee 分档次
+        gasLimitMap: new Map<string, number>(),     // 各种货币转账需要的gasLimit
+
+        // changelly
+        changellyCurrencies: [],                                  // changelly 支持的币种
+        rate: 0,                                            // 货币的美元汇率
+        silver: {                                         // 黄金价格
+            price: 0,
+            change: 0
+        },
+        currency2USDTMap: new Map<string, Currency2USDT>()  // k线  --> 计算涨跌幅
     },
     flags: {},
     inviteUsers: {
@@ -522,10 +580,25 @@ export interface Account {
 export interface LocalUser {
     id: string;            // 该账号的id (第一个ETH地址)
     token: string;         // 自动登录token
+    publicKey: string;     // 用户公钥, 第一个以太坊地址的公钥
     salt: string;          // 加密 盐值
     info: UserInfo;        // 基本信息
 }
 
+export interface LocalCurrencyRecord {
+    currencyName: string;            // 货币名称
+    currentAddr: string;             // 当前正在使用的地址
+    addrs: LocalAddrInfo[];          // 所有的地址
+    updateAddr: boolean;             // 地址是否已经更新
+}
+
+/**
+ * 地址对象
+ */
+export interface LocalAddrInfo {
+    addr: string;                    // 地址
+    balance: number;                 // 余额
+}
 /**
  * 当前用户前端数据
  */
@@ -538,6 +611,18 @@ export interface LocalCloud {
  */
 export interface LocalCloudWallet {
     balance: number;   // 余额
+}
+
+/**
+ * 本地3方数据
+ */
+export interface LocalThird {
+    gasPrice: GasPrice; // gasPrice分档次
+    btcMinerFee: BtcMinerFee; // btc minerfee 分档次
+    gasLimitMap: [string, number][]; // 各种货币转账需要的gasLimit
+    rate: number; // 货币的美元汇率
+    silver: Silver; // 白银价格
+    currency2USDTMap: [string, Currency2USDT][]; // k线  --> 计算涨跌幅
 }
 // =======================================================
 

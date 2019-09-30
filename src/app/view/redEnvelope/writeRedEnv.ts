@@ -6,13 +6,11 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callGetServerCloudBalance,callVerifyIdentidy, setStoreData } from '../../middleLayer/wrap';
-import { sendRedEnvlope } from '../../net/pull';
-import { CloudCurrencyType, LuckyMoneyType } from '../../publicLib/interface';
-import { getModulConfig } from '../../publicLib/modulConfig';
-import { currencyType } from '../../publicLib/tools';
-import { getUserInfo, popNewLoading, popNewMessage } from '../../utils/tools';
-import { getCloudBalances, registerStoreData } from '../../viewLogic/common';
+import { getServerCloudBalance, sendRedEnvlope } from '../../net/pull';
+import { getModulConfig } from '../../public/config';
+import { CloudCurrencyType, LuckyMoneyType } from '../../public/interface';
+import { getCloudBalances, register, setStore } from '../../store/memstore';
+import { currencyType, getUserInfo, popNewLoading, popNewMessage } from '../../utils/pureUtils';
 // ================================================导出
 
 // tslint:disable-next-line:no-reserved-keywords
@@ -93,14 +91,14 @@ export class WriteRedEnv extends Widget {
      */
     public updateBalance() {
         console.log('vmRpcCall writeRedEnv');
-        getCloudBalances().then(data => {
-            const list = this.props.list;
-            for (const i in list) {
-                list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
-            }
-            this.props.list = list;
-            this.paint(true);
-        });
+
+        const data = getCloudBalances();
+        const list = this.props.list;
+        for (const i in list) {
+            list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
+        }
+        this.props.list = list;
+        this.paint(true);
     }
 
     public backPrePage() {
@@ -238,7 +236,8 @@ export class WriteRedEnv extends Widget {
         },
             async (r) => {
                 const close = popNewLoading(this.language.loading);
-                const secretHash = await callVerifyIdentidy(r);
+                // TODO
+                const secretHash = await verifyIdentidy(r);
                 close.callback(close.widget);
                 if (secretHash) {
                     this.sendRedEnv(secretHash);
@@ -268,8 +267,8 @@ export class WriteRedEnv extends Widget {
             this.props.totalNum = 0;
             this.props.totalAmount = 0;
             this.props.message = '';
-            callGetServerCloudBalance();// 更新余额
-            setStoreData('activity/luckyMoney/sends', undefined);// 更新红包记录
+            getServerCloudBalance();// 更新余额
+            setStore('activity/luckyMoney/sends', undefined);// 更新红包记录
             this.paint(true);
         });
         if (this.props.inFlag === 'chat_user' || this.props.inFlag === 'chat_group') {
@@ -309,7 +308,7 @@ export class WriteRedEnv extends Widget {
 
 }
 // =====================================本地
-registerStoreData('cloud/cloudWallets', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();

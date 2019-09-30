@@ -3,13 +3,12 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getStoreData } from '../../middleLayer/wrap';
 import { uploadFile } from '../../net/pull';
+import { getStore, register } from '../../store/memstore';
+import { selectImage } from '../../utils/native';
+import { getUserInfo, popNewMessage, rippleShow } from '../../utils/pureUtils';
 // tslint:disable-next-line:max-line-length
-import { changeWalletName, changeWalletNote, changeWalletSex, deepCopy, getUserInfo, imgResize, popNewMessage, popPswBox, rippleShow, walletNameAvailable } from '../../utils/tools';
-import { registerStoreData } from '../../viewLogic/common';
-import { logoutAccount } from '../../viewLogic/login';
-import { selectImage } from '../../viewLogic/native';
+import { changeWalletName, changeWalletNote, changeWalletSex, deepCopy, imgResize, walletNameAvailable } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords 
 declare var module: any;
@@ -42,7 +41,7 @@ export class AccountHome extends Widget {
             sex:2,
             note:''
         };
-        Promise.all([getUserInfo(),getStoreData('wallet')]).then(([userInfo,wallet]) => {
+        Promise.all([getUserInfo()]).then(([userInfo]) => {
             if (userInfo.phoneNumber) {
                 const str = String(userInfo.phoneNumber).substr(3, 6);
                 this.props.phone = userInfo.phoneNumber.replace(str, '******');
@@ -50,8 +49,6 @@ export class AccountHome extends Widget {
             this.props.nickName = userInfo.nickName ? userInfo.nickName : this.language.defaultName;
             this.props.editName = this.props.nickName;
             this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
-            this.props.backup = wallet.isBackup;
-            this.props.isTourist = !wallet.setPsw;
             this.props.sex = userInfo.sex;
             this.props.note = userInfo.note ? userInfo.note :'';
             this.paint();
@@ -199,7 +196,7 @@ export class AccountHome extends Widget {
      * 退出账户不删除信息
      */
     public async logOut() {
-        const wallet = await getStoreData('wallet');
+        const wallet = await getStore('wallet');
         const setPsw = wallet.setPsw;
         const modalBox2 = deepCopy(this.language.modalBox2);
         if (!setPsw) {
@@ -215,9 +212,11 @@ export class AccountHome extends Widget {
             console.log('取消1');
         }, () => {
             console.log(1);
-            logoutAccount().then(() => {
-                this.backPrePage();
-            });
+
+            // TODO
+            // logoutAccount().then(() => {
+            //     this.backPrePage();
+            // });
             
         }
         );
@@ -227,7 +226,7 @@ export class AccountHome extends Widget {
      * 注销账户
      */
     public async logOutDel() {
-        const setPsw = await getStoreData('wallet/setPsw');
+        const setPsw = await getStore('wallet/setPsw');
         const modalBox3 = deepCopy(this.language.modalBox3);
         if (!setPsw) {
             modalBox3.sureText = this.language.modalBox3.sureText1;
@@ -241,9 +240,10 @@ export class AccountHome extends Widget {
             console.log('取消2');
         }, () => {
             popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[3], style: 'color:#F7931A;' }, () => {
-                logoutAccount(true).then(() => {
-                    this.backPrePage();
-                });
+                // TODO
+                // logoutAccount(true).then(() => {
+                //     this.backPrePage();
+                // });
                 
             });
         });
@@ -267,21 +267,21 @@ export class AccountHome extends Widget {
     }
 }
 
-registerStoreData('user/info', () => {
+register('user/info', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
 
-registerStoreData('wallet', () => {
+register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
     }
 });
 
-registerStoreData('setting/language', (r) => {
+register('setting/language', (r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.language = w.config.value[r];

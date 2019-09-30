@@ -5,8 +5,8 @@
 import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Widget } from '../../../pi/widget/widget';
-import { getModulConfig } from '../../publicLib/modulConfig';
-import { popNewMessage, rippleShow } from '../../utils/tools';
+import { getModulConfig } from '../../public/config';
+import { popNewMessage, rippleShow } from '../../utils/pureUtils';
 // =========================================导出
 declare var pi_update;
 declare var pi_modules;

@@ -6,12 +6,10 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callGetOneUserInfo, callQueryConvertLog, getStoreData, setStoreData } from '../../middleLayer/wrap';
-import { getData } from '../../net/pull';
-import { PAGELIMIT } from '../../publicLib/config';
-import { parseRtype, timestampFormat } from '../../publicLib/tools';
-import { getUserInfo } from '../../utils/tools';
-import { registerStoreData } from '../../viewLogic/common';
+import { getData, getOneUserInfo, queryConvertLog } from '../../net/pull';
+import { PAGELIMIT } from '../../public/config';
+import { getStore, register, setStore } from '../../store/memstore';
+import { getUserInfo, parseRtype, timestampFormat } from '../../utils/pureUtils';
 import { SettingLanguage } from '../base/app';
 
 // ================================ 导出
@@ -70,18 +68,18 @@ export class ExchangeHistory extends Widget {
      */
     public async initData() {
         this.getInviteRedEnvelope();     
-        const cHisRec = await getStoreData('activity/luckyMoney/exchange');
+        const cHisRec = await getStore('activity/luckyMoney/exchange');
         if (cHisRec) {
             const hList = cHisRec.list;
             if (hList && hList.length > this.props.recordList.length) {
                 console.log('load more from local');
             } else {
                 console.log('load more from server');
-                callQueryConvertLog(this.props.start);
+                queryConvertLog(this.props.start);
             }
         } else {
             console.log('load more from server');
-            callQueryConvertLog(this.props.start);
+            queryConvertLog(this.props.start);
         }
         this.loadMore();    
     }
@@ -98,7 +96,7 @@ export class ExchangeHistory extends Widget {
      */
     public async initRedEnv() {
         for (const i in this.props.recordList) {
-            const data = await callGetOneUserInfo([this.props.recordList[i].suid]);
+            const data = await getOneUserInfo([this.props.recordList[i].suid]);
             this.props.recordList[i].userName = data ? data.nickName :this.language.defaultName;
         }
         
@@ -114,7 +112,7 @@ export class ExchangeHistory extends Widget {
 
     // 获取邀请码记录
     public async getInviteRedEnvelope() {
-        const inviteRedBagRec = await getStoreData('activity/luckyMoney/invite');
+        const inviteRedBagRec = await getStore('activity/luckyMoney/invite');
         if (inviteRedBagRec) {
             console.log('inviteRedBagRec from local');
             this.props.inviteObj = inviteRedBagRec;
@@ -145,7 +143,7 @@ export class ExchangeHistory extends Widget {
                 timeShow: timestampFormat(timestamp),
                 userName:this.language.inviteRedEnv
             };
-            setStoreData('activity/luckyMoney/invite',this.props.inviteObj);
+            setStore('activity/luckyMoney/invite',this.props.inviteObj);
             this.innerPaint();
         }
     }
@@ -173,7 +171,7 @@ export class ExchangeHistory extends Widget {
      * 实际加载数据
      */
     public async loadMore() {
-        const cHisRec = await getStoreData('activity/luckyMoney/exchange');
+        const cHisRec = await getStore('activity/luckyMoney/exchange');
         if (!cHisRec) return;
         const hList = cHisRec.list;
         const start = this.props.recordList.length;
@@ -211,7 +209,7 @@ export class ExchangeHistory extends Widget {
      * 页面刷新
      */
     public refreshPage() {
-        callQueryConvertLog();
+        queryConvertLog();
         this.props.topRefresh = true;
         this.paint();
         setTimeout(() => {
@@ -221,7 +219,7 @@ export class ExchangeHistory extends Widget {
     }
 }
 // =====================================本地
-registerStoreData('activity/luckyMoney/exchange', () => {
+register('activity/luckyMoney/exchange', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();

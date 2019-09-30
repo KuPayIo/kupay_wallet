@@ -3,7 +3,7 @@
  */
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { getUserInfo } from '../../utils/tools';
+import { getUserInfo } from '../../utils/pureUtils';
 
 export class UnbindPhone extends Widget {
     public ok:() => void;

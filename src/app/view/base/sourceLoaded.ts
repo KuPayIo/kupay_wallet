@@ -20,6 +20,8 @@ export const init = (fl:any,fm:any,sc:any) => {
  */
 export const loadOpenBoxSource = () => {
     const sourceList = [
+        'app/components1/blankDiv/',
+        'app/components/topBar/',
         'earn/client/app/view/openBox/',
         'earn/client/app/components/lotteryModal/',
         'earn/client/app/view/myProduct/',
@@ -35,6 +37,8 @@ export const loadOpenBoxSource = () => {
  */
 export const loadTurntableSource = () => {
     const sourceList = [
+        'app/components1/blankDiv/',
+        'app/components/topBar/',
         'earn/client/app/view/turntable/',
         'earn/client/app/view/myProduct/',
         'earn/client/app/xls/dataCfg.c.js',
@@ -51,6 +55,8 @@ export const loadTurntableSource = () => {
  */
 export const loadMedalSource = () => {
     const sourceList = [
+        'app/components1/blankDiv/',
+        'app/components/topBar/',
         'earn/client/app/view/medal/',
         'earn/xlsx/errorNum.s.c.js',
         'earn/xlsx/errorNum.s.s.js',
@@ -82,6 +88,8 @@ export const loadMiningSource = () => {
  */
 export const loadShareSource = () => {
     const sourceList = [
+        'app/components1/blankDiv/',
+        'app/components/topBar/',
         'app/components/qrcode/',
         'earn/client/app/view/share/'
     ];
@@ -105,6 +113,8 @@ export const loadMallSource = () => {
  */
 export const loadAboutAppSource = () => {
     const sourceList = [
+        'app/components1/blankDiv/',
+        'app/components/topBar/',
         'app/view/aboutApp/',
         'app/components/basicItem/',
         'app/components/collapse/'
@@ -123,6 +133,8 @@ export const loadRedEnvelopeSource = () => {
         'app/components/basicInput/',
         'app/components1/input/',
         'app/components1/btn/',
+        'app/components1/blankDiv/',
+        'app/components/topBar/',
         'app/components1/img/'
     ];
 
@@ -134,6 +146,8 @@ export const loadRedEnvelopeSource = () => {
  */
 export const loadDividendSource = () => {
     const sourceList = [
+        'app/components1/blankDiv/',
+        'app/components/topBar/',
         'app/view/dividend/',
         'app/components/threeParaCard/'
     ];
@@ -146,6 +160,8 @@ export const loadDividendSource = () => {
  */
 export const loadCloudRechargeSource = () => {
     const sourceList = [
+        'app/components1/blankDiv/',
+        'app/components/topBar/',
         'app/view/cloudRecharge/'
     ];
 
@@ -158,6 +174,8 @@ export const loadCloudRechargeSource = () => {
 export const loadAccountSource = () => {
     const sourceList = [
         'app/view/account/',
+        'app/components1/blankDiv/',
+        'app/components/topBar/',
         'app/components/basicItem/',
         'app/components1/img/'
     ];
@@ -171,6 +189,8 @@ export const loadAccountSource = () => {
 export const loadSettingSource = () => {
     const sourceList = [
         'app/view/setting/',
+        'app/components1/blankDiv/',
+        'app/components/topBar/',
         'app/components/switch/',
         'app/components/basicItem/'
     ];

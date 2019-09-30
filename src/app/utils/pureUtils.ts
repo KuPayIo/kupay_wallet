@@ -97,7 +97,7 @@ export const getUserInfo = (userInfo1?:any) => {
     if (userInfo1) {
         promise = Promise.resolve(userInfo1);
     } else {
-        promise = getStore('user/info');
+        promise = Promise.resolve(getStore('user/info'));
     }
     
     return promise.then(userInfo => {

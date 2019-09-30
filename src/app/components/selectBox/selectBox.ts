@@ -11,7 +11,7 @@
 import { Json } from '../../../pi/lang/type';
 import { notify } from '../../../pi/widget/event';
 import { Widget } from '../../../pi/widget/widget';
-import { getModulConfig } from '../../publicLib/modulConfig';
+import { getModulConfig } from '../../public/config';
 // ================================================导出
 interface Props {
     list:any[];

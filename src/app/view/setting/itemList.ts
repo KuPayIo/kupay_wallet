@@ -6,7 +6,7 @@ import { appLanguageList, LocalLanguageMgr } from '../../../pi/browser/localLang
 import { Json } from '../../../pi/lang/type';
 import { setLang } from '../../../pi/util/lang';
 import { Widget } from '../../../pi/widget/widget';
-import { setStoreData } from '../../middleLayer/wrap';
+import { setStore } from '../../store/memstore';
 // ================================================导出
 export class ItemList extends Widget {
     public ok: () => void;
@@ -43,13 +43,14 @@ export class ItemList extends Widget {
             appLanguage.init();
             appLanguage.setAppLan({
                 success: (localLan) => {},
-                fail: (result) => {},language:appLanguageList[this.props.keys[e.value === 2 ? 0 :e.value]]
+                fail: (result) => {},
+                language:appLanguageList[this.props.keys[e.value === 2 ? 0 :e.value]]
             });
-            setStoreData('setting/language',this.props.keys[e.value === 2 ? 0 :e.value]);
+            setStore('setting/language',this.props.keys[e.value === 2 ? 0 :e.value]);
         } else if (this.props.flag === 1) {
-            setStoreData('setting/currencyUnit',this.props.keys[e.value]);            
+            setStore('setting/currencyUnit',this.props.keys[e.value]);            
         } else {
-            setStoreData('setting/changeColor',this.props.keys[e.value]);  
+            setStore('setting/changeColor',this.props.keys[e.value]);  
         }
     }
 }

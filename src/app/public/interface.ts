@@ -39,6 +39,7 @@ export interface Store {
     activity: Activity;  // 活动：红包，挖矿，分成，理财
 
     setting: Setting;     // 设置
+    third: Third;        // 第三方通信数据，如：changelly...
 
     flags: object;       // 全局的标识
     inviteUsers:object;  // 邀请好友

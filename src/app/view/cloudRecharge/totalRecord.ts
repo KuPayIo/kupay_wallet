@@ -5,11 +5,11 @@ import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { getRealNode } from '../../../pi/widget/painter';
 import { Widget } from '../../../pi/widget/widget';
-import { callGetAccountDetail,getStoreData } from '../../middleLayer/wrap';
-import { CloudCurrencyType, CurrencyRecord } from '../../publicLib/interface';
-import { currencyType, timestampFormat } from '../../publicLib/tools';
+import { getAccountDetail } from '../../net/pull';
+import { CloudCurrencyType, CurrencyRecord } from '../../public/interface';
+import { getStore, register } from '../../store/memstore';
+import { currencyType, timestampFormat } from '../../utils/pureUtils';
 import { fetchLocalTxByHash1, parseStatusShow } from '../../utils/tools';
-import { getCloudWallets, registerStoreData } from '../../viewLogic/common';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -41,7 +41,7 @@ export class TotalRecord extends Widget {
     }
     public init() {
         if (this.props.isActive) {
-            callGetAccountDetail(this.props.currencyName,1);
+            getAccountDetail(this.props.currencyName,1);
         }
         this.updateRecordList();
     }
@@ -51,17 +51,16 @@ export class TotalRecord extends Widget {
      */
     public updateRecordList() {
         if (!this.props.currencyName) return;
-        getCloudWallets().then(cloudWallets => {
-            const data = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).otherLogs;
-            this.props.otherNext = data.start; 
-            this.props.recordList = this.parseList(data.list);
-            this.props.recordList.sort((v1,v2) => {
-                return v2.time - v1.time;
-            });
-            this.props.canLoadMore = data.canLoadMore;
-            this.props.isRefreshing = false;
-            this.paint();
+        const cloudWallets = getStore('cloud/cloudWallets');
+        const data = cloudWallets.get(<any>CloudCurrencyType[this.props.currencyName]).otherLogs;
+        this.props.otherNext = data.start; 
+        this.props.recordList = this.parseList(data.list);
+        this.props.recordList.sort((v1,v2) => {
+            return v2.time - v1.time;
         });
+        this.props.canLoadMore = data.canLoadMore;
+        this.props.isRefreshing = false;
+        this.paint();
     }
 
     /**
@@ -96,7 +95,7 @@ export class TotalRecord extends Widget {
      * 请求更多数据
      */
     public loadMore() {
-        callGetAccountDetail(this.props.currencyName,0,this.props.otherNext);
+        getAccountDetail(this.props.currencyName,0,this.props.otherNext);
     }
 
     /**
@@ -117,7 +116,7 @@ export class TotalRecord extends Widget {
      * 更新交易状态
      */
     public updateTransaction() {
-        getStoreData('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
+        getStore('wallet/currencyRecords').then((currencyRecords:CurrencyRecord[]) => {
             const list = this.props.rechargeList.concat(this.props.withdrawList);
             list.forEach((item) => {
                 const txDetail = fetchLocalTxByHash1(currencyRecords,item.hash);
@@ -131,7 +130,7 @@ export class TotalRecord extends Widget {
 }
 
 // 云端记录变化
-registerStoreData('cloud/cloudWallets', () => {
+register('cloud/cloudWallets', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateRecordList();

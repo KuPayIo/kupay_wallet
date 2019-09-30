@@ -4,11 +4,11 @@ import { getLang } from '../../pi/util/lang';
 import { resize } from '../../pi/widget/resize/resize';
 import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from '../config';
 import { getAccountDetail } from '../net/pull';
-import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin } from '../public/config';
-import { CloudCurrencyType, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../public/interface';
+import { Config, defalutShowCurrencys, ERC20Tokens, getModulConfig, MainChainCoin, USD2CNYRateDefault } from '../public/config';
+import { CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../public/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { piRequire } from './commonjsTools';
-import { arrayBuffer2File, getUserInfo, popNewMessage, unicodeArray2Str } from './pureUtils';
+import { arrayBuffer2File, fetchCloudGain, formatBalance, formatBalanceValue, getUserInfo, popNewMessage, unicodeArray2Str } from './pureUtils';
 import { gotoRecharge } from './recharge';
 
 /**
@@ -507,13 +507,12 @@ export const fetchLocalTxByHash1 = (currencyRecords:CurrencyRecord[],hash:string
  * 获取货币单位符号 $ ￥
  */
 export const getCurrencyUnitSymbol = () => {
-    return getStore('setting/currencyUnit', 'CNY').then(currencyUnit => {
-        if (currencyUnit === 'CNY') {
-            return '￥';
-        } else if (currencyUnit === 'USD') {
-            return '$';
-        }
-    });
+    const currencyUnit = getStore('setting/currencyUnit', 'CNY');
+    if (currencyUnit === 'CNY') {
+        return '￥';
+    } else if (currencyUnit === 'USD') {
+        return '$';
+    }
 };
 
 /**
@@ -657,4 +656,191 @@ export const changeWalletSex = (walletSex:number) => {
         setStore('user/info', userInfo);
     });
     
+};
+
+/**
+ * 获取某个币种对应的货币价值即汇率
+ */
+export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
+    let balanceValue = 0;
+    const USD2CNYRate = getStore('third/rate') || USD2CNYRateDefault;
+    const currency2USDT = getStore('third/currency2USDTMap').get(currencyName) || { open: 0, close: 0 };
+    const currencyUnit = getStore('setting/currencyUnit', 'CNY');
+    const silverPrice = getStore('third/silver/price') || 0;
+    if (currencyUnit === 'CNY') {
+        if (currencyName === 'ST') {
+            balanceValue = balance * (silverPrice / 100);
+        } else if (currencyName === 'SC') {
+            balanceValue = balance;
+        } else {
+            balanceValue = balance * currency2USDT.close * USD2CNYRate;
+        }
+    } else if (currencyUnit === 'USD') {
+        if (currencyName === 'ST') {
+            balanceValue = (balance * (silverPrice / 100)) / USD2CNYRate;
+        } else if (currencyName === 'SC') {
+            balanceValue = balance / USD2CNYRate;
+        } else {
+            balanceValue = balance * currency2USDT.close;
+        }
+    }
+
+    return balanceValue;
+};
+
+// 获取货币的涨跌情况
+export const fetchCoinGain = (currencyName: string) => {
+    const currency2USDT: Currency2USDT = getStore('third/currency2USDTMap').get(currencyName);
+    if (!currency2USDT) return formatBalanceValue(0);
+
+    return formatBalanceValue(((currency2USDT.close - currency2USDT.open) / currency2USDT.open) * 100);
+};
+
+// 获取ST涨跌情况
+export const fetchSTGain = () => {
+    const goldGain = getStore('third/silver/change');
+    if (!goldGain) {
+        return formatBalanceValue(0);
+    } else {
+        return formatBalanceValue(goldGain * 100);
+    }
+};
+
+/**
+ * 获取云端总资产
+ */
+export const fetchCloudTotalAssets = () => {
+    const cloudBalances = getCloudBalances();
+    let totalAssets = 0;
+    for (const [k, v] of cloudBalances) {
+        totalAssets += fetchBalanceValueOfCoin(CloudCurrencyType[<any>k], v);
+    }
+
+    return totalAssets;
+};
+
+/**
+ * 获取本地钱包资产列表
+ */
+export const fetchWalletAssetList = () => {
+    const wallet = getStore('wallet');
+    const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
+    const assetList = [];
+    for (const k in MainChainCoin) {
+        const item: any = {};
+        if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
+            item.currencyName = k;
+            item.description = MainChainCoin[k].description;
+            const balance = fetchBalanceOfCurrency(k);
+            item.balance = formatBalance(balance);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
+            item.gain = fetchCoinGain(k);
+            item.rate = formatBalanceValue(fetchBalanceValueOfCoin(k,1));
+            assetList.push(item);
+        }
+
+    }
+
+    for (const k in ERC20Tokens) {
+        const item: any = {};
+        if (ERC20Tokens.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
+            item.currencyName = k;
+            item.description = ERC20Tokens[k].description;
+            const balance = fetchBalanceOfCurrency(k);
+            item.balance = formatBalance(balance);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
+            item.rate = formatBalanceValue(fetchBalanceValueOfCoin(k,1));
+            item.gain = fetchCoinGain(k);
+            assetList.push(item);
+        }
+    }
+
+    return assetList;
+};
+
+/**
+ * 获取云端钱包资产列表
+ */
+export const fetchCloudWalletAssetList = () => {
+    const assetList = [];
+    const cloudBalances = getCloudBalances();
+    const ktBalance = cloudBalances.get(CloudCurrencyType.KT) || 0;
+    const ktItem = {
+        currencyName: 'KT',
+        description: 'KT Token',
+        balance: formatBalance(ktBalance),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
+        gain: fetchCloudGain(),
+        rate:formatBalanceValue(0)
+    };
+    assetList.push(ktItem);
+    const scBalance = cloudBalances.get(CloudCurrencyType.SC) || 0;
+    const gtItem = {
+        currencyName: 'SC',
+        description: 'SC',
+        balance: formatBalance(scBalance),
+        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('SC',scBalance)),
+        gain: fetchCloudGain(),
+        rate:formatBalanceValue(fetchBalanceValueOfCoin('SC',1))
+    };
+    assetList.push(gtItem);
+    for (const k in CloudCurrencyType) {
+        let hidden = [];
+        if (getModulConfig('IOS')) {
+            hidden = getModulConfig('IOSCLOUDASSETSHIDDEN');
+        }
+        if (hidden.indexOf(k) >= 0) continue;
+        const item: any = {};
+        if (MainChainCoin.hasOwnProperty(k)) {
+            item.currencyName = k;
+            item.description = MainChainCoin[k].description;
+            const balance = cloudBalances.get(CloudCurrencyType[k]) || 0;
+            item.balance = formatBalance(balance);
+            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
+            item.gain = fetchCoinGain(k);
+            item.rate = formatBalanceValue(fetchBalanceValueOfCoin(k,1));
+            assetList.push(item);
+        }
+    }
+
+    return assetList;
+};
+
+/**
+ * 获取指定货币下余额总数
+ * @param currencyName 货币名称
+ */
+export const fetchBalanceOfCurrency = (currencyName: string) => {
+    const wallet = getStore('wallet');
+    if (!wallet) return 0;
+    let balance = 0;
+    let currencyRecord = null;
+    for (const item of wallet.currencyRecords) {
+        if (item.currencyName === currencyName) {
+            currencyRecord = item;
+        }
+    }
+    for (const addrInfo of currencyRecord.addrs) {
+        balance += addrInfo.balance;
+    }
+
+    return balance;
+};
+
+/**
+ * 获取总资产
+ */
+export const fetchLocalTotalAssets = () => {
+    const wallet = getStore('wallet');
+    if (!wallet) return 0;
+    let totalAssets = 0;
+    wallet.currencyRecords.forEach(item => {
+        if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
+            const balance = fetchBalanceOfCurrency(item.currencyName);
+            totalAssets += fetchBalanceValueOfCoin(item.currencyName, balance);
+        }
+
+    });
+
+    return totalAssets;
 };

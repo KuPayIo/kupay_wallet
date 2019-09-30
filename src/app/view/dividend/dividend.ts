@@ -7,11 +7,10 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callGetDividend, callGetDividHistory,callGetMining, getStoreData } from '../../middleLayer/wrap';
-import { PAGELIMIT } from '../../publicLib/config';
-import { CloudCurrencyType } from '../../publicLib/interface';
-import { getModulConfig } from '../../publicLib/modulConfig';
-import { getCloudBalances, registerStoreData } from '../../viewLogic/common';
+import { getDividend, getDividHistory, getMining } from '../../net/pull';
+import { getModulConfig, PAGELIMIT } from '../../public/config';
+import { CloudCurrencyType } from '../../public/interface';
+import { getCloudBalances, getStore, register } from '../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -77,7 +76,7 @@ export class Dividend extends Widget {
      * 获取更新数据
      */
     public initData() {
-        Promise.all([getCloudBalances(),getStoreData('activity/dividend')]).then(([cloudBalances,dividend]) => {
+        Promise.all([getCloudBalances(),getStore('activity/dividend')]).then(([cloudBalances,dividend]) => {
             this.props.ktBalance = cloudBalances.get(CloudCurrencyType.KT);
             const data = dividend.total;
             if (data) {
@@ -95,11 +94,11 @@ export class Dividend extends Widget {
                   
                 } else {
                     console.log('load more from server');
-                    callGetDividHistory(this.props.start);
+                    getDividHistory(this.props.start);
                 }
             } else {
                 console.log('load more from server');
-                callGetDividHistory(this.props.start);
+                getDividHistory(this.props.start);
             }
 
             this.loadMore();
@@ -111,7 +110,7 @@ export class Dividend extends Widget {
      *  本地实际加载数据
      */
     public async loadMore() {
-        const data = await getStoreData('activity/dividend/history');  
+        const data = await getStore('activity/dividend/history');  
         if (!data) return;
         const hList = data.list;
         const start = this.props.data.length;
@@ -159,7 +158,7 @@ export class Dividend extends Widget {
             this.props.firstClick = false;
 
             setTimeout(() => {// 数字动画效果执行完后刷新页面
-                callGetMining();
+                getMining();
                 this.initEvent();
                 this.paint();
             },500);
@@ -202,20 +201,20 @@ export class Dividend extends Widget {
      */
     private initEvent() {
         // 这里发起通信
-        callGetDividend();
-        callGetDividHistory();
+        getDividend();
+        getDividHistory();
     }
 }
 
 // ===================================================== 本地
 // ===================================================== 立即执行
-registerStoreData('activity/dividend/total', () => {
+register('activity/dividend/total', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
 });
-registerStoreData('activity/dividend/history', () => {
+register('activity/dividend/history', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.loadMore();

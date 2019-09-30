@@ -117,3 +117,26 @@ const confirmApplePay = (oid:string,receipt:string) => {
         mode: 'cors' // no-cors, cors, *same-origin
     });
 };
+
+/**
+ * 查询订单详情 
+ * @param oid 查询订单号
+ * @param okCb 成功回调
+ * @param failCb 失败回调
+ */
+export const getOrderDetail = async (oid: string) => {
+    const msg = { type: 'get_order_detail', param: { oid } };
+    
+    return requestAsync(msg);
+};
+
+/**
+ * 获取订单详情 通过pay支付收入的订单
+ * @param oid 订单号
+ */
+export const getOrderLocal = (transactionId: string) => {
+    const msg = { type: 'wallet/order@order_query_local', param: { transaction_id:transactionId } };
+    
+    return requestAsync(msg);
+     
+};

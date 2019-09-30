@@ -9,7 +9,7 @@ import { getStore, setStore } from '../store/memstore';
 import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDividHistory, parseExchangeDetail, parseMiningRank, parseMyInviteRedEnv, parseSendRedEnvLog, splitCloudCurrencyDetail } from '../utils/parse';
 import { base64ToFile, getUserInfo, piFetch, popNewMessage, unicodeArray2Str } from '../utils/pureUtils';
 import { showError } from '../utils/toolMessages';
-import { largeUnit2SmallUnit } from '../utils/unitTools';
+import { kpt2kt, largeUnit2SmallUnit } from '../utils/unitTools';
 import { requestAsync } from './login';
 
 /**
@@ -766,4 +766,35 @@ export const getInviteCode = () => {
     const msg = { type: 'wallet/cloud@get_invite_code', param: {} };
 
     return requestAsync(msg);
+};
+
+/**
+ * 获取挖矿汇总信息
+ */
+export const getMining = () => {
+    const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
+    
+    return requestAsync(msg).then(data => {
+        
+        const totalNum = kpt2kt(data.mine_total);
+        const holdNum = kpt2kt(data.mines);
+        const today = kpt2kt(data.today);
+        let nowNum = Math.round((totalNum - holdNum + today) * 0.25) - today;  // 今日可挖数量为矿山剩余量的0.25减去今日已挖 再四舍五入取整
+        if (nowNum <= 0) {
+            nowNum = 0;  // 如果今日可挖小于等于0，表示现在不能挖
+        } else if ((totalNum - holdNum) >= 100) {
+            nowNum = (nowNum < 100 && (totalNum - holdNum) >= 100) ? 100 : nowNum;  // 如果今日可挖小于100，且矿山剩余量大于100，则今日可挖100
+        } else {
+            nowNum = totalNum - holdNum;  // 如果矿山剩余量小于100，则本次挖完所有剩余量
+        }
+        const mining: any = {
+            totalNum: totalNum,
+            thisNum: nowNum,
+            holdNum: holdNum
+        };
+        console.log('-------------------',mining);
+        setStore('activity/mining/total', mining);
+
+        return mining;
+    });
 };

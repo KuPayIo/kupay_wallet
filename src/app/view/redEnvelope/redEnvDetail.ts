@@ -7,10 +7,11 @@ import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { sharePerUrl } from '../../config';
-import { callGetInviteCode,callGetOneUserInfo, callQueryDetailLog, getStoreData } from '../../middleLayer/wrap';
-import { uploadFileUrlPrefix } from '../../publicLib/config';
-import { LuckyMoneyType } from '../../publicLib/interface';
-import { getUserInfo } from '../../utils/tools';
+import { getInviteCode, getOneUserInfo, queryDetailLog } from '../../net/pull';
+import { uploadFileUrlPrefix } from '../../public/config';
+import { LuckyMoneyType } from '../../public/interface';
+import { getStore } from '../../store/memstore';
+import { getUserInfo } from '../../utils/pureUtils';
 
 // ================================================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -62,15 +63,15 @@ export class RedEnvDetail extends Widget {
     }
 
     public async initData() {
-        const uid = await getStoreData('user/conUid');
-        const value = await callQueryDetailLog(uid,this.props.rid);
+        const uid = await getStore('user/conUid');
+        const value = await queryDetailLog(uid,this.props.rid);
         if (value) {
             this.props.redBagList = value[0];        
             this.props.message = value[1];
         }
         const redBagList = value[0];
         for (const i in redBagList) {
-            callGetOneUserInfo([redBagList[i].cuid]).then(user => {
+            getOneUserInfo([redBagList[i].cuid]).then(user => {
                 this.props.redBagList[i].userName = user.nickName ? user.nickName :this.language.defaultUserName;
                 // tslint:disable-next-line:max-line-length
                 this.props.redBagList[i].avatar = user.avatar ? `${uploadFileUrlPrefix}${user.avatar}` :'../res/image/default_avater_big.png'; 
@@ -107,7 +108,7 @@ export class RedEnvDetail extends Widget {
     public async againSend() {
         let url = '';
         let title = '';
-        const lanSet = await getStoreData('setting/language');
+        const lanSet = await getStore('setting/language');
         let lan:any;
         if (lanSet) {
             lan = lanSet;
@@ -124,7 +125,7 @@ export class RedEnvDetail extends Widget {
             url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${this.props.rid}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
             title = this.language.redEnvType[1]; 
         } else if (this.props.rid === '-1') {
-            const inviteCodeInfo = await callGetInviteCode();
+            const inviteCodeInfo = await getInviteCode();
             if (inviteCodeInfo.result !== 1) return;
                 
             url = `${sharePerUrl}?cid=${inviteCodeInfo.cid}&type=${LuckyMoneyType.Invite}&lan=${lan}`;

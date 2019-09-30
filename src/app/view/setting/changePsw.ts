@@ -5,8 +5,8 @@
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callPasswordChange, callVerifyIdentidy } from '../../middleLayer/wrap';
-import { popNewLoading, popNewMessage, pswEqualed } from '../../utils/tools';
+import { popNewLoading, popNewMessage } from '../../utils/pureUtils';
+import { pswEqualed } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -98,7 +98,7 @@ export class ChangePSW extends Widget {
 
             return;
         }
-        await callPasswordChange(secretHash, newPassword);
+        await passwordChange(secretHash, newPassword);
         loading.callback(loading.widget);
         popNewMessage(this.language.tips[4]);
         this.backPrePage();

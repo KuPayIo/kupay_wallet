@@ -5,9 +5,10 @@ import { ShareType } from '../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Widget } from '../../../pi/widget/widget';
-import { getModulConfig } from '../../publicLib/modulConfig';
-import { copyToClipboard, getUserInfo, popNewMessage } from '../../utils/tools';
-import { makeScreenShot } from '../../viewLogic/native';
+import { getModulConfig } from '../../public/config';
+import { makeScreenShot } from '../../utils/native';
+import { getUserInfo, popNewMessage } from '../../utils/pureUtils';
+import { copyToClipboard } from '../../utils/tools';
 
 export class AddFriend extends Widget {
     public ok:() => void;

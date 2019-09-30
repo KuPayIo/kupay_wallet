@@ -5,9 +5,10 @@
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getStoreData, setStoreData } from '../../middleLayer/wrap';
 import { regPhone, unbindPhone } from '../../net/pull';
-import { delPopPhoneTips, getUserInfo, popNewMessage } from '../../utils/tools';
+import { getStore, setStore } from '../../store/memstore';
+import { getUserInfo, popNewMessage } from '../../utils/pureUtils';
+import { delPopPhoneTips } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -61,10 +62,10 @@ export class BindPhone extends Widget {
         if (!this.props.unbind) {
             const data = await regPhone(this.props.phone, this.props.areaCode,this.props.code.join(''));
             if (data && data.result === 1) {
-                const userinfo = await getStoreData('user/info');
+                const userinfo = await getStore('user/info');
                 userinfo.phoneNumber = this.props.phone;
                 userinfo.areaCode = this.props.areaCode;
-                setStoreData('user/info',userinfo);
+                setStore('user/info',userinfo);
                 delPopPhoneTips();
                 this.ok && this.ok();
                 popNewMessage('绑定成功');
@@ -77,10 +78,10 @@ export class BindPhone extends Widget {
             const data = await unbindPhone(this.props.phone, this.props.code.join(''),this.props.areaCode);
             if (data && data.result === 1) {
                 this.ok && this.ok();
-                const userinfo = await getStoreData('user/info');
+                const userinfo = await getStore('user/info');
                 userinfo.phoneNumber = '';
                 userinfo.areaCode = '';
-                setStoreData('user/info',userinfo);
+                setStore('user/info',userinfo);
                 popNewMessage('解绑成功');
             } else {
                 this.props.code = [];

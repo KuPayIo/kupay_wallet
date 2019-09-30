@@ -4,7 +4,7 @@
 // ================================ 导入
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getModulConfig } from '../../publicLib/modulConfig';
+import { getModulConfig } from '../../public/config';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

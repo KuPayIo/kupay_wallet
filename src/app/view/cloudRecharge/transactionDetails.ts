@@ -6,14 +6,12 @@ import { payPlatform } from '../../../pi/browser/vm';
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callGetOneUserInfo } from '../../middleLayer/wrap';
-import { SCPrecision } from '../../publicLib/config';
-import { TaskSid } from '../../publicLib/interface';
-import { getModulConfig } from '../../publicLib/modulConfig';
-import { timestampFormat } from '../../publicLib/tools';
+import { getOneUserInfo } from '../../net/pull';
+import { getModulConfig, SCPrecision } from '../../public/config';
+import { TaskSid } from '../../public/interface';
+import { makeScreenShot } from '../../utils/native';
+import { popNewMessage, timestampFormat } from '../../utils/pureUtils';
 import { getOrderDetail, getOrderLocal } from '../../utils/recharge';
-import { popNewMessage } from '../../utils/tools';
-import { makeScreenShot } from '../../viewLogic/native';
 
 // ============================导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -96,7 +94,7 @@ export class TransactionDetails extends Widget {
 
     // 云端支付
     public async setData1(res:any) {
-        const mchInfo = await callGetOneUserInfo([Number(res.mch_id)]);
+        const mchInfo = await getOneUserInfo([Number(res.mch_id)]);
         console.log(`商户信息 ========== mch_id = ${res.mch_id}  mchInfo = ${mchInfo}`);
         this.props.state = PayState[1];
         this.props.amount = res.total_fee / SCPrecision;

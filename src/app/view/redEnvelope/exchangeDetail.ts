@@ -5,10 +5,10 @@ import { Json } from '../../../pi/lang/type';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callGetOneUserInfo, callQueryDetailLog } from '../../middleLayer/wrap';
-import { uploadFileUrlPrefix } from '../../publicLib/config';
-import { CloudCurrencyType } from '../../publicLib/interface';
-import { currencyType } from '../../publicLib/tools';
+import { getOneUserInfo, queryDetailLog } from '../../net/pull';
+import { uploadFileUrlPrefix } from '../../public/config';
+import { CloudCurrencyType } from '../../public/interface';
+import { currencyType } from '../../utils/pureUtils';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -64,7 +64,7 @@ export class ExchangeDetail extends Widget {
 
     public async initData() {
         if (this.props.suid) {
-            callGetOneUserInfo([this.props.suid]).then(user => {
+            getOneUserInfo([this.props.suid]).then(user => {
                 console.log('exchange detail user',user);
                 if (!user) return;
                 this.props.userName = user.nickName ? user.nickName :this.language.defaultUserName;
@@ -73,7 +73,7 @@ export class ExchangeDetail extends Widget {
             });
         }
         
-        const value = await callQueryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);
+        const value = await queryDetailLog(this.props.suid,this.props.rid,this.props.acc_id);
         if (!value) return;
         this.props.redBagList = value[0];        
         this.props.message = value[1];
@@ -86,7 +86,7 @@ export class ExchangeDetail extends Widget {
         }
         
         for (let i = 0;i < redBagList.length;i++) {
-            const person = await callGetOneUserInfo([redBagList[i].cuid]);
+            const person = await getOneUserInfo([redBagList[i].cuid]);
             if (!person) break;
             this.props.redBagList[i].userName = person.nickName ? person.nickName :this.language.defaultUserName;
             // tslint:disable-next-line:max-line-length

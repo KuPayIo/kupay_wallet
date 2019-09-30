@@ -5,8 +5,8 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Widget } from '../../../pi/widget/widget';
 import { defaultPassword } from '../../config';
-import { callPasswordChange, callVerifyIdentidy } from '../../middleLayer/wrap';
-import { getUserInfo, popNewLoading, popNewMessage, pswEqualed } from '../../utils/tools';
+import { getUserInfo, popNewLoading, popNewMessage } from '../../utils/pureUtils';
+import {  pswEqualed } from '../../utils/tools';
 
 export class SettingPsw extends Widget {
     public props: any;

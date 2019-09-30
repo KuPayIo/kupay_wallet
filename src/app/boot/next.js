@@ -252,7 +252,10 @@ winit.initNext = function () {
 			"pi/ui/lang.js",
 			"pi/ui/lang.tpl",
 			"app/view/base/",
-			"app/components1/btn/",  
+			"app/components1/btn/",
+			"app/components1/loading/loading1.js",
+			"app/components1/loading/loading1.wcss",
+			"app/components1/loading/loading1.tpl",  
 			"app/res/css/",
 			'earn/client/app/res/css/'
 		];

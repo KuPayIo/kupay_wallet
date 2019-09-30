@@ -6,8 +6,8 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Widget } from '../../../pi/widget/widget';
 import { sharePerUrl } from '../../config';
-import { getStoreData } from '../../middleLayer/wrap';
-import { LuckyMoneyType } from '../../publicLib/interface';
+import { LuckyMoneyType } from '../../public/interface';
+import { getStore } from '../../store/memstore';
 
 interface Props {
     rid: string;
@@ -25,10 +25,10 @@ export class SendRedEnv extends Widget {
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props);
-        getStoreData('setting/language','zh_Hans').then(lan => {
+        getStore('setting/language','zh_Hans').then(lan => {
             this.props.lan = lan;
         });
-        getStoreData('user').then(user => {
+        getStore('user').then(user => {
             this.props.user = user;
         });
     }
