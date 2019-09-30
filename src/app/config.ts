@@ -57,3 +57,10 @@ export const defaultPassword = '123456789';
 
 // 充值赠送KT倍数
 export const rechargeGiftMultiple = 10;
+
+// 金额
+export enum WALLET {
+    KT_SHOW = '嗨豆', // KT界面显示文字
+    ST_SHOW = '碎银', // ST界面显示文字
+    SC_SHOW = '银两'  // SC界面显示文字
+}

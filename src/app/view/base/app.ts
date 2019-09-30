@@ -28,6 +28,14 @@ export class App extends Widget {
         this.init();
     }
 
+    public setProps(props:any) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props);
+    }
+
     public init(): void {
         const isActive = 'APP_WALLET';
         this.old[isActive] = true;
@@ -53,13 +61,13 @@ export class App extends Widget {
                     text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
-                    components: 'earn-client-app-view-home-home1'
+                    components: 'earn-client-app-view-home-home'
                 },{
                     modulName: 'APP_WALLET',
                     text: { zh_Hans:'钱',zh_Hant:'錢',en:'' },
                     icon: 'wallet.png',
                     iconActive: 'wallet_active.png',
-                    components: 'app-view-wallet-home-home'
+                    components: 'app-view-wallet-home-myHome'
                 }
             ],
             tabBarAnimateClasss:'',
@@ -116,6 +124,14 @@ export class App extends Widget {
             this.props.tabBarList[1].iconActive = 'chat_active.png';
             this.props.tabBarList[1].icon = 'chat.png';
         }
+        this.paint();
+    }
+
+    /**
+     * 个人主页
+     */
+    public myHome() {
+        this.props.isActive = 'APP_WALLET';
         this.paint();
     }
 }

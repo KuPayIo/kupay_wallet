@@ -1,0 +1,200 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
+.body{
+    padding-bottom: 120px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+}
+.myInfoBox{
+    margin: 75px 30px 0 30px;
+    width:690px;
+    height:400px;
+    background:linear-gradient(39deg,rgba(251,167,18,1) 0%,rgba(252,204,60,1) 100%);
+    border-radius:12px;
+    position: relative;
+}
+.avatarBox{
+    display: flex;
+}
+.dividend{
+    position: absolute;
+    top: 40%;
+    right: 0;
+    transform: translateY(-50%);
+    font-size:28px;
+    font-family:SourceHanSansCN-Regular,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    width:225px;
+    height:60px;
+    background:rgba(255,72,1,1);
+    border-radius:30px 0px 0px 30px;
+    text-align: center;
+    line-height: 60px;
+}
+.userHead{
+    margin: 19px 20px;
+    border: 2px solid #ffffff;
+}
+.userInfo{
+    display: flex;
+    flex-direction: column;
+    margin-left: 17px;
+}
+.userNameBox{
+    display: flex;
+    margin-top: 23px;
+    align-items: center;
+}
+.haihaiBox{
+    font-size:24px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin-top: 20px;
+}
+.userName{
+    font-size:32px;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+}
+.sex{
+    width: 32px;
+    height: 32px;
+    margin-left: 10px;
+}
+.medal{
+    width: 50px;
+    height: 50px;
+    margin-left: 19px;
+}
+.myMoney{
+    display: flex;
+    margin: 50px;
+}
+.silver{
+    font-size:64px;
+    font-family:Roboto-Regular,Roboto;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.moneyName{
+    font-size:24px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+}
+.btn{
+    width:160px;
+    height:60px;
+    background:rgba(255,255,255,0.2);
+    border-radius:30px;
+    text-align: center;
+    line-height: 60px;
+}
+.btnBox{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    font-size:28px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+}
+.minRank{
+    width:227px;
+    height:60px;
+    background:rgba(255,255,255,0.2);
+    border-radius:30px;
+    text-align: center;
+    line-height: 60px;
+}
+.friendList{
+    height: 102px;
+    display: flex;
+    border-bottom: 1px solid #EBEBEB;
+    box-sizing: border-box;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.fan{
+    height: 102px;
+    display: flex;
+    flex-direction: column;
+    font-size:36px;
+    font-family:Roboto-Regular,Roboto;
+    font-weight:400;
+    color:rgba(34,34,34,1);
+    justify-content: center;
+    align-items: center;
+}
+.fanName{
+    font-size:20px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(136,136,136,1);
+}
+.moreTitle{
+    margin: 40px 0 0 43px;
+    font-size:36px;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:bold;
+    color:rgba(34,34,34,1);
+}
+.more{
+   display: flex;
+   flex-wrap: wrap; 
+}
+.mallFunction{
+    width: 100px;
+    height: 126px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 25px 0  0 70px;
+}
+.iconBox{
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.iconBox{
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.iocn{
+    width: 50px;
+    height: 50px;
+}
+.redDot{
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 17px;
+    right: 17px;
+}
+.iconName{
+    font-size:24px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(34,34,34,1);
+    text-align: center;
+}

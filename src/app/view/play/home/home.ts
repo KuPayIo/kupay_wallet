@@ -5,6 +5,7 @@
 import { WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
+import { notify } from '../../../../pi/widget/event';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
@@ -22,12 +23,14 @@ import { activityList, gameList } from './gameConfig';
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+/**
+ * 玩游戏
+ */
 export class PlayHome extends Widget {
     public ok: () => void;
     public configPromise:Promise<string>;
     public thirdApiDependPromise:Promise<string>;
     public thirdApiPromise:Promise<string>;
-    
     constructor() {
         super();
         setTimeout(() => {
@@ -73,6 +76,31 @@ export class PlayHome extends Widget {
         this.props.gameList = gameList;
         this.props.activityList = activityList;
         this.props.loaded = false;
+        // 最近在玩
+        this.props.oftenList = [
+            { name:'一代掌门',icon:'../../../res/image/game/yidaizhangmen.png',desc:'2019LPL春季赛常规赛' },
+            { name:'仙之侠道',icon:'../../../res/image/game/xianzhixiadao.png',desc:'2019LPL春季赛常规赛' }
+        ];
+        // 推荐
+        this.props.recommend = [
+            { name:'疯狂斗牛',icon:'../../../res/image/game/bullfighting.png' },
+            { name:'小黄人',icon:'../../../res/image/game/littleYellowMan.png' }
+        ];
+        // 今日推荐
+        this.props.recommendedToday =  { name:'仙之侠道',icon:'../../../res/image/game/xianzhixiadao.png',bg:'../../../res/image/game/xianzhixiadaoBg.png',desc:'2019最热唯美奇幻手游' };
+        // 热门
+        this.props.popular = [
+            { name:'穿越火线',icon:'',bg:'../../../res/image/game/cf.png',desc:'新版本整装待发' },
+            { name:'仙之侠道',icon:'',bg:'../../../res/image/game/xianzhixiadaoBg1.png',desc:'2019最热唯美奇幻手游' }
+        ];
+        // 编辑推荐
+        this.props.editRecommend = { name:'一起吃鸡',icon:'../../../res/image/game/bullfighting.png',bg:'../../../res/image/game/eatingChicken.png',desc:'2019LPL春季赛常规赛' };
+        // 全部游戏
+        this.props.allGame = [
+            { name:'一代掌门',icon:'../../../res/image/game/yidaizhangmen.png',desc:'2019LPL春季赛常规赛' },
+            { name:'仙之侠道',icon:'../../../res/image/game/xianzhixiadao.png',desc:'2019LPL春季赛常规赛' },
+            { name:'倩女幽魂',icon:'../../../res/image/game/qiannvyouhun.png',desc:'2019LPL春季赛常规赛' }
+        ];
     }
 
     public attach() {
@@ -219,6 +247,13 @@ export class PlayHome extends Widget {
                 }
             }
         });
+    }
+
+    /**
+     * 去个人主页
+     */
+    public myHome(e:any) {
+        notify(e.node,'ev-myHome',null);
     }
 
 }

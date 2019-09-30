@@ -14,6 +14,7 @@ interface Props {
     refresh:boolean;
     text:string;
     nextImg:string;
+    title:string;
 }
 
 // ================================ 导出
@@ -46,8 +47,8 @@ export class TopBar1 extends Widget {
     /**
      * 打开我的设置
      */
-    public showMine() {
-        popNew3('app-view-mine-home-home');
+    public showMine(e:any) {
+        notify(e.node,'ev-myHome',null);
     }
 
     /**

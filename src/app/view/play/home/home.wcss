@@ -6,46 +6,6 @@
     flex-shrink: 0;
     overflow: hidden;
     position: relative;
-    background: linear-gradient(to right,#318DE6,#38CFE7);
-}
-.userHead{
-    width: 40px;
-    height: 40px;
-    margin: 40px 5px 0;
-    border: 24px solid transparent;
-}
-.backImg{
-    position: absolute;
-    top: 0px;
-    right: 0;
-    width: 276px;
-    height: 341px;
-    border-radius: 18px;
-}
-.refreshBtn{
-    width: 40px;
-    height: 40px;
-    margin: 40px 5px 0px;
-    border: 24px solid transparent;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-}
-.games1{
-    height: 800px;
-    background-color: #fff;
-    border-radius: 12px;
-    margin-bottom: 50px;
-}
-.title{
-    height: 50px;
-    line-height: 50px;
-    color: rgba(34, 34, 34, 1);
-    font-size: 36px;
-    text-align: left;
-    margin-left: 50px;
-    margin-top: 30px;
-    font-weight: 600;
 }
 .body{
     padding-bottom: 120px;
@@ -56,42 +16,206 @@
     display: flex;
     flex-direction: column;
     flex: 1 0 0;
-    position:relative;
 }
-.hot-games{
-    margin-top: 60px;
+.oftenPlay{
+    border-bottom: 1px solid #CCC;
+    box-sizing: border-box;
+    display: flex;
 }
-.hot-game-title{
-    font-size: 36px;
-    color: #222222;
-    line-height: 50px;
-    font-family: "PingFangSC-Medium";
-    margin-bottom: 35px;
+.oftenList{
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
-.item{
+.listItem{
+    height: 238px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 30px;
+}
+.oftenPlayItem{
+    width:160px;
+    height:160px;
+    border-radius:25px;
+    position: relative;
+}
+.mark{
+    width:140px;
+    height:36px;
+    background:rgba(255,255,255,1);
+    border-radius:18px;
+    opacity:0.65;
+    font-size:24px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(34,34,34,1);
+    position: absolute;
+    bottom: 9px;
+    left: 10px;
+    text-align: center;
+}
+.markImg{
+    width: 52px;
+    height: 56px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+.recommendImg{
+    width: 140px;
+    height: 140px;
+    border-radius:22px;
+}
+.oftenPlayItemImg{
+    width: 160px;
+    height: 160px;
+    border-radius:22px;
+}
+.gameName{
+    font-size:28px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(34,34,34,1);
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+.recommend{
+    width:140px;
+    height:140px;
+    border-radius:25px;
+    margin-top:20px;
+    position: relative;
+}
+.recommendedToday{
+    display: flex;
+    flex-direction: column;
+}
+.recommendedTodayTitle{
+    font-size:36px;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:bold;
+    color:rgba(34,34,34,1);
+    height: 96px;
+    line-height: 96px;
+    margin-left: 25px;
+}
+.showGame{
+    width: 700px;
+    height: 800px;
+    margin: 0 25px;
+    border-radius:12px;
+    display: flex;
+    justify-content: space-between;
+}
+.gameImg{
+    width: 100%;
+    height: 100%;
+}
+.item1{
+    width: 340px;
+    position: relative;
     overflow: hidden;
-    background-color: #fff;
-    border-radius: 12px;
-    margin-bottom: 50px;
+    border-radius:12px;
+    
 }
-.item-box{
-    height: 180px;
-    padding: 0 25px;
+.userHead{
+    width: 100%;
+    height: 100%;
 }
-.game-desc{
-    font-size: 28px;
-    color: #222222;
-    margin-top: 30px;
-    line-height: 40px;
+.gameInfo{
+    width: 100%;
+    height: 140px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(34,34,34,1) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.game-title{
-    font-size: 48px;
-    color: #222222;
-    line-height: 67px;
+.gameInfos{
+    width: 100%;
+    height: 140px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(34,34,34,1) 100%);
 }
-.game-item{
-    width:100%;
-    height:100%;
-    background-repeat: no-repeat;
-    background-size: cover;
+.gameInfoImg{
+    width: 120px;
+    height: 120px;
+    border-radius:30px;
+    margin-right: 20px;
+}
+.gameInfosName{
+    font-size:36px;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+}
+.publishTime{
+    font-size:28px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(204,204,204,1);
+}
+.editList{
+    display: flex;
+    margin: 25px;
+}
+.allGameList{
+    margin: 40px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.allGameImg{
+    width:140px;
+    height:140px;
+    border-radius:19px;
+}
+.allGameInfo{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-left: 20px;
+}
+.allGameName{
+    font-size:32px;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(34,34,34,1);
+}
+.allGamePublishTime{
+    font-size:24px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(136,136,136,1);
+}
+.btn{
+    width:122px;
+    height:60px;
+    background:rgba(66,133,244,1);
+    border-radius:30px;
+    font-size:24px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    text-align: center;
+    line-height: 60px;
+}
+.gameInfoName{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+.gameInfosNames{
+    font-size:32px;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(34,34,34,1);
 }
