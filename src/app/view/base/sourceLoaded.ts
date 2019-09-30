@@ -74,6 +74,7 @@ export const loadMiningSource = () => {
     const sourceList = [
         'earn/client/app/view/mining/',
         'earn/client/app/components/mineModalBox/',
+        'app/components1/blankDiv/',
         'earn/client/app/xls/mineType.c.js',
         'earn/client/app/xls/mineType.s.js',
         'earn/xlsx/item.c.js',
@@ -102,7 +103,9 @@ export const loadShareSource = () => {
  */
 export const loadMallSource = () => {
     const sourceList = [
-        'earn/client/app/view/mall/'
+        'earn/client/app/view/mall/',
+        'app/components1/blankDiv/',
+        'app/components/topBar/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);

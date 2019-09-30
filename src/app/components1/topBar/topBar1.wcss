@@ -10,7 +10,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 88px;
+    height: 110px;
 }
 .userHead{
     border: 2px solid #ffffff;  
@@ -32,4 +32,10 @@
     background-color: rgba(34, 34, 34, 1);
     display: inline-block;
     display: none;
+}
+.title{
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    font-size:40px;
 }

@@ -46,19 +46,19 @@ export class App extends Widget {
                     text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
-                    components: 'chat-client-app-view-home-contact'
+                    components: 'chat-client-app-view-home-test'
                 },{
                     modulName: 'APP_EARN',
                     text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
-                    components: 'earn-client-app-view-home-home1'
+                    components: 'earn-client-app-view-home-home'
                 },{
                     modulName: 'APP_WALLET',
                     text: { zh_Hans:'钱',zh_Hant:'錢',en:'' },
                     icon: 'wallet.png',
                     iconActive: 'wallet_active.png',
-                    components: 'app-view-wallet-home-home'
+                    components: 'app-view-base-myHome'
                 }
             ],
             tabBarAnimateClasss:'',
@@ -71,6 +71,7 @@ export class App extends Widget {
         this.props.tabBarList = this.props.tabBarList.filter(item => {
             return getModulConfig(item.modulName);
         });  
+        console.log('app ',this.props);
         getUserInfo().then(userInfo => {
             console.log('app userInfo = ',userInfo);
             this.props.userInfo = userInfo;
@@ -126,6 +127,14 @@ export class App extends Widget {
             this.props.tabBarList[1].icon = 'chat.png';
         }
         this.paint();
+    }
+
+    /**
+     * 个人主页
+     */
+    public myHome() {
+        // this.props.isActive = 'APP_WALLET';
+        // this.paint();
     }
 }
 

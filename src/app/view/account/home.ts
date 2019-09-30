@@ -4,11 +4,11 @@ import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { uploadFile } from '../../net/pull';
-import { getStore, register } from '../../store/memstore';
+import { register } from '../../store/memstore';
 import { selectImage } from '../../utils/native';
 import { getUserInfo, popNewMessage, rippleShow } from '../../utils/pureUtils';
 // tslint:disable-next-line:max-line-length
-import { changeWalletName, changeWalletNote, changeWalletSex, deepCopy, imgResize, walletNameAvailable } from '../../utils/tools';
+import { changeWalletName, changeWalletNote, changeWalletSex, imgResize, logoutAccount, walletNameAvailable } from '../../utils/tools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords 
 declare var module: any;
@@ -115,21 +115,9 @@ export class AccountHome extends Widget {
      */
     public changePhone() {
         if (!this.props.phone) {  // 绑定
-            popNew('app-view-setting-phone');
+            popNew('app-view-mine-setting-phone');
         } else { // 重新绑定
-            popNew('app-view-setting-unbindPhone');
-        }
-        
-    }
-
-    /**
-     * 修改密码
-     */
-    public changePsw() {
-        if (this.props.isTourist) {
-            popNew('app-view-setting-settingPsw',{});
-        } else {
-            popNew('app-view-setting-changePsw');
+            popNew('app-view-mine-setting-unbindPhone');
         }
         
     }
@@ -193,59 +181,14 @@ export class AccountHome extends Widget {
     }
 
     /**
-     * 退出账户不删除信息
-     */
-    public async logOut() {
-        const wallet = await getStore('wallet');
-        const setPsw = wallet.setPsw;
-        const modalBox2 = deepCopy(this.language.modalBox2);
-        if (!setPsw) {
-            modalBox2.sureText = this.language.modalBox2.sureText1;
-        }
-        popNew('app-components-modalBox-modalBox', modalBox2 , () => {  
-            if (!setPsw) {
-                this.ok && this.ok();
-            } else {
-                // this.backUp();
-            }
-            
-            console.log('取消1');
-        }, () => {
-            console.log(1);
-
-            // TODO
-            // logoutAccount().then(() => {
-            //     this.backPrePage();
-            // });
-            
-        }
-        );
-    }
-
-    /**
      * 注销账户
      */
-    public async logOutDel() {
-        const setPsw = await getStore('wallet/setPsw');
-        const modalBox3 = deepCopy(this.language.modalBox3);
-        if (!setPsw) {
-            modalBox3.sureText = this.language.modalBox3.sureText1;
-        }
-        popNew('app-components-modalBox-modalBox', modalBox3 , () => {
-            if (!setPsw) {
-                this.ok && this.ok();
-            } else {
-                // this.backUp();
-            }
-            console.log('取消2');
-        }, () => {
-            popNew('app-components-modalBox-modalBox', { title: '', content: this.language.tips[3], style: 'color:#F7931A;' }, () => {
-                // TODO
-                // logoutAccount(true).then(() => {
-                //     this.backPrePage();
-                // });
-                
+    public logOutDel() {
+        popNew('app-components-modalBox-modalBox', { title: '确认退出', content:'' }, () => {
+            logoutAccount(true).then(() => {
+                this.backPrePage();
             });
+            
         });
     }
 
@@ -268,13 +211,6 @@ export class AccountHome extends Widget {
 }
 
 register('user/info', () => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.init();
-    }
-});
-
-register('wallet', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();

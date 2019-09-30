@@ -4,17 +4,14 @@
  // ================================ 导入
 import { WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
+import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
+import { notify } from '../../../../pi/widget/event';
 import { Forelet } from '../../../../pi/widget/forelet';
+import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
-import { getPi3Config } from '../../../api/pi3Config';
-import { closePopFloatBox, setHasEnterGame } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
-import { callGetCurrentAddrInfo, callGetEthApiBaseUrl,callGetInviteCode, getStoreData } from '../../../middleLayer/wrap';
-import { LuckyMoneyType } from '../../../publicLib/interface';
-import { loadDir1 } from '../../../utils/commonjsTools';
-import { popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
-import { registerStoreData } from '../../../viewLogic/common';
+import { getStore, register } from '../../../store/memstore';
 import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
@@ -22,65 +19,86 @@ import { activityList, gameList } from './gameConfig';
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+/**
+ * 玩游戏
+ */
 export class PlayHome extends Widget {
     public ok: () => void;
     public configPromise:Promise<string>;
-    public piSdkPromise:Promise<string>;
-    public injectStartPromise:Promise<string>;
-    public injectEndPromise:Promise<string>;
-    
+    public thirdApiDependPromise:Promise<string>;
+    public thirdApiPromise:Promise<string>;
     constructor() {
         super();
-        setTimeout(() => {
-            this.injectStartPromise = new Promise((resolve) => {
-                const path = 'app/api/injectStart.js.txt';
-                loadDir1([path,'app/api/thirdBase.js'], fileMap => {
-                    const arr = new Uint8Array(fileMap[path]);
-                    const content = new TextDecoder().decode(arr);
-                    resolve(content);
-                });
-            });
-        },0);
+        // setTimeout(() => {
+        //     this.thirdApiPromise = new Promise((resolve) => {
+        //         const path = 'app/api/thirdApi.js.txt';
+        //         loadDir([path,'app/api/JSAPI.js'], undefined, undefined, undefined, fileMap => {
+        //             const arr = new Uint8Array(fileMap[path]);
+        //             const content = new TextDecoder().decode(arr);
+        //             resolve(content);
+        //         }, () => {
+        //             //
+        //         }, () => {
+        //             //
+        //         });
+        //     });
+        // },0);
+
+        // setTimeout(() => {
+        //     this.thirdApiDependPromise = new Promise((resolve) => {
+        //         const path = 'app/api/thirdApiDepend.js.txt';
+        //         loadDir([path,'app/api/thirdBase.js'], undefined, undefined, undefined, fileMap => {
+        //             const arr = new Uint8Array(fileMap[path]);
+        //             const content = new TextDecoder().decode(arr);
+        //             resolve(content);
+        //         }, () => {
+        //             //
+        //         }, () => {
+        //             //
+        //         });
+        //     });
+        // },0);
        
-        setTimeout(() => {
-            this.injectEndPromise = new Promise((resolve) => {
-                const path = 'app/api/injectEnd.js.txt';
-                loadDir1([path], fileMap => {
-                    const arr = new Uint8Array(fileMap[path]);
-                    const content = new TextDecoder().decode(arr);
-                    console.timeEnd('loginMod thirdApiDependPromise');
-                    resolve(content);
-                });
-            });
-        },0);
-       
-        setTimeout(() => {
-            this.piSdkPromise = new Promise((resolve) => {
-                const sdkToolsPath = 'app/pi_sdk/sdkTools.js';
-                const sdkApiPath = 'app/pi_sdk/sdkApi.js';
-                const sdkMainPath = 'app/pi_sdk/sdkMain.js';
-                loadDir1([sdkToolsPath,sdkApiPath,sdkMainPath], fileMap => {
-                    // tslint:disable-next-line:max-line-length
-                    const arrs = [new Uint8Array(fileMap[sdkToolsPath]),new Uint8Array(fileMap[sdkApiPath]),new Uint8Array(fileMap[sdkMainPath])];
-                    // tslint:disable-next-line:max-line-length
-                    const content = new TextDecoder().decode(arrs[0]) + new TextDecoder().decode(arrs[1]) + new TextDecoder().decode(arrs[2]);
-                    resolve(content);
-                });
-            });
-        },0);
-        
     }
     
-    public setProps(props:Json,oldProps:any) {
+    public setProps(props:Json) {
         this.props = {
             ...props,
             offlienType:OfflienType.WALLET
         };
         super.setProps(this.props);
+        console.log(props);
         this.props.refresh = false;
         this.props.gameList = gameList;
         this.props.activityList = activityList;
         this.props.loaded = false;
+        // 最近在玩
+        this.props.oftenList = [
+            { name:'一代掌门',icon:'../../../res/image/game/yidaizhangmen.png',desc:'2019LPL春季赛常规赛' },
+            { name:'仙之侠道',icon:'../../../res/image/game/xianzhixiadao.png',desc:'2019LPL春季赛常规赛' }
+        ];
+        // 推荐
+        this.props.recommend = [
+            { name:'疯狂斗牛',icon:'../../../res/image/game/bullfighting.png' },
+            { name:'小黄人',icon:'../../../res/image/game/littleYellowMan.png' }
+        ];
+        // 今日推荐
+        // tslint:disable-next-line:max-line-length
+        this.props.recommendedToday =  { name:'仙之侠道',icon:'../../../res/image/game/xianzhixiadao.png',bg:'../../../res/image/game/xianzhixiadaoBg.png',desc:'2019最热唯美奇幻手游' };
+        // 热门
+        this.props.popular = [
+            { name:'穿越火线',icon:'',bg:'../../../res/image/game/cf.png',desc:'新版本整装待发' },
+            { name:'仙之侠道',icon:'',bg:'../../../res/image/game/xianzhixiadaoBg1.png',desc:'2019最热唯美奇幻手游' }
+        ];
+        // 编辑推荐
+        // tslint:disable-next-line:max-line-length
+        this.props.editRecommend = { name:'一起吃鸡',icon:'../../../res/image/game/bullfighting.png',bg:'../../../res/image/game/eatingChicken.png',desc:'2019LPL春季赛常规赛' };
+        // 全部游戏
+        this.props.allGame = [
+            { name:'一代掌门',icon:'../../../res/image/game/yidaizhangmen.png',desc:'2019LPL春季赛常规赛' },
+            { name:'仙之侠道',icon:'../../../res/image/game/xianzhixiadao.png',desc:'2019LPL春季赛常规赛' },
+            { name:'倩女幽魂',icon:'../../../res/image/game/qiannvyouhun.png',desc:'2019LPL春季赛常规赛' }
+        ];
     }
 
     public attach() {
@@ -122,7 +140,7 @@ export class PlayHome extends Widget {
     }
 
     public showMine() {
-        popNew3('app-view-mine-home-home');
+        popNew('app-view-mine-home-home');
     }
 
     /**
@@ -141,19 +159,19 @@ export class PlayHome extends Widget {
      * 搜索
      */
     public toSearch() {
-        popNew3('app-view-play-searchGame');
+        popNew('app-view-play-searchGame');
     }
 
     /**
      * 点击游戏
      */
     public async gameClick(num:number) {
-        closePopFloatBox();
-        const id = await getStoreData('user/id');
+        // closePopFloatBox();
+        const id = getStore('user/id');
         if (!id) return;
-        // popNew3('earn-client-app-view-openBox-openBox');
+        popNew3('earn-client-app-view-openBox-openBox');
         
-        // return;
+        return;
         const isLogin = await getStoreData('user/isLogin');
         if (!isLogin) {
             popNewMessage('登录中,请稍后再试');
@@ -166,45 +184,35 @@ export class PlayHome extends Widget {
         } else {
             setPopPhoneTips();
             hasEnterGame = true;
-            const gameItem = gameList[num];
-            const gameTitle = gameItem.title.zh_Hans;
-            const gameUrl =   gameItem.url;
-            const webviewName = gameItem.webviewName;
+            const gameTitle = gameList[num].title.zh_Hans;
+            const gameUrl =   gameList[num].url;
+            const webviewName = gameList[num].webviewName;
             // tslint:disable-next-line:max-line-length
             const [addrInfo,baseUrl,inviteCodeInfo] = await Promise.all([callGetCurrentAddrInfo('ETH'),callGetEthApiBaseUrl(),callGetInviteCode()]);
             const inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`; 
             const pi3Config:any = getPi3Config();
             pi3Config.web3EthDefaultAccount = addrInfo.addr;
             pi3Config.web3ProviderNetWork = baseUrl;
-            pi3Config.appid = gameItem.appid;
-            pi3Config.buttonMod = gameItem.buttonMod;
+            pi3Config.appid = gameList[num].appid;
             pi3Config.gameName = gameTitle;
             pi3Config.webviewName = webviewName;
-            pi3Config.apkDownloadUrl = gameItem.apkDownloadUrl;
-            pi3Config.fromWallet = true;
+            pi3Config.apkDownloadUrl = gameList[num].apkDownloadUrl;
             pi3Config.userInfo = {
                 nickName:this.props.userInfo.nickName,
                 inviteCode
             };
-            // tslint:disable-next-line:variable-name
-            const pi_sdk = {
-                config:pi3Config
-            };
+
             const pi3ConfigStr = `
-                window.pi_sdk = ${JSON.stringify(pi_sdk)};
+                window.pi_config = ${JSON.stringify(pi3Config)};
             `;
             this.configPromise = Promise.resolve(pi3ConfigStr);
-            if (gameItem.usePi) { // 有pi的项目
-                this.configPromise.then(configContent => {
-                    WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, configContent);
-                });
-            } else {
-                const allPromise = Promise.all([this.injectStartPromise,this.configPromise,this.piSdkPromise,this.injectEndPromise]);
-                allPromise.then(([injectStartContent,configContent,piSdkContent,injectEndContent]) => {
-                    const content =  injectStartContent + configContent + piSdkContent + injectEndContent;
-                    WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
-                });
-            }
+
+            const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
+            allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
+                setHasEnterGame(true);
+                const content =  configContent + thirdApiDependContent + thirdApiContent;
+                WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
+            });
         }
     }
 
@@ -213,7 +221,7 @@ export class PlayHome extends Widget {
      * @param index 序号
      */
     public activityClick(index:number) {
-        popNew3(this.props.activityList[index].url);
+        popNew(this.props.activityList[index].url);
     }
 
     /**
@@ -222,7 +230,7 @@ export class PlayHome extends Widget {
     public defaultEnterGame() {
         return;
         const firstEnterGame = localStorage.getItem('firstEnterGame');   // 第一次直接进入游戏，以后如果绑定了手机则进入
-        getStoreData('user/isLogin').then(isLogin => {
+        getStore('user/isLogin').then(isLogin => {
             const phoneNumber = this.props.userInfo.phoneNumber;    
             console.log(`firstEnterGame = ${firstEnterGame},phoneNumber = ${phoneNumber}`);
             if (!firstEnterGame || phoneNumber) {
@@ -239,11 +247,18 @@ export class PlayHome extends Widget {
         });
     }
 
+    /**
+     * 去个人主页
+     */
+    public myHome(e:any) {
+        notify(e.node,'ev-myHome',null);
+    }
+
 }
 let hasEnterGame = false;
 // ========================================
 
-registerStoreData('user/isLogin', (isLogin:boolean) => {
+register('user/isLogin', (isLogin:boolean) => {
     setTimeout(() => {
         const w:any = forelet.getWidget(WIDGET_NAME);
         w && w.defaultEnterGame();   

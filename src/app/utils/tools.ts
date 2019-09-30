@@ -8,6 +8,7 @@ import { Config, defalutShowCurrencys, ERC20Tokens, getModulConfig, MainChainCoi
 import { CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../public/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { piRequire } from './commonjsTools';
+// tslint:disable-next-line:max-line-length
 import { arrayBuffer2File, fetchCloudGain, formatBalance, formatBalanceValue, getUserInfo, popNewMessage, unicodeArray2Str } from './pureUtils';
 import { gotoRecharge } from './recharge';
 
@@ -36,29 +37,6 @@ export const getStaticLanguage = () => {
     const lan = getStore('setting/language');
     
     return Config[lan];
-};
-
-/**
- * 获取手机提示语
- */
-export const getPopPhoneTips = () => {
-    const modalBox = { 
-        zh_Hans:{
-            title:'绑定手机',
-            content:'为了避免您的游戏数据丢失，请绑定手机号',
-            sureText:'去绑定',
-            onlyOk:true
-        },
-        zh_Hant:{
-            title:'綁定手機',
-            content:'為了避免您的遊戲數據丟失，請綁定手機號',
-            sureText:'去綁定',
-            onlyOk:true
-        },
-        en:'' 
-    };
-
-    return modalBox[getLang()];
 };
 
 /**
@@ -392,38 +370,6 @@ export const calCurrencyLogoUrl = (currencyName:string) => {
     return `app/res/${directory}/currency/${currencyName}.png`;
 };
 
-// 检查手机弹框提示
-export const checkPopPhoneTips = () => {
-    return Promise.all([getStore('user/info/phoneNumber'),getStore('user/id')]).then(([phoneNumber,uid]) => {
-        if (phoneNumber) {
-            delPopPhoneTips();
-            
-            return;
-        }
-        if (localStorage.getItem('popPhoneTips') && uid) {
-            
-            popModalBoxs('app-components-modalBox-modalBox',getPopPhoneTips(),() => { 
-                popNew('app-view-mine-setting-phone',{ jump:true });
-            },undefined,true);      
-        }
-    });
-};
-
-// 设置手机弹框提示
-export const setPopPhoneTips = () => {
-    getUserInfo().then(userInfo => {
-        const popPhoneTips = localStorage.getItem('popPhoneTips');
-        if (!userInfo.phoneNumber && !popPhoneTips) localStorage.setItem('popPhoneTips','1');
-    });
-};
-
-/**
- * 删除手机弹框提示
- */
-export const delPopPhoneTips = () => {
-    if (localStorage.getItem('popPhoneTips')) localStorage.removeItem('popPhoneTips');
-};
-
 /**
  * 过滤表情符号
  */
@@ -560,22 +506,6 @@ export const deepCopy = (v: any): any => {
     return JSON.parse(JSON.stringify(v));
 };
 
-/**
- * 函数节流
- */
-export const throttle = (func) => {
-    const intervel = 100;
-    let lastTime = 0;
-
-    return  () => {
-        const nowTime = new Date().getTime();
-        if (nowTime - lastTime > intervel) {
-            func();
-            lastTime = nowTime;
-        }
-    };
-};
-
 // ======================================================================================================================
 
 /**
@@ -659,188 +589,8 @@ export const changeWalletSex = (walletSex:number) => {
 };
 
 /**
- * 获取某个币种对应的货币价值即汇率
+ * 注销账户并删除数据
  */
-export const fetchBalanceValueOfCoin = (currencyName: string | CloudCurrencyType, balance: number) => {
-    let balanceValue = 0;
-    const USD2CNYRate = getStore('third/rate') || USD2CNYRateDefault;
-    const currency2USDT = getStore('third/currency2USDTMap').get(currencyName) || { open: 0, close: 0 };
-    const currencyUnit = getStore('setting/currencyUnit', 'CNY');
-    const silverPrice = getStore('third/silver/price') || 0;
-    if (currencyUnit === 'CNY') {
-        if (currencyName === 'ST') {
-            balanceValue = balance * (silverPrice / 100);
-        } else if (currencyName === 'SC') {
-            balanceValue = balance;
-        } else {
-            balanceValue = balance * currency2USDT.close * USD2CNYRate;
-        }
-    } else if (currencyUnit === 'USD') {
-        if (currencyName === 'ST') {
-            balanceValue = (balance * (silverPrice / 100)) / USD2CNYRate;
-        } else if (currencyName === 'SC') {
-            balanceValue = balance / USD2CNYRate;
-        } else {
-            balanceValue = balance * currency2USDT.close;
-        }
-    }
-
-    return balanceValue;
-};
-
-// 获取货币的涨跌情况
-export const fetchCoinGain = (currencyName: string) => {
-    const currency2USDT: Currency2USDT = getStore('third/currency2USDTMap').get(currencyName);
-    if (!currency2USDT) return formatBalanceValue(0);
-
-    return formatBalanceValue(((currency2USDT.close - currency2USDT.open) / currency2USDT.open) * 100);
-};
-
-// 获取ST涨跌情况
-export const fetchSTGain = () => {
-    const goldGain = getStore('third/silver/change');
-    if (!goldGain) {
-        return formatBalanceValue(0);
-    } else {
-        return formatBalanceValue(goldGain * 100);
-    }
-};
-
-/**
- * 获取云端总资产
- */
-export const fetchCloudTotalAssets = () => {
-    const cloudBalances = getCloudBalances();
-    let totalAssets = 0;
-    for (const [k, v] of cloudBalances) {
-        totalAssets += fetchBalanceValueOfCoin(CloudCurrencyType[<any>k], v);
-    }
-
-    return totalAssets;
-};
-
-/**
- * 获取本地钱包资产列表
- */
-export const fetchWalletAssetList = () => {
-    const wallet = getStore('wallet');
-    const showCurrencys = (wallet && wallet.showCurrencys) || defalutShowCurrencys;
-    const assetList = [];
-    for (const k in MainChainCoin) {
-        const item: any = {};
-        if (MainChainCoin.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
-            item.currencyName = k;
-            item.description = MainChainCoin[k].description;
-            const balance = fetchBalanceOfCurrency(k);
-            item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
-            item.gain = fetchCoinGain(k);
-            item.rate = formatBalanceValue(fetchBalanceValueOfCoin(k,1));
-            assetList.push(item);
-        }
-
-    }
-
-    for (const k in ERC20Tokens) {
-        const item: any = {};
-        if (ERC20Tokens.hasOwnProperty(k) && showCurrencys.indexOf(k) >= 0) {
-            item.currencyName = k;
-            item.description = ERC20Tokens[k].description;
-            const balance = fetchBalanceOfCurrency(k);
-            item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
-            item.rate = formatBalanceValue(fetchBalanceValueOfCoin(k,1));
-            item.gain = fetchCoinGain(k);
-            assetList.push(item);
-        }
-    }
-
-    return assetList;
-};
-
-/**
- * 获取云端钱包资产列表
- */
-export const fetchCloudWalletAssetList = () => {
-    const assetList = [];
-    const cloudBalances = getCloudBalances();
-    const ktBalance = cloudBalances.get(CloudCurrencyType.KT) || 0;
-    const ktItem = {
-        currencyName: 'KT',
-        description: 'KT Token',
-        balance: formatBalance(ktBalance),
-        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('KT', ktBalance)),
-        gain: fetchCloudGain(),
-        rate:formatBalanceValue(0)
-    };
-    assetList.push(ktItem);
-    const scBalance = cloudBalances.get(CloudCurrencyType.SC) || 0;
-    const gtItem = {
-        currencyName: 'SC',
-        description: 'SC',
-        balance: formatBalance(scBalance),
-        balanceValue: formatBalanceValue(fetchBalanceValueOfCoin('SC',scBalance)),
-        gain: fetchCloudGain(),
-        rate:formatBalanceValue(fetchBalanceValueOfCoin('SC',1))
-    };
-    assetList.push(gtItem);
-    for (const k in CloudCurrencyType) {
-        let hidden = [];
-        if (getModulConfig('IOS')) {
-            hidden = getModulConfig('IOSCLOUDASSETSHIDDEN');
-        }
-        if (hidden.indexOf(k) >= 0) continue;
-        const item: any = {};
-        if (MainChainCoin.hasOwnProperty(k)) {
-            item.currencyName = k;
-            item.description = MainChainCoin[k].description;
-            const balance = cloudBalances.get(CloudCurrencyType[k]) || 0;
-            item.balance = formatBalance(balance);
-            item.balanceValue = formatBalanceValue(fetchBalanceValueOfCoin(k, balance));
-            item.gain = fetchCoinGain(k);
-            item.rate = formatBalanceValue(fetchBalanceValueOfCoin(k,1));
-            assetList.push(item);
-        }
-    }
-
-    return assetList;
-};
-
-/**
- * 获取指定货币下余额总数
- * @param currencyName 货币名称
- */
-export const fetchBalanceOfCurrency = (currencyName: string) => {
-    const wallet = getStore('wallet');
-    if (!wallet) return 0;
-    let balance = 0;
-    let currencyRecord = null;
-    for (const item of wallet.currencyRecords) {
-        if (item.currencyName === currencyName) {
-            currencyRecord = item;
-        }
-    }
-    for (const addrInfo of currencyRecord.addrs) {
-        balance += addrInfo.balance;
-    }
-
-    return balance;
-};
-
-/**
- * 获取总资产
- */
-export const fetchLocalTotalAssets = () => {
-    const wallet = getStore('wallet');
-    if (!wallet) return 0;
-    let totalAssets = 0;
-    wallet.currencyRecords.forEach(item => {
-        if (wallet.showCurrencys.indexOf(item.currencyName) >= 0) {
-            const balance = fetchBalanceOfCurrency(item.currencyName);
-            totalAssets += fetchBalanceValueOfCoin(item.currencyName, balance);
-        }
-
-    });
-
-    return totalAssets;
+export const logoutAccount = async (del:boolean = false,noLogin:boolean = false) => {
+   // TODO 
 };

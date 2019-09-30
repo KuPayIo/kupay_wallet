@@ -20,7 +20,7 @@ export const run = (cb): void =>  {
     // 数据检查  
     checkUpdate();  
     const id = getStore('user/id');
-    popNew('app-view-base-test');
+    popNew('app-view-base-app');
     if (!id) {
         popNew('app-view-base-entrance');
     } 

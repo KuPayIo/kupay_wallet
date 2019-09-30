@@ -222,10 +222,32 @@ winit.initNext = function () {
 	}
 	var firstStageLoaded = function(){
 		var sourceList = [
+			"pi/ui/root.js",
+			"pi/ui/root.tpl",
+			"pi/ui/html.js",
+			"pi/ui/html.tpl",
+			"pi/ui/lang.js",
+			"pi/ui/lang.tpl",
 			"app/view/base/sourceLoaded.js",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",
-			"app/net/login.js"
+			"app/net/login.js",
+			"app/view/base/",
+			"app/view/play/home/",
+			"earn/client/app/view/home/",
+			"chat/client/app/view/home/test.tpl",
+			"app/components1/btn/",
+			"app/components1/img/",
+			"app/components1/topBar/",
+			"app/components1/blankDiv/",
+			"app/components1/offlineTip/",
+			"app/components1/loading/loading1.js",
+			"app/components1/loading/loading1.wcss",
+			"app/components1/loading/loading1.tpl",  
+			"app/res/css/",
+			'earn/client/app/res/css/',
+			'earn/xlsx/item.c.js',
+			'earn/xlsx/item.s.js'
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.log("firstStageLoaded success-----------------");
@@ -234,32 +256,6 @@ winit.initNext = function () {
 			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/init").exports.registerRpcStruct(fm);
 			// 活动注册
 			pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
-			// 继续加载首页所需
-			loadWalletFirstPageSource();  //钱包
-		}, function (r) {
-			alert("加载目录失败, " + r.error + ":" + r.reason);
-		}, dirProcess.handler);
-	}
-	
-	// 加载钱包首页所需资源
-	var loadWalletFirstPageSource = function () {
-		console.time("fp loadWalletFirstPageSource");
-		var sourceList = [
-			"pi/ui/root.js",
-			"pi/ui/root.tpl",
-			"pi/ui/html.js",
-			"pi/ui/html.tpl",
-			"pi/ui/lang.js",
-			"pi/ui/lang.tpl",
-			"app/view/base/",
-			"app/components1/btn/",
-			"app/components1/loading/loading1.js",
-			"app/components1/loading/loading1.wcss",
-			"app/components1/loading/loading1.tpl",  
-			"app/res/css/",
-			'earn/client/app/res/css/'
-		];
-		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
@@ -268,7 +264,7 @@ winit.initNext = function () {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
 	}
-
+	
 	// 全部所需资源下载完成,进入app,显示界面
 	var enterApp = function(){
 		// 加载根组件

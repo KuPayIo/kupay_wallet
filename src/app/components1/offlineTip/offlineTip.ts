@@ -7,8 +7,8 @@ import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore, register as earnRegister } from '../../../earn/client/app/store/memstore';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { callWalletManualReconnect,getStoreData } from '../../middleLayer/wrap';
-import { registerStoreData } from '../../viewLogic/common';
+import { walletManualReconnect } from '../../net/login';
+import { getStore, register } from '../../store/memstore';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -24,7 +24,7 @@ export class OfflineTip extends Widget {
     public create() {
         super.create();
          // 钱包login
-        registerStoreData('user/isLogin', (isLogin:boolean) => {
+        register('user/isLogin', (isLogin:boolean) => {
             this.updateDate(OfflienType.WALLET,isLogin);
         });
 
@@ -39,10 +39,7 @@ export class OfflineTip extends Widget {
         });
 
         if (this.state === null) {
-            forelet.paint('');
-            getStoreData('user/id').then(uid => {
-                forelet.paint(uid);
-            });
+            forelet.paint(getStore('user/id'));
         }
         
     }
@@ -62,11 +59,11 @@ export class OfflineTip extends Widget {
         this.props.reconnecting = true;   // 正在连接
         const offlienType = this.props.offlienType;
         if (offlienType === OfflienType.WALLET) {  // 钱包重连
-            callWalletManualReconnect();
+            walletManualReconnect();
         } else if (offlienType === OfflienType.CHAT) {  // 聊天重连
-            getStoreData('user/isLogin').then(isLogin => {
+            getStore('user/isLogin').then(isLogin => {
                 if (!isLogin) {
-                    callWalletManualReconnect();
+                    walletManualReconnect();
                 }
             });
            
@@ -74,9 +71,9 @@ export class OfflineTip extends Widget {
                 chatManualReconnect();
             }
         } else {   // 活动重连
-            getStoreData('user/isLogin').then(isLogin => {
+            getStore('user/isLogin').then(isLogin => {
                 if (!isLogin) {
-                    callWalletManualReconnect();
+                    walletManualReconnect();
                 }
             });
             if (!earnGetStore('userInfo/isLogin')) {

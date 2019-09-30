@@ -8,6 +8,7 @@
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    position: relative;
 }
 .head-container{
     position:relative;
@@ -69,4 +70,20 @@
 }
 .rightArrow{
     margin-right: 20px;
+}
+.btn{
+    width:630px;
+    height:100px;
+    background:rgba(66,133,244,1);
+    border-radius:50px;
+    font-size:32px;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    text-align: center;
+    line-height: 100px;
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
 }

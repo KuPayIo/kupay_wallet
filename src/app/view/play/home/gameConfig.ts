@@ -1,6 +1,11 @@
-import { ButtonMods } from '../../../api/pi3Config';
-import { shareDownload } from '../../../config';
+import { shareDownload } from '../../../public/config';
 
+ // 按钮模式
+export enum ButtonMods { 
+    FLOATBUTTON = 1,  // 悬浮框样式1  三个点 可拖动
+    WXBUTTON = 2,      // 微信小程序样式
+    FLOATBUTTON2 = 3   // 悬浮框样式2  图标 可拖动
+}
 /**
  * 第三方游戏相关配置
  */

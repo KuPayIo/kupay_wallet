@@ -1,5 +1,5 @@
 import { DeviceIdProvider } from '../../pi/browser/device';
-import { open, request,setUrl } from '../../pi/net/ui/con_mgr';
+import { open, reopen,request, setUrl } from '../../pi/net/ui/con_mgr';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { inAndroidApp, inIOSApp, wsUrl } from '../public/config';
 import { getStore, setStore } from '../store/memstore';
@@ -26,6 +26,14 @@ export const requestAsync = (msg: any):Promise<any> => {
             }
         });
     });
+};
+
+/**
+ * 钱包手动重连
+ */
+export const walletManualReconnect = () => {
+    console.log('walletManualReconnect called');
+    reopen(conReOpen);
 };
 
 /**
@@ -202,6 +210,7 @@ export const loginWallet = (appId:string,success:Function) => {
  * 登录钱包并获取openId成功
  */
 const loginWalletSuccess = () => {
+    return;
     walletLogin = true;
     for (const loginType of loginedCallbackList) {
         loginWalletSuccess1(loginType);

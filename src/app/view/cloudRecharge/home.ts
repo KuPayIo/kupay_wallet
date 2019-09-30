@@ -7,8 +7,8 @@ import { getAccountDetail } from '../../net/pull';
 import { getModulConfig } from '../../public/config';
 import { CloudCurrencyType } from '../../public/interface';
 import { getCloudBalances, getStore, register } from '../../store/memstore';
-import { fetchCloudGain, formatBalance, formatBalanceValue } from '../../utils/pureUtils';
-import { fetchBalanceValueOfCoin, getCurrencyUnitSymbol, goRecharge } from '../../utils/tools';
+import { fetchBalanceValueOfCoin, fetchCloudGain, formatBalance, formatBalanceValue } from '../../utils/pureUtils';
+import { getCurrencyUnitSymbol, goRecharge } from '../../utils/tools';
 // ===================================================== 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
