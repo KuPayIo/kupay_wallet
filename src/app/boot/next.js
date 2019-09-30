@@ -228,6 +228,7 @@ winit.initNext = function () {
 			"pi/ui/html.tpl",
 			"pi/ui/lang.js",
 			"pi/ui/lang.tpl",
+			"app/store/memstore.js",
 			"app/view/base/sourceLoaded.js",
 			"earn/client/app/net/login.js",
 			"chat/client/app/net/login.js",

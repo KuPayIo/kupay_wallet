@@ -5,7 +5,7 @@ import { ShareType } from '../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Widget } from '../../../pi/widget/widget';
-import { sharePerUrl } from '../../config';
+import { sharePerUrl } from '../../public/config';
 import { LuckyMoneyType } from '../../public/interface';
 import { getStore } from '../../store/memstore';
 

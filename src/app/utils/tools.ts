@@ -1,15 +1,15 @@
 import { setStore as earnSetStore } from '../../earn/client/app/store/memstore';
-import { popModalBoxs, popNew } from '../../pi/ui/root';
+import { popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { resize } from '../../pi/widget/resize/resize';
-import { notSwtichShowCurrencys, preShowCurrencys, resendInterval } from '../config';
 import { getAccountDetail } from '../net/pull';
-import { Config, defalutShowCurrencys, ERC20Tokens, getModulConfig, MainChainCoin, USD2CNYRateDefault } from '../public/config';
-import { CloudCurrencyType, Currency2USDT, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../public/interface';
+// tslint:disable-next-line:max-line-length
+import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin, notSwtichShowCurrencys, preShowCurrencys, resendInterval } from '../public/config';
+import { CloudCurrencyType, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../public/interface';
 import { getCloudBalances, getStore,setStore } from '../store/memstore';
 import { piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
-import { arrayBuffer2File, fetchCloudGain, formatBalance, formatBalanceValue, getUserInfo, popNewMessage, unicodeArray2Str } from './pureUtils';
+import { arrayBuffer2File, popNewMessage, unicodeArray2Str } from './pureUtils';
 import { gotoRecharge } from './recharge';
 
 /**

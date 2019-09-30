@@ -1,8 +1,7 @@
 /**
  * 主动向后端通讯
  */
-import { uploadFileUrl } from '../config';
-import { getModulConfig, PAGELIMIT } from '../public/config';
+import { getModulConfig, PAGELIMIT, uploadFileUrl } from '../public/config';
 import { CloudCurrencyType } from '../public/interface';
 import { getStore, setStore } from '../store/memstore';
 // tslint:disable-next-line:max-line-length
