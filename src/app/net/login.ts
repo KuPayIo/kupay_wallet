@@ -3,6 +3,7 @@ import { open, reopen,request, setUrl } from '../../pi/net/ui/con_mgr';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { inAndroidApp, inIOSApp, wsUrl } from '../public/config';
 import { getStore, setStore } from '../store/memstore';
+import { playerName } from '../utils/tools';
 
 /**
  * 登录
@@ -172,9 +173,22 @@ export const touristLogin = async () => {
         param
     };
     
-    return requestAsync(msg).then(res => {
+    return requestAsync(msg).then(async res => {
         setStore('flags/isLogin',true);
         setStore('user/acc_id',res.acc_id);
+        const info = {
+            nickName: await playerName(),           // 昵称
+            avatar: '',             // 头像
+            phoneNumber: '',        // 手机号
+            areaCode: '86',          // 区域码
+            isRealUser: false,       // 是否是真实用户
+            acc_id: res.acc_id,                // 好嗨号
+            sex: 2,                    // 性别  0男 1女 2中性
+            note: ''                   // 个性签名
+        };
+        const user = getStore('user');
+        user.info = info;
+        setStore('user',user);
         console.log('游客登录成功 =',res);
         loginWalletSuccess();
         applyAutoLogin();
@@ -210,7 +224,6 @@ export const loginWallet = (appId:string,success:Function) => {
  * 登录钱包并获取openId成功
  */
 const loginWalletSuccess = () => {
-    return;
     walletLogin = true;
     for (const loginType of loginedCallbackList) {
         loginWalletSuccess1(loginType);
@@ -245,8 +258,6 @@ const logoutWalletSuccess =  () => {
         logout();
     }
 };
-
-openConnect();
 
 /**
  * 获取设备唯一id

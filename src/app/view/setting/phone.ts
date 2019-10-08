@@ -7,8 +7,7 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { regPhone, unbindPhone } from '../../net/pull';
 import { getStore, setStore } from '../../store/memstore';
-import { getUserInfo, popNewMessage } from '../../utils/pureUtils';
-import { delPopPhoneTips } from '../../utils/tools';
+import { delPopPhoneTips, getUserInfo, popNewMessage } from '../../utils/pureUtils';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

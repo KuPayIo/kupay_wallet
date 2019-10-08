@@ -4,7 +4,6 @@
 // ================================ 导入
 import { register as ChatRegister } from '../../../chat/client/app/data/store';
 import { register as earnRegister } from '../../../earn/client/app/store/memstore';
-import { collect, pageRoutersCollection } from '../../../pi/collection/collection';
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
@@ -90,11 +89,11 @@ export class App extends Widget {
         if (this.props.isActive === identfy) return;
         const fromPage = this.findPage(this.props.isActive);
         const toPage = this.findPage(identfy);
-        if (collect) {
-            const now = Date.now();
-            pageRoutersCollection({ page:fromPage,to:toPage,stay_time:now - this.props.inTime });
-            this.props.inTime = now;
-        }
+        // if (collect) {
+        //     const now = Date.now();
+        //     pageRoutersCollection({ page:fromPage,to:toPage,stay_time:now - this.props.inTime });
+        //     this.props.inTime = now;
+        // }
         this.props.isActive = identfy;
         this.old[identfy] = true;
         this.paint();
@@ -133,8 +132,8 @@ export class App extends Widget {
      * 个人主页
      */
     public myHome() {
-        // this.props.isActive = 'APP_WALLET';
-        // this.paint();
+        this.props.isActive = 'APP_WALLET';
+        this.paint();
     }
 }
 

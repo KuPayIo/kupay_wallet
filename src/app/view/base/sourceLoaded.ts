@@ -177,6 +177,7 @@ export const loadCloudRechargeSource = () => {
 export const loadAccountSource = () => {
     const sourceList = [
         'app/view/account/',
+        'app/components1/checkSex/',
         'app/components1/blankDiv/',
         'app/components/topBar/',
         'app/components/basicItem/',
@@ -195,7 +196,12 @@ export const loadSettingSource = () => {
         'app/components1/blankDiv/',
         'app/components/topBar/',
         'app/components/switch/',
-        'app/components/basicItem/'
+        'app/components/basicItem/',
+        'app/components1/input/',
+        'app/components/bindPhone/',
+        'chat/client/app/widget/pageEdit/',
+        'chat/client/app/widget/topBar/',
+        'chat/client/app/widget/input/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);

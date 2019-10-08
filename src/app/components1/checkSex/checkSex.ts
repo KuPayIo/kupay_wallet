@@ -1,6 +1,6 @@
 // tslint:disable-next-line:missing-jsdoc
 import { Widget } from '../../../pi/widget/widget';
-import { rippleShow } from '../../utils/tools';
+import { rippleShow } from '../../utils/pureUtils';
 
 interface Props {
     title:string;

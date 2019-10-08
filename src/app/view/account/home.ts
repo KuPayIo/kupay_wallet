@@ -9,6 +9,7 @@ import { selectImage } from '../../utils/native';
 import { getUserInfo, popNewMessage, rippleShow } from '../../utils/pureUtils';
 // tslint:disable-next-line:max-line-length
 import { changeWalletName, changeWalletNote, changeWalletSex, imgResize, logoutAccount, walletNameAvailable } from '../../utils/tools';
+import { loadBindPhoneSource, loadSetPhoneSource, loadSettingSource } from '../base/sourceLoaded';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords 
 declare var module: any;
@@ -27,7 +28,6 @@ export class AccountHome extends Widget {
         this.init();
     }
     public init() {
-
         this.props = {
             isTourist:false,
             avatar: '',
@@ -115,11 +115,18 @@ export class AccountHome extends Widget {
      */
     public changePhone() {
         if (!this.props.phone) {  // 绑定
-            popNew('app-view-mine-setting-phone');
+            const loading = popNew('app-components1-loading-loading1');
+            loadSettingSource().then(() => {
+                popNew('app-view-setting-phone');
+                loading.callback(loading.widget);
+            });
         } else { // 重新绑定
-            popNew('app-view-mine-setting-unbindPhone');
+            const loading = popNew('app-components1-loading-loading1');
+            loadSettingSource().then(() => {
+                popNew('app-view-setting-unbindPhone');
+                loading.callback(loading.widget);
+            });
         }
-        
     }
 
     /**
@@ -160,11 +167,15 @@ export class AccountHome extends Widget {
      * 修改名称
      */
     public changeName() {
-        popNew('chat-client-app-widget-pageEdit-pageEdit',{ title:'修改昵称', contentInput:this.props.nickName,maxLength:10 },(res:any) => {
-            changeWalletName(res.content);
-            this.props.nickName = res.content;
-            popNewMessage('修改昵称成功');
-            this.paint();
+        const loading = popNew('app-components1-loading-loading1');
+        loadSettingSource().then(() => {
+            popNew('chat-client-app-widget-pageEdit-pageEdit',{ title:'修改昵称', contentInput:this.props.nickName,maxLength:10 },(res:any) => {
+                changeWalletName(res.content);
+                this.props.nickName = res.content;
+                popNewMessage('修改昵称成功');
+                this.paint();
+            });
+            loading.callback(loading.widget);
         });
     }
 
@@ -172,12 +183,17 @@ export class AccountHome extends Widget {
      * 修改个性签名
      */
     public changeSignature() {
-        popNew('chat-client-app-widget-pageEdit-pageEdit',{ title:'修改个性签名', contentInput:this.props.note,maxLength:100 },(res:any) => {
-            changeWalletNote(res.content);
-            this.props.note = res.content;
-            popNewMessage('修改个性签名成功');
-            this.paint();
+        const loading = popNew('app-components1-loading-loading1');
+        loadSettingSource().then(() => {
+            popNew('chat-client-app-widget-pageEdit-pageEdit',{ title:'修改个性签名', contentInput:this.props.note,maxLength:100 },(res:any) => {
+                changeWalletNote(res.content);
+                this.props.note = res.content;
+                popNewMessage('修改个性签名成功');
+                this.paint();
+            });
+            loading.callback(loading.widget);
         });
+       
     }
 
     /**
