@@ -522,11 +522,9 @@ export const walletNameAvailable = (walletName) => {
  * @param walletName wallet name
  */
 export const changeWalletName = (walletName:string) => {
-    return getStore('user/info').then(userInfo => {
-        userInfo.nickName = walletName;
-        setStore('user/info', userInfo);
-    });
-    
+    const userInfo = getStore('user/info');
+    userInfo.nickName = walletName;
+    setStore('user/info', userInfo);
 };
 
 /**
@@ -569,11 +567,9 @@ export const nickNameInterception = (name: string): string => {
  * @param walletNote wallet note
  */
 export const changeWalletNote = (walletNote:string) => {
-    return getStore('user/info').then(userInfo => {
-        userInfo.note = walletNote;
-        setStore('user/info', userInfo);
-    });
-    
+    const userInfo = getStore('user/info');
+    userInfo.note = walletNote;
+    setStore('user/info', userInfo); 
 };
 
 /**
@@ -581,11 +577,9 @@ export const changeWalletNote = (walletNote:string) => {
  * @param walletSex wallet sex
  */
 export const changeWalletSex = (walletSex:number) => {
-    return getStore('user/info').then(userInfo => {
-        userInfo.sex = walletSex;
-        setStore('user/info', userInfo);
-    });
-    
+    const userInfo = getStore('user/info');
+    userInfo.sex = walletSex;
+    setStore('user/info', userInfo);
 };
 
 /**

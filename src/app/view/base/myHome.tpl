@@ -35,7 +35,7 @@
             </div>
             {{end}}
         </div>
-        <div w-class="moreTitle">更多</div>
+        <div w-class="moreTitle" on-tap="test">更多</div>
         <div w-class="more">
             {{for i,v of it.mallFunction}}
             <div w-class="mallFunction" on-tap="funClick(e,{{i}})">

@@ -8,7 +8,7 @@ import { getModulConfig } from '../../public/config';
 import { register } from '../../store/memstore';
 import { fetchCloudWalletAssetList, getUserInfo, rippleShow } from '../../utils/pureUtils';
 // tslint:disable-next-line:max-line-length
-import { loadAboutAppSource, loadCloudRechargeSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadRedEnvelopeSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
+import { loadAboutAppSource, loadAccountSource, loadCloudRechargeSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadPersonalInfoSource, loadRedEnvelopeSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
 
 export const forelet = new Forelet();
 // tslint:disable-next-line:no-reserved-keywords
@@ -111,12 +111,12 @@ export class MyHome extends Widget {
      */
     public initData() {
         Promise.all([getUserInfo()]).then(([userInfo]) => {
-            this.props.userInfo.userName = userInfo.nickName ? userInfo.nickName :'昵称未设置';
+            this.props.userInfo.nickName = userInfo.nickName ? userInfo.nickName :'昵称未设置';
             this.props.userInfo.avatar = userInfo.avatar;
             this.props.userInfo.userLevel = userInfo.level;
             this.props.userInfo.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
             this.medalest();
-            // this.updateLocalWalletAssetList();
+            this.updateLocalWalletAssetList();
         });
     }
 
@@ -155,9 +155,8 @@ export class MyHome extends Widget {
     /**
      * 展示我的勋章
      */
-    public showMyMedal() {
-        popNew('earn-client-app-view-medal-medal');
-        // this.backPrePage();
+    public showMyMedal(e:any) {
+        this.funClick(e,10);
     }
 
     // 动画效果执行
@@ -177,7 +176,13 @@ export class MyHome extends Widget {
      * 我的资料
      */
     public userInfoSet() {
-        popNew('app-view-mine-account-home');
+        const loading = popNew('app-components1-loading-loading1');
+        loadAccountSource().then(() => {
+            popNew('app-view-account-home');
+            
+            loading.callback(loading.widget);
+        });
+        
     }
 
     // tslint:disable-next-line:max-func-body-length
