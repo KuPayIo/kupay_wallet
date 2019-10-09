@@ -253,7 +253,7 @@ export const logoutWallet = (success:Function) => {
 /**
  * 钱包登出成功
  */
-const logoutWalletSuccess =  () => {
+export const logoutWalletSuccess =  () => {
     for (const logout of logoutCallbackList) {
         logout();
     }

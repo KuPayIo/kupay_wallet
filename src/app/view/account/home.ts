@@ -200,12 +200,17 @@ export class AccountHome extends Widget {
      * 注销账户
      */
     public logOutDel() {
-        popNew('app-components-modalBox-modalBox', { title: '确认退出', content:'' }, () => {
-            logoutAccount(true).then(() => {
-                this.backPrePage();
+        const loading = popNew('app-components1-loading-loading1');
+        loadSettingSource().then(() => {
+            popNew('app-components-modalBox-modalBox', { title: '确认退出', content:'' }, () => {
+                logoutAccount(true).then(() => {
+                    this.backPrePage();
+                });
+                
             });
-            
+            loading.callback(loading.widget);
         });
+        
     }
 
     /** 

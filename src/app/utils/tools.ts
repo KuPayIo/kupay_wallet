@@ -1,15 +1,18 @@
 import { setStore as earnSetStore } from '../../earn/client/app/store/memstore';
+import { closeCon, setBottomLayerReloginMsg } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
+import { cryptoRandomInt } from '../../pi/util/math';
 import { resize } from '../../pi/widget/resize/resize';
+import { logoutWalletSuccess, openConnect } from '../net/login';
 import { getAccountDetail } from '../net/pull';
 // tslint:disable-next-line:max-line-length
 import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin, notSwtichShowCurrencys, preShowCurrencys, resendInterval } from '../public/config';
 import { CloudCurrencyType, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../public/interface';
-import { getCloudBalances, getStore,setStore } from '../store/memstore';
+import { getCloudBalances, getStore,initCloudWallets, setStore } from '../store/memstore';
 import { piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
-import { arrayBuffer2File, popNewMessage, unicodeArray2Str } from './pureUtils';
+import { arrayBuffer2File, closeAllPage, delPopPhoneTips, popNewMessage, unicodeArray2Str } from './pureUtils';
 import { gotoRecharge } from './recharge';
 
 /**
@@ -586,5 +589,74 @@ export const changeWalletSex = (walletSex:number) => {
  * 注销账户并删除数据
  */
 export const logoutAccount = async (del:boolean = false,noLogin:boolean = false) => {
-   // TODO 
+    setStore('user/token','');
+    const user = {
+        id: '',                      // 该账号的id
+        isLogin: false,              // 登录状态
+        offline:false,                // 在线状态
+        allIsLogin:false,            // 所有服务登录状态  (钱包  活动  聊天)
+        token: '',                   // 自动登录token
+        conRandom: '',               // 连接随机数
+        conUid: '',                   // 服务器连接uid
+        publicKey: '',               // 用户公钥, 第一个以太坊地址的公钥
+        salt: cryptoRandomInt().toString(),                    // 加密 盐值
+        secretHash: '',             // 密码hash缓存   
+        info: {                      // 用户基本信息
+            nickName: '',           // 昵称
+            avatar: '',            // 头像
+            phoneNumber: '',       // 手机号
+            isRealUser: false    // 是否是真实用户
+        }
+    };
+    const cloud = {
+        cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
+    };
+    
+    const activity = {
+        luckyMoney: {
+            sends: null,          // 发送红包记录
+            exchange: null,       // 兑换红包记录
+            invite: null          // 邀请码记录
+        },
+        mining: {
+            total: null,      // 挖矿汇总信息
+            history: null, // 挖矿历史记录
+            addMine: [],  // 矿山增加项目
+            mineRank: null,    // 矿山排名
+            miningRank: null,  // 挖矿排名
+            itemJump: null
+        },                       // 挖矿
+        dividend: {
+            total: null,         // 分红汇总信息
+            history: null       // 分红历史记录
+        },
+        financialManagement: {          // 理财
+            products: null,
+            purchaseHistories: null
+        }
+    };
+
+    let lockScreen = getStore('setting/lockScreen');
+    lockScreen = {
+        psw:'',
+        open:false
+    };
+    setStore('wallet',null,false);
+    setStore('cloud',cloud,false);
+    setStore('user',user);
+    setStore('activity',activity);
+    setStore('setting/lockScreen',lockScreen);
+    setStore('flags/saveAccount', false);  
+    setBottomLayerReloginMsg('','','');
+    closeCon();
+    logoutWalletSuccess();
+    setTimeout(() => {
+        openConnect();
+    },100);
+    if (!noLogin) {
+        closeAllPage();
+        popNew('app-view-base-entrance');
+    }
+    delPopPhoneTips();
+   
 };

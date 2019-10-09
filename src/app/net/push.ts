@@ -83,22 +83,23 @@ export const initPush = () => {
         getServerCloudBalance();
         const wallet = getStore('wallet');
         const userInfo = getStore('user/info');
-        let popType = -1;           // 弹框类型 -1 无弹框 0 密码弹框   1 绑定手机弹框
-        if (!wallet.setPsw) {
-            const setPsw = getStore('flags').setPsw;
-            if (!setPsw) {
-                setStore('flags/setPsw',true);  // 防止多次弹窗
-                popType = 0;
-            }
+        // let popType = -1;           // 弹框类型 -1 无弹框 0 密码弹框   1 绑定手机弹框
+        // debugger;
+        // if (!wallet.setPsw) {
+        //     const setPsw = getStore('flags').setPsw;
+        //     if (!setPsw) {
+        //         setStore('flags/setPsw',true);  // 防止多次弹窗
+        //         popType = 0;
+        //     }
             
-        } else if (!userInfo.phoneNumber) {
-            const bindPhone = getStore('flags').bindPhone;
-            if (!bindPhone) {
-                setStore('flags/bindPhone',true);  // 防止多次弹窗
-                popType = 1;
-            }
+        // } else if (!userInfo.phoneNumber) {
+        //     const bindPhone = getStore('flags').bindPhone;
+        //     if (!bindPhone) {
+        //         setStore('flags/bindPhone',true);  // 防止多次弹窗
+        //         popType = 1;
+        //     }
             
-        }
+        // }
         balanceChange(res);
     });
 

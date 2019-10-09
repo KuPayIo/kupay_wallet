@@ -120,6 +120,9 @@ export class MyHome extends Widget {
         });
     }
 
+    public test() {
+        this.updateLocalWalletAssetList();
+    }
     // 获取最高勋章
     public medalest() {
         const medalList = getMedalList(CoinType.KT, 'coinType');
@@ -270,6 +273,7 @@ export class MyHome extends Widget {
             default:
         }
     }
+
 }
 // 云端余额变化
 register('cloud/cloudWallets',(r) => {

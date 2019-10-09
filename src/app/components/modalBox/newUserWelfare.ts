@@ -4,7 +4,6 @@
 
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { callGetAllAccount } from '../../middleLayer/wrap';
 
 export class NewUserWelfare extends Widget {
     public ok: () => void;
