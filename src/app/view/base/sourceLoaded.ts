@@ -38,13 +38,15 @@ export const loadOpenBoxSource = () => {
 export const loadTurntableSource = () => {
     const sourceList = [
         'app/components1/blankDiv/',
+        'earn/client/app/components/lotteryModal/',
         'app/components/topBar/',
         'earn/client/app/view/turntable/',
         'earn/client/app/view/myProduct/',
         'earn/client/app/xls/dataCfg.c.js',
         'earn/client/app/xls/dataCfg.s.js',
         'earn/xlsx/awardCfg.c.js',
-        'earn/xlsx/awardCfg.s.js'
+        'earn/xlsx/awardCfg.s.js',
+        'app/net/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);
@@ -78,7 +80,8 @@ export const loadMiningSource = () => {
         'earn/client/app/xls/mineType.c.js',
         'earn/client/app/xls/mineType.s.js',
         'earn/xlsx/item.c.js',
-        'earn/xlsx/item.s.js'
+        'earn/xlsx/item.s.js',
+        'app/net/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);
@@ -138,7 +141,10 @@ export const loadRedEnvelopeSource = () => {
         'app/components1/btn/',
         'app/components1/blankDiv/',
         'app/components/topBar/',
-        'app/components1/img/'
+        'app/components1/img/',
+        'app/components1/loading/',
+        'earn/client/app/components/noviceTaskAward/',
+        'earn/client/app/xls/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);
@@ -199,9 +205,11 @@ export const loadSettingSource = () => {
         'app/components/basicItem/',
         'app/components1/input/',
         'app/components/bindPhone/',
+        'app/components/modalBox/',
         'chat/client/app/widget/pageEdit/',
         'chat/client/app/widget/topBar/',
-        'chat/client/app/widget/input/'
+        'chat/client/app/widget/input/',
+        'earn/xlsx/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);
