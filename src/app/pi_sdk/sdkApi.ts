@@ -112,7 +112,7 @@ const closeWalletWebview = () => {
     pi_sdk.pi_RPC_Method(pi_sdk.config.jsApi, 'closeWalletWebview', (error, result) => {
         console.log('closeWalletWebview call success');
     });
-}
+};
 
 // ----------对外接口------------------------------------------------------------------------------------------
 

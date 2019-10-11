@@ -1,5 +1,6 @@
  // ================================ 导入
 import { screenMode, WebViewManager } from '../../../../pi/browser/webview';
+import { ajax } from '../../../../pi/lang/mod';
 import { Json } from '../../../../pi/lang/type';
 import { getLang } from '../../../../pi/util/lang';
 import { Forelet } from '../../../../pi/widget/forelet';
@@ -9,6 +10,7 @@ import { closeWalletWebview } from '../../../api/JSAPI';
 import { getPi3Config } from '../../../api/pi3Config';
 import { closePopFloatBox } from '../../../api/thirdBase';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
+import { directEnterGame } from '../../../net/login';
 import { getStore, register, setStore } from '../../../store/memstore';
 import { getUserInfo, hasWallet, popNew3, popNewMessage, setPopPhoneTips } from '../../../utils/tools';
 import { activityList, gameList } from './gameConfig';
@@ -199,15 +201,18 @@ export class PlayHome extends Widget {
 
             this.configPromise = Promise.resolve(pi3ConfigStr);
             if (gameItem.usePi) { // 有pi的项目
-                this.configPromise.then(configContent => {
-                    if (gameUrl.indexOf('http') > -1) {
-                        WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, '', screen);
-                    } else {
-                        WebViewManager.open(webviewName, gameUrl, gameTitle, '', screen);
-                    }
-                    hasEnterGame = false;  
-                    closeWalletWebview();                     
-                });
+                directEnterGame();
+                // this.configPromise.then(configContent => {
+                //     if (gameUrl.indexOf('http') > -1) {
+                //         WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, '', screen);
+                //     } else {
+                //         WebViewManager.open(webviewName, gameUrl, gameTitle, '', screen);
+                //     }
+                //     hasEnterGame = false;  
+                //     closeWalletWebview();                     
+                // }).catch(r => {
+                //     // 
+                // });
             } else {
                 const allPromise = Promise.all([this.injectStartPromise,this.configPromise,this.piSdkPromise,this.injectEndPromise]);
                 allPromise.then(([injectStartContent,configContent,piSdkContent,injectEndContent]) => {
@@ -215,6 +220,8 @@ export class PlayHome extends Widget {
                     WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content, screen);
                     hasEnterGame = false;
                     closeWalletWebview();              
+                }).catch(r => {
+                    // 
                 });
             }
         }

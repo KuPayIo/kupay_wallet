@@ -14,6 +14,7 @@ export interface OrderDetail {
     payType: PayType; // 支付方式
     cointype: number; // 充值类型
     note?:string;     // 备注
+    ext:string;   // 后续操作所需参数
 }
 
 /**

@@ -5,11 +5,11 @@ import { AdPlatform, ADUnion, PlayEvent } from '../../pi/browser/ad_unoin';
 import { DeviceIdProvider } from '../../pi/browser/device';
 import { ImagePicker } from '../../pi/browser/imagePicker';
 import { screenMode, WebViewManager } from '../../pi/browser/webview';
+import { WeChatLogin } from '../../pi/browser/wxlogin';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { getStore, setStore } from '../store/memstore';
 import { piRequire } from '../utils/commonjsTools';
 import { popNewLoading } from '../utils/tools';
-import { WeChatLogin } from '../../pi/browser/wxlogin';
 
 export const selectImage = (ok?,cancel?) => {
     console.log('选择图片');
@@ -298,9 +298,9 @@ registerToWx('wxd842d1d167444cd0');   // 加载就立即调用
 export const getWXCode = (ok?:any,fail?:any) => {
     WeChatLogin.getCodeFromWX('snsapi_userinfo','',(res,code) => {
         console.log('getWXCode!!!!!!',res,code);
-        if(res === 0){
+        if (res === 0) {
             ok && ok(code);
-        }else{
+        } else {
             fail && fail();
         }
        

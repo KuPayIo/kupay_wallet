@@ -42,13 +42,22 @@ export class ThirdRechargeSC  extends Widget {
      */
     public rechargeClick() {
         const num = this.props.needPay * SCPrecision;
+        const data = {
+            app_id:this.props.order.appid,
+            oid:this.props.order.transaction_id,
+            nonce_str:this.props.order.nonce_str,
+            pk:getStore('user/publicKey',''),
+            sign:this.props.order.sign
+        };
+        debugger;
         const orderDetail:OrderDetail = {
             total: num * SCUnitprice, // 总价
             body: wxPayShow, // 信息
             num, // 充值SC数量
             payType: this.props.selPayType, // 支付方式
             cointype: CloudCurrencyType.SC, // 充值类型
-            note: ''          // 备注
+            note: '',          // 备注
+            ext:JSON.stringify(data)
         };
         confirmPay(orderDetail).then(res => {
             if (res) {

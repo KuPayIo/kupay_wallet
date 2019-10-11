@@ -6,7 +6,7 @@ import { CreateWalletType, Option, phoneImport, touristLogin } from '../../logic
 import { getWXCode } from '../../logic/native';
 import { getRandom, logoutAccountDel } from '../../net/login';
 import { setStore } from '../../store/memstore';
-import { getDataCenter, getLoginMod } from '../../utils/commonjsTools';
+import { getLoginMod } from '../../utils/commonjsTools';
 import { defaultPassword } from '../../utils/constants';
 import { playerName, popNew3, popNewLoading, popNewMessage, rippleShow } from '../../utils/tools';
 

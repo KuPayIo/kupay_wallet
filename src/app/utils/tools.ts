@@ -1222,7 +1222,7 @@ export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callb
             loading && loading.callback(loading.widget);
             setStore('flags/level_3_page_loaded', true);
             popNew(name,props,ok,cancel);
-        }).catch(r=>{
+        }).catch(r => {
             console.log('popNew3 loaded failed');
         });
         

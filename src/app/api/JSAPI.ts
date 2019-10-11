@@ -1,8 +1,8 @@
 /**
  * 授权、支付等API
  */
-import { WebViewManager, screenMode } from '../../pi/browser/webview';
-import { popNew, cfg, browserAdaptive } from '../../pi/ui/root';
+import { screenMode, WebViewManager } from '../../pi/browser/webview';
+import { browserAdaptive, cfg, popNew } from '../../pi/ui/root';
 import { loadDir } from '../../pi/widget/util';
 import { sign } from '../core/genmnemonic';
 import { GlobalWallet } from '../core/globalWallet';
@@ -226,10 +226,10 @@ export interface ThirdOrder {
  * 关闭钱包后台
  */
 export const closeWalletWebview = () => {
-    WebViewManager.closeDefault(()=>{
+    WebViewManager.closeDefault(() => {
         console.log('关闭钱包后台成功了');
     });
-}
+};
 
 /**
  * 支付返回结果
@@ -275,8 +275,8 @@ const thirdPay1 = async (order:ThirdOrder,webviewName: string) => {
             if (rechargeSuccess) {  // 充值成功   直接购买
                 if (setNoPassword === SetNoPassword.SETED) {// 余额足够并且免密开启   直接购买
                     console.log('walletPay start------',order);
-                    const payRes = await walletPay(order);
-                    console.log('walletPay success',payRes);
+                    // const payRes = await walletPay(order);
+                    // console.log('walletPay success',payRes);
             
                     return [undefined,{ result:PayCode.SUCCESS }];
                 } else if (setNoPassword === SetNoPassword.NOSETED) { // 余额足够  但是没有开启免密
@@ -477,4 +477,3 @@ const jsonUriSort = (json) => {
 
     return msg;
 };
-

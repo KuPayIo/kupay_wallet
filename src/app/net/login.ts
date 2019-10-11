@@ -3,6 +3,7 @@
  */
 
 import { WebViewManager } from '../../pi/browser/webview';
+import { ajax } from '../../pi/lang/mod';
 import { closeCon, open, reopen, setBottomLayerReloginMsg, setReloginCallback, setUrl } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { cryptoRandomInt } from '../../pi/util/math';
@@ -214,14 +215,11 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
         // setStore('user/isLogin', true);
         
         if ((<any>window).isFirst) {
-            const gameItem = gameList[0];
-            const gameTitle = gameItem.title.zh_Hans;
-            const gameUrl =   gameItem.url;
-            const webviewName = gameItem.webviewName;
-            const screen = gameItem.screenMode;
-            WebViewManager.open(webviewName, gameUrl, gameTitle, '', screen);
-            closeWalletWebview();
+            directEnterGame(() => {
+                popNew('app-view-base-app');
+            });
         }
+
     }).catch(err => {
         setStore('user/isLogin', false);
         if (err.error !== -69) {
@@ -229,6 +227,26 @@ export const defaultLogin = async (hash:string,conRandom:string) => {
         }
     });
 
+};
+
+/**
+ * 直接进入游戏
+ * @param cb 失败后回调
+ */
+export const directEnterGame = (cb?:any) => {
+    ajax.get(`http://cgcydzm.17youx.cn/client/boot/haohai.html?${Math.random()}`, {}, undefined, undefined, 1000,(res:string) => {
+        const gameItem = gameList[0];
+        const gameTitle = gameItem.title.zh_Hans;
+        const gameUrl =   gameItem.url;
+        const webviewName = gameItem.webviewName;
+        const screen = gameItem.screenMode;
+        WebViewManager.open(webviewName, gameUrl, gameTitle, res, screen);
+        closeWalletWebview();
+    },(err:any) => {
+        console.log('下载游戏首页错误',err);
+        popNewMessage('网络错误，无法进入游戏，请稍后再试');
+        cb && cb();
+    });
 };
 
 /**
