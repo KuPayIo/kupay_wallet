@@ -13,12 +13,14 @@ import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
 import { LockScreen } from '../../public/interface';
 import { getStore } from '../../store/memstore';
+import { getScreenModify } from '../../utils/native';
 
 // ============================== 导出
 export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查  
     checkUpdate();  
+    getScreenModify();
     const id = getStore('user/info/openid');
     popNew('app-view-base-app');
     if (!id) {

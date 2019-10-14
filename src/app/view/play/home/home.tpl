@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-next-click="toSearch">
     <div w-class="topBack" ev-myHome="myHome">
-        <app-components1-topBar-topBar1>{avatar:{{it.userInfo.avatar}},title:"游戏",nextImg:"../../res/image1/searchGame.png" }</app-components1-topBar-topBar1>
+        <app-components1-topBar-topBar1>{avatar:{{it.userInfo.avatar}},title:"游戏" }</app-components1-topBar-topBar1>
     </div>
     <app-components1-offlineTip-offlineTip>{ offlienType:{{it.offlienType}} }</app-components1-offlineTip-offlineTip>
     <div w-class="body">
