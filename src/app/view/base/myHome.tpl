@@ -25,7 +25,7 @@
                 </div>
                 {{end}}
             </div>
-            <div w-class="dividend">距离分红 20 天</div>
+            <div w-class="dividend" on-tap="dividend">距离分红 20 天</div>
         </div>
         
         <div w-class="friendList">

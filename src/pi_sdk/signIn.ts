@@ -198,9 +198,12 @@ export const createSignInPage = () => {
     document.querySelector('#touristLogin').addEventListener('click',touristLogin);
 };
 
+// 获取验证码倒计时
+let codeTimer = null;
+
 // 获取验证码
 const getCode = () => {
-    const phone = document.querySelector('#phoneInput').value;
+    const phone = document.querySelector('#phoneInput')['value'];
     const reg = /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/;
     if (!phone || !reg.test(phone)) {
         popNewMessage('无效的手机号');
@@ -209,13 +212,13 @@ const getCode = () => {
     }
     let countdown = 60;
     console.log('倒计时 ',countdown);
-    const timer = setInterval(() => {
+    codeTimer = setInterval(() => {
         countdown--;
         console.log('倒计时 ',countdown);
         document.querySelector('#countdown').innerHTML = `${countdown}s 重新获取`;
         if (countdown === 0) {
             document.querySelector('#countdown').innerHTML = `获取验证码`;
-            clearInterval(timer);
+            codeTimer && clearInterval(codeTimer);
         }
     },1000);
     console.log('sendCode start');
@@ -234,8 +237,8 @@ export enum UserType {
 
 // 手机号登录
 const phoneLogin = () => {
-    const phone = document.querySelector('#phoneInput').value;
-    const code = document.querySelector('#codeInput').value;
+    const phone = document.querySelector('#phoneInput')['value'];
+    const code = document.querySelector('#codeInput')['value'];
     if (!phone) {
         popNewMessage('请输入手机号');
 
@@ -307,8 +310,41 @@ const wbLogin = () => {
 
 // 注册或登录成功后关掉注册页面
 const closeSigninPage=()=>{
+    codeTimer && clearInterval(codeTimer);
     const piRoot = document.querySelector('.pi-root');
     if (piRoot) {
         document.querySelector('body').removeChild(piRoot);
     }
+}
+
+/**
+ * 弹出框
+ */
+export const createModalBox = (title:string,msg:string,okCB:any,cancelCB?:any) => {
+    closeSigninPage();
+    const htmlText = `
+        <div class="pi-mask">
+            <div class="modalBox-body animated bounceInUp">
+                <div class="pi-pay-title">${title}</div>
+                <div class="pi-pay-content">${msg}</div>
+                <div class="pi-btns" style="padding-bottom:30px;">
+                    <div class="pi-cancel-btn">取消</div>
+                    <div class="pi-ok-btn">确定</div>
+                </div>
+            </div>
+        </div>`;
+    const piRoot = document.createElement('div');
+    piRoot.setAttribute('id', 'pi-root');
+    piRoot.innerHTML = htmlText;
+    const body = document.querySelector('body');
+    body.appendChild(piRoot);
+
+    document.querySelector('.pi-ok-btn').addEventListener('click',()=>{
+        closePopBox();
+        okCB && okCB();
+    });
+    document.querySelector('.pi-cancel-btn').addEventListener('click',()=>{
+        closePopBox();
+        cancelCB && cancelCB();
+    });
 }

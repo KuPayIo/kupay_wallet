@@ -282,11 +282,6 @@ winit.initNext = function () {
 			// 关闭读取界面
 			document.body.removeChild(document.getElementById('rcmj_loading_log'));
 		});
-
-		// 活动登录
-		pi_modules.commonjs.exports.relativeGet("earn/client/app/net/login").exports.earnLogin();
-		// 聊天登录
-		pi_modules.commonjs.exports.relativeGet("chat/client/app/net/login").exports.chatLogin();
 	}
 
 	
@@ -311,7 +306,11 @@ winit.initNext = function () {
 			pi_sdk.piSdkInit((res)=>{
 				console.log('bind vm success', res);
 				//钱包登录
-				pi_modules.commonjs.exports.relativeGet("app/net/login").exports.walletLogin(enterApp);		
+				pi_modules.commonjs.exports.relativeGet("app/net/login").exports.walletLogin(enterApp);	
+				// // 活动登录
+				// pi_modules.commonjs.exports.relativeGet("earn/client/app/net/login").exports.earnLogin();
+				// // 聊天登录
+				// pi_modules.commonjs.exports.relativeGet("chat/client/app/net/login").exports.chatLogin();	
 			});
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);

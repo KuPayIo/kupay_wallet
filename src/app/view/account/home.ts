@@ -94,22 +94,27 @@ export class AccountHome extends Widget {
     }
 
     public uploadAvatar() {
-        const imagePicker = selectImage((width, height, url) => {
-            console.log('selectImage url = ',url);
-            // tslint:disable-next-line:max-line-length
-            this.props.avatarHtml = `<div style="background-image: url(${url});width: 80px;height: 80px;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
-            this.props.chooseImage = true;
-            this.props.avatar = url;
-            this.paint();
-            imagePicker.getContent({
-                quality:70,
-                success(buffer:ArrayBuffer) {
-                    imgResize(buffer,(res) => {
-                        uploadFile(res.base64);
-                    });
-                }
+        const loading = popNew('app-components1-loading-loading1');
+        loadSettingSource().then(() => {
+            const imagePicker = selectImage((width, height, url) => {
+                console.log('selectImage url = ',url);
+                // tslint:disable-next-line:max-line-length
+                this.props.avatarHtml = `<div style="background-image: url(${url});width: 80px;height: 80px;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+                this.props.chooseImage = true;
+                this.props.avatar = url;
+                this.paint();
+                imagePicker.getContent({
+                    quality:70,
+                    success(buffer:ArrayBuffer) {
+                        imgResize(buffer,(res) => {
+                            uploadFile(res.base64);
+                        });
+                    }
+                });
             });
+            loading.callback(loading.widget);
         });
+        
     }
 
     /**

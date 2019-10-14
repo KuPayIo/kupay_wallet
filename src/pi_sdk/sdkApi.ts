@@ -1,5 +1,5 @@
 import { closePopBox, popInputBox, popNewLoading, popNewMessage } from './sdkTools';
-import { createSignInPage, createSignInStyle } from './signIn';
+import { createSignInPage, createSignInStyle, createModalBox } from './signIn';
 
 /**
  * 获取是否开启免密支付
@@ -37,31 +37,47 @@ export const setFreeSecrectPay =  (openFreeSecret) => {
     });
 };
 
-// 执行授权监听回调
-export const runAuthorizeListener = ()=>{
-    console.log(`authorizeCallBack ${authorizeCallBack}, authorizeParams ${authorizeParams}`);
-    if(authorizeCallBack && authorizeParams){
-        authorize(authorizeParams,authorizeCallBack);
-    }
-}
-
-// ----------对外接口-----------------------------------------------------------------------
 let authorizeParams;
 let authorizeCallBack;
 
-// 监听授权
-const addAuthorizeListener = (params,callBack)=>{
-    authorizeParams = params;
-    authorizeCallBack = callBack;
+// 执行授权监听回调
+export const runAuthorizeListener = () => {
+    console.log(`runAuthorizeListener authorizeParams ${authorizeParams}`);
+    if(authorizeCallBack && authorizeParams){
+        window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'authorize', authorizeParams,  (error, result) => {
+            console.log('authorize call success', error, JSON.stringify(result));
+            if(error === -1){   // 没有账号
+                openSignInPage();
+            }else{
+                authorizeCallBack && authorizeCallBack(error, result);
+            } 
+        });
+    }
+};
+
+// 执行被踢下线方法
+export const runForceLogout = ()=>{
+    createModalBox('下线通知','您的账户已在别处登录，当前账户已下线',()=>{
+        window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'runForceLogout');
+    });
 }
 
-// 获取openID
-const authorize = (params, callBack) => {
-    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'authorize', params,  (error, result) => {
-        console.log('authorize call success', error, JSON.stringify(result));
-        callBack(error, result);
+// 执行踢人下线方法
+export const runKickOffline = (param)=>{
+    createModalBox('检测到在其它设备有登录','清除其它设备上的账户信息，并登录',()=>{
+        window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'runKickOffline',param);
     });
-};
+}
+
+// ----------对外接口-----------------------------------------------------------------------
+
+
+// 授权 获取openID
+const authorize = (params, callBack)=>{
+    authorizeParams = params;
+    authorizeCallBack = callBack;
+    runAuthorizeListener();
+}
 
 // 第三方支付
 const thirdPay =  (order, callBack) => {
@@ -138,8 +154,11 @@ const closeWalletWebview = () => {
 
 // 打开注册登录页面
 const openSignInPage = () => {
-    createSignInStyle();
-    createSignInPage();
+    if(!document.querySelector('.signIn_page')){
+        createSignInStyle();
+        createSignInPage();
+    }
+    
 }
 
 // 邀请好友 分享
@@ -160,8 +179,7 @@ const piApi = {
     openNewWebview,
     closeWalletWebview,
     openSignInPage,
-    inviteUser,
-    addAuthorizeListener
+    inviteUser
 }; 
 
 // tslint:disable-next-line: no-unsafe-any

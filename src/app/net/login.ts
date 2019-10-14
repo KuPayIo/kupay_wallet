@@ -26,18 +26,9 @@ export const requestAsync = (msg: any):Promise<any> => {
 
 // 钱包登录
 export const walletLogin = (cb:Function) => {
-    (<any>window).pi_sdk.api.addAuthorizeListener({ appId:101 },(err, result) => {
-        console.log('addAuthorizeListener',err,JSON.stringify(result));
-        console.log('钱包登录成功',result);
-        setStore('user/info',result);
-        cb();
-    });
-
     (<any>window).pi_sdk.api.authorize({ appId:101 },(err, result) => {
         console.log('authorize',err,JSON.stringify(result));
-        if (err === -1) {  // 没有账号
-            (<any>window).pi_sdk.api.openSignInPage();
-        } else if (err === 0) { // 网络未连接
+        if (err === 0) { // 网络未连接
             console.log('网络未连接');
         } else {
             console.log('钱包登录成功',result);

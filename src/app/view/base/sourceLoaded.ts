@@ -161,8 +161,7 @@ export const loadDividendSource = () => {
     const sourceList = [
         'app/components1/blankDiv/',
         'app/components/topBar/',
-        'app/view/dividend/',
-        'app/components/threeParaCard/'
+        'app/view/dividend/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);
@@ -210,6 +209,7 @@ export const loadSettingSource = () => {
         'app/components1/input/',
         'app/components/bindPhone/',
         'app/components/modalBox/',
+        'app/components1/loading/',
         'chat/client/app/widget/pageEdit/',
         'chat/client/app/widget/topBar/',
         'chat/client/app/widget/input/',

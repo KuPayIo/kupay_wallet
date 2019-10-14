@@ -14,7 +14,7 @@ const obj = {};
 export const vmRpcCall = (methodName:string,params: any[]):Promise<any> => {
     count++;
     console.log(`vmRpcCall start methodName ${methodName} params ${JSON.stringify(params)} count ${count}`);
-
+    
     return new Promise((resolve,reject) => {
         addStoreLoadedListener(() => {
             let count = obj[methodName] || 0;
@@ -56,9 +56,15 @@ export const clearUser = () => {
 };
 
 /**
- * 
- * requestAsyncRpc请求
+ * websocket请求
  */
-export const requestAsyncRpc = (msg:any) => {
+export const requestAsyncRpc = (msg: any) => {
     return vmRpcCall('requestAsyncRpc',[msg]);
+};
+
+/**
+ * 去充值
+ */
+export const goRecharge = () => {
+    return vmRpcCall('goRecharge',[]);
 };

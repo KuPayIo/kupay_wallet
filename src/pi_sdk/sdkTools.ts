@@ -376,6 +376,14 @@ export const createThirdApiStyleTag = () => {
         color: #fff;
         margin: 10px 0 20px;
     }
+    .modalBox-body{
+        background-color: #fff;
+        padding: 30px;
+        padding-bottom: 0;
+        width: 570px;
+        border-radius: 12px;
+        box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
+    }
 
     /* 动画 */
     @-webkit-keyframes bounceInUp {

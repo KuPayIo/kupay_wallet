@@ -1,5 +1,5 @@
-import { getFreeSecret, setFreeSecrectPay } from './sdkApi';
-import { buttonModInit, createThirdApiStyleTag, createThirdBaseStyle } from './sdkTools';
+import { createThirdApiStyleTag, createThirdBaseStyle, buttonModInit } from './sdkTools';
+import { setFreeSecrectPay, getFreeSecret } from './sdkApi';
 
 /**
  * pi sdk 入口文件
@@ -11,7 +11,7 @@ let webviewManagerPath;   // pi库webview文件路径
 let pi_RPC_Method:Function;     // rpc调用
 
 // tslint:disable-next-line:variable-name
-const pi_sdk:any = window.pi_sdk || {};         // pi sdk
+const pi_sdk:any = window["pi_sdk"] || {};         // pi sdk
 
 // tslint:disable-next-line:variable-name
 const piStore:any = pi_sdk.store || {       // store
@@ -176,7 +176,7 @@ const piService = {
                 return;
             }
             if (that.callBackListen) {
-                window.JSBridge.webViewBindService(JSON.stringify(autoInfo));
+                window["JSBridge"].webViewBindService(JSON.stringify(autoInfo));
                 setTimeout(handler, step);
             }
         };
@@ -186,7 +186,7 @@ const piService = {
     unbind: function(webViewName) {
         if (!this.hasCallBind) return;
         this.hasCallBind = false;
-        window.JSBridge.unWebViewBindService(webViewName);
+        window["JSBridge"].unWebViewBindService(webViewName);
     },
     onBindService: function(err, initData) {
         this.callBackListen && this.callBackListen(err, JSON.parse(initData));
@@ -235,7 +235,7 @@ piConfig.buttonMods = {
     FLOATBUTTON:1,
     WXBUTTON:2,
     FLOATBUTTON2:3
-};
+}
 
 pi_sdk.setWebviewManager = setWebviewManager;
 pi_sdk.piSdkInit = piSdkInit;
@@ -243,4 +243,4 @@ pi_sdk.config = piConfig;
 pi_sdk.store = piStore;
 pi_sdk.piService = piService;
 
-window.pi_sdk = pi_sdk; 
+window["pi_sdk"] = pi_sdk; 

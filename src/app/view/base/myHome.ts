@@ -4,12 +4,12 @@ import { CoinType } from '../../../earn/client/app/xls/dataEnum.s';
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getStoreData } from '../../api/walletApi';
+import { getStoreData, goRecharge } from '../../api/walletApi';
 import { registerStoreData } from '../../postMessage/listenerStore';
 import { getModulConfig } from '../../public/config';
 import { fetchCloudWalletAssetList, getUserInfo, rippleShow } from '../../utils/pureUtils';
 // tslint:disable-next-line:max-line-length
-import { loadAboutAppSource, loadAccountSource, loadCloudRechargeSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadPersonalInfoSource, loadRedEnvelopeSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
+import { loadAboutAppSource, loadAccountSource, loadCloudRechargeSource, loadDividendSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadPersonalInfoSource, loadRedEnvelopeSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
 
 export const forelet = new Forelet();
 // tslint:disable-next-line:no-reserved-keywords
@@ -228,11 +228,7 @@ export class MyHome extends Widget {
                 });
                 break;
             case 7:
-                loadCloudRechargeSource().then(() => {
-                    popNew('app-view-cloudRecharge-home',{ currencyName:'SC',gain:0 });
-                
-                    loading.callback(loading.widget);
-                });
+                goRecharge();
                 break;
             case 8:
                 loadAboutAppSource().then(() => {
@@ -269,6 +265,17 @@ export class MyHome extends Widget {
                 break;
             default:
         }
+    }
+
+    /**
+     * 分红
+     */
+    public dividend() {
+        const loading = popNew('app-components1-loading-loading1');
+        loadDividendSource().then(() => {
+            popNew('app-view-dividend-home');
+            loading.callback(loading.widget);
+        });
     }
 
 }
