@@ -4,6 +4,7 @@ import { popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
 import { resize } from '../../pi/widget/resize/resize';
+import { getStoreData, setStoreData } from '../api/walletApi';
 import { logoutWalletSuccess, openConnect } from '../net/login';
 import { getAccountDetail } from '../net/pull';
 // tslint:disable-next-line:max-line-length
@@ -510,7 +511,6 @@ export const deepCopy = (v: any): any => {
 };
 
 // ======================================================================================================================
-
 /**
  * 钱包名称是否合法
  * @param walletName wallet name
@@ -525,9 +525,10 @@ export const walletNameAvailable = (walletName) => {
  * @param walletName wallet name
  */
 export const changeWalletName = (walletName:string) => {
-    const userInfo = getStore('user/info');
-    userInfo.nickName = walletName;
-    setStore('user/info', userInfo);
+    getStoreData('user/info').then((r:any) => {
+        r.nickName = walletName;
+        setStoreData('user/info',r);
+    });
 };
 
 /**
@@ -570,9 +571,10 @@ export const nickNameInterception = (name: string): string => {
  * @param walletNote wallet note
  */
 export const changeWalletNote = (walletNote:string) => {
-    const userInfo = getStore('user/info');
-    userInfo.note = walletNote;
-    setStore('user/info', userInfo); 
+    getStoreData('user/info').then((r:any) => {
+        r.note = walletNote;
+        setStoreData('user/info',r);
+    });
 };
 
 /**
@@ -580,9 +582,10 @@ export const changeWalletNote = (walletNote:string) => {
  * @param walletSex wallet sex
  */
 export const changeWalletSex = (walletSex:number) => {
-    const userInfo = getStore('user/info');
-    userInfo.sex = walletSex;
-    setStore('user/info', userInfo);
+    getStoreData('user/info').then((r:any) => {
+        r.sex = walletSex;
+        setStoreData('user/info',r);
+    });
 };
 
 /**

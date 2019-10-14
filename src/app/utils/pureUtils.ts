@@ -3,6 +3,7 @@ import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { getRealNode } from '../../pi/widget/painter';
 import { lookup } from '../../pi/widget/widget';
+import { getStoreData } from '../api/walletApi';
 // tslint:disable-next-line:max-line-length
 import { Config, defalutShowCurrencys, ERC20Tokens, getModulConfig, inJSVM, MainChainCoin, uploadFileUrlPrefix, USD2CNYRateDefault } from '../public/config';
 import { CloudCurrencyType, Currency2USDT, CurrencyRecord } from '../public/interface';
@@ -99,7 +100,7 @@ export const getUserInfo = (userInfo1?:any) => {
     if (userInfo1) {
         promise = Promise.resolve(userInfo1);
     } else {
-        promise = Promise.resolve(getStore('user/info'));
+        promise = getStoreData('user/info');
     }
     
     return promise.then(userInfo => {

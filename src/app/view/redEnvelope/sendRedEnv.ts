@@ -25,12 +25,14 @@ export class SendRedEnv extends Widget {
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props);
-        getStore('setting/language','zh_Hans').then(lan => {
-            this.props.lan = lan;
-        });
-        getStore('user').then(user => {
-            this.props.user = user;
-        });
+        this.props.lan = getStore('setting/language','zh_Hans');
+        this.props.user = getStore('user');
+        // getStore('setting/language','zh_Hans').then(lan => {
+        //     this.props.lan = lan;
+        // });
+        // getStore('user').then(user => {
+        //     this.props.user = user;
+        // });
     }
 
     /**

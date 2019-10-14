@@ -7,6 +7,7 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { registerStoreData } from '../../postMessage/listenerStore';
 import { getModulConfig } from '../../public/config';
 import { register } from '../../store/memstore';
 import { getUserInfo, rippleShow } from '../../utils/pureUtils';

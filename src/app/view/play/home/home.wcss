@@ -1,6 +1,5 @@
 .new-page{
-    display: flex;
-    flex-direction: column;
+    overflow: auto;
 }
 .topBack{
     flex-shrink: 0;

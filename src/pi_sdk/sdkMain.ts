@@ -1,3 +1,4 @@
+import { getFreeSecret, setFreeSecrectPay } from './sdkApi';
 import { buttonModInit, createThirdApiStyleTag, createThirdBaseStyle } from './sdkTools';
 
 /**
@@ -10,18 +11,15 @@ let webviewManagerPath;   // pi库webview文件路径
 let pi_RPC_Method:Function;     // rpc调用
 
 // tslint:disable-next-line:variable-name
-const pi_sdk:any = (<any>window).pi_sdk || {};         // pi sdk
+const pi_sdk:any = window.pi_sdk || {};         // pi sdk
 
 // tslint:disable-next-line:variable-name
-const pi_jsApi:any = pi_sdk.api;      // api
-
-// tslint:disable-next-line:variable-name
-const pi_store:any = pi_sdk.store || {       // store
+const piStore:any = pi_sdk.store || {       // store
     freeSecret:false                         // 是否开启免密支付
 };   
 
 // tslint:disable-next-line:variable-name
-const pi_config:any = pi_sdk.config || {};  // 配置信息
+const piConfig:any = pi_sdk.config || {};  // 配置信息
 
 /**
  * button id定义
@@ -47,7 +45,12 @@ const showButtons = [{
     clickedClose:true,
     clickCb:() => {
         console.log('click 邀请好友');
-        pi_RPC_Method(pi_config.jsApi, 'inviteFriends', pi_config.webviewName,  (error, result) => {
+        pi_RPC_Method(piConfig.jsApi, 'inviteFriends', {
+            nickName:'测试',
+            inviteCode:'123456',
+            apkDownloadUrl:'http://xxxxx',
+            webviewName:piConfig.webviewName
+        }, (error, result) => {
             console.log('inviteFriends call success');
         });
     }
@@ -59,7 +62,7 @@ const showButtons = [{
     clickedClose:true,
     clickCb:() => {
         console.log('click 游戏客服');
-        pi_RPC_Method(pi_config.jsApi, 'gotoGameService', pi_config.webviewName,  (error, result) => {
+        pi_RPC_Method(piConfig.jsApi, 'gotoGameService', piConfig.webviewName,  (error, result) => {
             console.log('gotoGameService call success');
         });
     }
@@ -71,7 +74,7 @@ const showButtons = [{
     clickedClose:true,
     clickCb:() => {
         console.log('click 官方群聊');
-        pi_RPC_Method(pi_config.jsApi, 'gotoOfficialGroupChat', pi_config.webviewName,  (error, result) => {
+        pi_RPC_Method(piConfig.jsApi, 'gotoOfficialGroupChat', piConfig.webviewName,  (error, result) => {
             console.log('gotoOfficialGroupChat call success');
         });
     }
@@ -83,7 +86,7 @@ const showButtons = [{
     clickedClose:true,
     clickCb:() => {
         console.log('click 去充值');
-        pi_RPC_Method(pi_config.jsApi, 'gotoRecharge', pi_config.webviewName,  (error, result) => {
+        pi_RPC_Method(piConfig.jsApi, 'gotoRecharge', piConfig.webviewName,  (error, result) => {
             console.log('inviteFriends call success');
         });
     }
@@ -98,7 +101,7 @@ const showButtons = [{
     clickedClose:false,
     clickCb:() => {
         console.log('click 免密支付');
-        pi_jsApi.setFreeSecrectPay(!pi_store.freeSecret);
+        setFreeSecrectPay(!piStore.freeSecret);
     }
 },{
     id:ButtonId.MINWINDOW,
@@ -108,7 +111,7 @@ const showButtons = [{
     clickedClose:true,
     clickCb:() => {
         console.log('click 最小化');
-        pi_RPC_Method(pi_config.jsApi, 'minWebview', { webviewName:pi_config.webviewName,popFloatBox:true },  (error, result) => {
+        pi_RPC_Method(piConfig.jsApi, 'minWebview', { webviewName:piConfig.webviewName,popFloatBox:true },  (error, result) => {
             console.log('minWebview call success');
         });
     }
@@ -120,27 +123,86 @@ const showButtons = [{
     clickedClose:true,
     clickCb:() => {
         console.log('click 退出游戏');
-        const payload = {
-            webviewName:pi_config.webviewName,
-            appId:pi_config.appid,
-            openId:pi_config.openId
-        };
-        pi_RPC_Method(pi_config.jsApi, 'closeWebview', payload, (error, result) => {
+        pi_RPC_Method(piConfig.jsApi, 'closeWebview', piConfig.webviewName, (error, result) => {
             console.log('closeWebview call success');
         });
     }
 }];
 
 /**
+ * @param timeMS: 超时时间
+ * @param autoInfo：JSON对象
+ * @param callback(err, initData) 接口回调
+ * @description autoInfo 结构
+ *                  {
+ *                      "webViewName" = "testWebView"
+ *                  }
+ * @description initData 结构
+ *                  {
+ *                      "code" = 0
+ *                      "autoToken" = "HA1284HWADry98"
+ *                  }
+ */
+const piService = {
+    hasCallBind: false,
+    callBackListen: undefined,
+
+    bind: function(timeMS, autoInfo, callback) {
+        let start = 0;
+        const step = 100;
+        
+        if (this.hasCallBind) {
+            callback({
+                code: -1,
+                reason: 'this webview has already bind'
+            });
+            return;
+        }
+
+        this.hasCallBind = true;
+        this.callBackListen = callback;
+        const that = this;
+        const handler = function () {
+            if (!that.hasCallBind) {
+                return;
+            }
+
+            start += step;
+            if (start > timeMS) {
+                callback({
+                    code: -3,
+                    reason: 'timeout'
+                });
+                return;
+            }
+            if (that.callBackListen) {
+                window.JSBridge.webViewBindService(JSON.stringify(autoInfo));
+                setTimeout(handler, step);
+            }
+        };
+
+        setTimeout(handler, step);
+    },
+    unbind: function(webViewName) {
+        if (!this.hasCallBind) return;
+        this.hasCallBind = false;
+        window.JSBridge.unWebViewBindService(webViewName);
+    },
+    onBindService: function(err, initData) {
+        this.callBackListen && this.callBackListen(err, JSON.parse(initData));
+        this.callBackListen = undefined;
+    }
+};
+
+/**
  * 设置webviewManager路径
  */
 const setWebviewManager = (path:string) => {
-    if (!pi_config.fromWallet) return;  
     webviewManagerPath = path;
     console.log('setWebviewManager path = ',path);
     pi_sdk.pi_RPC_Method = pi_RPC_Method = (moduleName:string, methodName:string, param:any, callback:Function) => {
         const exs = pi_modules[webviewManagerPath].exports;
-        if (!exs || !exs.WebViewManager || ! exs.WebViewManager.rpc) throw new Error('can\'t find WebViewManager');
+        if (!exs || !exs.WebViewManager || !exs.WebViewManager.rpc) throw new Error('can\'t find WebViewManager');
         const rpcData = {
             moduleName,  // 模块名
             methodName,  // 方法名
@@ -153,20 +215,32 @@ const setWebviewManager = (path:string) => {
 /**
  * 初始化
  */
-const piSdkInit = () => {
-    if (!pi_config.fromWallet) return;   // 只有从钱包打开的渠道才初始化
+const piSdkInit = (cb:any) => {
     createThirdBaseStyle();
     createThirdApiStyleTag();
+    piService.bind(10000, { webviewName: piConfig.webviewName, appid:piConfig.appid }, cb);
     buttonModInit()();
     // getFreeSecret();
 };
 
-pi_config.ButtonId = ButtonId;
-pi_config.showButtons = showButtons;
+piConfig.ButtonId = ButtonId;
+piConfig.showButtons = showButtons;
+piConfig.webviewName = 'wallet';
+piConfig.isHorizontal = false;
+piConfig.appid = '101';
+piConfig.jsApi = 'app/remote/JSAPI';
+piConfig.imgUrlPre = 'http://192.168.31.226/wallet/app/res/image/third/';
+piConfig.buttonMod = 1;
+piConfig.buttonMods = {
+    FLOATBUTTON:1,
+    WXBUTTON:2,
+    FLOATBUTTON2:3
+};
 
 pi_sdk.setWebviewManager = setWebviewManager;
 pi_sdk.piSdkInit = piSdkInit;
-pi_sdk.config = pi_config;
-pi_sdk.store = pi_store;
+pi_sdk.config = piConfig;
+pi_sdk.store = piStore;
+pi_sdk.piService = piService;
 
-(<any>window).pi_sdk = pi_sdk; 
+window.pi_sdk = pi_sdk; 

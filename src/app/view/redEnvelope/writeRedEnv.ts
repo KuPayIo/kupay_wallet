@@ -42,9 +42,9 @@ export class WriteRedEnv extends Widget {
     public props:Props = {
         ktShow:getModulConfig('KT_SHOW'),
         list: [
-            { img: '../res/image1/currency/KT.png', name: 'KT', num: 0 },
-            { img: '../res/image1/currency/BTC.png', name: 'BTC', num:0 },
-            { img: '../res/image1/currency/ETH.png', name: 'ETH', num:0 }
+            { img: '../../res/image1/currency/KT.png', name: 'KT', num: 0 },
+            { img: '../../res/image1/currency/BTC.png', name: 'BTC', num:0 },
+            { img: '../../res/image1/currency/ETH.png', name: 'ETH', num:0 }
         ],
         selected: 0,
         showPin: false,
@@ -63,15 +63,17 @@ export class WriteRedEnv extends Widget {
         super.create();
         this.language = this.config.value[getLang()];
         this.updateBalance();
+
         getUserInfo().then(userInfo => {
             this.props.realUser = userInfo.isRealUser || !!userInfo.phoneNumber;
             this.props.acc_id = userInfo.acc_id;
         });
         const isIos = getModulConfig('IOS');
         if (isIos) {
-            this.props.list = [
-                { img: '../res/image1/currency/KT.png', name: 'KT', num: 0 }
-            ];
+            // this.props.list = [
+            //     { img: '../../res/image1/currency/KT.png', name: 'KT', num: 0 }
+            // ];
+            this.props.list = [this.props.list[0]];
         }
     }
 
@@ -179,6 +181,7 @@ export class WriteRedEnv extends Widget {
      * 点击发红包按钮
      */
     public async send() {
+
         const curCoin = this.props.list[this.props.selected];
      
         if (Number(this.props.totalNum) === 0) {
@@ -204,11 +207,11 @@ export class WriteRedEnv extends Widget {
         if (this.props.message === '') {
             this.props.message = this.language.messTitle[1];
         }
-        if (!this.props.realUser) {
-            popNewMessage(this.language.tips[5]);
+        // if (!this.props.realUser) {
+        //     popNewMessage(this.language.tips[5]);
 
-            return;
-        }
+        //     return;
+        // }
         if (this.props.selected === 0) {
             if (Number(this.props.totalAmount) < this.props.totalNum) {
                 const ktTips = {
@@ -228,24 +231,25 @@ export class WriteRedEnv extends Widget {
         const mess1 = `${this.language.phrase[0]}${this.props.totalAmount}${ctypeShow} / ${this.props.totalNum} ${this.language.phrase[1]}`;
         // tslint:disable-next-line:max-line-length
         const mess2 = this.language.phrase[2] + (this.props.showPin ? this.language.redEnvType[1] : this.language.redEnvType[0]);
-        popNew('app-components1-modalBoxInput-modalBoxInput', {
-            title: ctypeShow + this.language.phrase[3],
-            content: [mess1, mess2],
-            placeholder: this.language.phrase[4],
-            itype: 'password'
-        },
-            async (r) => {
-                const close = popNewLoading(this.language.loading);
-                // TODO
-                const secretHash = await verifyIdentidy(r);
-                close.callback(close.widget);
-                if (secretHash) {
-                    this.sendRedEnv(secretHash);
-                } else {
-                    popNewMessage(this.language.tips[6]);
-                }
-            }
-        );
+        // popNew('app-components1-modalBoxInput-modalBoxInput', {
+        //     title: ctypeShow + this.language.phrase[3],
+        //     content: [mess1, mess2],
+        //     placeholder: this.language.phrase[4],
+        //     itype: 'password'
+        // },
+        //     async (r) => {
+        //         const close = popNewLoading(this.language.loading);
+        //         // TODO
+        //         const secretHash = await verifyIdentidy(r);
+        //         close.callback(close.widget);
+        //         if (secretHash) {
+        //             this.sendRedEnv(secretHash);
+        //         } else {
+        //             popNewMessage(this.language.tips[6]);
+        //         }
+        //     }
+        // );
+        this.sendRedEnv('');
 
     }
 

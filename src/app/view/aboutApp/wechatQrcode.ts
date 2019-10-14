@@ -6,7 +6,6 @@ import { ShareType } from '../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Widget } from '../../../pi/widget/widget';
-import { getModulConfig } from '../../public/config';
 import { makeScreenShot } from '../../utils/native';
 import { popNewMessage } from '../../utils/pureUtils';
 // ==================================================导出

@@ -78,9 +78,9 @@ export const initPush = () => {
     });
 
     // 监听余额变化事件
-    setMsgHandler(ServerPushKey.ALTERBALANCEOK,(res) => {
+    setMsgHandler(ServerPushKey.ALTERBALANCEOK,async (res) => {
         console.log('alter_balance_ok服务器推送成功===========调用排名===============',res);
-        getServerCloudBalance();
+        await getServerCloudBalance();
         const wallet = getStore('wallet');
         const userInfo = getStore('user/info');
         // let popType = -1;           // 弹框类型 -1 无弹框 0 密码弹框   1 绑定手机弹框

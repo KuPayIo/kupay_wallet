@@ -19,7 +19,7 @@ export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
     // 数据检查  
     checkUpdate();  
-    const id = getStore('user/id');
+    const id = getStore('user/info/openid');
     popNew('app-view-base-app');
     if (!id) {
         popNew('app-view-base-entrance');
@@ -86,7 +86,6 @@ const addAppEvent = () => {
     
                 setTimeout(() => {
                     // TODO 钱包登录
-                        
                     if (!chatGetStore('isLogin')) {
                         chatManualReconnect();
                     }

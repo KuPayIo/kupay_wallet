@@ -42,7 +42,7 @@
                 <div w-class="iconBox">
                     <img src="{{v.src}}" alt="" w-class="iocn"/>
                     {{if v.fg}}
-                    <img src="../../../res/image/mallFunction/redDot.png" alt="" w-class="redDot"/>
+                    <img src="../../res/image/mallFunction/redDot.png" alt="" w-class="redDot"/>
                     {{end}}
                 </div>
                 <div w-class="iconName" style="width:{{i==2?'120px':'100px'}}">{{v.name}}</div>

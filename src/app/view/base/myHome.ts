@@ -4,8 +4,9 @@ import { CoinType } from '../../../earn/client/app/xls/dataEnum.s';
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { getStoreData } from '../../api/walletApi';
+import { registerStoreData } from '../../postMessage/listenerStore';
 import { getModulConfig } from '../../public/config';
-import { register } from '../../store/memstore';
 import { fetchCloudWalletAssetList, getUserInfo, rippleShow } from '../../utils/pureUtils';
 // tslint:disable-next-line:max-line-length
 import { loadAboutAppSource, loadAccountSource, loadCloudRechargeSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadPersonalInfoSource, loadRedEnvelopeSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
@@ -119,10 +120,6 @@ export class MyHome extends Widget {
             this.updateLocalWalletAssetList();
         });
     }
-
-    public test() {
-        this.updateLocalWalletAssetList();
-    }
     // 获取最高勋章
     public medalest() {
         const medalList = getMedalList(CoinType.KT, 'coinType');
@@ -167,11 +164,11 @@ export class MyHome extends Widget {
         rippleShow(e);
     }
     // 更新本地资产
-    public updateLocalWalletAssetList() {
-        const assetList = fetchCloudWalletAssetList();
+    public async updateLocalWalletAssetList() {
+        const assetList = await getStoreData('cloud');
         this.props.wallet = [
-            { num:assetList[1].balanceValue,name:`${getModulConfig('SC_SHOW')}余额` },
-            { num:assetList[0].balance,name:`我的${getModulConfig('KT_SHOW')}` }];
+            { num:assetList.SC,name:`${getModulConfig('SC_SHOW')}余额` },
+            { num:assetList.KT,name:`我的${getModulConfig('KT_SHOW')}` }];
         this.paint();
     }
 
@@ -276,9 +273,10 @@ export class MyHome extends Widget {
 
 }
 // 云端余额变化
-register('cloud/cloudWallets',(r) => {
+registerStoreData('cloud',(r) => {
+    console.log('云端余额变化',JSON.parse(r));
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
-        w.updateCloudWalletAssetList();
+        w.updateLocalWalletAssetList();
     }
 });

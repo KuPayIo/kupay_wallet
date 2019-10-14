@@ -1,11 +1,34 @@
+// import { Struct, structMgr } from '../../pi/struct/struct_mgr';
 import { listDirFile } from '../../pi/widget/util';
-
 /**
  * commonjs 动态加载文件
  */
 
 declare var pi_modules;
 
+// /**
+//  * 注册了所有可以rpc调用的结构体
+//  * @param fileMap file map
+//  */
+// export const registerRpcStruct = (fileMap) => {
+//     if (!(<any>self).__mgr) {
+//         (<any>self).__mgr = structMgr;
+//     }
+//     for (const k in fileMap) {
+//         if (!k.endsWith('.s.js')) {
+//             continue;
+//         }
+//         const filePath = k.slice(0, k.length - pi_modules.butil.exports.fileSuffix(k).length - 1);
+//         const exp = pi_modules[filePath] && pi_modules[filePath].exports;
+//         for (const kk in exp) {
+//             if (Struct.isPrototypeOf(exp[kk]) && exp[kk]._$info && exp[kk]._$info.name) {
+//                 if (!(<any>self).__mgr.lookup(exp[kk]._$info.name_hash)) {
+//                     (<any>self).__mgr.register(exp[kk]._$info.name_hash, exp[kk], exp[kk]._$info.name);
+//                 }
+//             }
+//         }
+//     }
+// };
 /**
  * 获取模块导出
  */
@@ -18,14 +41,14 @@ export const relativeGet = (path:string) => {
 /**
  * loadDir加载模块
  */
-export const piLoadDir = (sourceList:string[],flags?:any,fileMap?:any,suffixCfg?:any) => {
+export const piLoadDir = (sourceList:string[],flags?:any,fm?:any,suffixCfg?:any) => {
     return new Promise((resolve,reject) => {
         const html = relativeGet('pi/util/html');
         html.checkWebpFeature((r) => {
             flags = flags || {};
             flags.webp = flags.webp || r;
             const util = relativeGet('pi/widget/util');
-            util.loadDir(sourceList, flags, fileMap, suffixCfg,  (fileMap) => {
+            util.loadDir(sourceList, flags, fm, suffixCfg,  (fileMap) => {                
                 const tab = util.loadCssRes(fileMap);
                 tab.timeout = 90000;
                 tab.release();

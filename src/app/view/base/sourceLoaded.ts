@@ -26,7 +26,8 @@ export const loadOpenBoxSource = () => {
         'earn/client/app/components/lotteryModal/',
         'earn/client/app/view/myProduct/',
         'earn/client/app/xls/dataCfg.c.js',
-        'earn/client/app/xls/dataCfg.s.js'
+        'earn/client/app/xls/dataCfg.s.js',
+        'app/net/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);
@@ -60,10 +61,8 @@ export const loadMedalSource = () => {
         'app/components1/blankDiv/',
         'app/components/topBar/',
         'earn/client/app/view/medal/',
-        'earn/xlsx/errorNum.s.c.js',
-        'earn/xlsx/errorNum.s.s.js',
-        'earn/xlsx/item.c.js',
-        'earn/xlsx/item.s.js'
+        'earn/server/rpc/',
+        'earn/client/app/net/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);
@@ -81,7 +80,10 @@ export const loadMiningSource = () => {
         'earn/client/app/xls/mineType.s.js',
         'earn/xlsx/item.c.js',
         'earn/xlsx/item.s.js',
-        'app/net/'
+        'earn/xlsx/awardCfg.c.js',
+        'earn/xlsx/awardCfg.s.js',
+        'app/net/',
+        'earn/client/app/net/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);
@@ -144,7 +146,9 @@ export const loadRedEnvelopeSource = () => {
         'app/components1/img/',
         'app/components1/loading/',
         'earn/client/app/components/noviceTaskAward/',
-        'earn/client/app/xls/'
+        'earn/client/app/xls/',
+        'app/net/',
+        'app/components/share/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);
