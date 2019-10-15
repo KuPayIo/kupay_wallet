@@ -3,9 +3,8 @@
     flex-direction: column;
 }
 .body{
-    padding-bottom: 120px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    margin-bottom: 150px;
+    overflow: auto;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     display: flex;
@@ -126,8 +125,9 @@
     display: flex;
     border-bottom: 1px solid #EBEBEB;
     box-sizing: border-box;
-    justify-content: space-evenly;
+    justify-content: space-around;
     align-items: center;
+    padding: 0 70px;
 }
 .fan{
     height: 102px;
@@ -156,6 +156,7 @@
 .more{
    display: flex;
    flex-wrap: wrap; 
+   margin-bottom: 100px;
 }
 .mallFunction{
     width: 100px;
