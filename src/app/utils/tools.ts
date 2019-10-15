@@ -3,6 +3,7 @@ import { closeCon, setBottomLayerReloginMsg } from '../../pi/net/ui/con_mgr';
 import { popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
+import { Callback } from '../../pi/util/util';
 import { resize } from '../../pi/widget/resize/resize';
 import { getStoreData, setStoreData } from '../api/walletApi';
 import { logoutWalletSuccess, openConnect } from '../net/login';
@@ -11,7 +12,7 @@ import { getAccountDetail } from '../net/pull';
 import { Config, defalutShowCurrencys, ERC20Tokens, MainChainCoin, notSwtichShowCurrencys, preShowCurrencys, resendInterval } from '../public/config';
 import { CloudCurrencyType, CurrencyRecord, MinerFeeLevel, TxHistory, TxStatus, TxType, Wallet } from '../public/interface';
 import { getCloudBalances, getStore,initCloudWallets, setStore } from '../store/memstore';
-import { piRequire } from './commonjsTools';
+import { piLoadDir, piRequire } from './commonjsTools';
 // tslint:disable-next-line:max-line-length
 import { arrayBuffer2File, closeAllPage, delPopPhoneTips, popNewMessage, unicodeArray2Str } from './pureUtils';
 import { gotoRecharge } from './recharge';
@@ -238,7 +239,39 @@ export const fetchWalletAssetListAdded = (wallet:Wallet) => {
 
     return assetList;
 };
-
+/**
+ * 弹出三级页面
+ */
+export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callback) => {
+    const level_3_page_loaded = getStore('flags').level_3_page_loaded;
+    if (level_3_page_loaded) {
+        popNew(name,props,ok,cancel);
+    } else {
+        const loading = popNew('app-components1-loading-loading1');
+        const level3SourceList = [
+            'app/middleLayer/',
+            'app/publicLib/',
+            'app/viewLogic/',
+            'app/components/',
+            'app/res/',
+            'app/view/',
+            'chat/client/app/view/',
+            'chat/client/app/widget/',
+            'chat/client/app/res/',
+            'earn/client/app/view/',
+            'earn/client/app/test/',
+            'earn/client/app/components/',
+            'earn/client/app/res/',
+            'earn/client/app/xls/',
+            'earn/xlsx/'
+        ];
+        piLoadDir(level3SourceList).then(() => {
+            console.log('popNew3 ------ all resource loaded');
+            popNew(name,props,ok,cancel);
+            loading.callback(loading.widget);
+        });
+    }
+};
 /**
  * 计算剩余百分比
  */

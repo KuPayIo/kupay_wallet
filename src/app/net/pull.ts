@@ -218,8 +218,8 @@ export const sendCode = async (phone: string, num: string,verify:boolean = true)
 /**
  * 注册手机
  */
-export const regPhone = async (phone: string, num:string, code: string) => {
-    const msg = { type: 'wallet/user@bind_user', param: { userType:1, user:phone, pwd:code,cmd:0 } };
+export const regPhone = async (phone: string, num:number, code: string) => {
+    const msg = { type: 'wallet/user@bind_user', param: { userType:1, user:phone, pwd:code,cmd:num } };
     
     try {
         return await requestAsyncRpc(msg);

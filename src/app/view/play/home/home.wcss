@@ -1,10 +1,9 @@
 .new-page{
-    overflow: auto;
+   
 }
 .topBack{
     flex-shrink: 0;
     overflow: hidden;
-    position: relative;
 }
 .body{
     padding-bottom: 120px;

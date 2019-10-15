@@ -5,10 +5,10 @@
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { getStoreData, setStoreData } from '../../api/walletApi';
 import { regPhone, unbindPhone } from '../../net/pull';
 import { getStore, setStore } from '../../store/memstore';
 import { delPopPhoneTips, getUserInfo, popNewMessage } from '../../utils/pureUtils';
-import { getStoreData, setStoreData } from '../../api/walletApi';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -60,7 +60,7 @@ export class BindPhone extends Widget {
         }
         
         if (!this.props.unbind) {
-            const data = await regPhone(this.props.phone, this.props.areaCode,this.props.code.join(''));
+            const data = await regPhone(this.props.phone, 0,this.props.code.join(''));
             if (data && data.result === 1) {
                 const userinfo = await getStoreData('user/info');
                 userinfo.phoneNumber = this.props.phone;

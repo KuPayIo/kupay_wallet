@@ -229,6 +229,7 @@ export class MyHome extends Widget {
                 break;
             case 7:
                 goRecharge();
+                loading.callback(loading.widget);
                 break;
             case 8:
                 loadAboutAppSource().then(() => {
@@ -285,5 +286,13 @@ registerStoreData('cloud',(r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateLocalWalletAssetList();
+    }
+});
+
+// 资料变化
+registerStoreData('user',(r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.initData();
     }
 });

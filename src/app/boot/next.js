@@ -251,7 +251,17 @@ winit.initNext = function () {
 			'earn/xlsx/item.s.js',
 			'earn/xlsx/awardCfg.c.js',
 			'earn/xlsx/awardCfg.s.js',
-			"app/postMessage/"
+			"app/postMessage/",
+			"earn/client/app/components/noviceTaskAward/",
+
+			"chat/client/app/view/home/",
+			"chat/client/app/view/contactList/contactList.tpl",
+			"chat/client/app/view/contactList/contactList.js",
+			"chat/client/app/view/contactList/contactList.wcss",
+			"chat/client/app/view/contactList/contactItem.tpl",
+			"chat/client/app/view/contactList/contactItem.js",
+			"chat/client/app/view/contactList/contactItem.wcss",
+			"chat/client/app/widget/imgShow/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.log("firstStageLoaded success-----------------");
@@ -282,6 +292,12 @@ winit.initNext = function () {
 			// 关闭读取界面
 			document.body.removeChild(document.getElementById('rcmj_loading_log'));
 		});
+		// 活动登录
+		pi_modules.commonjs.exports.relativeGet("earn/client/app/net/login").exports.earnLogin(()=>{
+			// 聊天登录
+			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/login").exports.chatLogin();	
+		});
+		
 	}
 
 	
@@ -307,10 +323,6 @@ winit.initNext = function () {
 				console.log('bind vm success', res);
 				//钱包登录
 				pi_modules.commonjs.exports.relativeGet("app/net/login").exports.walletLogin(enterApp);	
-				// // 活动登录
-				// pi_modules.commonjs.exports.relativeGet("earn/client/app/net/login").exports.earnLogin();
-				// // 聊天登录
-				// pi_modules.commonjs.exports.relativeGet("chat/client/app/net/login").exports.chatLogin();	
 			});
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);

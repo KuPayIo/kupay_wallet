@@ -2,7 +2,7 @@
  * play home 
  */
  // ================================ 导入
-import { WebViewManager } from '../../../../pi/browser/webview';
+import { screenMode, WebViewManager } from '../../../../pi/browser/webview';
 import { Json } from '../../../../pi/lang/type';
 import { popNew } from '../../../../pi/ui/root';
 import { getLang } from '../../../../pi/util/lang';
@@ -10,8 +10,10 @@ import { notify } from '../../../../pi/widget/event';
 import { Forelet } from '../../../../pi/widget/forelet';
 import { loadDir } from '../../../../pi/widget/util';
 import { Widget } from '../../../../pi/widget/widget';
+import { getStoreData } from '../../../api/walletApi';
 import { OfflienType } from '../../../components1/offlineTip/offlineTip';
 import { getStore, register } from '../../../store/memstore';
+import { popNewMessage, setPopPhoneTips } from '../../../utils/pureUtils';
 import { activityList, gameList } from './gameConfig';
 
 // ================================ 导出
@@ -161,18 +163,20 @@ export class PlayHome extends Widget {
     public toSearch() {
         popNew('app-view-play-searchGame');
     }
-
+    public gameClick1() {
+        this.gameClick(0);
+    }
     /**
      * 点击游戏
      */
     public async gameClick(num:number) {
         // closePopFloatBox();
-        const id = getStore('user/id');
-        if (!id) return;
-        popNew3('earn-client-app-view-openBox-openBox');
+        // const id = getStore('user/id');
+        // if (!id) return;
+        // popNew3('earn-client-app-view-openBox-openBox');
         
-        return;
-        const isLogin = await getStoreData('user/isLogin');
+        // return;
+        const isLogin = await getStoreData('flags/isLogin');
         if (!isLogin) {
             popNewMessage('登录中,请稍后再试');
 
@@ -187,32 +191,33 @@ export class PlayHome extends Widget {
             const gameTitle = gameList[num].title.zh_Hans;
             const gameUrl =   gameList[num].url;
             const webviewName = gameList[num].webviewName;
+            WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, '',screenMode.portrait);
             // tslint:disable-next-line:max-line-length
-            const [addrInfo,baseUrl,inviteCodeInfo] = await Promise.all([callGetCurrentAddrInfo('ETH'),callGetEthApiBaseUrl(),callGetInviteCode()]);
-            const inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`; 
-            const pi3Config:any = getPi3Config();
-            pi3Config.web3EthDefaultAccount = addrInfo.addr;
-            pi3Config.web3ProviderNetWork = baseUrl;
-            pi3Config.appid = gameList[num].appid;
-            pi3Config.gameName = gameTitle;
-            pi3Config.webviewName = webviewName;
-            pi3Config.apkDownloadUrl = gameList[num].apkDownloadUrl;
-            pi3Config.userInfo = {
-                nickName:this.props.userInfo.nickName,
-                inviteCode
-            };
+            // const [addrInfo,baseUrl,inviteCodeInfo] = await Promise.all([callGetCurrentAddrInfo('ETH'),callGetEthApiBaseUrl(),callGetInviteCode()]);
+            // const inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`; 
+            // const pi3Config:any = getPi3Config();
+            // pi3Config.web3EthDefaultAccount = addrInfo.addr;
+            // pi3Config.web3ProviderNetWork = baseUrl;
+            // pi3Config.appid = gameList[num].appid;
+            // pi3Config.gameName = gameTitle;
+            // pi3Config.webviewName = webviewName;
+            // pi3Config.apkDownloadUrl = gameList[num].apkDownloadUrl;
+            // pi3Config.userInfo = {
+            //     nickName:this.props.userInfo.nickName,
+            //     inviteCode
+            // };
 
-            const pi3ConfigStr = `
-                window.pi_config = ${JSON.stringify(pi3Config)};
-            `;
-            this.configPromise = Promise.resolve(pi3ConfigStr);
+            // const pi3ConfigStr = `
+            //     window.pi_config = ${JSON.stringify(pi3Config)};
+            // `;
+            // this.configPromise = Promise.resolve(pi3ConfigStr);
 
-            const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
-            allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
-                setHasEnterGame(true);
-                const content =  configContent + thirdApiDependContent + thirdApiContent;
-                WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
-            });
+            // const allPromise = Promise.all([this.configPromise,this.thirdApiDependPromise,this.thirdApiPromise]);
+            // allPromise.then(([configContent,thirdApiDependContent,thirdApiContent]) => {
+            //     setHasEnterGame(true);
+            //     const content =  configContent + thirdApiDependContent + thirdApiContent;
+            //     WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, content);
+            // });
         }
     }
 

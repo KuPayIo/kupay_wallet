@@ -2,9 +2,9 @@
  * choose currency
  */
 import { Widget } from '../../../pi/widget/widget';
-import { getStoreData } from '../../middleLayer/wrap';
-import { formatBalance } from '../../publicLib/tools';
 import { calCurrencyLogoUrl, getCurrentAddrInfo1 } from '../../utils/tools';
+import { getStoreData } from '../../api/walletApi';
+import { formatBalance } from '../../utils/pureUtils';
 
 interface Props {
     list:string[];

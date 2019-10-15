@@ -32,7 +32,7 @@
             <div w-class="recommendedTodayTitle">今日推荐</div>
             <div w-class="showGame" style="position: relative">
                <div w-class="userHead">
-                    <div w-class="gameImg">
+                    <div w-class="gameImg" on-tap="gameClick1">
                         <img src="{{it.recommendedToday.bg}}" loading="lazy" w-class="userHead" />
                     </div>
                     <div w-class="gameInfos">

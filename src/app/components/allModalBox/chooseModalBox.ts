@@ -2,7 +2,7 @@
  * 矿工费选择框
  */
 import { Widget } from '../../../pi/widget/widget';
-import { MinerFeeLevel } from '../../publicLib/interface';
+import { MinerFeeLevel } from '../../public/interface';
 interface Props {
     currencyName:string;
     minerFeeList:any[];

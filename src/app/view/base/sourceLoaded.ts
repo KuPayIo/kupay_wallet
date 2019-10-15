@@ -22,6 +22,7 @@ export const loadOpenBoxSource = () => {
     const sourceList = [
         'app/components1/blankDiv/',
         'app/components/topBar/',
+        'app/components1/loading/',
         'earn/client/app/view/openBox/',
         'earn/client/app/components/lotteryModal/',
         'earn/client/app/view/myProduct/',
@@ -41,6 +42,7 @@ export const loadTurntableSource = () => {
         'app/components1/blankDiv/',
         'earn/client/app/components/lotteryModal/',
         'app/components/topBar/',
+        'app/components1/loading/',
         'earn/client/app/view/turntable/',
         'earn/client/app/view/myProduct/',
         'earn/client/app/xls/dataCfg.c.js',
@@ -76,6 +78,7 @@ export const loadMiningSource = () => {
         'earn/client/app/view/mining/',
         'earn/client/app/components/mineModalBox/',
         'app/components1/blankDiv/',
+        'app/components1/loading/',
         'earn/client/app/xls/mineType.c.js',
         'earn/client/app/xls/mineType.s.js',
         'earn/xlsx/item.c.js',
@@ -213,7 +216,8 @@ export const loadSettingSource = () => {
         'chat/client/app/widget/pageEdit/',
         'chat/client/app/widget/topBar/',
         'chat/client/app/widget/input/',
-        'earn/xlsx/'
+        'earn/xlsx/',
+        'earn/client/app/components/noviceTaskAward/'
     ];
 
     return piLoadDir(sourceList,flags,fileMap,suffixCfg);

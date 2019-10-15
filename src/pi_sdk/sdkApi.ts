@@ -52,6 +52,7 @@ export const runAuthorizeListener = () => {
                 authorizeCallBack && authorizeCallBack(error, result);
             } 
         });
+        
     }
 };
 
