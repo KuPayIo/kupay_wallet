@@ -74,7 +74,7 @@ export const runKickOffline = (param)=>{
 
 
 // 授权 获取openID
-const authorize = (params, callBack)=>{
+const authorize = (params, callBack) => {
     authorizeParams = params;
     authorizeCallBack = callBack;
     runAuthorizeListener();

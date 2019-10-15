@@ -211,7 +211,9 @@ const getCode = () => {
         return; 
     }
     let countdown = 60;
+    document.querySelector('#countdown').innerHTML = `${countdown}s 重新获取`;
     console.log('倒计时 ',countdown);
+    
     codeTimer = setInterval(() => {
         countdown--;
         console.log('倒计时 ',countdown);

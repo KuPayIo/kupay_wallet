@@ -1,5 +1,6 @@
 import { getStore as earnGetStore } from '../../../earn/client/app/store/memstore';
 import { getMedalList } from '../../../earn/client/app/utils/tools';
+import { getCompleteTask } from '../../../earn/client/app/view/home/home';
 import { CoinType } from '../../../earn/client/app/xls/dataEnum.s';
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
@@ -7,6 +8,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { getStoreData, goRecharge } from '../../api/walletApi';
 import { registerStoreData } from '../../postMessage/listenerStore';
 import { getModulConfig } from '../../public/config';
+import { register, setStore } from '../../store/memstore';
 import { fetchCloudWalletAssetList, getUserInfo, rippleShow } from '../../utils/pureUtils';
 // tslint:disable-next-line:max-line-length
 import { loadAboutAppSource, loadAccountSource, loadCloudRechargeSource, loadDividendSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadPersonalInfoSource, loadRedEnvelopeSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
@@ -118,6 +120,7 @@ export class MyHome extends Widget {
             this.props.userInfo.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
             this.medalest();
             this.updateLocalWalletAssetList();
+            this.setRedFlags();
         });
     }
     // 获取最高勋章
@@ -187,6 +190,8 @@ export class MyHome extends Widget {
 
     // tslint:disable-next-line:max-func-body-length
     public funClick(e:any,i:number) {
+        const day = new Date().getDate();
+        const msg = JSON.parse(localStorage.getItem(`redFlags_${this.props.userInfo.acc_id}`));
         const loading = popNew('app-components1-loading-loading1');
         switch (i) {
             case 0:
@@ -202,26 +207,31 @@ export class MyHome extends Widget {
                 });
                 break;
             case 2:
+                loading.callback(loading.widget);
                 break;
             case 3:
+                msg.invite = false;
                 loadShareSource().then(() => {
                     popNew('earn-client-app-view-share-inviteFriend');
                     loading.callback(loading.widget);
                 });
                 break;
             case 4:
+                msg.treasureChest = false;
                 loadOpenBoxSource().then(() => {
                     popNew('earn-client-app-view-openBox-openBox');
                     loading.callback(loading.widget);
                 });
                 break;
             case 5:
+                msg.turntable = false;
                 loadTurntableSource().then(() => {
                     popNew('earn-client-app-view-turntable-turntable');
                     loading.callback(loading.widget);
                 });
                 break;
             case 6:
+                msg.mining = false;
                 loadMiningSource().then(() => {
                     popNew('earn-client-app-view-mining-miningHome');
                     loading.callback(loading.widget);
@@ -252,11 +262,12 @@ export class MyHome extends Widget {
                 });
                 break;
             case 11:
-                loadAboutAppSource().then(() => {
-                    popNew('app-view-aboutApp-wechatQrcode',{ fg:1 });
+                // loadAboutAppSource().then(() => {
+                //     popNew('app-view-aboutApp-wechatQrcode',{ fg:1 });
                 
-                    loading.callback(loading.widget);
-                });
+                //     loading.callback(loading.widget);
+                // });
+                loading.callback(loading.widget);
                 break;
             case 12:
                 loadAboutAppSource().then(() => {
@@ -266,6 +277,9 @@ export class MyHome extends Widget {
                 break;
             default:
         }
+        msg.day = day;
+        localStorage.setItem(`redFlags_${this.props.userInfo.acc_id}`,JSON.stringify(msg));
+        setStore('flags/redFlags',msg);
     }
 
     /**
@@ -277,6 +291,39 @@ export class MyHome extends Widget {
             popNew('app-view-dividend-home');
             loading.callback(loading.widget);
         });
+    }
+
+    /**
+     * 设置小红点的显示
+     */
+    public setRedFlags() {
+        const day = new Date().getDate();
+        const msg = JSON.parse(localStorage.getItem(`redFlags_${this.props.userInfo.acc_id}`));
+        if (!msg) {
+            const day = new Date().getDate();
+            const msg  = {
+                day,
+                invite:true,
+                treasureChest:true,
+                turntable:true,
+                mining:true
+            };
+            localStorage.setItem(`redFlags_${this.props.userInfo.acc_id}`,JSON.stringify(msg));
+        }
+        if (day === msg.day) {
+            // 同一天登录
+            this.props.mallFunction[3].fg = msg.invite;
+            this.props.mallFunction[4].fg = msg.treasureChest;
+            this.props.mallFunction[5].fg = msg.turntable;
+            this.props.mallFunction[6].fg = msg.mining;
+        } else {
+            // 第二天登录
+            this.props.mallFunction[3].fg = true;
+            this.props.mallFunction[4].fg = true;
+            this.props.mallFunction[5].fg = true;
+            this.props.mallFunction[6].fg = true;
+        }
+        this.paint();
     }
 
 }
@@ -294,5 +341,13 @@ registerStoreData('user',(r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
+    }
+});
+
+// 监听红点变化
+register('flags/redFlags',(r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        w.setRedFlags();
     }
 });
