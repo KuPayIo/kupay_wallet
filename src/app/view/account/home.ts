@@ -6,7 +6,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { clearUser } from '../../api/walletApi';
 import { uploadFile } from '../../net/pull';
 import { registerStoreData } from '../../postMessage/listenerStore';
-import { getStore, register } from '../../store/memstore';
+import { getStore, initStore, register } from '../../store/memstore';
 import { selectImage } from '../../utils/native';
 import { getUserInfo, popNewMessage, rippleShow } from '../../utils/pureUtils';
 // tslint:disable-next-line:max-line-length
@@ -211,11 +211,17 @@ export class AccountHome extends Widget {
         const loading = popNew('app-components1-loading-loading1');
         loadSettingSource().then(() => {
             popNew('app-components-modalBox-modalBox', { title: '确认退出', content:'' }, () => {
-                // logoutAccount(true).then(() => {
-                //     this.backPrePage();
-                // });
+
+                // 添加一张背景图
+                const loginBg:any = document.createElement('div');
+                loginBg.className = 'haohaiLoginDiv';
+                document.querySelector('body').appendChild(loginBg);
+
+                // 清除账号数据
                 clearUser();
                 
+                // 初始化数据
+                initStore();
             });
             loading.callback(loading.widget);
         });
@@ -239,7 +245,7 @@ export class AccountHome extends Widget {
     // }
 }
 
-registerStoreData('user/info', () => {
+registerStoreData('user', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();
@@ -251,5 +257,14 @@ register('setting/language', (r) => {
     if (w) {
         w.language = w.config.value[r];
         w.paint();
+    }
+});
+
+registerStoreData('flags/isLogin',(r:boolean) => {
+    if (r) {
+        const loginBg = document.querySelector('.haohaiLoginDiv');
+        if (loginBg) {
+            document.body.removeChild(loginBg);
+        }
     }
 });
