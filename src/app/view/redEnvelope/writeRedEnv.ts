@@ -266,8 +266,12 @@ export class WriteRedEnv extends Widget {
         // tslint:disable-next-line:max-line-length
         // const totalAmount = largeUnit2SmallUnit(CloudCurrencyType[Number(CloudCurrencyType[curCoin.name])], this.props.totalAmount);   // 红包总金额
         const totalNum = this.props.totalNum;    // 红包总个数
-        const rid = await sendRedEnvlope(Number(rtype), ctype, Number(this.props.totalAmount), totalNum, lm);
-        if (!rid.msg) return;
+        const redCode:any = await sendRedEnvlope(Number(rtype), ctype, Number(this.props.totalAmount), totalNum, lm);
+        console.log('红包兑换码是=========================',redCode.msg);
+        if (!redCode.msg) {
+
+            return;
+        }
         setTimeout(() => {
             this.props.oneAmount = 0;
             this.props.totalNum = 0;
@@ -281,13 +285,13 @@ export class WriteRedEnv extends Widget {
             console.log('发红包成功了');
             this.ok({
                 message: lm,
-                rid: rtype + rid.msg,  // 红包的ID
+                rid: rtype + redCode.msg,  // 红包的ID
                 acc_id:this.props.acc_id
             });
         } else {
             popNew('app-view-redEnvelope-sendRedEnv', {
                 message: lm,
-                rid:rid.msg,
+                rid:redCode.msg,
                 rtype: rtype,
                 cname: curCoin.name
             });

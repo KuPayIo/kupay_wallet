@@ -76,8 +76,8 @@ export class PlayHome extends Widget {
         this.props.loaded = false;
         // 最近在玩
         this.props.oftenList = [
-            { name:'一代掌门',icon:'../../../res/image/game/yidaizhangmen.png',desc:'2019LPL春季赛常规赛' },
-            { name:'仙之侠道',icon:'../../../res/image/game/xianzhixiadao.png',desc:'2019LPL春季赛常规赛' }
+            { name:'仙之侠道',icon:'../../../res/image/game/xianzhixiadao.png',desc:'2019LPL春季赛常规赛' },
+            { name:'一代掌门',icon:'../../../res/image/game/yidaizhangmen.png',desc:'2019LPL春季赛常规赛' }
         ];
         // 推荐
         this.props.recommend = [
@@ -120,6 +120,7 @@ export class PlayHome extends Widget {
         },2000);
 
     }
+
     /**
      * 刷新页面前的准备
      */
@@ -191,7 +192,8 @@ export class PlayHome extends Widget {
             const gameTitle = gameList[num].title.zh_Hans;
             const gameUrl =   gameList[num].url;
             const webviewName = gameList[num].webviewName;
-            WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, '',screenMode.portrait);
+            const screenMode = gameList[num].screenMode;
+            WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, '',screenMode);
             // tslint:disable-next-line:max-line-length
             // const [addrInfo,baseUrl,inviteCodeInfo] = await Promise.all([callGetCurrentAddrInfo('ETH'),callGetEthApiBaseUrl(),callGetInviteCode()]);
             // const inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`; 
@@ -257,6 +259,26 @@ export class PlayHome extends Widget {
      */
     public myHome(e:any) {
         notify(e.node,'ev-myHome',null);
+    }
+
+    public async goGame(num:number) {
+        const isLogin = await getStoreData('flags/isLogin');
+        if (!isLogin) {
+            popNewMessage('登录中,请稍后再试');
+
+            return;
+        }
+        if (!gameList[num].url) {
+            const tips = { zh_Hans:'敬请期待',zh_Hant:'敬請期待',en:'' };
+            popNewMessage(tips[getLang()]);
+        } else {
+            hasEnterGame = true;
+            const gameTitle = gameList[num].title.zh_Hans;
+            const gameUrl =   gameList[num].url;
+            const webviewName = gameList[num].webviewName;
+            const screenMode = gameList[num].screenMode;
+            WebViewManager.open(webviewName, `${gameUrl}?${Math.random()}`, gameTitle, '',screenMode);
+        }
     }
 
 }

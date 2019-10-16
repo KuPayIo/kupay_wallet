@@ -1,18 +1,19 @@
 /**
  * open red-envelope
  */
+import { getConvertRedBag, getRedCode } from '../../../earn/client/app/net/rpc';
 import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { convertRedBag, getServerCloudBalance, takeRedBag } from '../../net/pull';
-import { CloudCurrencyType, LuckyMoneyType } from '../../public/interface';
+import { convertRedBag, getServerCloudBalance } from '../../net/pull';
+import { CloudCurrencyType, CloudType, LuckyMoneyType } from '../../public/interface';
 import { setStore } from '../../store/memstore';
 import { currencyType, popNewMessage } from '../../utils/pureUtils';
 import { smallUnit2LargeUnit } from '../../utils/unitTools';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
-declare var module: any;
+declare let module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
@@ -73,10 +74,9 @@ export class OpenRedEnvelope extends Widget {
      */
     public async convertClick() {
         const rid = this.props.rid;
-        
-        const res: any = await takeRedBag(rid.slice(2));
+        const res: any = await getRedCode(rid.slice(2));
         console.log('========================convert',res);
-        if (res.result === 702) {  // 红包已被领完 查看其他人领取记录
+        if (res.reslutCode === 702) {  // 红包已被领完 查看其他人领取记录
             this.props = {
                 ...this.props,
                 rtype: rid.slice(0,2),
@@ -88,31 +88,31 @@ export class OpenRedEnvelope extends Widget {
 
             return false;
 
-        } else if (res.result !== 1) {  // 其他错误 直接退出
+        } else if (res.reslutCode !== 1) {  // 其他错误 直接退出
             this.props.openClick = false;
             this.paint();
 
             return false;
         }
         console.log('!!!!!!!!!!!!!!!!!!!takeredbag',res);
-        const cid = res.value[3];  // 兑换码
+        const cid = JSON.parse(res.msg).cid;  // 兑换码
         
-        const ans = await convertRedBag(cid);
-        if (!ans) {
+        const ans:any = await getConvertRedBag(cid);
+        if (ans.reslutCode !== 1) {
             this.props.openClick = false;
             this.paint();
 
             return false;
         }
         console.log('!!!!!!!!!!!!!!!!!!!convertredbag',ans);
-        const v = ans.value;
+        const v = JSON.parse(ans.msg);
         this.props = {
             ...this.props,
             rtype: rid.slice(0,2),
             ctypeShow: currencyType(CloudCurrencyType[v[0]]),
-            amount: smallUnit2LargeUnit(CloudCurrencyType[v[0]],v[1]),
+            amount: smallUnit2LargeUnit(CloudType[v[0]],v[1]),
             rid: rid.slice(2),
-            suid: ans.src_id
+            suid: v.send_uid
         };
         setStore('activity/luckyMoney/exchange',undefined);
         getServerCloudBalance();

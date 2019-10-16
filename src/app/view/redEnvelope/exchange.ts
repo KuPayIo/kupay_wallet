@@ -3,7 +3,7 @@
  */
 // ============================== 导入
 
-import { convertAwards, inputInviteCdKey } from '../../../earn/client/app/net/rpc';
+import { convertAwards, getConvertRedBag, inputInviteCdKey } from '../../../earn/client/app/net/rpc';
 import { popModalBoxs, popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
@@ -54,7 +54,7 @@ export class Exchange extends Widget {
         }
         const close = popNewLoading(this.language.loading);
         const res: any = await this.convertRedEnvelope(code);
-
+        debugger;
         close.callback(close.widget);
         if (!res.value) return;
         setStore('activity/luckyMoney/exchange',undefined);
@@ -90,9 +90,9 @@ export class Exchange extends Widget {
     public async convertRedEnvelope(code: string) {
         const perCode = code.slice(0, 2);
         const validCode = code.slice(2);
-        let value = [];
+        let value = null;
         if (perCode === LuckyMoneyType.Normal || perCode === LuckyMoneyType.Random) {
-            value = await convertRedBag(validCode);  // 兑换普通红包，拼手气红包
+            value = await getConvertRedBag(validCode);  // 兑换普通红包，拼手气红包
         } else if (perCode === LuckyMoneyType.Invite) {
             const data = await getData('convertRedEnvelope');
             if (data.value) {

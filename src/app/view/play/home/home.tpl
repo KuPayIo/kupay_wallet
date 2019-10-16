@@ -7,7 +7,7 @@
         <div w-class="oftenPlay">
             <div w-class="oftenList">
                 {{for i,v of it.oftenList}}
-                <div w-class="listItem">
+                <div w-class="listItem" on-tap="goGame({{i}})">
                     <div w-class="oftenPlayItem">
                         <img src="{{v.icon}}" alt="" w-class="oftenPlayItemImg"/>
                         <div w-class="mark">最近在玩</div>
