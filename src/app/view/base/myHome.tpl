@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div w-class="myMoney">
-                {{for i,v of it.wallet}}
+                {{for i,v of it1.wallet}}
                 <div w-class="btnBox">
                     <div w-class="silver">
                         <div w-class="money">{{v.num}}</div>

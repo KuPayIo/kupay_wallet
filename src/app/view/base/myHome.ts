@@ -19,7 +19,6 @@ declare var module: any;
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
     showDataList:any;// 广场，粉丝，关注，好友
-    wallet:any;// 钱包余额
     mallFunction:any;// 小功能
     userInfo:any;
     hasWallet:boolean;
@@ -40,10 +39,6 @@ export class MyHome extends Widget {
             { num:4,name:'关注' },
             { num:4,name:'粉丝' },
             { num:4,name:'好友' }
-        ],
-        wallet:[
-            { num:999.99,name:'银两余额' },
-            { num:999.99,name:'我的嗨豆' }
         ],
         mallFunction:[
             { src:'../../res/image/mallFunction/mall.png',name:'嗨豆商城' },
@@ -106,6 +101,7 @@ export class MyHome extends Widget {
             ...this.props
         };
         super.setProps(this.props);
+        this.state = STATE;
         this.initData();
     }
 
@@ -169,7 +165,7 @@ export class MyHome extends Widget {
     // 更新本地资产
     public async updateLocalWalletAssetList() {
         const assetList = await getStoreData('cloud');
-        this.props.wallet = [
+        this.state.wallet = [
             { num:assetList.SC,name:`${getModulConfig('SC_SHOW')}余额` },
             { num:assetList.KT,name:`我的${getModulConfig('KT_SHOW')}` }];
         this.paint();
@@ -344,13 +340,19 @@ export class MyHome extends Widget {
     }
 
 }
+const STATE = {
+    wallet:[
+        { num:999.99,name:'银两余额' },
+        { num:999.99,name:'我的嗨豆' }
+    ]
+};
 // 云端余额变化
 registerStoreData('cloud',(r) => {
-    console.log('云端余额变化',JSON.parse(r));
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.updateLocalWalletAssetList();
-    }
+    STATE.wallet = [
+        { num:r.SC,name:'银两余额' },
+        { num:r.KT,name:'我的嗨豆' }
+    ];
+    forelet.paint(STATE);
 });
 
 // 资料变化
