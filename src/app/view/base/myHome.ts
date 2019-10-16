@@ -190,7 +190,16 @@ export class MyHome extends Widget {
 
     // tslint:disable-next-line:max-func-body-length
     public funClick(e:any,i:number) {
-        const day = new Date().getDate();
+        const date = new Intl.DateTimeFormat('zh', {
+            year: 'numeric',  
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
+        const day = date.format(new Date()).split(' ')[0];
         const msg = JSON.parse(localStorage.getItem(`redFlags_${this.props.userInfo.acc_id}`));
         const loading = popNew('app-components1-loading-loading1');
         switch (i) {
@@ -297,10 +306,18 @@ export class MyHome extends Widget {
      * 设置小红点的显示
      */
     public setRedFlags() {
-        const day = new Date().getDate();
+        const date = new Intl.DateTimeFormat('zh', {
+            year: 'numeric',  
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
+        const day = date.format(new Date()).split(' ')[0];
         const msg = JSON.parse(localStorage.getItem(`redFlags_${this.props.userInfo.acc_id}`));
         if (!msg) {
-            const day = new Date().getDate();
             const msg  = {
                 day,
                 invite:true,

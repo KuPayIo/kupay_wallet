@@ -20,12 +20,7 @@ export class MyIncome extends Widget {
             { zh_Hans:'什么是BTC',zh_Hant:'什麼是BTC',en:'' }
         ],
         showDataList:[
-            { num:'+0.0205 mBTC',name:'分红',time:'2019-09-06 14:00' },
-            { num:'+0.0205 mBTC',name:'分红',time:'2019-09-06 14:00' },
-            { num:'+0.0205 mBTC',name:'分红',time:'2019-09-06 14:00' },
-            { num:'+0.0205 mBTC',name:'分红',time:'2019-09-06 14:00' },
-            { num:'+0.0205 mBTC',name:'分红',time:'2019-09-06 14:00' },
-            { num:'+0.0205 mBTC',name:'分红',time:'2019-09-06 14:00' }
+            // { num:'+0.0205 mBTC',name:'分红',time:'2019-09-06 14:00' }
         ],
         dividendDescription:[
             {

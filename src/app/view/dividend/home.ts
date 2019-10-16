@@ -1,5 +1,6 @@
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
+import { getStoreData } from '../../api/walletApi';
 import { rippleShow } from '../../utils/pureUtils';
 
 interface Props {
@@ -29,6 +30,16 @@ export class DividendHome extends Widget {
         dividendInterest:['我的收益','分红说明','什么是BTC']
     };
 
+    public create() {
+        super.create();
+        getStoreData('cloud').then(r => {
+            this.props.hold = {
+                kt:r.KT,
+                addUp:0
+            };
+            this.paint();
+        });
+    }
     /**
      * 点击权益
      */

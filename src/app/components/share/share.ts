@@ -52,7 +52,6 @@ export class BaseShare extends Widget {
     }
 
     private baseShare(platform: number) {
-
         if (this.props.shareType === ShareType.TYPE_LINK) {
             const walletName = '钱包';
 

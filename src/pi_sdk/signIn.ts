@@ -213,7 +213,7 @@ const getCode = () => {
     let countdown = 60;
     document.querySelector('#countdown').innerHTML = `${countdown}s 重新获取`;
     console.log('倒计时 ',countdown);
-    
+
     codeTimer = setInterval(() => {
         countdown--;
         console.log('倒计时 ',countdown);
@@ -322,16 +322,19 @@ const closeSigninPage=()=>{
 /**
  * 弹出框
  */
-export const createModalBox = (title:string,msg:string,okCB:any,cancelCB?:any) => {
+export const createModalBox = (title:string,msg:string,btnName:string,okCB?:any) => {
     closeSigninPage();
     const htmlText = `
         <div class="pi-mask">
             <div class="modalBox-body animated bounceInUp">
-                <div class="pi-pay-title">${title}</div>
-                <div class="pi-pay-content">${msg}</div>
-                <div class="pi-btns" style="padding-bottom:30px;">
-                    <div class="pi-cancel-btn">取消</div>
-                    <div class="pi-ok-btn">确定</div>
+                <div style="font-size: 40px;line-height: 56px;text-align: center;">
+                    ${title}
+                </div>
+                <div style="color: #888888;margin-bottom: 50px;font-size: 32px;padding-top: 40px;">
+                    ${msg}
+                </div>
+                <div class="pi-sure-btn">
+                    ${btnName}
                 </div>
             </div>
         </div>`;
@@ -341,12 +344,8 @@ export const createModalBox = (title:string,msg:string,okCB:any,cancelCB?:any) =
     const body = document.querySelector('body');
     body.appendChild(piRoot);
 
-    document.querySelector('.pi-ok-btn').addEventListener('click',()=>{
+    document.querySelector('.pi-sure-btn').addEventListener('click',()=>{
         closePopBox();
         okCB && okCB();
-    });
-    document.querySelector('.pi-cancel-btn').addEventListener('click',()=>{
-        closePopBox();
-        cancelCB && cancelCB();
     });
 }

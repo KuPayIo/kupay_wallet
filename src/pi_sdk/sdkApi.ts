@@ -58,15 +58,15 @@ export const runAuthorizeListener = () => {
 
 // 执行被踢下线方法
 export const runForceLogout = ()=>{
-    createModalBox('下线通知','您的账户已在别处登录，当前账户已下线',()=>{
+    createModalBox('下线通知','您的账号已下线，如需继续使用，请重新登录','重新登录',()=>{
         window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'runForceLogout');
     });
 }
 
 // 执行踢人下线方法
 export const runKickOffline = (param)=>{
-    createModalBox('检测到在其它设备有登录','清除其它设备上的账户信息，并登录',()=>{
-        window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'runKickOffline',param);
+    createModalBox('登录提示','检测到在其它设备有登录，清除其它设备的账户信息','确定',()=>{
+        // window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'runKickOffline',param);
     });
 }
 

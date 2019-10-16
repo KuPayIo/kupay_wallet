@@ -633,3 +633,13 @@ export interface PostMessage {
     moduleName:PostModule;   // 模块名
     args:PostMessageArgs;                // 参数
 }
+
+/**
+ * 发红包需要的货币类型
+ */
+export enum CloudType {
+    KT = 6001,  // KT
+    ETH = 4001,       // ETH 
+    BTC = 3001,       // BTC
+    ST = 5001        // ST
+}

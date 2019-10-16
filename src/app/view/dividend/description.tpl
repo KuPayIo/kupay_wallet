@@ -2,14 +2,16 @@
     <app-components-topBar-topBar>{title:{{it.tabBar[it.state]}} }</app-components-topBar-topBar>
     <div w-class="body">
         {{if it.state==0}}
-            {{for i,v of it.showDataList}}
-            <div w-class="item">
-                <div w-class="num">{{v.num}}</div>
-                <div w-class="myIncomeInfo">
-                    <div w-class="title">{{v.name}}</div>
-                    <div w-class="time">{{v.time}}</div>
+            {{if it.showDataList.length}}
+                {{for i,v of it.showDataList}}
+                <div w-class="item">
+                    <div w-class="num">{{v.num}}</div>
+                    <div w-class="myIncomeInfo">
+                        <div w-class="title">{{v.name}}</div>
+                        <div w-class="time">{{v.time}}</div>
+                    </div>
                 </div>
-            </div>
+                {{end}}
             {{end}}
         {{elseif it.state==1}}
             {{for i,v of it.dividendDescription}}

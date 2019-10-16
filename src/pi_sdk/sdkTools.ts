@@ -256,6 +256,14 @@ export const createThirdApiStyleTag = () => {
     justify-content: center;
     align-items: center;
     }
+    .pi-sure-btn{
+        border-top: 1px solid #CCCCCC;
+        padding: 30px;
+        text-align: center;
+        color: #3294E6;
+        font-size: 28px;
+        font-weight: 600;
+    }
 
 
     /* 获取openid */

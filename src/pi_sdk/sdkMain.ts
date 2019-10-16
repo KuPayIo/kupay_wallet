@@ -111,10 +111,8 @@ const showButtons = [{
     clickedClose:true,
     clickCb:() => {
         console.log('click 最小化');
-        // { webviewName:piConfig.webviewName,popFloatBox:true }
-        pi_RPC_Method(piConfig.jsApi, 'minWebview', piConfig.webviewName,  (error, result) => {
-            console.log('minWebview call success');
-        });
+        const exs = pi_modules[webviewManagerPath].exports;
+        exs.WebViewManager.minWebView(piConfig.webviewName);
     }
 },{
     id:ButtonId.EXITGAME,
