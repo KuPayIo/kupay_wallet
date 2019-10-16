@@ -268,6 +268,7 @@ export const popNew3 = (name: string, props?: any, ok?: Callback, cancel?: Callb
         piLoadDir(level3SourceList).then(() => {
             console.log('popNew3 ------ all resource loaded');
             popNew(name,props,ok,cancel);
+            setStore('flags/level_3_page_loaded',true);
             loading.callback(loading.widget);
         });
     }
