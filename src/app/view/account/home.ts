@@ -211,11 +211,10 @@ export class AccountHome extends Widget {
         const loading = popNew('app-components1-loading-loading1');
         loadSettingSource().then(() => {
             popNew('app-components-modalBox-modalBox', { title: '确认退出', content:'' }, () => {
-
                 // 添加一张背景图
                 const loginBg:any = document.createElement('div');
                 loginBg.className = 'haohaiLoginDiv';
-                document.querySelector('body').appendChild(loginBg);
+                document.querySelector('[w-tag="pi-ui-root"]').appendChild(loginBg);
 
                 // 清除账号数据
                 clearUser();
@@ -260,11 +259,10 @@ register('setting/language', (r) => {
     }
 });
 
+// 监听重新登录
 registerStoreData('flags/isLogin',(r:boolean) => {
-    if (r) {
-        const loginBg = document.querySelector('.haohaiLoginDiv');
-        if (loginBg) {
-            document.body.removeChild(loginBg);
-        }
+    const loginBg = document.querySelector('.haohaiLoginDiv');
+    if (r && loginBg) {
+        document.querySelector('[w-tag="pi-ui-root"]').removeChild(loginBg);
     }
 });

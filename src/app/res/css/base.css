@@ -325,12 +325,12 @@ div{
     animation: rippleVary 0.3s forwards;
 }
 .haohaiLoginDiv{
-    width: 100%;
-    height: 100%;
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 9999;
+    bottom: 0;
+    right: 0;
+    z-index: 998;
     background-image: url(http://192.168.33.13/wallet/app/res/image1/haohaiLogin.jpg);
     background-position: center;
     background-repeat: no-repeat;

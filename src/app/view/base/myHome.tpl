@@ -3,7 +3,7 @@
         <app-components1-blankDiv-topDiv></app-components1-blankDiv-topDiv>
         <div w-class="myInfoBox">
             <div w-class="avatarBox">
-                <widget w-tag="app-components1-img-img" w-class="userHead" on-tap="userInfoSet">{imgURL:{{it.userInfo.avatar?it.userInfo.avatar:'../../res/image1/default_avatar.png'}},width:"140px;"}</widget>
+                <widget w-tag="app-components1-img-img" w-class="userHead" on-tap="userInfoSet">{imgURL:{{it.userInfo.avatar}},width:"140px;"}</widget>
                 <div w-class="userInfo">
                     <div w-class="userNameBox">
                         <div w-class="userName">{{it.userInfo.nickName}}</div>

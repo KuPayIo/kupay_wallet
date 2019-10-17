@@ -10,9 +10,9 @@ import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
 import { convertRedBag, getData, getServerCloudBalance, queryRedBagDesc, setData } from '../../net/pull';
 import { getModulConfig } from '../../public/config';
-import { CloudCurrencyType, LuckyMoneyType } from '../../public/interface';
+import { CloudCurrencyType, CloudType, LuckyMoneyType } from '../../public/interface';
 import { setStore } from '../../store/memstore';
-import { popNewLoading, popNewMessage } from '../../utils/pureUtils';
+import { currencyType, popNewLoading, popNewMessage } from '../../utils/pureUtils';
 import { showError } from '../../utils/toolMessages';
 import { eth2Wei, smallUnit2LargeUnit } from '../../utils/unitTools';
 
@@ -54,20 +54,20 @@ export class Exchange extends Widget {
         }
         const close = popNewLoading(this.language.loading);
         const res: any = await this.convertRedEnvelope(code);
-        debugger;
         close.callback(close.widget);
-        if (!res.value) return;
+        if (res.reslutCode !== 1) return;
         setStore('activity/luckyMoney/exchange',undefined);
         getServerCloudBalance();
         const r: any = await this.queryDesc(code);
         const ktShow = getModulConfig('KT_SHOW');
+        const redInfo = JSON.parse(res.msg);
         const redEnvelope = {
-            message: r.value,
-            ctypeShow: res.value[0] === CloudCurrencyType.KT ? ktShow : CloudCurrencyType[res.value[0]],
-            amount: smallUnit2LargeUnit(CloudCurrencyType[res.value[0]], res.value[1]),
+            message: redInfo.desc,
+            ctypeShow: currencyType(CloudType[redInfo.coin_type]),
+            amount: smallUnit2LargeUnit(CloudType[redInfo.coin_type],redInfo.amount),
             rtype: code.slice(0, 2),
             rid:res.rid,
-            suid:res.src_id,
+            suid:redInfo.send_uid,
             code
         };
         popNew('app-view-redEnvelope-openRedEnv', redEnvelope);

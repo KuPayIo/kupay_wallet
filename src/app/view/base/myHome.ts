@@ -5,10 +5,10 @@ import { CoinType } from '../../../earn/client/app/xls/dataEnum.s';
 import { popNew } from '../../../pi/ui/root';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getStoreData, goRecharge } from '../../api/walletApi';
+import { clearUser, getStoreData, goRecharge } from '../../api/walletApi';
 import { registerStoreData } from '../../postMessage/listenerStore';
 import { getModulConfig } from '../../public/config';
-import { register, setStore } from '../../store/memstore';
+import { initStore, register, setStore } from '../../store/memstore';
 import { fetchCloudWalletAssetList, getUserInfo, rippleShow } from '../../utils/pureUtils';
 // tslint:disable-next-line:max-line-length
 import { loadAboutAppSource, loadAccountSource, loadCloudRechargeSource, loadDividendSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadPersonalInfoSource, loadRedEnvelopeSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
@@ -114,6 +114,7 @@ export class MyHome extends Widget {
             this.props.userInfo.avatar = userInfo.avatar;
             this.props.userInfo.userLevel = userInfo.level;
             this.props.userInfo.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
+            this.paint();
             this.medalest();
             this.updateLocalWalletAssetList();
             this.setRedFlags();
@@ -322,6 +323,8 @@ export class MyHome extends Widget {
                 mining:true
             };
             localStorage.setItem(`redFlags_${this.props.userInfo.acc_id}`,JSON.stringify(msg));
+
+            return;
         }
         if (day === msg.day) {
             // 同一天登录
@@ -337,6 +340,11 @@ export class MyHome extends Widget {
             this.props.mallFunction[6].fg = true;
         }
         this.paint();
+    }
+
+    // 测试
+    public test() {
+        console.log('用户信息==============================',this.props);
     }
 
 }
@@ -355,12 +363,25 @@ registerStoreData('cloud',(r) => {
     forelet.paint(STATE);
 });
 
-// 资料变化
+// 资料变化  监听踢人下线
 registerStoreData('user',(r) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.initData();
     }
+    // if (!r.token && !document.querySelector('.haohaiLoginDiv')) {
+
+    //     // 添加一张背景图
+    //     const loginBg:any = document.createElement('div');
+    //     loginBg.className = 'haohaiLoginDiv';
+    //     document.querySelector('[w-tag="pi-ui-root"]').appendChild(loginBg);
+
+    //     // 清除账号数据
+    //     clearUser();
+        
+    //     // 初始化数据
+    //     initStore();
+    // }
 });
 
 // 监听红点变化

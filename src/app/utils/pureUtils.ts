@@ -107,7 +107,12 @@ export const getUserInfo = (userInfo1?:any) => {
         console.log('getUserInfo userInfo = ',userInfo);
         let avatar = userInfo.info.avatar;
         if (avatar && avatar.indexOf('data:image') < 0) {
-            avatar = `${uploadFileUrlPrefix}${avatar}`;
+            if (avatar.slice(0,4) === 'http') {
+                avatar = avatar;   
+            } else {
+                avatar = `${uploadFileUrlPrefix}${avatar}`;
+            }
+            
         } else {
             avatar = 'app/res/image/default_avater_big.png';
         }
