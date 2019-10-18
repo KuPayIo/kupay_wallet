@@ -3,13 +3,15 @@ import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { clearUser } from '../../api/walletApi';
 import { uploadFile } from '../../net/pull';
-import { register } from '../../store/memstore';
+import { registerStoreData } from '../../postMessage/listenerStore';
+import { getStore, initStore, register } from '../../store/memstore';
 import { selectImage } from '../../utils/native';
 import { getUserInfo, popNewMessage, rippleShow } from '../../utils/pureUtils';
 // tslint:disable-next-line:max-line-length
 import { changeWalletName, changeWalletNote, changeWalletSex, imgResize, logoutAccount, walletNameAvailable } from '../../utils/tools';
-import { loadBindPhoneSource, loadSetPhoneSource, loadSettingSource } from '../base/sourceLoaded';
+import { loadSettingSource } from '../base/sourceLoaded';
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords 
 declare var module: any;
@@ -92,22 +94,27 @@ export class AccountHome extends Widget {
     }
 
     public uploadAvatar() {
-        const imagePicker = selectImage((width, height, url) => {
-            console.log('selectImage url = ',url);
-            // tslint:disable-next-line:max-line-length
-            this.props.avatarHtml = `<div style="background-image: url(${url});width: 120px;height: 120px;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
-            this.props.chooseImage = true;
-            this.props.avatar = url;
-            this.paint();
-            imagePicker.getContent({
-                quality:70,
-                success(buffer:ArrayBuffer) {
-                    imgResize(buffer,(res) => {
-                        uploadFile(res.base64);
-                    });
-                }
+        const loading = popNew('app-components1-loading-loading1');
+        loadSettingSource().then(() => {
+            const imagePicker = selectImage((width, height, url) => {
+                console.log('selectImage url = ',url);
+                // tslint:disable-next-line:max-line-length
+                this.props.avatarHtml = `<div style="background-image: url(${url});width: 80px;height: 80px;background-size: cover;background-position: center;background-repeat: no-repeat;border-radius:50%"></div>`;
+                this.props.chooseImage = true;
+                this.props.avatar = url;
+                this.paint();
+                imagePicker.getContent({
+                    quality:70,
+                    success(buffer:ArrayBuffer) {
+                        imgResize(buffer,(res) => {
+                            uploadFile(res.base64);
+                        });
+                    }
+                });
             });
+            loading.callback(loading.widget);
         });
+        
     }
 
     /**
@@ -169,8 +176,9 @@ export class AccountHome extends Widget {
     public changeName() {
         const loading = popNew('app-components1-loading-loading1');
         loadSettingSource().then(() => {
-            popNew('chat-client-app-widget-pageEdit-pageEdit',{ title:'修改昵称', contentInput:this.props.nickName,maxLength:10 },(res:any) => {
-                changeWalletName(res.content);
+            // tslint:disable-next-line:max-line-length
+            popNew('chat-client-app-widget-pageEdit-pageEdit',{ title:'修改昵称', contentInput:this.props.nickName,maxLength:10 },async (res:any) => {
+                await changeWalletName(res.content);
                 this.props.nickName = res.content;
                 popNewMessage('修改昵称成功');
                 this.paint();
@@ -203,8 +211,22 @@ export class AccountHome extends Widget {
         const loading = popNew('app-components1-loading-loading1');
         loadSettingSource().then(() => {
             popNew('app-components-modalBox-modalBox', { title: '确认退出', content:'' }, () => {
-                logoutAccount(true).then(() => {
-                    this.backPrePage();
+                // 添加一张背景图
+                const loginBg:any = document.createElement('div');
+                loginBg.className = 'haohaiLoginDiv';
+                document.querySelector('[w-tag="pi-ui-root"]').appendChild(loginBg);
+
+                // 清除账号数据
+                clearUser().then(() => {
+                    // 初始化数据
+                    initStore();
+                    // 监听重新登录
+                    registerStoreData('flags/isLogin',(r:boolean) => {
+                        const loginBg = document.querySelector('.haohaiLoginDiv');
+                        if (r && loginBg) {
+                            document.querySelector('[w-tag="pi-ui-root"]').removeChild(loginBg);
+                        }
+                    });
                 });
                 
             });
@@ -217,21 +239,20 @@ export class AccountHome extends Widget {
      * 选择性别
      */
     public changeSex() {
-        popNew('app-components1-checkSex-checkSex', { title:'选择性别',active:this.props.sex }, (r: any) => {
-            changeWalletSex(r);
-            this.props.sex = r;
+        popNew('app-components1-checkSex-checkSex', { title:'选择性别',active:this.props.sex }, async (r: any) => {
+            await changeWalletSex(r);
             popNewMessage('修改性别成功');
             this.paint();
         });
     }
 
-    // 黑名单管理
-    public blacklist() {
-        popNew('chat-client-app-view-contactList-blacklist',{ title:'黑名单管理' ,addType:'放出' });
-    }
+    // // 黑名单管理
+    // public blacklist() {
+    //     popNew('chat-client-app-view-contactList-blacklist',{ title:'黑名单管理' ,addType:'放出' });
+    // }
 }
 
-register('user/info', () => {
+registerStoreData('user', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.init();

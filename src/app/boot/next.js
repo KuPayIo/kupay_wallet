@@ -248,7 +248,20 @@ winit.initNext = function () {
 			"app/res/css/",
 			'earn/client/app/res/css/',
 			'earn/xlsx/item.c.js',
-			'earn/xlsx/item.s.js'
+			'earn/xlsx/item.s.js',
+			'earn/xlsx/awardCfg.c.js',
+			'earn/xlsx/awardCfg.s.js',
+			"app/postMessage/",
+			"earn/client/app/components/noviceTaskAward/",
+
+			"chat/client/app/view/home/",
+			"chat/client/app/view/contactList/contactList.tpl",
+			"chat/client/app/view/contactList/contactList.js",
+			"chat/client/app/view/contactList/contactList.wcss",
+			"chat/client/app/view/contactList/contactItem.tpl",
+			"chat/client/app/view/contactList/contactItem.js",
+			"chat/client/app/view/contactList/contactItem.wcss",
+			"chat/client/app/widget/imgShow/"
 		];
 		util.loadDir(sourceList, flags, fm, suffixCfg, function (fileMap) {
 			console.log("firstStageLoaded success-----------------");
@@ -260,7 +273,10 @@ winit.initNext = function () {
 			var tab = util.loadCssRes(fileMap);
 			tab.timeout = 90000;
 			tab.release();
-			enterApp();
+			if(!pi_update.inApp){
+				vmLoad(util,fm);
+			}
+			loadPiSdk();
 		}, function (r) {
 			alert("加载目录失败, " + r.error + ":" + r.reason);
 		}, dirProcess.handler);
@@ -276,6 +292,41 @@ winit.initNext = function () {
 			// 关闭读取界面
 			document.body.removeChild(document.getElementById('rcmj_loading_log'));
 		});
+		// 活动登录
+		pi_modules.commonjs.exports.relativeGet("earn/client/app/net/login").exports.earnLogin(()=>{
+			// 聊天登录
+			pi_modules.commonjs.exports.relativeGet("chat/client/app/net/login").exports.chatLogin();	
+		});
+		
+	}
+
+	
+	/**
+	 * pc版加载VM
+	 */
+	function vmLoad(util,fm) {
+		// 开始flag
+		console.log("vm项目开始了。。。。。。。");
+		util.loadDir([ "vm/remote/","vm/store"], flags, fm, undefined, function (fileMap) {
+			pi_modules.commonjs.exports.relativeGet("vm/remote/login").exports.openConnect();
+			
+		}, function (r) {
+			console.log("加载目录失败, " + r.url + ", " + r.error + ":" + r.reason);
+		}, function(){});
+		
+	}
+
+	var loadPiSdk = function(){
+		util.loadDir(["pi_sdk/"], flags, fm, undefined, function (fileMap) {
+			pi_sdk.setWebviewManager("pi/browser/webview");
+			pi_sdk.piSdkInit((res)=>{
+				console.log('bind vm success', res);
+				//钱包登录
+				pi_modules.commonjs.exports.relativeGet("app/net/login").exports.walletLogin(enterApp);	
+			});
+		}, function (r) {
+			alert("加载目录失败, " + r.error + ":" + r.reason);
+		}, dirProcess.handler);
 	}
 
 	// 加载一些需要预加载的图片

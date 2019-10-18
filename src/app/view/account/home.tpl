@@ -9,8 +9,7 @@
                 {"zh_Hans":"昵称","zh_Hant":"暱稱","en":""}, 
                 {"zh_Hans":"性别","zh_Hant":"性別","en":""},  
                 {"zh_Hans":"个性签名","zh_Hant":"個性簽名","en":""}, 
-                {"zh_Hans":"手机号","zh_Hant":"手機號","en":""},         
-                {"zh_Hans":"黑名单管理","zh_Hant":"黑名單管理","en":""}
+                {"zh_Hans":"手机号","zh_Hant":"手機號","en":""}        
                 ] }}
                 
                 {{: phone = {"zh_Hans":it.phone,"zh_Hant":it.phone,"en":""} }}
@@ -41,9 +40,6 @@
                 {{else}}
                 <app-components-basicItem-basicItem>{name:{{itemTitle[4]}},describe:{{bindPhone}} }</app-components-basicItem-basicItem>
                 {{end}}
-            </div>
-            <div on-tap="blacklist" on-down="onShow">
-                <app-components-basicItem-basicItem>{name:{{itemTitle[5]}} }</app-components-basicItem-basicItem>
             </div>
         </div>
         <div w-class="btn" on-tap="logOutDel" on-down="onShow">退出登录</div>

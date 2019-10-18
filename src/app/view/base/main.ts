@@ -7,23 +7,33 @@ import { getStore as chatGetStore } from '../../../chat/client/app/data/store';
 import { chatManualReconnect } from '../../../chat/client/app/net/init';
 import { earnManualReconnect } from '../../../earn/client/app/net/init';
 import { getStore as earnGetStore } from '../../../earn/client/app/store/memstore';
-import { addAppBackPressed } from '../../../pi/browser/app_comon_event';
+import { addActivityBackPressed, addAppBackPressed } from '../../../pi/browser/app_comon_event';
 import { ExitApp } from '../../../pi/browser/exitApp';
+import { initReport } from '../../../pi/collection/collection';
 import { backCall, backList, lastBack, popNew } from '../../../pi/ui/root';
 import { addWidget } from '../../../pi/widget/util';
+import { sourceIp } from '../../public/config';
 import { LockScreen } from '../../public/interface';
 import { getStore } from '../../store/memstore';
+import { getScreenModify } from '../../utils/native';
 
 // ============================== 导出
 export const run = (cb): void =>  {
     addWidget(document.body, 'pi-ui-root');
+    initReport({
+        reported:true,
+        interval:10 * 1000,
+        deadline:30 * 1000,
+        ip:sourceIp
+    });
     // 数据检查  
     checkUpdate();  
-    const id = getStore('user/id');
+    getScreenModify();
+    // const id = getStore('user/info/openid');
     popNew('app-view-base-app');
-    if (!id) {
-        popNew('app-view-base-entrance');
-    } 
+    // if (!id) {
+    //     popNew('app-view-base-entrance');
+    // } 
     // 锁屏页面;
     // popNewPage();
     if (cb) cb();
@@ -48,18 +58,18 @@ const popNewPage = () => {
     });
 };
 
-/**
- * 预先从底层获取一些数据
- */
-const preFetchFromNative = () => {
-    getScreenModify();
-        // 预先随机下载
-    preLoadAd(undefined,() => {
-        preLoadAd(undefined,() => {
-            preLoadAd(undefined);
-        });
-    });
-};
+// /**
+//  * 预先从底层获取一些数据
+//  */
+// const preFetchFromNative = () => {
+//     getScreenModify();
+//         // 预先随机下载
+//     preLoadAd(undefined,() => {
+//         preLoadAd(undefined,() => {
+//             preLoadAd(undefined);
+//         });
+//     });
+// };
 const checkUpdate = () => {
   // todo 
 };
@@ -86,7 +96,6 @@ const addAppEvent = () => {
     
                 setTimeout(() => {
                     // TODO 钱包登录
-                        
                     if (!chatGetStore('isLogin')) {
                         chatManualReconnect();
                     }
@@ -103,7 +112,8 @@ const addAppEvent = () => {
 
     let startTime = 0;
         // 注册appBackPressed
-    addAppBackPressed(() => {
+    // 处理物理返回事件
+    addActivityBackPressed(() => {
         let doubleClick = false;
         const now = new Date().getTime();
         if (now - startTime <= 300) {
@@ -117,13 +127,10 @@ const addAppEvent = () => {
             exitApp.init();
             exitApp.ToHome({});
         } else {
-            const widget = lastBack();
-            const entranceName = 'app-view-base-entrance';
-            const entranceName1 = 'app-view-base-entrance1';
-            if (widget.name === entranceName || widget.name === entranceName1) return;
             backCall();
         }
     });
+
 };
 
 // ============================== 立即执行

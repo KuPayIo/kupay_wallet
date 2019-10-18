@@ -1,11 +1,10 @@
-.new-page{
+.newpage{
     display: flex;
     flex-direction: column;
 }
 .topBack{
     flex-shrink: 0;
     overflow: hidden;
-    position: relative;
 }
 .body{
     padding-bottom: 120px;
@@ -13,9 +12,6 @@
     overflow-y: auto;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    display: flex;
-    flex-direction: column;
-    flex: 1 0 0;
 }
 .oftenPlay{
     border-bottom: 1px solid #CCC;

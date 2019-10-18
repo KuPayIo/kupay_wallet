@@ -2,15 +2,19 @@
  * sendRedEnv
  */
 // =============================================导入
+import { sendRedEnvlope } from '../../../earn/client/app/net/rpc';
 import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { getServerCloudBalance, sendRedEnvlope } from '../../net/pull';
+import { getStoreData } from '../../api/walletApi';
+import { getServerCloudBalance } from '../../net/pull';
+import { registerStoreData } from '../../postMessage/listenerStore';
 import { getModulConfig } from '../../public/config';
-import { CloudCurrencyType, LuckyMoneyType } from '../../public/interface';
+import { CloudCurrencyType, CloudType, LuckyMoneyType } from '../../public/interface';
 import { getCloudBalances, register, setStore } from '../../store/memstore';
 import { currencyType, getUserInfo, popNewLoading, popNewMessage } from '../../utils/pureUtils';
+import { largeUnit2SmallUnit } from '../../utils/unitTools';
 // ================================================导出
 
 // tslint:disable-next-line:no-reserved-keywords
@@ -42,9 +46,8 @@ export class WriteRedEnv extends Widget {
     public props:Props = {
         ktShow:getModulConfig('KT_SHOW'),
         list: [
-            { img: '../res/image1/currency/KT.png', name: 'KT', num: 0 },
-            { img: '../res/image1/currency/BTC.png', name: 'BTC', num:0 },
-            { img: '../res/image1/currency/ETH.png', name: 'ETH', num:0 }
+            { img: '../../res/image1/currency/KT.png', name: 'KT', num: 0 },
+            { img: '../../res/image1/currency/SC.png', name: 'SC', num:0 }
         ],
         selected: 0,
         showPin: false,
@@ -63,15 +66,17 @@ export class WriteRedEnv extends Widget {
         super.create();
         this.language = this.config.value[getLang()];
         this.updateBalance();
+
         getUserInfo().then(userInfo => {
             this.props.realUser = userInfo.isRealUser || !!userInfo.phoneNumber;
             this.props.acc_id = userInfo.acc_id;
         });
         const isIos = getModulConfig('IOS');
         if (isIos) {
-            this.props.list = [
-                { img: '../res/image1/currency/KT.png', name: 'KT', num: 0 }
-            ];
+            // this.props.list = [
+            //     { img: '../../res/image1/currency/KT.png', name: 'KT', num: 0 }
+            // ];
+            this.props.list = [this.props.list[0]];
         }
     }
 
@@ -91,14 +96,13 @@ export class WriteRedEnv extends Widget {
      */
     public updateBalance() {
         console.log('vmRpcCall writeRedEnv');
-
-        const data = getCloudBalances();
-        const list = this.props.list;
-        for (const i in list) {
-            list[i].num = data.get(CloudCurrencyType[list[i].name]) || 0;
-        }
-        this.props.list = list;
-        this.paint(true);
+        getStoreData('cloud').then(r => {
+            const list = this.props.list;
+            list[0].num = r.KT;
+            this.props.list = list;
+            this.paint(true);
+        });
+        
     }
 
     public backPrePage() {
@@ -179,6 +183,7 @@ export class WriteRedEnv extends Widget {
      * 点击发红包按钮
      */
     public async send() {
+
         const curCoin = this.props.list[this.props.selected];
      
         if (Number(this.props.totalNum) === 0) {
@@ -204,11 +209,11 @@ export class WriteRedEnv extends Widget {
         if (this.props.message === '') {
             this.props.message = this.language.messTitle[1];
         }
-        if (!this.props.realUser) {
-            popNewMessage(this.language.tips[5]);
+        // if (!this.props.realUser) {
+        //     popNewMessage(this.language.tips[5]);
 
-            return;
-        }
+        //     return;
+        // }
         if (this.props.selected === 0) {
             if (Number(this.props.totalAmount) < this.props.totalNum) {
                 const ktTips = {
@@ -228,24 +233,25 @@ export class WriteRedEnv extends Widget {
         const mess1 = `${this.language.phrase[0]}${this.props.totalAmount}${ctypeShow} / ${this.props.totalNum} ${this.language.phrase[1]}`;
         // tslint:disable-next-line:max-line-length
         const mess2 = this.language.phrase[2] + (this.props.showPin ? this.language.redEnvType[1] : this.language.redEnvType[0]);
-        popNew('app-components1-modalBoxInput-modalBoxInput', {
-            title: ctypeShow + this.language.phrase[3],
-            content: [mess1, mess2],
-            placeholder: this.language.phrase[4],
-            itype: 'password'
-        },
-            async (r) => {
-                const close = popNewLoading(this.language.loading);
-                // TODO
-                const secretHash = await verifyIdentidy(r);
-                close.callback(close.widget);
-                if (secretHash) {
-                    this.sendRedEnv(secretHash);
-                } else {
-                    popNewMessage(this.language.tips[6]);
-                }
-            }
-        );
+        // popNew('app-components1-modalBoxInput-modalBoxInput', {
+        //     title: ctypeShow + this.language.phrase[3],
+        //     content: [mess1, mess2],
+        //     placeholder: this.language.phrase[4],
+        //     itype: 'password'
+        // },
+        //     async (r) => {
+        //         const close = popNewLoading(this.language.loading);
+        //         // TODO
+        //         const secretHash = await verifyIdentidy(r);
+        //         close.callback(close.widget);
+        //         if (secretHash) {
+        //             this.sendRedEnv(secretHash);
+        //         } else {
+        //             popNewMessage(this.language.tips[6]);
+        //         }
+        //     }
+        // );
+        this.sendRedEnv('');
 
     }
 
@@ -256,12 +262,16 @@ export class WriteRedEnv extends Widget {
         const curCoin = this.props.list[this.props.selected];
         const lm = this.props.message;  // 留言
         const rtype = this.props.showPin ? LuckyMoneyType.Random : LuckyMoneyType.Normal; // 0 等额红包  1 拼手气红包
-        const ctype = Number(CloudCurrencyType[curCoin.name]);  // 货币类型
-        const totalAmount = Number(this.props.totalAmount);   // 红包总金额
+        const ctype = Number(CloudType[curCoin.name]);  // 货币类型
+        // tslint:disable-next-line:max-line-length
+        // const totalAmount = largeUnit2SmallUnit(CloudCurrencyType[Number(CloudCurrencyType[curCoin.name])], this.props.totalAmount);   // 红包总金额
         const totalNum = this.props.totalNum;    // 红包总个数
-        const rid = await sendRedEnvlope(rtype, ctype, totalAmount, totalNum, lm,secretHash);
+        const redCode:any = await sendRedEnvlope(Number(rtype), ctype, Number(this.props.totalAmount), totalNum, lm);
+        console.log('红包兑换码是=========================',redCode.msg);
+        if (!redCode.msg) {
 
-        // if (!rid) return;
+            return;
+        }
         setTimeout(() => {
             this.props.oneAmount = 0;
             this.props.totalNum = 0;
@@ -275,13 +285,13 @@ export class WriteRedEnv extends Widget {
             console.log('发红包成功了');
             this.ok({
                 message: lm,
-                rid: rtype + rid,  // 红包的ID
+                rid: rtype + redCode.msg,  // 红包的ID
                 acc_id:this.props.acc_id
             });
         } else {
             popNew('app-view-redEnvelope-sendRedEnv', {
                 message: lm,
-                rid,
+                rid:redCode.msg,
                 rtype: rtype,
                 cname: curCoin.name
             });
@@ -308,7 +318,7 @@ export class WriteRedEnv extends Widget {
 
 }
 // =====================================本地
-register('cloud/cloudWallets', () => {
+registerStoreData('cloud', () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         w.updateBalance();

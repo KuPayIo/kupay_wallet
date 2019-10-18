@@ -1,6 +1,7 @@
 /**
  * 主动向后端通讯
  */
+import { getStoreData, requestAsyncRpc, setStoreData } from '../api/walletApi';
 import { getModulConfig, PAGELIMIT, uploadFileUrl } from '../public/config';
 import { CloudCurrencyType } from '../public/interface';
 import { getStore, setStore } from '../store/memstore';
@@ -9,14 +10,13 @@ import { parseCloudAccountDetail, parseCloudBalance, parseConvertLog, parseDivid
 import { base64ToFile, getUserInfo, piFetch, popNewMessage, unicodeArray2Str } from '../utils/pureUtils';
 import { showError } from '../utils/toolMessages';
 import { kpt2kt, largeUnit2SmallUnit } from '../utils/unitTools';
-import { requestAsync } from './login';
 
 /**
  * 获取指定类型的货币余额
  */
 export const getBalance = async (currencyType: CloudCurrencyType) => {
     const msg = { type: 'wallet/account@get', param: { list: `[${currencyType}]` } };
-    requestAsync(msg).then(r => {
+    requestAsyncRpc(msg).then(r => {
         // todo 这里更新余额
     });
 };
@@ -29,7 +29,7 @@ export const getBalance = async (currencyType: CloudCurrencyType) => {
 export const inputInviteCdKey = async (code) => {
     const msg = { type: 'wallet/cloud@input_cd_key', param: { code: code } };
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncRpc(msg);
 
         return [res.fuid];
     } catch (err) {
@@ -60,10 +60,10 @@ export const  sendRedEnvlope = async (rtype: string, ctype: number, totalAmount:
             desc: lm
         }
     };
-
+    debugger;
     try {
-        const res = await requestAsync(msg);
-
+        const res = await requestAsyncRpc(msg);
+        debugger;
         return res.value;
     } catch (err) {
         showError(err && (err.result || err.type));
@@ -80,7 +80,7 @@ export const takeRedBag = async (rid) => {
     
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
-        const res = await requestAsync(msg);
+        const res = await requestAsyncRpc(msg);
 
         return res;
     } catch (err) {
@@ -98,7 +98,7 @@ export const convertRedBag = async (cid) => {
 
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
-        const res = await requestAsync(msg);
+        const res = await requestAsyncRpc(msg);
 
         return res;
     } catch (err) {
@@ -120,7 +120,7 @@ export const queryRedBagDesc = async (cid: string) => {
         }
     };
 
-    return requestAsync(msg);
+    return requestAsyncRpc(msg);
 };
 
 // ==========================================红包end
@@ -133,7 +133,7 @@ export const getAward = async () => {
 
     try {
         // tslint:disable-next-line:no-unnecessary-local-variable
-        const detail = await requestAsync(msg);
+        const detail = await requestAsyncRpc(msg);
         
         return detail;
         
@@ -150,7 +150,7 @@ export const getAward = async () => {
 export const setData = async (param) => {
     const msg = { type: 'wallet/data@set', param: param };
 
-    return requestAsync(msg);
+    return requestAsyncRpc(msg);
 };
 
 /**
@@ -159,7 +159,7 @@ export const setData = async (param) => {
 export const getData = async (key) => {
     const msg = { type: 'wallet/data@get', param: { key } };
 
-    return requestAsync(msg);
+    return requestAsyncRpc(msg);
 };
 
 /**
@@ -174,7 +174,7 @@ export const getUserList = async (uids: number[], isOpenid?: number) => {
     }
 
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsyncRpc(msg);
         if (res.value[0]) {
             const resAry = [];
             for (const element of res.value) {
@@ -196,42 +196,18 @@ export const getUserList = async (uids: number[], isOpenid?: number) => {
 export const doChat = async () => {
     const msg = { type: 'wallet/cloud@chat', param: {} };
 
-    requestAsync(msg).then(r => {
+    requestAsyncRpc(msg).then(r => {
         // 通信成功
     });
-};
-
-/**
- * 验证手机号是否被注册
- */
-export const verifyPhone = async (phone:string,num: string) => {
-    const msg = { type: 'wallet/user@check_phone', param: { phone,num } };
-    try {
-        await requestAsync(msg); 
-
-        return false;
-    } catch (err) {
-        if (err.result === 1005) return true;
-
-        return false; 
-    }
 };
 
 /**
  * 发送验证码
  */
 export const sendCode = async (phone: string, num: string,verify:boolean = true) => {
-    if (verify) {
-        const v = await verifyPhone(phone,num);
-        if (v) {
-            popNewMessage('手机号已绑定');
-
-            return 1;
-        }
-    }
     const msg = { type: 'wallet/sms@send_sms_code', param: { phone, num, name: getModulConfig('WALLET_NAME') } };
     try {
-        return await requestAsync(msg);
+        return await requestAsyncRpc(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -242,18 +218,11 @@ export const sendCode = async (phone: string, num: string,verify:boolean = true)
 /**
  * 注册手机
  */
-export const regPhone = async (phone: string, num:string, code: string) => {
-    const userInfo = await getUserInfo();
-    const bphone = userInfo.phoneNumber;
-    const areaCode = userInfo.areaCode;
-    // tslint:disable-next-line:variable-name
-    const old_phone =  bphone ? bphone :'';
-    // tslint:disable-next-line:variable-name
-    const  old_num = areaCode ? areaCode : '';
-    const msg = { type: 'wallet/user@reg_phone', param: { phone, old_phone, code,num,old_num } };
+export const regPhone = async (phone: string, num:number, code: string) => {
+    const msg = { type: 'wallet/user@bind_user', param: { userType:1, user:phone, pwd:code,cmd:num } };
     
     try {
-        return await requestAsync(msg);
+        return await requestAsyncRpc(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -271,7 +240,7 @@ export const checkPhoneCode = async (phone: string, code: string,cmd?:string) =>
     }
     const msg = { type: 'wallet/user@check_phoneCode', param };
     try {
-        return await requestAsync(msg);
+        return await requestAsyncRpc(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -286,7 +255,7 @@ export const unbindPhone = async (phone: string, code: string,num:string) => {
     const param:any = { phone, code,num };
     const msg = { type: 'wallet/user@unset_phone', param };
     try {
-        return await requestAsync(msg);
+        return await requestAsyncRpc(msg);
     } catch (err) {
         showError(err && (err.result || err.type));
 
@@ -300,7 +269,7 @@ export const unbindPhone = async (phone: string, code: string,num:string) => {
 export const getProxy = async () => {
     const msg = { type: 'wallet/proxy@get_proxy', param: {} };
 
-    return requestAsync(msg);
+    return requestAsyncRpc(msg);
 };
 
 // ===============================充值提现
@@ -321,15 +290,14 @@ export const uploadFile = async (base64) => {
         mode: 'cors' // no-cors, cors, *same-origin
         // redirect: 'follow', // manual, *follow, error
         // referrer: 'no-referrer' // *client, no-referrer
-    }).then(res => {
+    }).then(async res => {
         console.log('uploadFile success ',res);
         popNewMessage('图片上传成功');
         if (res.result === 1) {
             const sid = res.sid;
-            getStore('user/info').then(userInfo => {
-                userInfo.avatar = sid;
-                setStore('user/info',userInfo);
-            });
+            const userInfo = await getStoreData('user/info');
+            userInfo.avatar = sid;
+            setStoreData('user/info',userInfo);
         }
     }).catch(err => {
         console.log('uploadFile fail ',err);
@@ -348,7 +316,7 @@ export const changellySign = (data:any) => {
         }
     };
 
-    return requestAsync(msg);
+    return requestAsyncRpc(msg);
 };
 
 /**
@@ -360,7 +328,7 @@ export const getInviteUserAccIds = () => {
         param: {}
     };
 
-    return requestAsync(msg);
+    return requestAsyncRpc(msg);
 };
 
 /**
@@ -372,7 +340,7 @@ export const getAppleGoods = () => {
         param: {}
     };
 
-    return requestAsync(msg);
+    return requestAsyncRpc(msg);
 };
 
 /**
@@ -387,7 +355,7 @@ export const getUserRecentGame = (accid:number,count:number) => {
         }
     };
 
-    return requestAsync(msg).then(r => {
+    return requestAsyncRpc(msg).then(r => {
         if (r.list) {
             const list = [];
             r.list.forEach(v => {  // appid
@@ -406,7 +374,7 @@ export const getRealUser = () => {
         param: {}
     };
 
-    return requestAsync(msg).then(res => {
+    return requestAsyncRpc(msg).then(res => {
         const userInfo  = getStore('user/info');
         const isRealUser = res.value !== 'false';
         
@@ -423,7 +391,7 @@ export const getRealUser = () => {
 export const getBindPhone = () => {
     const msg = { type: 'wallet/user@get_phone',param: {} };
 
-    return requestAsync(msg).then(res => {
+    return requestAsyncRpc(msg).then(res => {
         const userInfo  = getStore('user/info');
         if (userInfo.phoneNumber !== res.phone || userInfo.areaCode !== res.num) {
             userInfo.phoneNumber =  res.phone;
@@ -442,7 +410,7 @@ export const getServerCloudBalance = () => {
     list.push(CloudCurrencyType.SC);
     const msg = { type: 'wallet/account@get', param: { list:`[${list}]` } };
     
-    return requestAsync(msg).then(balanceInfo => {
+    return requestAsyncRpc(msg).then(balanceInfo => {
         console.log('balanceInfo', balanceInfo);
         const cloudBalances = parseCloudBalance(balanceInfo);
         const cloudWallets = getStore('cloud/cloudWallets');
@@ -460,7 +428,7 @@ export const getServerCloudBalance = () => {
 export const getUserInfoFromServer = (uids: [number]) => {
     const msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
 
-    return requestAsync(msg).then(res => {
+    return requestAsyncRpc(msg).then(res => {
         const userInfoStr = unicodeArray2Str(res.value[0]);
         const localUserInfo = getStore('user/info');
         console.log('localUserInfo ==== ',localUserInfo);
@@ -492,7 +460,7 @@ export const setUserInfo = () => {
     const userInfo = getStore('user/info');
     const msg = { type: 'wallet/user@set_info', param: { value:JSON.stringify(userInfo) } };
     
-    return requestAsync(msg);
+    return requestAsyncRpc(msg);
 };
 
 /**
@@ -501,7 +469,7 @@ export const setUserInfo = () => {
 export const getHighTop =  (num: number) => {
     const msg = { type: 'wallet/cloud@get_high_top', param: { num: num } };
 
-    return requestAsync(msg).then(data => {
+    return requestAsyncRpc(msg).then(data => {
         console.log('获取全部排名========================',data);
         
         return parseMiningRank(data);
@@ -528,7 +496,7 @@ export const getAccountDetail = (coin: string,filter:number,start = '') => {
         param
     };
 
-    return requestAsync(msg).then(res => {
+    return requestAsyncRpc(msg).then(res => {
         const nextStart = res.start;
         const detail = parseCloudAccountDetail(coin,res.value);
         const splitDetail = splitCloudCurrencyDetail(detail); 
@@ -566,7 +534,7 @@ export const getAccountDetail = (coin: string,filter:number,start = '') => {
 export const getSilverPrice = (ispay:number = 0) => {
     const msg = { type:'get_silverprice',param:{ ispay } };
 
-    return requestAsync(msg).then(resData => {
+    return requestAsyncRpc(msg).then(resData => {
         if (resData.result === 1) {
             setStore('third/silver',{ price:resData.price,change:resData.change });
         }
@@ -598,7 +566,7 @@ export const queryConvertLog = (start?:string) => {
         };
     }
 
-    return requestAsync(msg).then(detail => {
+    return requestAsyncRpc(msg).then(detail => {
         const data = parseConvertLog(detail,start);
         setStore('activity/luckyMoney/exchange',data);
 
@@ -618,7 +586,7 @@ export const getDividHistory = (start = '') => {
         } 
     };
     
-    return requestAsync(msg).then(data => {
+    return requestAsyncRpc(msg).then(data => {
         const dividHistory = parseDividHistory(data);
         setStore('activity/dividend/history', dividHistory);
 
@@ -647,7 +615,7 @@ export const queryDetailLog = (uid:number,rid: string,accId?:string) => {
     }
     if (rid === '-1') return;
 
-    return requestAsync(msg).then(detail => {
+    return requestAsyncRpc(msg).then(detail => {
         return parseExchangeDetail(detail.value);
     });
         
@@ -657,7 +625,7 @@ export const queryDetailLog = (uid:number,rid: string,accId?:string) => {
 export const getFriendsKTTops =  (arr:any) => {
     const msg = { type:'wallet/cloud@finds_high_top',param:{ finds:JSON.stringify(arr) } };
 
-    return  requestAsync(msg).then(data => {
+    return  requestAsyncRpc(msg).then(data => {
         console.log('获取好友排名========================',data);
 
         return parseMiningRank(data);
@@ -670,7 +638,7 @@ export const getFriendsKTTops =  (arr:any) => {
 export const getInviteCodeDetail = () => {
     const msg = { type: 'wallet/cloud@get_invite_code_detail', param: {} };
     
-    return requestAsync(msg).then(data => {
+    return requestAsyncRpc(msg).then(data => {
         return parseMyInviteRedEnv(data.value);
     });
 };
@@ -697,7 +665,7 @@ export const querySendRedEnvelopeRecord = (start?: string) => {
         };
     }
 
-    return requestAsync(msg).then(detail => {
+    return requestAsyncRpc(msg).then(detail => {
         const data = parseSendRedEnvLog(detail.value,start);
         setStore('activity/luckyMoney/sends',data);
 
@@ -712,7 +680,7 @@ export const querySendRedEnvelopeRecord = (start?: string) => {
 export const getBonusHistory = () => {
     const msg = { type:'wallet/cloud@get_bonus_history',param:{} };
 
-    return requestAsync(msg);
+    return requestAsyncRpc(msg);
 };
 
 /**
@@ -725,7 +693,7 @@ export const getDividend = async () => {
     const num = (data.value !== '') ? data.value[0][1] : 0;
     const yearIncome = (num * 365 / 7).toFixed(4); 
     
-    return requestAsync(msg).then(data => {
+    return requestAsyncRpc(msg).then(data => {
         const dividend: any = {
             totalDivid: data.value[0],
             totalDays: data.value[1],
@@ -749,7 +717,7 @@ export const getOneUserInfo = (uids: number[], isOpenid?: number) => {
         msg = { type: 'wallet/user@get_infos', param: { list: `[${uids.toString()}]` } };
     }
 
-    return requestAsync(msg).then(res => {
+    return requestAsyncRpc(msg).then(res => {
         if (res.value[0]) {
 
             return JSON.parse(unicodeArray2Str(res.value[0]));
@@ -764,7 +732,7 @@ export const getOneUserInfo = (uids: number[], isOpenid?: number) => {
 export const getInviteCode = () => {
     const msg = { type: 'wallet/cloud@get_invite_code', param: {} };
 
-    return requestAsync(msg);
+    return requestAsyncRpc(msg);
 };
 
 /**
@@ -773,7 +741,7 @@ export const getInviteCode = () => {
 export const getMining = () => {
     const msg = { type: 'wallet/cloud@get_mine_total', param: {} };
     
-    return requestAsync(msg).then(data => {
+    return requestAsyncRpc(msg).then(data => {
         
         const totalNum = kpt2kt(data.mine_total);
         const holdNum = kpt2kt(data.mines);

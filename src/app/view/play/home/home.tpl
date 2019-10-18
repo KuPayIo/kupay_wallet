@@ -1,13 +1,13 @@
-<div class="new-page" w-class="new-page" ev-next-click="toSearch">
+<div class="new-page" w-class="newpage" ev-next-click="toSearch">
     <div w-class="topBack" ev-myHome="myHome">
-        <app-components1-topBar-topBar1>{avatar:{{it.userInfo.avatar}},title:"游戏",nextImg:"../../res/image1/searchGame.png" }</app-components1-topBar-topBar1>
+        <app-components1-topBar-topBar1>{avatar:{{it.userInfo.avatar}},title:"游戏" }</app-components1-topBar-topBar1>
     </div>
     <app-components1-offlineTip-offlineTip>{ offlienType:{{it.offlienType}} }</app-components1-offlineTip-offlineTip>
     <div w-class="body">
         <div w-class="oftenPlay">
             <div w-class="oftenList">
                 {{for i,v of it.oftenList}}
-                <div w-class="listItem">
+                <div w-class="listItem" on-tap="goGame({{i}})">
                     <div w-class="oftenPlayItem">
                         <img src="{{v.icon}}" alt="" w-class="oftenPlayItemImg"/>
                         <div w-class="mark">最近在玩</div>
@@ -32,7 +32,7 @@
             <div w-class="recommendedTodayTitle">今日推荐</div>
             <div w-class="showGame" style="position: relative">
                <div w-class="userHead">
-                    <div w-class="gameImg">
+                    <div w-class="gameImg" on-tap="gameClick1">
                         <img src="{{it.recommendedToday.bg}}" loading="lazy" w-class="userHead" />
                     </div>
                     <div w-class="gameInfos">

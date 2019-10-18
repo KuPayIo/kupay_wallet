@@ -1,0 +1,60 @@
+.newPage{
+    display: flex;
+    flex-direction: column;
+}
+.body{
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    background:rgba(242,242,242,1);
+    padding: 0 30px;
+}
+.item{
+    height: 119px;
+    padding: 0 30px;
+    border-bottom: 1px solid #ccc;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.num{
+    font-size:32px;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(34,34,34,1);   
+}
+.myIncomeInfo{
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+.title{
+    font-size:32px;
+    font-family:Roboto-Regular,Roboto;
+    font-weight:400;
+    color:rgba(34,34,34,1);
+}
+.time{
+    font-size:24px;
+    font-family:Roboto-Regular,Roboto;
+    font-weight:400;
+    color:rgba(136,136,136,1);
+}
+.legendTitle{
+    font-size:32px;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:bold;
+    color:rgba(34,34,34,1);
+    margin: 60px 30px 0;
+}
+.answer{
+    font-size:28px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(34,34,34,1);
+    line-height: 50px;
+    margin: 0 30px;
+}

@@ -299,3 +299,40 @@ div{
     animation: popBoxZoomIn .4s ease forwards;
     animation-delay: .1s;
 }
+/* 水波纹点击效果 */
+@keyframes rippleVary{
+    0% {transform: scale(0);opacity: .3;}
+    100% {transform: scale(10);opacity: 0.1;}
+}
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+.ripple:after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, #666 10%, transparent 20%);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    transform: scale(10);
+    opacity: 0;
+    animation: rippleVary 0.3s forwards;
+}
+.haohaiLoginDiv{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 998;
+    background-image: url(http://192.168.33.13/wallet/app/res/image1/haohaiLogin.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}

@@ -3,6 +3,7 @@ import { backCall, backList, popModalBoxs, popNew } from '../../pi/ui/root';
 import { getLang } from '../../pi/util/lang';
 import { getRealNode } from '../../pi/widget/painter';
 import { lookup } from '../../pi/widget/widget';
+import { getStoreData } from '../api/walletApi';
 // tslint:disable-next-line:max-line-length
 import { Config, defalutShowCurrencys, ERC20Tokens, getModulConfig, inJSVM, MainChainCoin, uploadFileUrlPrefix, USD2CNYRateDefault } from '../public/config';
 import { CloudCurrencyType, Currency2USDT, CurrencyRecord } from '../public/interface';
@@ -99,29 +100,34 @@ export const getUserInfo = (userInfo1?:any) => {
     if (userInfo1) {
         promise = Promise.resolve(userInfo1);
     } else {
-        promise = Promise.resolve(getStore('user/info'));
+        promise = getStoreData('user');
     }
     
     return promise.then(userInfo => {
         console.log('getUserInfo userInfo = ',userInfo);
-        let avatar = userInfo.avatar;
+        let avatar = userInfo.info.avatar;
         if (avatar && avatar.indexOf('data:image') < 0) {
-            avatar = `${uploadFileUrlPrefix}${avatar}`;
+            if (avatar.slice(0,4) === 'http') {
+                avatar = avatar;   
+            } else {
+                avatar = `${uploadFileUrlPrefix}${avatar}`;
+            }
+            
         } else {
             avatar = 'app/res/image/default_avater_big.png';
         }
         const level = chatGetStore(`userInfoMap/${chatGetStore('uid')}`,{ level:0 }).level;
     
         return {
-            nickName: userInfo.nickName,
-            phoneNumber: userInfo.phoneNumber,
-            areaCode: userInfo.areaCode,
-            isRealUser: userInfo.isRealUser,
+            nickName: userInfo.info.nickName,
+            phoneNumber: userInfo.info.phoneNumber,
+            areaCode: userInfo.info.areaCode,
+            isRealUser: userInfo.info.isRealUser,
             acc_id: userInfo.acc_id,
             avatar,
             level,
-            sex:userInfo.sex,
-            note:userInfo.note
+            sex:userInfo.info.sex,
+            note:userInfo.info.note
         };
     });
 };

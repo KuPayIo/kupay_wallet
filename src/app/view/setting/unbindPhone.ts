@@ -24,7 +24,7 @@ export class UnbindPhone extends Widget {
     }
 
     public unbindClick() {
-        popNew('app-view-mine-setting-phone',{ unbind:true },() => {
+        popNew('app-view-setting-phone',{ unbind:true },() => {
             this.ok && this.ok();
         });
     }

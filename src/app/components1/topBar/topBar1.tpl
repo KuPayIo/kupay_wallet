@@ -16,11 +16,10 @@
         {{if it.title}}
         <div w-class="title">{{it.title}}</div>
         {{end}}
-        <div style="display:inline-block;" on-down="onShow">
+        <div style="display:inline-block;width: 100px;" on-down="onShow">
             {{if it.nextImg}}
             <img src="{{it.nextImg}}" w-class="refreshBtn" on-tap="goNext"/>
             {{end}}
-
         </div>
     </div>
 </div>

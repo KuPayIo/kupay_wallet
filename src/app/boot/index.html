@@ -312,7 +312,7 @@
 			align-items: center;
 			position: absolute;
 			z-index: 9998;
-			background-image: url(../res/image1/bg_open.jpg);
+			background-image: url(http://192.168.33.13/wallet/app/res/image1/haohaiLogin.jpg);
 			background-position: center;
 			background-repeat: no-repeat;
 			background-size: cover;
@@ -739,4 +739,46 @@
 		</div>
 	</div>
 </body>
+<script>
+	/**
+	 * 自适应
+	 */
+	function browserAdaptive () {
+		var cfg = {
+			width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
+		};
+		const clientWidth = document.documentElement.clientWidth;
+		const clientHeight = document.documentElement.clientHeight;
+		var rootWidth = cfg.width;
+		var rootHeight = cfg.height;
+		var scaleW = clientWidth / rootWidth;
+		var scaleH = clientHeight / rootHeight;
+		if (cfg.wscale >= cfg.hscale) {
+			// 宽度比例变动
+			if (scaleW > scaleH * (cfg.wscale + 1)) {
+				// 大于规定的比例
+				rootWidth = rootWidth * (cfg.wscale + 1) | 0;
+			} else {
+				rootWidth = (clientWidth / scaleH) | 0;
+			}
+			scaleW = scaleH;
+		} else {
+			// 高度比例变动
+			if (scaleH > scaleW * (cfg.hscale + 1)) {
+				rootHeight = rootHeight * (cfg.hscale + 1) | 0;
+			} else {
+				rootHeight = (clientHeight / scaleW) | 0;
+			}
+			scaleH = scaleW;
+		}
+		const rootX = (clientWidth - rootWidth) / 2;
+		const rootY = (clientHeight - rootHeight) / 2;
+	
+		// tslint:disable-next-line:max-line-length
+		return `left:${rootX}px;top: ${rootY}px;width:${rootWidth}px;height:${rootHeight}px;-webkit-transform:scale(${scaleW},${scaleH});-moz-transform:scale(${scaleW},${scaleH});-ms-transform:scale(${scaleW},${scaleH});transform:scale(${scaleW},${scaleH});`;
+	};
+	
+	document.querySelector('#rcmj_loading_log').setAttribute('style',browserAdaptive());
+	</script>
+	
 </html>

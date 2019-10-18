@@ -7,6 +7,7 @@ import { register as earnRegister } from '../../../earn/client/app/store/memstor
 import { setLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
+import { registerStoreData } from '../../postMessage/listenerStore';
 import { getModulConfig } from '../../public/config';
 import { register } from '../../store/memstore';
 import { getUserInfo, rippleShow } from '../../utils/pureUtils';
@@ -36,25 +37,25 @@ export class App extends Widget {
             tabBarList: [
                 {
                     modulName: 'APP_PLAY',
-                    text: { zh_Hans:'玩',zh_Hant:'玩',en:'' },
+                    text: { zh_Hans:'游戏',zh_Hant:'游戏',en:'' },
                     icon: 'play.png',
                     iconActive: 'play_active.png',
                     components: 'app-view-play-home-home'
                 },{
                     modulName: 'APP_CHAT',
-                    text: { zh_Hans:'聊',zh_Hant:'聊',en:'' },
+                    text: { zh_Hans:'广场',zh_Hant:'广场',en:'' },
                     icon: 'chat.png',
                     iconActive: 'chat_active.png',
-                    components: 'chat-client-app-view-home-test'
+                    components: 'chat-client-app-view-home-contact'
                 },{
                     modulName: 'APP_EARN',
-                    text: { zh_Hans:'赚',zh_Hant:'賺',en:'' },
+                    text: { zh_Hans:'任务',zh_Hant:'任务',en:'' },
                     icon: 'earn.png',
                     iconActive: 'earn_active.png',
                     components: 'earn-client-app-view-home-home'
                 },{
                     modulName: 'APP_WALLET',
-                    text: { zh_Hans:'钱',zh_Hant:'錢',en:'' },
+                    text: { zh_Hans:'我的',zh_Hant:'我的',en:'' },
                     icon: 'wallet.png',
                     iconActive: 'wallet_active.png',
                     components: 'app-view-base-myHome'
@@ -150,16 +151,6 @@ register('setting/language',(r) => {
     setLang(r);
 });
 
-register('user',(user:any) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        getUserInfo(user.info).then(userInfo => {
-            w.props.userInfo = userInfo;
-            w.paint();
-        });
-    }
-});
-
 // 创建钱包成功
 register('flags/createWallet',(createWallet:boolean) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
@@ -192,3 +183,13 @@ export const gotoEarn = () => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.switchToEarn();
 };
+
+registerStoreData('user/info',(user => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    if (w) {
+        getUserInfo(user.info).then(userInfo => {
+            w.props.userInfo = userInfo;
+            w.paint();
+        });
+    }
+}));

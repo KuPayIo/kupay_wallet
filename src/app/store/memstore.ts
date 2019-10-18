@@ -7,7 +7,6 @@ import { appLanguageList, LocalLanguageMgr } from '../../pi/browser/localLanguag
 import { HandlerMap } from '../../pi/util/event';
 import { setLang } from '../../pi/util/lang';
 import { cryptoRandomInt } from '../../pi/util/math';
-import { openConnect } from '../net/login';
 import { defaultSetting, topHeight } from '../public/config';
 // tslint:disable-next-line:max-line-length
 import { BtcMinerFee, CloudCurrencyType, CloudWallet, Currency2USDT, GasPrice, Setting, Silver, Store, UserInfo } from '../public/interface';
@@ -28,7 +27,6 @@ export const initStore = () => {
         initInviteUsers();      // 邀请好友数据初始化
 
         return initAccount().then(() => { // 账户初始化
-            openConnect();
             initFileStore().then(() => {  // indexDb数据初始化
                 // initTxHistory();         // 历史记录初始化
             });
@@ -506,6 +504,7 @@ const store: Store = {
             note: ''                   // 个性签名
         }
     },
+    
     cloud: {
         cloudWallets: initCloudWallets()     // 云端钱包相关数据, 余额  充值提现记录...
     },

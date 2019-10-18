@@ -1,6 +1,7 @@
 /**
  * sendRedEnv
  */
+import { getConvertRedBag, getRedCode } from '../../../earn/client/app/net/rpc';
 import { ShareType } from '../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
@@ -25,47 +26,54 @@ export class SendRedEnv extends Widget {
     }
     public setProps(props:Props,oldProps:Props) {
         super.setProps(props);
-        getStore('setting/language','zh_Hans').then(lan => {
-            this.props.lan = lan;
-        });
-        getStore('user').then(user => {
-            this.props.user = user;
-        });
+        this.props.lan = getStore('setting/language','zh_Hans');
+        this.props.user = getStore('user');
+        // getStore('setting/language','zh_Hans').then(lan => {
+        //     this.props.lan = lan;
+        // });
+        // getStore('user').then(user => {
+        //     this.props.user = user;
+        // });
     }
 
     /**
      * 发红包
      */
     public async sendRedEnv() {
-        const lan = this.props.lan;
-        const user = this.props.user;
-        let url = '';
-        let title = '';
-        const accId = user.info.acc_id;
-        const uid = user.conUid;
-        if (this.props.rtype === '00') {
-            // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${this.props.rid}&uid=${uid}&accId=${accId}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
-            title = this.language.redEnvType[0]; 
-        } else if (this.props.rtype === '01') {
-            // tslint:disable-next-line:max-line-length
-            url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${this.props.rid}&uid=${uid}&accId=${accId}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
-            title = this.language.redEnvType[1]; 
-        } else {
-            url = `${sharePerUrl}?cid=${this.props.rid}&type=${LuckyMoneyType.Invite}&lan=${lan}`;
-            title = this.language.redEnvType[2];
-        }
-        popNew('app-components-share-share', { 
-            shareType: ShareType.TYPE_LINK,
-            url,
-            title,
-            content:this.props.message
-        },() => {
-            this.backPrePage();
-        },() => {
-            this.backPrePage();
-        });
-        console.error(url);
+        // const lan = this.props.lan;
+        // const user = this.props.user;
+        // let url = '';
+        // let title = '';
+        // const accId = user.info.acc_id;
+        // const uid = user.conUid;
+        // if (this.props.rtype === '00') {
+        //     // tslint:disable-next-line:max-line-length
+        //     url = `${sharePerUrl}?type=${LuckyMoneyType.Normal}&rid=${this.props.rid}&uid=${uid}&accId=${accId}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
+        //     title = this.language.redEnvType[0]; 
+        // } else if (this.props.rtype === '01') {
+        //     // tslint:disable-next-line:max-line-length
+        //     url = `${sharePerUrl}?type=${LuckyMoneyType.Random}&rid=${this.props.rid}&uid=${uid}&accId=${accId}&lm=${(<any>window).encodeURIComponent(this.props.message)}&lan=${lan}`;
+        //     title = this.language.redEnvType[1]; 
+        // } else {
+        //     url = `${sharePerUrl}?cid=${this.props.rid}&type=${LuckyMoneyType.Invite}&lan=${lan}`;
+        //     title = this.language.redEnvType[2];
+        // }
+        // popNew('app-components-share-share', { 
+        //     shareType: ShareType.TYPE_LINK,
+        //     url,
+        //     title,
+        //     content:this.props.message
+        // },() => {
+        //     this.backPrePage();
+        // },() => {
+        //     this.backPrePage();
+        // });
+        // console.error(url);
+
+        // 测试兑换码
+        const res: any = await getRedCode(this.props.rid);
+        this.props.message = JSON.parse(res.msg).cid;
+        this.paint();
     }
 
     public backPrePage() {

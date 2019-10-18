@@ -1,14 +1,6 @@
 /**
  * sdk tools
  */
-// tslint:disable-next-line:variable-name
-const pi_sdk = (<any>window).pi_sdk || {};
-
-// tslint:disable-next-line:variable-name
-const pi_config = pi_sdk.config;
-
-// tslint:disable-next-line:variable-name
-const pi_store = pi_sdk.store;
 
 /**
  * 悬浮框按钮样式
@@ -30,6 +22,7 @@ export const createThirdBaseStyle = () => {
       transform: translateX(-50%);
       transition: opacity .3s, transform .4s;
       opacity: 0;
+      z-index:99999;
     }
     .message-fade-enter {
       opacity: 1;
@@ -74,85 +67,85 @@ export const createThirdBaseStyle = () => {
       display: inline-flex;
       align-items: center;
       z-index:99999;
-  }
-  .pi-wx-dots{
-      display: flex;
-      align-items: center;
-      width: 25px;
-      height: 25px;
-      justify-content: center;
-  }
-  .pi-wx-dot1{
-      width:3.5px;
-      height:3.5px;
-      background-color: #fff;
-      border-radius: 50%;
-  }
-  .pi-wx-dot2{
-      width:6.5px;
-      height:6.5px;
-      background-color: #fff;
-      border-radius: 50%;
-      margin: 0 2.5px;
-  }
-  .pi-wx-circle{
-      width:25px;
-      height:25px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-left: 17px;
-  }
-  .pi-wx-circle1{
-      background-color:rgba(0,0,0,0);
-      width:17px;
-      height:17px;
-      border: 2px solid #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-      box-sizing: border-box;
-  }
-  .pi-wx-circle2{
-      width:5px;
-      height:5px;
-      background-color: #fff;
-      border-radius: 50%;
-  }
+    }
+    .pi-wx-dots{
+        display: flex;
+        align-items: center;
+        width: 25px;
+        height: 25px;
+        justify-content: center;
+    }
+    .pi-wx-dot1{
+        width:3.5px;
+        height:3.5px;
+        background-color: #fff;
+        border-radius: 50%;
+    }
+    .pi-wx-dot2{
+        width:6.5px;
+        height:6.5px;
+        background-color: #fff;
+        border-radius: 50%;
+        margin: 0 2.5px;
+    }
+    .pi-wx-circle{
+        width:25px;
+        height:25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 17px;
+    }
+    .pi-wx-circle1{
+        background-color:rgba(0,0,0,0);
+        width:17px;
+        height:17px;
+        border: 2px solid #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        box-sizing: border-box;
+    }
+    .pi-wx-circle2{
+        width:5px;
+        height:5px;
+        background-color: #fff;
+        border-radius: 50%;
+    }
     .pi-bottom-box{
-    background:#fff;
-    border-radius:20px 20px 0px 0px;
-    position: absolute;
-    bottom: -400px;
-    left: 0;
-    right: 0;
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0 60px 30px;
-    transition: all .3s ease-in-out;
+        background:#fff;
+        border-radius:20px 20px 0px 0px;
+        position: absolute;
+        bottom: -400px;
+        left: 20px;
+        right: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        padding-bottom: 30px;
+        transition: all .3s ease-in-out;
     }
     .pi-bottom-item{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 25%;
-    margin-top: 40px;
+        display: flex;
+        width:25%;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
     }
     .pi-img-box{
-    width: 100px;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     .pi-text{
-    font-size:24px;
-    font-family:"PingFangSC-Regular";
-    font-weight:400;
-    color:rgba(136,136,136,1);
-    line-height:33px;
-    margin-top: 10px;
+        font-size:24px;
+        font-family:"PingFangSC-Regular";
+        font-weight:400;
+        color:rgba(136,136,136,1);
+        line-height:33px;
+        margin-top: 10px;
     }
     `;
     // tslint:disable-next-line:variable-name
@@ -169,11 +162,11 @@ export const createThirdBaseStyle = () => {
  */
 export const buttonModInit = () => {
     return () => {
-        if (pi_config.buttonMod === pi_config.buttonMods.FLOATBUTTON) {  // 可拖动悬浮框 三个点
+        if (window["pi_sdk"].config.buttonMod === window["pi_sdk"].config.buttonMods.FLOATBUTTON) {  // 可拖动悬浮框 三个点
             floatButtonInit();
-        } else if (pi_config.buttonMod === pi_config.buttonMods.WXBUTTON) {   // 微信小程序悬浮框
+        } else if (window["pi_sdk"].config.buttonMod === window["pi_sdk"].config.buttonMods.WXBUTTON) {   // 微信小程序悬浮框
             WxButtionInit();
-        } else if (pi_config.buttonMod === pi_config.buttonMods.FLOATBUTTON2) { // 可拖动悬浮框 图标
+        } else if (window["pi_sdk"].config.buttonMod === window["pi_sdk"].config.buttonMods.FLOATBUTTON2) { // 可拖动悬浮框 图标
             floatButtonInit2();
         } else {                    // 默认
             floatButtonInit2();
@@ -263,13 +256,21 @@ export const createThirdApiStyleTag = () => {
     justify-content: center;
     align-items: center;
     }
+    .pi-sure-btn{
+        border-top: 1px solid #CCCCCC;
+        padding: 30px;
+        text-align: center;
+        color: #3294E6;
+        font-size: 28px;
+        font-weight: 600;
+    }
 
 
     /* 获取openid */
 
     .pi-update-box {
     background-color: #fff;
-    background-image: url(${pi_config.imgUrlPre}update_bg.png);
+    background-image: url(${window["pi_sdk"].config.imgUrlPre}update_bg.png);
     background-repeat: no-repeat;
     background-size: 100% 235px;
     width: 630px;
@@ -301,12 +302,7 @@ export const createThirdApiStyleTag = () => {
     color: #8e96ab;
     }
 
-
-
-
-
     /* 支付 */
-
     .pi-pay-title {
         font-size:38px;
         height: 90px;
@@ -345,10 +341,7 @@ export const createThirdApiStyleTag = () => {
         outline:none;
     }
 
-
-
     /* 加载 */
-
     .pi-loading-mask{
         position: absolute;
         margin: 0;
@@ -391,12 +384,16 @@ export const createThirdApiStyleTag = () => {
         color: #fff;
         margin: 10px 0 20px;
     }
-
-
-
+    .modalBox-body{
+        background-color: #fff;
+        padding: 30px;
+        padding-bottom: 0;
+        width: 570px;
+        border-radius: 12px;
+        box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
+    }
 
     /* 动画 */
-
     @-webkit-keyframes bounceInUp {
     from,
     60%,
@@ -518,7 +515,7 @@ export const createThirdApiStyleTag = () => {
 export const createAuthorizeElementTag = () => {
     const htmlText = `
         <div class="pi-update-box animated bounceInUp">
-            <img src="${pi_config.imgUrlPre}rocket.png" class="pi-update-rocket" />
+            <img src="${window["pi_sdk"].config.imgUrlPre}rocket.png" class="pi-update-rocket" />
             <div class="pi-update-content">
                 <div class="pi-update-title">您将获取以下授权</span></div>
                 <div class="pi-update-items">
@@ -625,11 +622,11 @@ export const popInputBox =  (title,okCB,cancelCB?) => {
  * 根据id获取buttonItem
  */
 const getButtonItemById = (id) => {
-    const index = pi_config.showButtons.findIndex((item) => {
+    const index = window["pi_sdk"].config.showButtons.findIndex((item) => {
         return item.id === id;
     });
 
-    return pi_config.showButtons[index];
+    return window["pi_sdk"].config.showButtons[index];
 };
 
 // 创建设置免密弹窗标签
@@ -666,7 +663,7 @@ const createInputBoxElementTag =  (title) => {
  */
 const setButtonMod = (buttonMod) => {
     console.log('setButtonMod',buttonMod);
-    pi_config.buttonMod = buttonMod;
+    window["pi_sdk"].config.buttonMod = buttonMod;
 };
 
 /**
@@ -692,6 +689,7 @@ const floatButtonInit = () => {
    * 微信小程序按钮样式初始化
    */
 const WxButtionInit = () => {
+    console.log('~!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!WxButtionInit');
     const $wxBtns = document.createElement('div');
     $wxBtns.setAttribute('class','pi-wx-btns button-mod');
       
@@ -714,7 +712,7 @@ const WxButtionInit = () => {
     $wxDots.addEventListener('click',popNewPanel());
   
       // 关闭游戏
-    const closeItem = getButtonItemById(pi_config.ButtonId.EXITGAME);
+    const closeItem = getButtonItemById(window["pi_sdk"].config.ButtonId.EXITGAME);
     $wxCircle.addEventListener('click',closeItem.clickCb);
   
     $wxBtns.appendChild($wxDots);
@@ -734,8 +732,8 @@ const floatButtonInit2 =  () => {
     $floatButton.setAttribute('style','position: absolute;top:133px;right: 0px; width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);z-index: 99999;');
     // tslint:disable-next-line:no-inner-html
     $floatButton.innerHTML = `
-          <img src="${pi_config.imgUrlPre}wallet_logo.png" style="width:100%;height:100%;border-radius:50%;"/>
-          <img src="${pi_config.imgUrlPre}bubble.png" style="border-radius:50%;position: absolute;width:100%;height:100%;top:0;left:0;"/>
+          <img src="${window["pi_sdk"].config.imgUrlPre}wallet_logo.png" style="width:100%;height:100%;border-radius:50%;"/>
+          <img src="${window["pi_sdk"].config.imgUrlPre}bubble.png" style="border-radius:50%;position: absolute;width:100%;height:100%;top:0;left:0;"/>
       `;
     $floatButton.addEventListener('click',popNewPanel());
     document.querySelector('body').appendChild($floatButton);
@@ -754,20 +752,24 @@ const popNewPanel = () => {
             e.stopPropagation();
             e.preventDefault();
         });
-        pi_config.showButtons.forEach((item,index) => {
+        window["pi_sdk"].config.showButtons.forEach((item,index) => {
             if (!item.show) return;
             const $bottomItem = document.createElement('div');
             $bottomItem.setAttribute('class','pi-bottom-item');
+            if (window["pi_sdk"].config.isHorizontal) {  // 横屏游戏
+                $bottomItem.style.flex = '1 0 0';
+                $bottomItem.style.width = '160px';
+            }
             $bottomItem.setAttribute('id',item.id);
             let imgUrl = item.img;
             let text = item.text;
-            if (item.id === pi_config.ButtonId.FREESECRET) {
-                imgUrl = pi_store.freeSecret ? item.startImg : item.closeImg;
-                text = pi_store.freeSecret ? item.startText : item.closeText;
+            if (item.id === window["pi_sdk"].config.ButtonId.FREESECRET) {
+                imgUrl = window["pi_sdk"].store.freeSecret ? item.startImg : item.closeImg;
+                text = window["pi_sdk"].store.freeSecret ? item.startText : item.closeText;
             }
           
             // tslint:disable-next-line:no-inner-html
-            $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${pi_config.imgUrlPre}${imgUrl}" class="pi-item-img"/></div>
+            $bottomItem.innerHTML = `<div class="pi-img-box"><img src="${window["pi_sdk"].config.imgUrlPre}${imgUrl}" class="pi-item-img"/></div>
               <div class="pi-text">${text}</div>`;
             $bottomItem.addEventListener('click',() => {
                 (throttle(item.clickCb))();
@@ -800,15 +802,20 @@ const popNewPanel = () => {
  * 自适应
  */
 const browserAdaptive =  () => {
-    const cfg = {
+    let cfg = {
         width: 750, height: 1334, wscale: 0, hscale: 0.25, full: false
     };
+    if (window["pi_sdk"].config.isHorizontal) {  // 横屏游戏
+        cfg = {
+            width: 1334, height: 750, wscale: 0.25, hscale: 0, full: false
+        };
+    }
     const clientWidth = document.documentElement.clientWidth;
     const clientHeight = document.documentElement.clientHeight;
     let rootWidth = cfg.width;
     let rootHeight = cfg.height;
-    const scaleW = clientWidth / rootWidth;
-    const scaleH = clientHeight / rootHeight;
+    let scaleW = clientWidth / rootWidth;
+    let scaleH = clientHeight / rootHeight;
     if (cfg.wscale >= cfg.hscale) {
         // 宽度比例变动
         if (scaleW > scaleH * (cfg.wscale + 1)) {
@@ -817,6 +824,7 @@ const browserAdaptive =  () => {
         } else {
             rootWidth = (clientWidth / scaleH) | 0;
         }
+        scaleW = scaleH;
     } else {
         // 高度比例变动
         if (scaleH > scaleW * (cfg.hscale + 1)) {
@@ -824,12 +832,13 @@ const browserAdaptive =  () => {
         } else {
             rootHeight = (clientHeight / scaleW) | 0;
         }
+        scaleH = scaleW;
     }
     const rootX = (clientWidth - rootWidth) / 2;
     const rootY = (clientHeight - rootHeight) / 2;
 
     // tslint:disable-next-line:max-line-length
-    return `z-index:99999;position: fixed;overflow: hidden;left:${rootX}px;top: ${rootY}px;width:${rootWidth}px;height:${rootHeight}px;-webkit-transform:scale(${scaleW},${scaleH});-moz-transform:scale(${scaleW},${scaleH});-ms-transform:scale(${scaleW},${scaleH});transform:scale(${scaleW},${scaleH});`;
+    return `z-index:99999;user-select:none;position: fixed;overflow: hidden;left:${rootX}px;top: ${rootY}px;width:${rootWidth}px;height:${rootHeight}px;-webkit-transform:scale(${scaleW},${scaleH});-moz-transform:scale(${scaleW},${scaleH});-ms-transform:scale(${scaleW},${scaleH});transform:scale(${scaleW},${scaleH});`;
     
 };
 
@@ -914,5 +923,3 @@ const dragDom = (element, callback?) => {
         }
     };    
 };
-
-(<any>window).pi_sdk = pi_sdk; 

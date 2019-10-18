@@ -3,5 +3,5 @@ mklink /j "../src/pi_pt" "../../pi_pt/src/pi_pt";
 mklink /j "../src/chat" "../../messaging/src/chat";
 mklink /j "../src/earn" "../../wallet_game/src/earn";
 mklink /j "../../node_modules" "../../pi_build/node_modules";
-mklink /j "../src/boot" "../../pi/src/boot";
+mklink /j "../src/vm" "../../haohai_vm/src/app";
 pause;

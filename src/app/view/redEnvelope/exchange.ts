@@ -3,16 +3,16 @@
  */
 // ============================== 导入
 
-import { convertAwards } from '../../../earn/client/app/net/rpc';
+import { convertAwards, getConvertRedBag, inputInviteCdKey } from '../../../earn/client/app/net/rpc';
 import { popModalBoxs, popNew } from '../../../pi/ui/root';
 import { getLang } from '../../../pi/util/lang';
 import { Forelet } from '../../../pi/widget/forelet';
 import { Widget } from '../../../pi/widget/widget';
-import { convertRedBag, getData, getServerCloudBalance, inputInviteCdKey, queryRedBagDesc, setData } from '../../net/pull';
+import { convertRedBag, getData, getServerCloudBalance, queryRedBagDesc, setData } from '../../net/pull';
 import { getModulConfig } from '../../public/config';
-import { CloudCurrencyType, LuckyMoneyType } from '../../public/interface';
+import { CloudCurrencyType, CloudType, LuckyMoneyType } from '../../public/interface';
 import { setStore } from '../../store/memstore';
-import { popNewLoading, popNewMessage } from '../../utils/pureUtils';
+import { currencyType, popNewLoading, popNewMessage } from '../../utils/pureUtils';
 import { showError } from '../../utils/toolMessages';
 import { eth2Wei, smallUnit2LargeUnit } from '../../utils/unitTools';
 
@@ -54,20 +54,20 @@ export class Exchange extends Widget {
         }
         const close = popNewLoading(this.language.loading);
         const res: any = await this.convertRedEnvelope(code);
-
         close.callback(close.widget);
-        if (!res.value) return;
+        if (res.reslutCode !== 1) return;
         setStore('activity/luckyMoney/exchange',undefined);
         getServerCloudBalance();
         const r: any = await this.queryDesc(code);
         const ktShow = getModulConfig('KT_SHOW');
+        const redInfo = JSON.parse(res.msg);
         const redEnvelope = {
-            message: r.value,
-            ctypeShow: res.value[0] === CloudCurrencyType.KT ? ktShow : CloudCurrencyType[res.value[0]],
-            amount: smallUnit2LargeUnit(CloudCurrencyType[res.value[0]], res.value[1]),
+            message: redInfo.desc,
+            ctypeShow: currencyType(CloudType[redInfo.coin_type]),
+            amount: smallUnit2LargeUnit(CloudType[redInfo.coin_type],redInfo.amount),
             rtype: code.slice(0, 2),
             rid:res.rid,
-            suid:res.src_id,
+            suid:redInfo.send_uid,
             code
         };
         popNew('app-view-redEnvelope-openRedEnv', redEnvelope);
@@ -90,9 +90,9 @@ export class Exchange extends Widget {
     public async convertRedEnvelope(code: string) {
         const perCode = code.slice(0, 2);
         const validCode = code.slice(2);
-        let value = [];
+        let value = null;
         if (perCode === LuckyMoneyType.Normal || perCode === LuckyMoneyType.Random) {
-            value = await convertRedBag(validCode);  // 兑换普通红包，拼手气红包
+            value = await getConvertRedBag(validCode);  // 兑换普通红包，拼手气红包
         } else if (perCode === LuckyMoneyType.Invite) {
             const data = await getData('convertRedEnvelope');
             if (data.value) {
@@ -100,31 +100,29 @@ export class Exchange extends Widget {
 
                 return;
             }
-            
-            value = await inputInviteCdKey(validCode);  // 兑换邀请码
-            if (!value) {
-                
-                return;
-            }
-            const fuid = value[0];
-            value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
-            setData({ key: 'convertRedEnvelope', value: JSON.stringify([fuid,new Date().getTime()]) });
-            convertAwards(validCode).then((res:any) => {  // 兑换邀请码获得奖励
-                if (res && res.award.length > 0) {
-                    const awa = res.award[0];
-                    popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-                        title: '邀请奖励',
-                        awardType: awa.awardType,
-                        awardNum: awa.count
-                    });
-                    this.props.cid = '';
-                    this.paint(true);
 
-                } else {
-                    popNewMessage('获取奖励失败');
+            inputInviteCdKey(validCode).then((r:any) => {
+                if (r.reslutCode) {
+                    const fuid = r.reslutCode;
+                    value = [CloudCurrencyType.ETH, eth2Wei(0.015).toString()];
+                    setData({ key: 'convertRedEnvelope', value: JSON.stringify([fuid,new Date().getTime()]) });
+                    convertAwards(validCode).then((res:any) => {  // 兑换邀请码获得奖励
+                        if (res && res.award.length > 0) {
+                            const awa = res.award[0];
+                            popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                                title: '邀请奖励',
+                                awardType: awa.awardType,
+                                awardNum: awa.count
+                            });
+                            this.props.cid = '';
+                            this.paint(true);
+
+                        } else {
+                            popNewMessage('获取奖励失败');
+                        }
+                    });
                 }
             });
-           
         } else {
             popNewMessage(this.language.errorList[1]);
 
