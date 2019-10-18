@@ -25,7 +25,7 @@ export const gameList = [
         img:['app/res/image1/open_box1.png','app/res/image1/fairyChivalry.jpg','app/res/image1/fairyChivalry.jpg'],
         url:'http://ysxzxd.17youx.cn/dst/boot/yineng/yineng.html',
         apkDownloadUrl:shareDownload,
-        webviewName:'game',
+        webviewName:'fairyChivalry',
         buttonMod:ButtonMods.FLOATBUTTON2,   // 当前按钮模式
         accId:'268828',
         groupId:10001,

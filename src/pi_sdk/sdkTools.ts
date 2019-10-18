@@ -807,7 +807,7 @@ const browserAdaptive =  () => {
     };
     if (window["pi_sdk"].config.isHorizontal) {  // 横屏游戏
         cfg = {
-            width: 1334, height: 750, wscale: 0, hscale: 0, full: false
+            width: 1334, height: 750, wscale: 0.25, hscale: 0, full: false
         };
     }
     const clientWidth = document.documentElement.clientWidth;
@@ -838,7 +838,7 @@ const browserAdaptive =  () => {
     const rootY = (clientHeight - rootHeight) / 2;
 
     // tslint:disable-next-line:max-line-length
-    return `z-index:99999;position: fixed;overflow: hidden;left:${rootX}px;top: ${rootY}px;width:${rootWidth}px;height:${rootHeight}px;-webkit-transform:scale(${scaleW},${scaleH});-moz-transform:scale(${scaleW},${scaleH});-ms-transform:scale(${scaleW},${scaleH});transform:scale(${scaleW},${scaleH});`;
+    return `z-index:99999;user-select:none;position: fixed;overflow: hidden;left:${rootX}px;top: ${rootY}px;width:${rootWidth}px;height:${rootHeight}px;-webkit-transform:scale(${scaleW},${scaleH});-moz-transform:scale(${scaleW},${scaleH});-ms-transform:scale(${scaleW},${scaleH});transform:scale(${scaleW},${scaleH});`;
     
 };
 

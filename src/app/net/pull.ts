@@ -1,7 +1,7 @@
 /**
  * 主动向后端通讯
  */
-import { requestAsyncRpc } from '../api/walletApi';
+import { getStoreData, requestAsyncRpc, setStoreData } from '../api/walletApi';
 import { getModulConfig, PAGELIMIT, uploadFileUrl } from '../public/config';
 import { CloudCurrencyType } from '../public/interface';
 import { getStore, setStore } from '../store/memstore';
@@ -290,15 +290,14 @@ export const uploadFile = async (base64) => {
         mode: 'cors' // no-cors, cors, *same-origin
         // redirect: 'follow', // manual, *follow, error
         // referrer: 'no-referrer' // *client, no-referrer
-    }).then(res => {
+    }).then(async res => {
         console.log('uploadFile success ',res);
         popNewMessage('图片上传成功');
         if (res.result === 1) {
             const sid = res.sid;
-            getStore('user/info').then(userInfo => {
-                userInfo.avatar = sid;
-                setStore('user/info',userInfo);
-            });
+            const userInfo = await getStoreData('user/info');
+            userInfo.avatar = sid;
+            setStoreData('user/info',userInfo);
         }
     }).catch(err => {
         console.log('uploadFile fail ',err);

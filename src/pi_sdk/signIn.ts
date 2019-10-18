@@ -141,7 +141,7 @@ export const createSignInPage = () => {
     <div style="display:flex;align-items:center;flex-direction: column;margin-top:80px;">
         <div class="phoneInput">
             <img src="${window["pi_sdk"].config.imgUrlPre}/signIn_tel.png" class="inputIcon"/>
-            <input type="number" class="pi_input_inner" id="phoneInput"/>
+            <input type="number" class="pi_input_inner" id="phoneInput" autofocus="autofocus"/>
         </div>
         <div class="codeBox">
             <div class="codeInput">
@@ -188,8 +188,10 @@ export const createSignInPage = () => {
     const piRoot = document.createElement('div');
     piRoot.classList.add('pi-root');
     piRoot.appendChild(elem);
-    document.querySelector('body').appendChild(piRoot);
+    document.body.appendChild(piRoot);
 
+    document.querySelector('#phoneInput').addEventListener('input',phoneChange);
+    document.querySelector('#phoneInput').addEventListener('keyup',phoneKeyup);
     document.querySelector('#countdown').addEventListener('click',getCode);
     document.querySelector('#phoneLogin').addEventListener('click',phoneLogin);
     document.querySelector('#wxLogin').addEventListener('click',wxLogin);
@@ -198,11 +200,26 @@ export const createSignInPage = () => {
     document.querySelector('#touristLogin').addEventListener('click',touristLogin);
 };
 
+// 手机号输入
+const phoneChange = (e)=>{
+    let phone = e.target.value;
+    if(phone.length > 11){
+        document.querySelector('#phoneInput').value = phone.substr(0, 11);
+    }
+}
+const phoneKeyup = (e) =>{
+    let phone =  e.target.value;
+    console.log(phone);
+    document.querySelector('#phoneInput').value = phone.replace(/\D/g,'');
+}
+
 // 获取验证码倒计时
 let codeTimer = null;
-
 // 获取验证码
 const getCode = () => {
+    if(codeTimer){
+        return;
+    }
     const phone = document.querySelector('#phoneInput')['value'];
     const reg = /^[1][3-8]\d{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/;
     if (!phone || !reg.test(phone)) {
@@ -212,13 +229,11 @@ const getCode = () => {
     }
     let countdown = 60;
     document.querySelector('#countdown').innerHTML = `${countdown}s 重新获取`;
-    console.log('倒计时 ',countdown);
 
     codeTimer = setInterval(() => {
         countdown--;
-        console.log('倒计时 ',countdown);
         document.querySelector('#countdown').innerHTML = `${countdown}s 重新获取`;
-        if (countdown === 0) {
+        if (countdown <= 0) {
             document.querySelector('#countdown').innerHTML = `获取验证码`;
             codeTimer && clearInterval(codeTimer);
         }
@@ -270,7 +285,7 @@ const phoneLogin = () => {
 // 微信登录
 const wxLogin = () => {
     popNewLoading('登录中');
-    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'wechatLogin',{}, (error, res) => {
+    window["pi_sdk"].pi_RPC_Method(window["pi_sdk"].config.jsApi, 'wechatLogin', undefined,(error, res) => {
         closePopBox();
         if (error) {
             popNewMessage('登录失败');
@@ -341,8 +356,7 @@ export const createModalBox = (title:string,msg:string,btnName:string,okCB?:any)
     const piRoot = document.createElement('div');
     piRoot.setAttribute('id', 'pi-root');
     piRoot.innerHTML = htmlText;
-    const body = document.querySelector('body');
-    body.appendChild(piRoot);
+    document.body.appendChild(piRoot);
 
     document.querySelector('.pi-sure-btn').addEventListener('click',()=>{
         closePopBox();

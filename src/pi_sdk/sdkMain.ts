@@ -1,5 +1,6 @@
 import { createThirdApiStyleTag, createThirdBaseStyle, buttonModInit } from './sdkTools';
-import { setFreeSecrectPay, getFreeSecret } from './sdkApi';
+import { setFreeSecrectPay } from './sdkApi';
+import { confData } from './sdkConf';
 
 /**
  * pi sdk 入口文件
@@ -19,7 +20,7 @@ const piStore:any = pi_sdk.store || {       // store
 };   
 
 // tslint:disable-next-line:variable-name
-const piConfig:any = pi_sdk.config || {};  // 配置信息
+let piConfig:any = pi_sdk.config || {};  // 配置信息
 
 /**
  * button id定义
@@ -224,16 +225,17 @@ const piSdkInit = (cb:any) => {
 
 piConfig.ButtonId = ButtonId;
 piConfig.showButtons = showButtons;
-piConfig.webviewName = 'wallet';
-piConfig.isHorizontal = false;
-piConfig.appid = '101';
 piConfig.jsApi = 'app/remote/JSAPI';
 piConfig.imgUrlPre = 'http://192.168.31.226/wallet/app/res/image/third/';
-piConfig.buttonMod = 1;
+piConfig.buttonMod = 1;   // 悬浮按钮样式
 piConfig.buttonMods = {
     FLOATBUTTON:1,
     WXBUTTON:2,
     FLOATBUTTON2:3
+}
+piConfig = {
+    ...confData,
+    ...piConfig
 }
 
 pi_sdk.setWebviewManager = setWebviewManager;

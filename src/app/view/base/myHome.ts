@@ -11,7 +11,7 @@ import { getModulConfig } from '../../public/config';
 import { initStore, register, setStore } from '../../store/memstore';
 import { fetchCloudWalletAssetList, getUserInfo, rippleShow } from '../../utils/pureUtils';
 // tslint:disable-next-line:max-line-length
-import { loadAboutAppSource, loadAccountSource, loadCloudRechargeSource, loadDividendSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadPersonalInfoSource, loadRedEnvelopeSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
+import { loadAboutAppSource, loadAccountSource, loadCloudRechargeSource, loadDividendSource, loadHaihaiSource, loadMallSource, loadMedalSource, loadMiningSource, loadOpenBoxSource, loadPersonalInfoSource, loadRedEnvelopeSource, loadShareSource, loadTurntableSource } from './sourceLoaded';
 
 export const forelet = new Forelet();
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,13 +20,14 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 interface Props {
     showDataList:any;// 广场，粉丝，关注，好友
     mallFunction:any;// 小功能
-    userInfo:any;
+    user:any;
     hasWallet:boolean;
     hasBackupMnemonic:boolean;
     isTourist:boolean;
     mineMedal:any;
     medalList:any;
     medalest:string;// 最高勋章
+    uid:number;// 用户ID
 }
 
 /**
@@ -56,7 +57,7 @@ export class MyHome extends Widget {
             { src:'../../res/image/mallFunction/contact.png',name:'联系我们' }
 
         ],
-        userInfo:{
+        user:{
             acc_id: '332935',
             areaCode: '86',
             avatar: 'app/res/image/default_avater_big.png',
@@ -94,11 +95,13 @@ export class MyHome extends Widget {
                 medal: []
             }
         ],
-        medalest:''
+        medalest:'',
+        uid:0
     };
     public setProps(props:any) {
         this.props = {
-            ...this.props
+            ...this.props,
+            ...props
         };
         super.setProps(this.props);
         this.state = STATE;
@@ -109,11 +112,12 @@ export class MyHome extends Widget {
      * 更新数据
      */
     public initData() {
-        Promise.all([getUserInfo()]).then(([userInfo]) => {
-            this.props.userInfo.nickName = userInfo.nickName ? userInfo.nickName :'昵称未设置';
-            this.props.userInfo.avatar = userInfo.avatar;
-            this.props.userInfo.userLevel = userInfo.level;
-            this.props.userInfo.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
+        Promise.all([getUserInfo()]).then(async ([userInfo]) => {
+            this.props.user.nickName = userInfo.nickName ? userInfo.nickName :'昵称未设置';
+            this.props.user.avatar = userInfo.avatar;
+            this.props.user.userLevel = userInfo.level;
+            this.props.user.acc_id = userInfo.acc_id ? userInfo.acc_id :'000000';
+            this.props.uid = await getStoreData('user').uid;
             this.paint();
             this.medalest();
             this.updateLocalWalletAssetList();
@@ -176,11 +180,8 @@ export class MyHome extends Widget {
      * 我的资料
      */
     public userInfoSet() {
-        const loading = popNew('app-components1-loading-loading1');
         loadAccountSource().then(() => {
             popNew('app-view-account-home');
-            
-            loading.callback(loading.widget);
         });
         
     }
@@ -197,94 +198,76 @@ export class MyHome extends Widget {
             hour12: false
         });
         const day = date.format(new Date()).split(' ')[0];
-        const msg = JSON.parse(localStorage.getItem(`redFlags_${this.props.userInfo.acc_id}`));
-        const loading = popNew('app-components1-loading-loading1');
+        const msg = JSON.parse(localStorage.getItem(`redFlags_${this.props.user.acc_id}`));
         switch (i) {
             case 0:
                 loadMallSource().then(() => {
                     popNew('earn-client-app-view-mall-exchange');
-                    loading.callback(loading.widget);
                 });
                 break;
             case 1:
                 loadRedEnvelopeSource().then(() => {
                     popNew('app-view-redEnvelope-writeRedEnv');
-                    loading.callback(loading.widget);
                 });
                 break;
             case 2:
-                loading.callback(loading.widget);
                 break;
             case 3:
                 msg.invite = false;
                 loadShareSource().then(() => {
                     popNew('earn-client-app-view-share-inviteFriend');
-                    loading.callback(loading.widget);
                 });
                 break;
             case 4:
                 msg.treasureChest = false;
                 loadOpenBoxSource().then(() => {
                     popNew('earn-client-app-view-openBox-openBox');
-                    loading.callback(loading.widget);
                 });
                 break;
             case 5:
                 msg.turntable = false;
                 loadTurntableSource().then(() => {
                     popNew('earn-client-app-view-turntable-turntable');
-                    loading.callback(loading.widget);
                 });
                 break;
             case 6:
                 msg.mining = false;
                 loadMiningSource().then(() => {
                     popNew('earn-client-app-view-mining-miningHome');
-                    loading.callback(loading.widget);
                 });
                 break;
             case 7:
                 goRecharge();
-                loading.callback(loading.widget);
                 break;
             case 8:
                 loadAboutAppSource().then(() => {
                     popNew('app-view-aboutApp-aboutus');
-                
-                    loading.callback(loading.widget);
                 });
                 break;
             case 9:
                 loadAboutAppSource().then(() => {
                     popNew('app-view-aboutApp-help');
-                
-                    loading.callback(loading.widget);
                 });
                 break;
             case 10:
                 loadMedalSource().then(() => {
                     popNew('earn-client-app-view-medal-medal');
-                    loading.callback(loading.widget);
                 });
                 break;
             case 11:
-                // loadAboutAppSource().then(() => {
-                //     popNew('app-view-aboutApp-wechatQrcode',{ fg:1 });
-                
-                //     loading.callback(loading.widget);
-                // });
-                loading.callback(loading.widget);
+                loadHaihaiSource().then(() => {
+                    popNew('chat-client-app-view-info-userDetail', { uid: this.props.uid });
+                });
                 break;
             case 12:
                 loadAboutAppSource().then(() => {
                     popNew('app-view-aboutApp-contanctUs');
-                    loading.callback(loading.widget);
                 });
                 break;
             default:
         }
         msg.day = day;
-        localStorage.setItem(`redFlags_${this.props.userInfo.acc_id}`,JSON.stringify(msg));
+        localStorage.setItem(`redFlags_${this.props.user.acc_id}`,JSON.stringify(msg));
         setStore('flags/redFlags',msg);
     }
 
@@ -292,10 +275,8 @@ export class MyHome extends Widget {
      * 分红
      */
     public dividend() {
-        const loading = popNew('app-components1-loading-loading1');
         loadDividendSource().then(() => {
             popNew('app-view-dividend-home');
-            loading.callback(loading.widget);
         });
     }
 
@@ -313,7 +294,7 @@ export class MyHome extends Widget {
             hour12: false
         });
         const day = date.format(new Date()).split(' ')[0];
-        const msg = JSON.parse(localStorage.getItem(`redFlags_${this.props.userInfo.acc_id}`));
+        const msg = JSON.parse(localStorage.getItem(`redFlags_${this.props.user.acc_id}`));
         if (!msg) {
             const msg  = {
                 day,
@@ -322,7 +303,7 @@ export class MyHome extends Widget {
                 turntable:true,
                 mining:true
             };
-            localStorage.setItem(`redFlags_${this.props.userInfo.acc_id}`,JSON.stringify(msg));
+            localStorage.setItem(`redFlags_${this.props.user.acc_id}`,JSON.stringify(msg));
 
             return;
         }
@@ -369,19 +350,6 @@ registerStoreData('user',(r) => {
     if (w) {
         w.initData();
     }
-    // if (!r.token && !document.querySelector('.haohaiLoginDiv')) {
-
-    //     // 添加一张背景图
-    //     const loginBg:any = document.createElement('div');
-    //     loginBg.className = 'haohaiLoginDiv';
-    //     document.querySelector('[w-tag="pi-ui-root"]').appendChild(loginBg);
-
-    //     // 清除账号数据
-    //     clearUser();
-        
-    //     // 初始化数据
-    //     initStore();
-    // }
 });
 
 // 监听红点变化

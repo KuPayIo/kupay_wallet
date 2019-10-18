@@ -1,4 +1,5 @@
 // import { Struct, structMgr } from '../../pi/struct/struct_mgr';
+import { popNew } from '../../pi/ui/root';
 import { listDirFile } from '../../pi/widget/util';
 /**
  * commonjs 动态加载文件
@@ -41,23 +42,30 @@ export const relativeGet = (path:string) => {
 /**
  * loadDir加载模块
  */
-export const piLoadDir = (sourceList:string[],flags?:any,fm?:any,suffixCfg?:any) => {
+export const piLoadDir = (sourceList:string[],flags?:any,fm?:any,suffixCfg?:any,isLoadDir?:boolean) => {
     return new Promise((resolve,reject) => {
         const html = relativeGet('pi/util/html');
         html.checkWebpFeature((r) => {
             flags = flags || {};
             flags.webp = flags.webp || r;
             const util = relativeGet('pi/widget/util');
-            util.loadDir(sourceList, flags, fm, suffixCfg,  (fileMap) => {                
-                const tab = util.loadCssRes(fileMap);
-                tab.timeout = 90000;
-                tab.release();
+            if (isLoadDir) {
                 resolve();
-            },  (r) => {
-                reject(r);
-            }, () => {
-                // console.log();
-            });
+            } else {
+                const loading = popNew('app-components1-loading-loading1');
+                util.loadDir(sourceList, flags, fm, suffixCfg,  (fileMap) => {                
+                    const tab = util.loadCssRes(fileMap);
+                    tab.timeout = 90000;
+                    tab.release();
+                    loading.callback(loading.widget);
+                    resolve();
+                },  (r) => {
+                    reject(r);
+                }, () => {
+                    // console.log();
+                });
+            }
+            
         });
         
     });

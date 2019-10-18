@@ -217,10 +217,18 @@ export class AccountHome extends Widget {
                 document.querySelector('[w-tag="pi-ui-root"]').appendChild(loginBg);
 
                 // 清除账号数据
-                clearUser();
+                clearUser().then(() => {
+                    // 初始化数据
+                    initStore();
+                    // 监听重新登录
+                    registerStoreData('flags/isLogin',(r:boolean) => {
+                        const loginBg = document.querySelector('.haohaiLoginDiv');
+                        if (r && loginBg) {
+                            document.querySelector('[w-tag="pi-ui-root"]').removeChild(loginBg);
+                        }
+                    });
+                });
                 
-                // 初始化数据
-                initStore();
             });
             loading.callback(loading.widget);
         });
@@ -256,13 +264,5 @@ register('setting/language', (r) => {
     if (w) {
         w.language = w.config.value[r];
         w.paint();
-    }
-});
-
-// 监听重新登录
-registerStoreData('flags/isLogin',(r:boolean) => {
-    const loginBg = document.querySelector('.haohaiLoginDiv');
-    if (r && loginBg) {
-        document.querySelector('[w-tag="pi-ui-root"]').removeChild(loginBg);
     }
 });

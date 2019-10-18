@@ -7,12 +7,12 @@
                 <div w-class="userInfo">
                     <div w-class="userNameBox">
                         <div w-class="userName">{{it.userInfo.nickName}}</div>
-                        {{if it.userInfo.sex!=2}}
-                        <img src="../../../res/image/{{it.userInfo.sex==0?'boy.png':'girl.png'}}" alt="" w-class="sex"/>
+                        {{if it.user.sex!=2}}
+                        <img src="../../../res/image/{{it.user.sex==0?'boy.png':'girl.png'}}" alt="" w-class="sex"/>
                         {{end}}
                         <img src="{{it.medalest}}" alt="" w-class="medal" on-tap="showMyMedal"/>
                     </div>
-                    <div w-class="haihaiBox">嗨号：{{ it.userInfo.acc_id }}</div>
+                    <div w-class="haihaiBox">嗨号：{{ it.user.acc_id }}</div>
                 </div>
             </div>
             <div w-class="myMoney">
