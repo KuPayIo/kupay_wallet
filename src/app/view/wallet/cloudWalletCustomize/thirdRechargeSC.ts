@@ -68,6 +68,8 @@ export class ThirdRechargeSC  extends Widget {
                 //     this.ok && this.ok(true);
                 // },500);
             }
+        }).catch(err => {
+            alert(`啊哦，遇到问题了，快联系客服解决一下吧 ${JSON.stringify(err)}`);
         });
     }
     /**

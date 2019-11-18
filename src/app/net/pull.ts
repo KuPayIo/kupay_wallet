@@ -512,7 +512,7 @@ export const getOneUserInfo = async (uids: number[], isOpenid?: number) => {
     }
 
     try {
-        const res = await requestAsync(msg);
+        const res = await requestAsync(msg, -1);
         if (res.value[0]) {
 
             return JSON.parse(unicodeArray2Str(res.value[0]));

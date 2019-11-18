@@ -320,7 +320,7 @@ const openPayment = (order: any) => {
     const orderStr = JSON.stringify(order);
     const msg = { type: 'wallet/order@order_start', param: { json: orderStr } };
 
-    return requestAsync(msg);
+    return requestAsync(msg, -1);
 };
 
 /**
@@ -353,7 +353,7 @@ const orderPay = (order: any,secretHash?:string) => {
     
     console.log('walletPay param-------------',msg);
     
-    return requestAsync(msg);
+    return requestAsync(msg, -1);
 };
 
 /**
@@ -386,7 +386,7 @@ const queryNoPWD = async (appid:string,total_fee?:number) => {
 
     let setNoPassword;
     try {
-        await requestAsync(msg);
+        await requestAsync(msg, -1);
         setNoPassword = SetNoPassword.SETED;
     } catch (err) {
         if (err.result === 2119) {  // 用户未开启免密支付

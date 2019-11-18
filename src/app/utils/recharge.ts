@@ -64,8 +64,11 @@ export const confirmPay = async (orderDetail: OrderDetail) => {
     } catch (err) {
         if (err === 0) {
             popNewMessage('网络未连接');
+        } else {
+            alert(`啊哦，遇到问题了，快联系客服解决一下吧 ${JSON.stringify(err)}`);
         }
         loading.callback(loading.widget);
+
     }
 };
 
